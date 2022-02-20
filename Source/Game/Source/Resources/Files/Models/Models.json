@@ -1,0 +1,29 @@
+{
+  "Plane100": {
+    "shape": "Models/Plane100.obj",
+    "texture": "Textures/Ambient.png"
+  },
+  "Box1": {
+    "shape": "Models/Box1.obj",
+    "texture": "Textures/Box.jpg"
+  },
+  "SphereBox": {
+    "shape": "Models/Sphere_01.obj",
+    "texture": "Textures/Box.jpg",
+    "scale": 2
+  },
+  "Sphere": {
+    "shape": "Models/Sphere_01.obj",
+    "texture": "Textures/Ambient.png",
+    "scale": [
+      2,
+      2,
+      2
+    ]
+  },
+  "SphereFire": {
+    "shape": "Models/Sphere_01.obj",
+    "texture": "Textures/Box.jpg",
+    "scale": 0.25
+  },
+}

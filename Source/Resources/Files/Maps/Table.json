@@ -1,0 +1,37 @@
+{
+  "backColor": [
+    0.8, 0.6, 1, 1
+	],
+  "objects": [
+    {
+      "name": "Table_00",
+      "model": "Table_00",
+	  "visible": true,
+      "pos": [0, 0, 0]
+    },
+    {
+      "name": "Table_01",
+      "model": "Table_01",
+	  "visible": false,
+      "pos": [34.5, 0, -7.5]
+    },
+    {
+      "name": "Table_02",
+      "model": "Table_02",
+	  "visible": false,
+      "pos": [-11, 0, -20.5]
+    },
+    {
+      "name": "Table_03",
+      "model": "Table_03",
+	  "visible": false,
+      "pos": [-32.5, 0, -8.0]
+    },
+    {
+      "name": "Table_99",
+      "model": "Table_99",
+	  "visible": false,
+      "pos": [0, 0, 0]
+    }
+  ]
+}

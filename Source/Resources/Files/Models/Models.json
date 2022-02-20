@@ -1,0 +1,27 @@
+{
+  "Table_00": {
+    "shape": "Models/PlaneVertical.obj",
+    "texture": "Textures/Table/Table_00.jpg",
+    "scale": [82.6, 0, 55]
+  },
+  "Table_01": {
+    "shape": "Models/PlaneVertical.obj",
+    "texture": "Textures/Table/Table_01.jpg",
+    "scale": [34.46, 0, 47.6]
+  },
+  "Table_02": {
+    "shape": "Models/PlaneVertical.obj",
+    "texture": "Textures/Table/Table_02.jpg",
+    "scale": [8.2, 0, 31.27]
+  },
+  "Table_03": {
+    "shape": "Models/PlaneVertical.obj",
+    "texture": "Textures/Table/Table_03.jpg",
+    "scale": [13, 0, 47.07]
+  },
+  "Table_99": {
+    "shape": "Models/PlaneVertical.obj",
+    "texture": "Textures/Table/Table_99.jpg",
+    "scale": [82.6, 0, 55]
+  }
+}

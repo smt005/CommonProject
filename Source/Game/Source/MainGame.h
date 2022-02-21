@@ -32,9 +32,8 @@ public:
 
 private:
 	CallbackPtr _callbackPtr;
-	std::vector<std::string> _maps;
+	std::vector<std::pair<std::string, std::map<std::string, bool>>> _maps;
 	int _indexCurrentMap;
-	std::map<std::string, bool> _visibleMap;
 	double _updateTime;
 
 };

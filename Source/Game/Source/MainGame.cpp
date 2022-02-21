@@ -37,13 +37,25 @@ void MainGame::init() {
 	Draw::setClearColor(0.9f, 0.6f, 0.3f, 1.0f);
 
 	if (_indexCurrentMap == -1) {
-		_maps.emplace_back("Table");
-		_indexCurrentMap = 0;
-	}
+		{
+			std::map<std::string, bool> visibleMap;
+			visibleMap["Table_01"] = false;
+			visibleMap["Table_02"] = false;
+			visibleMap["Table_03"] = false;
 
-	_visibleMap["Table_01"] = false;
-	_visibleMap["Table_02"] = false;
-	_visibleMap["Table_03"] = false;
+			_maps.emplace_back(std::pair("Table", visibleMap));
+		}
+
+		{
+			std::map<std::string, bool> visibleMap;
+			visibleMap["Office_01"] = false;
+			visibleMap["Office_02"] = false;
+
+			_maps.emplace_back(std::pair("Office", visibleMap));
+		}
+
+		_indexCurrentMap = 1;
+	}
 
 	update();
 
@@ -51,6 +63,8 @@ void MainGame::init() {
 }
 
 void MainGame::update() {
+	//return;
+
 	double currentTime = Engine::Core::currentTime();
 	if (_updateTime > currentTime) {
 		return;
@@ -58,15 +72,17 @@ void MainGame::update() {
 
 	_updateTime = currentTime + 3000;
 
+	std::map<std::string, bool>& visibleMap = _maps[_indexCurrentMap].second;
+
 	// Смена видимости и ...
-	for (auto& it = _visibleMap.begin(); it != _visibleMap.end(); ++it) {
+	for (auto& it = visibleMap.begin(); it != visibleMap.end(); ++it) {
 		float value = help::random(0.f, 1000.f);
 		it->second = value > 500.f ? true : false;
 	}
 
 	// Смена отображения
-	if (Map::Ptr map = Map::getByName("Table")) {
-		for (const std::pair<std::string, bool>& pair : _visibleMap) {		
+	if (Map::Ptr map = Map::getByName(_maps[_indexCurrentMap].first)) {
+		for (const std::pair<std::string, bool>& pair : visibleMap) {
 			if (Object* object = map->getObjectByName(pair.first)) {
 				object->setVisible(pair.second);
 			}
@@ -80,7 +96,7 @@ void MainGame::draw() {
 
 	// Draw
 	Draw::prepare();
-	Draw::draw(*Map::getByName(_maps[_indexCurrentMap]));
+	Draw::draw(*Map::getByName(_maps[_indexCurrentMap].first));
 }
 
 void MainGame::resize() {
@@ -118,22 +134,25 @@ void MainGame::initCallback() {
 			changeMap(true);
 		}
 
+		const std::string& nameMap = _maps[_indexCurrentMap].first;
 		std::string nameObject;
-		if (key == Engine::VirtualKey::VK_1) { nameObject = "Table_01"; }
-		if (key == Engine::VirtualKey::VK_2) { nameObject = "Table_02"; }
-		if (key == Engine::VirtualKey::VK_3) { nameObject = "Table_03"; }
+		if (key == Engine::VirtualKey::VK_1) { nameObject = nameMap + "_01"; }
+		if (key == Engine::VirtualKey::VK_2) { nameObject = nameMap + "_02"; }
+		if (key == Engine::VirtualKey::VK_3) { nameObject = nameMap + "_03"; }
 
 		if (!nameObject.empty()) {
-			if (Map::Ptr map = Map::getByName("Table")) {
-				if (Object* object = map->getObjectByName(nameObject)) {
-					bool visible = !object->visible();
-					object->setVisible(visible);
+			if (Map::Ptr map = Map::getByName(nameMap)) {
+				if (map->hasByName(nameObject)) {
+					if (Object* object = map->getObjectByName(nameObject)) {
+						bool visible = !object->visible();
+						object->setVisible(visible);
+					}
 				}
 			}
 		}
 
-		if (key == Engine::VirtualKey::Q) {
-			if (Map::Ptr map = Map::getByName("Table")) {
+		/*if (key == Engine::VirtualKey::Q) {
+			if (Map::Ptr map = Map::getByName(nameMap)) {
 				if (Object* object = map->getObjectByName("Table_00")) {
 					bool visible = !object->visible();
 					object->setVisible(visible);
@@ -143,14 +162,14 @@ void MainGame::initCallback() {
 					object->setVisible(visible);
 				}
 			}
-		}
+		}*/
 
 		if (key == Engine::VirtualKey::R && Engine::Callback::pressKey(Engine::VirtualKey::CONTROL)) {
-			Model::clear();
-			Model::removeData();
-			Texture::clear();
-			Shape::clear();
-			Map::getByName(_maps[_indexCurrentMap])->load();
+			//Model::clear();
+			//Model::removeData();
+			//Texture::clear();
+			//Shape::clear();
+			Map::getByName(nameMap)->load();
 		}
 	});
 }

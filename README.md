@@ -12,10 +12,13 @@ cd D:/Test/FindObjectGame
 git submodule update --init --recursive
 
 # Генерация проекта с помощью CMake
-Запустить скрипт для соответствующей студии из папки "D:\Projects\Game\FindObjectGame\Source\Engine\Help\Script"
+Запустить скрипт для соответствующей студии из папки "D:/Test/FindObjectGame\Source\Engine\Help\Script"
 # WARNING
 - x64 вроде не рабтает. Точно работает Win32, debug.
 - Есть ошибка с PhysX при генерации проекта. НУЖНО ПРОСТО ПОВТОРНО ЗАПУСТИТЬ СКРИПТ.
+
+# Игра
+Для игры больше ничего не надо делать, только запустить соглашение и запустить сборку.
 
 # Движок, "Engine"
 Для создание нового проекта, достаточно подключить подмодуль Engine.

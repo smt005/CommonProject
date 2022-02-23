@@ -61,11 +61,11 @@
  },
   "Ceiling_00": {
   "shape": "Models/Room/Ceiling_00.obj",
-  "texture": "Textures/Common/Concrete_00.jpg",
+  "texture": "Textures/Common/Concrete_00.jpg"
  },
   "Carpet_00": {
   "shape": "Models/Room/Carpet_00.obj",
-  "texture": "Textures/Common/Carpet_00.jpg",
+  "texture": "Textures/Common/Carpet_00.jpg"
  },
   "Lamp_00": {
   "shape": "Models/Room/Lamp_00.obj",

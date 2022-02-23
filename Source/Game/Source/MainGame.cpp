@@ -13,6 +13,8 @@
 #include "Object/Model.h"
 #include "Object/Shape.h"
 
+#include "glm/vec2.hpp"
+
 #include <memory>
 
 std::string MainGame::_resourcesDir;
@@ -21,7 +23,7 @@ const std::string saveFileName("../../../Executable/Save.json");
 MainGame::MainGame()
 	: _indexCurrentMap(-1)
 	, _updateTime (0)
-	, _state(State::GAME)
+	, _state(State::MENU)
 {
 }
 
@@ -56,7 +58,12 @@ void MainGame::init() {
 }
 
 void MainGame::update() {
-	//return;
+	if (_state == State::MENU) {
+		return;
+	} else if (_state == State::EXIT) {
+		Engine::Core::close();
+		return;
+	}
 
 	double currentTime = Engine::Core::currentTime();
 	if (_updateTime > currentTime) {
@@ -116,7 +123,7 @@ void MainGame::initCallback() {
 		}
 
 		if (Engine::Callback::pressTap(Engine::VirtualTap::LEFT)) {
-
+			hit(Engine::Callback::mousePos().x, Engine::Screen::height() - Engine::Callback::mousePos().y);
 		}
 	});
 
@@ -142,16 +149,14 @@ void MainGame::initCallback() {
 
 		if (key == Engine::VirtualKey::Q) {
 			changeMap(false);
-			std::string currentmapStr = _maps[_indexCurrentMap].first;
-			Map::Ptr mapPtr = Map::getByName(currentmapStr);
-			Camera::setCurrent(mapPtr->getCamera());
+			Map& map = currentMap();
+			Camera::setCurrent(map.getCamera());
 		}
 
 		if (key == Engine::VirtualKey::E) {
 			changeMap(true);
-			std::string currentmapStr = _maps[_indexCurrentMap].first;
-			Map::Ptr mapPtr = Map::getByName(currentmapStr);
-			Camera::setCurrent(mapPtr->getCamera());
+			Map& map = currentMap();
+			Camera::setCurrent(map.getCamera());
 		}
 
 		if (key == Engine::VirtualKey::R && Engine::Callback::pressKey(Engine::VirtualKey::CONTROL) && Engine::Callback::pressKey(Engine::VirtualKey::SHIFT)) {
@@ -160,34 +165,14 @@ void MainGame::initCallback() {
 			Texture::clear();
 			Shape::clear();
 
-			std::string currentmapStr;
-			if (_state == MainGame::State::MENU) {
-				currentmapStr = "Menu";
-			}
-			else {
-				currentmapStr = _maps[_indexCurrentMap].first;
-			}
-
-			if (!currentmapStr.empty()) {
-				Map::Ptr mapPtr = Map::getByName(currentmapStr);
-				mapPtr->load();
-				Camera::setCurrent(mapPtr->getCamera());
-			}
+			Map& map = currentMap();
+			map.load();
+			Camera::setCurrent(map.getCamera());
 		}
 		else if (key == Engine::VirtualKey::R && Engine::Callback::pressKey(Engine::VirtualKey::CONTROL)) {
-			std::string currentmapStr;
-			if (_state == MainGame::State::MENU) {
-				currentmapStr = "Menu";
-			}
-			else {
-				currentmapStr = _maps[_indexCurrentMap].first;
-			}
-
-			if (!currentmapStr.empty()) {
-				Map::Ptr mapPtr = Map::getByName(currentmapStr);
-				mapPtr->load();
-				Camera::setCurrent(mapPtr->getCamera());
-			}
+			Map& map = currentMap();
+			map.load();
+			Camera::setCurrent(map.getCamera());
 		}
 
 	});
@@ -269,6 +254,23 @@ void MainGame::save()
 #endif // _DEBUG
 }
 
+Map& MainGame::currentMap() {
+	std::string currentmapStr;
+	if (_state == MainGame::State::MENU) {
+		currentmapStr = "Menu";
+	}
+	else {
+		currentmapStr = _maps[_indexCurrentMap].first;
+	}
+
+	if (currentmapStr.empty()) {
+		currentmapStr = "Menu";
+	}
+
+	Map::Ptr mapPtr = Map::getByName(currentmapStr);
+	return *mapPtr;
+}
+
 void MainGame::changeMap(const bool right) {
 	size_t size = _maps.size();
 	if (size < 2) {
@@ -282,5 +284,18 @@ void MainGame::changeMap(const bool right) {
 	}
 	else if (_indexCurrentMap >= size) {
 		_indexCurrentMap = 0;
+	}
+}
+
+void MainGame::hit(const int x, const int y) {
+	std::vector<Object*>& objects = currentMap().objects;
+	for (Object* object : objects) {
+		if (object->visible() && object->hit(x, y)) {
+			if (object->getName() == "Door_00") {
+				_state = State::EXIT; 
+			} else if (object->getName() == "Monitor_display_00") {
+				_state = State::GAME;
+			}
+		}
 	}
 }

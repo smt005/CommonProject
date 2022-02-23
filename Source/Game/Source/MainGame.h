@@ -5,6 +5,8 @@
 #include <vector>
 #include <memory>
 
+class Map;
+
 namespace Engine { class Callback; }
 typedef std::shared_ptr<Engine::Callback> CallbackPtr;
 
@@ -31,7 +33,9 @@ public:
 	bool load();
 	void save();
 
+	Map& currentMap();
 	void changeMap(const bool right);
+	void hit(const int x, const int y);
 
 public:
 	static std::string _resourcesDir;

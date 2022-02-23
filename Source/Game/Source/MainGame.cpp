@@ -132,7 +132,11 @@ void MainGame::initCallback() {
 		Engine::VirtualKey key = releaseKeyEvent->getId();
 
 		if (key == Engine::VirtualKey::ESCAPE) {
-			Engine::Core::close();
+			//Engine::Core::close();
+			_state = State::MENU;
+			Map& map = currentMap();
+			map.load();
+			Camera::setCurrent(map.getCamera());
 		}
 
 		if (key == Engine::VirtualKey::S && Engine::Callback::pressKey(Engine::VirtualKey::CONTROL)) {
@@ -141,10 +145,6 @@ void MainGame::initCallback() {
 
 		if (key == Engine::VirtualKey::L && Engine::Callback::pressKey(Engine::VirtualKey::CONTROL)) {
 			load();
-		}
-
-		if (key == Engine::VirtualKey::ESCAPE) {
-			Engine::Core::close();
 		}
 
 		if (key == Engine::VirtualKey::Q) {
@@ -295,6 +295,9 @@ void MainGame::hit(const int x, const int y) {
 				_state = State::EXIT; 
 			} else if (object->getName() == "Monitor_display_00") {
 				_state = State::GAME;
+				Map& map = currentMap();
+				map.load();
+				Camera::setCurrent(map.getCamera());
 			}
 		}
 	}

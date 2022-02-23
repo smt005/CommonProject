@@ -34,17 +34,17 @@
   {
    "name": "Walls_00",
    "model": "Walls_00",
-   "visible": false
+   "_visible": false
   },
   {
    "name": "Floor_00",
    "model": "Floor_00",
-   "visible": false
+   "_visible": false
   },
   {
    "name": "Ceiling_00",
    "model": "Ceiling_00",
-   "visible": false
+   "_visible": false
   },
   {
    "name": "Door_00",
@@ -55,25 +55,25 @@
   {
    "name": "Door_rotate_00",
    "model": "Door_rotate_00",
-   "visible": false,
+   "_visible": false,
    "pos": [0, 49, 0]
   },
   {
    "name": "Table_00",
    "model": "Table_00",
-   "visible": false,
+   "_visible": false,
    "pos": [39, 34, 0]
   },
   {
    "name": "Stool_00",
    "model": "Stool_00",
-   "visible": false,
+   "_visible": false,
    "pos": [25, 34, 0]
   },
   {
    "name": "Monitor_00",
    "model": "Monitor_00",
-   "visible": false,
+   "_visible": false,
    "pos": [39, 34, 11]
   },
   {

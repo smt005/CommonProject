@@ -45,5 +45,58 @@
   "shape": "Models/PlaneVertical.obj",
   "texture": "Textures/Office/Office_99.jpg",
   "scale": [82.6, 0, 61.95]
+ },
+  "02_comment": "Map Room_00",
+  "Room_00": {
+  "shape": "Models/Room/Room_00.obj",
+  "texture": "Textures/Common/Brick.jpg"
+ },
+  "Walls_00": {
+  "shape": "Models/Room/Walls_00.obj",
+  "texture": "Textures/Common/Wallpaper_00.jpg"
+ },
+   "Floor_00": {
+  "shape": "Models/Room/Floor_00.obj",
+   "texture": "Textures/Common/Plank_00.png"
+ },
+  "Ceiling_00": {
+  "shape": "Models/Room/Ceiling_00.obj",
+  "texture": "Textures/Common/Concrete_00.jpg",
+ },
+  "Carpet_00": {
+  "shape": "Models/Room/Carpet_00.obj",
+  "texture": "Textures/Common/Carpet_00.jpg",
+ },
+  "Lamp_00": {
+  "shape": "Models/Room/Lamp_00.obj",
+  "texture": "Textures/Colors/White.png"
+ },
+  "Table_00": {
+  "shape": "Models/Room/Table_00.obj",
+  "texture": "Textures/Common/Wood_00.jpg"
+ },
+  "Stool_00": {
+  "shape": "Models/Room/Stool_00.obj",
+  "texture": "Textures/Common/Wood_00.jpg"
+ },
+  "Cup_00": {
+  "shape": "Models/Room/Cup_00.obj",
+  "texture": "Textures/Colors/White.png"
+ },
+  "Teapot_00": {
+  "shape": "Models/Room/Teapot_00.obj",
+  "texture": "Textures/Colors/White.png"
+ },
+  "Saucer_00": {
+  "shape": "Models/Room/Saucer_00.obj",
+  "texture": "Textures/Colors/White.png"
+ },
+  "Picture_border_00": {
+  "shape": "Models/Room/Picture_border_00.obj",
+  "texture": "Textures/Common/Wood_00.jpg"
+ },
+  "Picture_00": {
+  "shape": "Models/Room/Picture_00.obj",
+  "texture": "Textures/Office/Office_01.jpg"
  }
 }

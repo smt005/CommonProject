@@ -16,6 +16,7 @@
 #include <memory>
 
 std::string MainGame::_resourcesDir;
+const std::string saveFileName("../../../Executable/Save.json");
 
 MainGame::MainGame()
 	: _indexCurrentMap(-1)
@@ -28,15 +29,22 @@ MainGame::~MainGame() {
 }
 
 void MainGame::init() {
-	// Camera
-	Camera::current.setFromEye(true);
-	Camera::current.setPos(glm::vec3(0.f, 95.f, 0.f));
-	Camera::current.setVector(glm::vec3(0.f, -1.f, 0.f));
-	Camera::current.setDist(1.0f);
+	if (!load()) {
+		Camera::current.setFromEye(true);
+		Camera::current.setPos(glm::vec3(0.f, 95.f, 0.f));
+		Camera::current.setVector(glm::vec3(0.f, -1.f, 0.f));
+		Camera::current.setDist(1.0f);
+	}
 
 	Draw::setClearColor(0.9f, 0.6f, 0.3f, 1.0f);
 
 	if (_indexCurrentMap == -1) {
+		{
+			std::map<std::string, bool> visibleMap;
+
+			_maps.emplace_back(std::pair("Room_00", visibleMap));
+		}
+
 		{
 			std::map<std::string, bool> visibleMap;
 			visibleMap["Table_01"] = false;
@@ -54,7 +62,7 @@ void MainGame::init() {
 			_maps.emplace_back(std::pair("Office", visibleMap));
 		}
 
-		_indexCurrentMap = 1;
+		_indexCurrentMap = 0;
 	}
 
 	update();
@@ -126,65 +134,116 @@ void MainGame::initCallback() {
 			Engine::Core::close();
 		}
 
-		if (key == Engine::VirtualKey::A) {
+		if (key == Engine::VirtualKey::S && Engine::Callback::pressKey(Engine::VirtualKey::CONTROL)) {
+			save();
+		}
+
+		if (key == Engine::VirtualKey::L && Engine::Callback::pressKey(Engine::VirtualKey::CONTROL)) {
+			load();
+		}
+
+		if (key == Engine::VirtualKey::ESCAPE) {
+			Engine::Core::close();
+		}
+
+		if (key == Engine::VirtualKey::Q) {
 			changeMap(false);
 		}
 
-		if (key == Engine::VirtualKey::D) {
+		if (key == Engine::VirtualKey::E) {
 			changeMap(true);
 		}
 
-		const std::string& nameMap = _maps[_indexCurrentMap].first;
-		std::string nameObject;
-		if (key == Engine::VirtualKey::VK_1) { nameObject = nameMap + "_01"; }
-		if (key == Engine::VirtualKey::VK_2) { nameObject = nameMap + "_02"; }
-		if (key == Engine::VirtualKey::VK_3) { nameObject = nameMap + "_03"; }
-
-		if (!nameObject.empty()) {
-			if (Map::Ptr map = Map::getByName(nameMap)) {
-				if (map->hasByName(nameObject)) {
-					if (Object* object = map->getObjectByName(nameObject)) {
-						bool visible = !object->visible();
-						object->setVisible(visible);
-					}
-				}
-			}
-		}
-
-		/*if (key == Engine::VirtualKey::Q) {
-			if (Map::Ptr map = Map::getByName(nameMap)) {
-				if (Object* object = map->getObjectByName("Table_00")) {
-					bool visible = !object->visible();
-					object->setVisible(visible);
-				}
-				if (Object* object = map->getObjectByName("Table_99")) {
-					bool visible = !object->visible();
-					object->setVisible(visible);
-				}
-			}
-		}*/
-
-		if (key == Engine::VirtualKey::R && Engine::Callback::pressKey(Engine::VirtualKey::CONTROL)) {
-			//Model::clear();
-			//Model::removeData();
-			//Texture::clear();
-			//Shape::clear();
+		if (key == Engine::VirtualKey::R && Engine::Callback::pressKey(Engine::VirtualKey::CONTROL) && Engine::Callback::pressKey(Engine::VirtualKey::SHIFT)) {
+			Model::clear();
+			Model::removeData();
+			Texture::clear();
+			Shape::clear();
+			const std::string& nameMap = _maps[_indexCurrentMap].first;
 			Map::getByName(nameMap)->load();
 		}
+		else if (key == Engine::VirtualKey::R && Engine::Callback::pressKey(Engine::VirtualKey::CONTROL)) {
+			const std::string& nameMap = _maps[_indexCurrentMap].first;
+			Map::getByName(nameMap)->load();
+		}
+
 	});
+
+	_callbackPtr->add(Engine::CallbackType::PINCH_KEY, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
+		if (Engine::Callback::pressKey(Engine::VirtualKey::CONTROL)) {
+			return;
+		}
+
+		float speedCamera = 5.0f * Engine::Core::deltaTime();
+		if (Engine::Callback::pressKey(Engine::VirtualKey::SHIFT)) {
+			speedCamera = 30.0f * Engine::Core::deltaTime();
+		}
+
+		if (Engine::Callback::pressKey(Engine::VirtualKey::S)) {
+			Camera::current.move(CAMERA_FORVARD, speedCamera);
+		}
+
+		if (Engine::Callback::pressKey(Engine::VirtualKey::W)) {
+			Camera::current.move(CAMERA_BACK, speedCamera);
+		}
+
+		if (Engine::Callback::pressKey(Engine::VirtualKey::D)) {
+			Camera::current.move(CAMERA_RIGHT, speedCamera);
+		}
+
+		if (Engine::Callback::pressKey(Engine::VirtualKey::A)) {
+			Camera::current.move(CAMERA_LEFT, speedCamera);
+		}
+
+		if (Engine::Callback::pressKey(Engine::VirtualKey::R)) {
+			Camera::current.move(CAMERA_TOP, speedCamera);
+		}
+
+		if (Engine::Callback::pressKey(Engine::VirtualKey::F)) {
+			Camera::current.move(CAMERA_DOWN, speedCamera);
+		}
+	}
+	);
 }
 
 void MainGame::initPhysic() {
 
 }
 
-bool MainGame::load() {
+bool MainGame::load()
+{
+	Json::Value saveData;
+	if (!help::loadJson(saveFileName, saveData) || saveData.empty()) {
+		return false;
+	}
 
-	return false;
+	if (!saveData["camera"].empty()) {
+		Json::Value& cameraData = saveData["camera"];
+		Camera::current.setJsonData(cameraData);
+	}
+
+#if _DEBUG
+	Engine::Core::log("LOAD: " + saveFileName + "\n" + help::stringFroJson(saveData));
+#endif // _DEBUG
+
+	return true;
 }
 
-void MainGame::save() {
+void MainGame::save()
+{
+	Json::Value saveData;
 
+	Json::Value cameraData;
+	Camera::current.getJsonData(cameraData);
+
+	saveData["camera"] = cameraData;
+	saveData["testKey"] = "testValue";
+
+	help::saveJson(saveFileName, saveData);
+
+#if _DEBUG
+	Engine::Core::log("SAVE: " + saveFileName + "\n" + help::stringFroJson(saveData));
+#endif // _DEBUG
 }
 
 void MainGame::changeMap(const bool right) {

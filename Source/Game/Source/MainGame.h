@@ -10,6 +10,12 @@ typedef std::shared_ptr<Engine::Callback> CallbackPtr;
 
 class MainGame final : public Engine::Game
 {
+	enum class State {
+		MENU,
+		GAME,
+		EXIT
+	};
+
 public:
 	MainGame();
 	~MainGame();
@@ -35,5 +41,6 @@ private:
 	std::vector<std::pair<std::string, std::map<std::string, bool>>> _maps;
 	int _indexCurrentMap;
 	double _updateTime;
+	State _state;
 
 };

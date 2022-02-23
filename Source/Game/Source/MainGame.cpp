@@ -21,6 +21,7 @@ const std::string saveFileName("../../../Executable/Save.json");
 MainGame::MainGame()
 	: _indexCurrentMap(-1)
 	, _updateTime (0)
+	, _state(State::GAME)
 {
 }
 
@@ -41,32 +42,16 @@ void MainGame::init() {
 	if (_indexCurrentMap == -1) {
 		{
 			std::map<std::string, bool> visibleMap;
-
 			_maps.emplace_back(std::pair("Room_00", visibleMap));
 		}
-
 		{
 			std::map<std::string, bool> visibleMap;
-			visibleMap["Table_01"] = false;
-			visibleMap["Table_02"] = false;
-			visibleMap["Table_03"] = false;
-
-			_maps.emplace_back(std::pair("Table", visibleMap));
+			_maps.emplace_back(std::pair("Room_01", visibleMap));
 		}
-
-		{
-			std::map<std::string, bool> visibleMap;
-			visibleMap["Office_01"] = false;
-			visibleMap["Office_02"] = false;
-
-			_maps.emplace_back(std::pair("Office", visibleMap));
-		}
-
 		_indexCurrentMap = 0;
 	}
 
 	update();
-
 	initCallback();
 }
 
@@ -104,7 +89,16 @@ void MainGame::draw() {
 
 	// Draw
 	Draw::prepare();
-	Draw::draw(*Map::getByName(_maps[_indexCurrentMap].first));
+
+	if (_state == MainGame::State::MENU) {
+		Draw::draw(*Map::getByName("Menu"));
+	}
+	else if (_state == MainGame::State::EXIT) {
+		Engine::Core::close();
+	}
+	else {
+		Draw::draw(*Map::getByName(_maps[_indexCurrentMap].first));
+	}
 }
 
 void MainGame::resize() {
@@ -148,10 +142,16 @@ void MainGame::initCallback() {
 
 		if (key == Engine::VirtualKey::Q) {
 			changeMap(false);
+			std::string currentmapStr = _maps[_indexCurrentMap].first;
+			Map::Ptr mapPtr = Map::getByName(currentmapStr);
+			Camera::setCurrent(mapPtr->getCamera());
 		}
 
 		if (key == Engine::VirtualKey::E) {
 			changeMap(true);
+			std::string currentmapStr = _maps[_indexCurrentMap].first;
+			Map::Ptr mapPtr = Map::getByName(currentmapStr);
+			Camera::setCurrent(mapPtr->getCamera());
 		}
 
 		if (key == Engine::VirtualKey::R && Engine::Callback::pressKey(Engine::VirtualKey::CONTROL) && Engine::Callback::pressKey(Engine::VirtualKey::SHIFT)) {
@@ -159,12 +159,35 @@ void MainGame::initCallback() {
 			Model::removeData();
 			Texture::clear();
 			Shape::clear();
-			const std::string& nameMap = _maps[_indexCurrentMap].first;
-			Map::getByName(nameMap)->load();
+
+			std::string currentmapStr;
+			if (_state == MainGame::State::MENU) {
+				currentmapStr = "Menu";
+			}
+			else {
+				currentmapStr = _maps[_indexCurrentMap].first;
+			}
+
+			if (!currentmapStr.empty()) {
+				Map::Ptr mapPtr = Map::getByName(currentmapStr);
+				mapPtr->load();
+				Camera::setCurrent(mapPtr->getCamera());
+			}
 		}
 		else if (key == Engine::VirtualKey::R && Engine::Callback::pressKey(Engine::VirtualKey::CONTROL)) {
-			const std::string& nameMap = _maps[_indexCurrentMap].first;
-			Map::getByName(nameMap)->load();
+			std::string currentmapStr;
+			if (_state == MainGame::State::MENU) {
+				currentmapStr = "Menu";
+			}
+			else {
+				currentmapStr = _maps[_indexCurrentMap].first;
+			}
+
+			if (!currentmapStr.empty()) {
+				Map::Ptr mapPtr = Map::getByName(currentmapStr);
+				mapPtr->load();
+				Camera::setCurrent(mapPtr->getCamera());
+			}
 		}
 
 	});

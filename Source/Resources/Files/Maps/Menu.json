@@ -1,0 +1,59 @@
+{
+ "backColor": [0.8, 0.6, 1, 1],
+"camera" : 
+	{
+		"calcFrustum" : false,
+		"dist" : 50.0,
+		"fromEye" : true,
+		"pos" : [ -11.7, 3.8, 36.0],
+		"speed" : -0.5,
+		"speedRotate" : 0.0075,
+		"vector" : [ 0.55, 0.76, -0.34]
+	},
+ "objects": [
+  {
+   "name": "Walls_00",
+   "model": "Walls_00"
+  },
+  {
+   "name": "Floor_00",
+   "model": "Floor_00"
+  },
+  {
+   "name": "Ceiling_00",
+   "model": "Ceiling_00"
+  },
+  {
+   "name": "Door_00",
+   "model": "Door_00",
+   "visible": false,
+   "pos": [0, 49, 0]
+  },
+  {
+   "name": "Door_rotate_00",
+   "model": "Door_rotate_00",
+   "visible": true,
+   "pos": [0, 49, 0]
+  },
+  {
+   "name": "Table_00",
+   "model": "Table_00",
+   "pos": [39, 34, 0]
+  },
+  {
+   "name": "Stool_00",
+   "model": "Stool_00",
+   "pos": [25, 34, 0]
+  },
+  {
+   "name": "Monitor_00",
+   "model": "Monitor_00",
+   "pos": [39, 34, 11]
+  },
+  {
+   "name": "Monitor_display_00",
+   "model": "Monitor_display_00",
+   "pos": [39, 34, 11]
+  }
+ ]
+}

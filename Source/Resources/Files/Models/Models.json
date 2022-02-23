@@ -98,5 +98,21 @@
   "Picture_00": {
   "shape": "Models/Room/Picture_00.obj",
   "texture": "Textures/Office/Office_01.jpg"
+ },
+  "Door_00": {
+  "shape": "Models/Room/Door_00.obj",
+  "texture": "Textures/Common/Wood_00.jpg"
+ },
+  "Door_rotate_00": {
+  "shape": "Models/Room/Door_rotate_00.obj",
+  "texture": "Textures/Common/Wood_00.jpg"
+ },
+  "Monitor_00": {
+  "shape": "Models/Room/Monitor_00.obj",
+  "texture": "Textures/Common/Concrete_00.jpg"
+ },
+  "Monitor_display_00": {
+  "shape": "Models/Room/Monitor_display_00.obj",
+  "texture": "Textures/Office/Office_01.jpg"
  }
 }

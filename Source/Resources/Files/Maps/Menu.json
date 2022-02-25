@@ -49,13 +49,12 @@
   {
    "name": "Door_00",
    "model": "Door_00",
-   "_visible": false,
    "pos": [0, 49, 0],
   },
   {
    "name": "Door_rotate_00",
    "model": "Door_rotate_00",
-   "_visible": false,
+   "visible": false,
    "pos": [0, 49, 0]
   },
   {
@@ -81,7 +80,12 @@
    "model": "Monitor_display_00",
    "visible": true,
    "pos": [39, 34, 11]
-   "_pos": [0, 0, 0]
+  },
+  {
+   "name": "Monitor_display_01",
+   "model": "Monitor_display_01",
+   "visible": false,
+   "pos": [39, 34, 11]
   }
  ]
 }

@@ -16,6 +16,7 @@
 #include "glm/vec2.hpp"
 
 #include <memory>
+#include <set>
 
 std::string MainGame::_resourcesDir;
 const std::string saveFileName("../../../Executable/Save.json");
@@ -65,29 +66,14 @@ void MainGame::update() {
 		return;
 	}
 
-	double currentTime = Engine::Core::currentTime();
+	/*double currentTime = Engine::Core::currentTime();
 	if (_updateTime > currentTime) {
 		return;
 	}
 
 	_updateTime = currentTime + 3000;
 
-	std::map<std::string, bool>& visibleMap = _maps[_indexCurrentMap].second;
-
-	// Смена видимости и ...
-	for (auto& it = visibleMap.begin(); it != visibleMap.end(); ++it) {
-		float value = help::random(0.f, 1000.f);
-		it->second = value > 500.f ? true : false;
-	}
-
-	// Смена отображения
-	if (Map::Ptr map = Map::getByName(_maps[_indexCurrentMap].first)) {
-		for (const std::pair<std::string, bool>& pair : visibleMap) {
-			if (Object* object = map->getObjectByName(pair.first)) {
-				object->setVisible(pair.second);
-			}
-		}
-	}
+	std::map<std::string, bool>& visibleMap = _maps[_indexCurrentMap].second;*/
 }
 
 void MainGame::draw() {
@@ -123,7 +109,7 @@ void MainGame::initCallback() {
 		}
 
 		if (Engine::Callback::pressTap(Engine::VirtualTap::LEFT)) {
-			hit(Engine::Callback::mousePos().x, Engine::Screen::height() - Engine::Callback::mousePos().y);
+			hit(Engine::Callback::mousePos().x, Engine::Screen::height() - Engine::Callback::mousePos().y, true);
 		}
 	});
 
@@ -210,8 +196,17 @@ void MainGame::initCallback() {
 		if (Engine::Callback::pressKey(Engine::VirtualKey::F)) {
 			Camera::current.move(CAMERA_DOWN, speedCamera);
 		}
-	}
-	);
+	});
+
+	_callbackPtr->add(Engine::CallbackType::MOVE, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
+		static glm::vec2 mousePos;
+		glm::vec2 currentMousePos(Engine::Callback::mousePos().x, Engine::Screen::height() - Engine::Callback::mousePos().y);
+
+		if (mousePos != currentMousePos) {
+			hit(currentMousePos.x, currentMousePos.y);
+			mousePos = currentMousePos;
+		}
+	});
 }
 
 void MainGame::initPhysic() {
@@ -287,18 +282,38 @@ void MainGame::changeMap(const bool right) {
 	}
 }
 
-void MainGame::hit(const int x, const int y) {
-	std::vector<Object*>& objects = currentMap().objects;
-	for (Object* object : objects) {
+void MainGame::hit(const int x, const int y, const bool action) {
+	std::set<std::string> objectsUnderMouse;
+
+	for (Object* object : currentMap().objects) {
 		if (object->visible() && object->hit(x, y)) {
-			if (object->getName() == "Door_00") {
-				_state = State::EXIT; 
-			} else if (object->getName() == "Monitor_display_00") {
-				_state = State::GAME;
-				Map& map = currentMap();
-				map.load();
-				Camera::setCurrent(map.getCamera());
-			}
+			objectsUnderMouse.emplace(object->getName());
 		}
+	}
+
+	if (objectsUnderMouse.find("Door_00") != objectsUnderMouse.end() || objectsUnderMouse.find("Door_rotate_00") != objectsUnderMouse.end()) {
+		currentMap().getObjectByName("Door_00").setVisible(false);
+		currentMap().getObjectByName("Door_rotate_00").setVisible(true);
+		
+		if (objectsUnderMouse.find("Door_rotate_00") != objectsUnderMouse.end() && action) {
+			_state = State::EXIT;
+		}
+	}
+	else if (objectsUnderMouse.find("Monitor_display_00") != objectsUnderMouse.end() || objectsUnderMouse.find("Monitor_display_01") != objectsUnderMouse.end()) {
+		currentMap().getObjectByName("Monitor_display_00").setVisible(false);
+		currentMap().getObjectByName("Monitor_display_01").setVisible(true);
+
+		if (objectsUnderMouse.find("Monitor_display_01") != objectsUnderMouse.end() && action) {
+			_state = State::GAME;
+			Map& map = currentMap();
+			map.load();
+			Camera::setCurrent(map.getCamera());
+		}
+	}
+	else {
+		currentMap().getObjectByName("Door_00").setVisible(true);
+		currentMap().getObjectByName("Door_rotate_00").setVisible(false);
+		currentMap().getObjectByName("Monitor_display_00").setVisible(true);
+		currentMap().getObjectByName("Monitor_display_01").setVisible(false);
 	}
 }

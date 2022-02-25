@@ -35,7 +35,7 @@ public:
 
 	Map& currentMap();
 	void changeMap(const bool right);
-	void hit(const int x, const int y);
+	void hit(const int x, const int y, const bool action = false);
 
 public:
 	static std::string _resourcesDir;
@@ -46,5 +46,4 @@ private:
 	int _indexCurrentMap;
 	double _updateTime;
 	State _state;
-
 };

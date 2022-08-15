@@ -1,0 +1,25 @@
+{
+ "backColor": [0.3, 0.6, 0.9, 1],
+ "camera" : 
+	{
+		"calcFrustum" : false,
+		"dist" : 50.0,
+		"fromEye" : true,
+		"pos" : [ -185, 48, 117 ],
+		"speed" : -5,
+		"fov" : 50,
+		"speedRotate" : 0.0075,
+		"vector" : [ 0.675, -0.737, -0.0319]
+	},
+ "objects": [
+  {
+   "name": "Walls",
+   "model": "Walls"
+  },
+  {
+   "name": "Floor_00",
+   "model": "Floor_00",
+   "_visible": false
+  }
+ ]
+}

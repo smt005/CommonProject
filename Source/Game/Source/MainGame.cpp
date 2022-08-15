@@ -8,18 +8,25 @@
 #include "Common/Help.h"
 #include "Draw/Camera.h"
 #include "Draw/Draw.h"
+#include "Draw/DrawLight.h"
+#include "Draw/DrawLine.h"
 #include "Object/Map.h"
 #include "Object/Object.h"
 #include "Object/Model.h"
 #include "Object/Shape.h"
+#include "Object/Line.h"
 
 #include "glm/vec2.hpp"
 
 #include <memory>
 #include <set>
 
+#define DRAW DrawLight
+
 std::string MainGame::_resourcesDir;
 const std::string saveFileName("../../../Executable/Save.json");
+Object lightObject;
+vec3 lightPos(-500.0f, -500.0f, 500.0f);
 
 MainGame::MainGame()
 	: _indexCurrentMap(-1)
@@ -30,9 +37,17 @@ MainGame::MainGame()
 
 MainGame::~MainGame() {
 	_callbackPtr.reset();
+
+	if (_greed) {
+		delete _greed;
+		_greed = nullptr;
+	}
 }
 
 void MainGame::init() {
+	_greed = new Greed(100.0f, 10.0f);
+	_greed->setPos({ 0.0f, 0.0f, 0.1f });
+
 	if (!load()) {
 		Camera::current.setFromEye(true);
 		Camera::current.setPos(glm::vec3(0.f, 95.f, 0.f));
@@ -40,10 +55,27 @@ void MainGame::init() {
 		Camera::current.setDist(1.0f);
 	}
 
-	Draw::setClearColor(0.9f, 0.6f, 0.3f, 1.0f);
+	DRAW::setClearColor(0.3f, 0.6f, 0.9f, 1.0f);
 
 	if (_indexCurrentMap == -1) {
 		{
+			std::map<std::string, bool> visibleMap;
+			_maps.emplace_back(std::pair("Apartment_00", visibleMap));
+		}
+		{
+			std::map<std::string, bool> visibleMap;
+			_maps.emplace_back(std::pair("Apartment_01", visibleMap));
+		}
+		/* {
+			std::map<std::string, bool> visibleMap;
+			_maps.emplace_back(std::pair("Apartment_02", visibleMap));
+		}
+		{
+			std::map<std::string, bool> visibleMap;
+			_maps.emplace_back(std::pair("Apartment_03", visibleMap));
+		}*/
+
+		/* {
 			std::map<std::string, bool> visibleMap;
 			_maps.emplace_back(std::pair("Room_00", visibleMap));
 		}
@@ -51,8 +83,16 @@ void MainGame::init() {
 			std::map<std::string, bool> visibleMap;
 			_maps.emplace_back(std::pair("Room_01", visibleMap));
 		}
+		{
+			std::map<std::string, bool> visibleMap;
+			_maps.emplace_back(std::pair("Room_02", visibleMap));
+		}*/
+
 		_indexCurrentMap = 0;
+		_state = MainGame::State::GAME;
 	}
+
+	//lightObject.set("light", "Lamp_00", lightPos);
 
 	update();
 	initCallback();
@@ -77,39 +117,139 @@ void MainGame::update() {
 }
 
 void MainGame::draw() {
-	Draw::viewport();
-	Draw::clearColor();
+	DRAW::viewport();
+	DRAW::clearColor();
 
 	// Draw
-	Draw::prepare();
+	DRAW::prepare();
 
 	if (_state == MainGame::State::MENU) {
-		Draw::draw(*Map::getByName("Menu"));
+		DRAW::draw(*Map::getByName("Menu"));
 	}
 	else if (_state == MainGame::State::EXIT) {
 		Engine::Core::close();
 	}
 	else {
-		Draw::draw(*Map::getByName(_maps[_indexCurrentMap].first));
+		DRAW::draw(*Map::getByName(_maps[_indexCurrentMap].first));
+	}
+
+	// Свет
+	Draw::prepare();
+	Draw::draw(lightObject);
+}
+
+void MainGame::Drawline() {
+	DrawLine::prepare();
+
+	if (_qwe0_) {
+		{
+			float points[] = { 0.0f, 0.0f, 0.0f, 10.0f, 20.0f, 20.0f,
+								10.0f, 20.0f, 20.0f, 20.0f, 20.0f, 20.0f };
+			Line line(points, 4, Line::LINE);
+			line.setLineWidth(5.0f);
+			line.color = Color::GREEN;
+
+			DrawLine::draw(line);
+		}
+
+		{
+			float points[] = { 20.0f, 30.0f, 0.0f,
+								20.0f, 30.0f, 20.0f,
+								30.0f, 30.0f, 20.0f };
+			Line line(points, 3, Line::LOOP);
+			line.setLineWidth(5.0f);
+			line.color = { 0.3f, 0.6f, 0.9f,0.5f };
+
+			DrawLine::draw(line);
+		}
+
+		{
+			float points[] = { 30.0f, 40.0f, 0.0f,
+								30.0f, 40.0f, 20.0f,
+								40.0f, 40.0f, 20.0f };
+			Line line(points, 3, Line::STRIP);
+			line.setLineWidth(5.0f);
+			line.color = Color::RED;
+			line.color.setAlpha(0.5);
+
+			DrawLine::draw(line);
+		}
+
+		/* {
+			float pointsX[] = { 0.f, 0.f, 0.f, _lenghtNormal, _lenghtNormal, _lenghtNormal };
+			Line lineX(pointsX, 2, Line::LINE);
+			lineX.setLineWidth(5.0f);
+			lineX.color = Color::RED;
+			lineX.color.setAlpha(0.999);
+			DrawLine::draw(lineX);
+		}*/
+	}
+
+	DrawLine::draw(*_greed);
+
+	//...
+	if (_qwe_) {
+		Map& map = *Map::getByName(_maps[_indexCurrentMap].first);
+
+		for (auto& object : map.objects) {
+			if (object->visible()) {
+				float* vertexes = object->getModel().getMesh().vertexes();
+				float* normals = object->getModel().getMesh().normals();
+				int countVertex = object->getModel().getMesh().countVertex();
+
+				for (int i = 0; i < countVertex * 3; i = i + 3) {
+					float* pos = &vertexes[i];
+					float* norm = &normals[i];
+
+					float pointsX[] = { pos[0], pos[1], pos[2], pos[0] + norm[0] * _lenghtNormal, pos[1] + norm[1] * _lenghtNormal, pos[2] + norm[2] * _lenghtNormal};
+					Line lineX(pointsX, 2, Line::LINE);
+					lineX.setLineWidth(_widthNormal);
+					lineX.color = Color::RED;
+					lineX.color.setAlpha(0.75);
+					DrawLine::draw(lineX, object->getMatrix());
+				}
+			}
+		}
 	}
 }
 
 void MainGame::resize() {
-	Camera::getCurrent().setPerspective(45.0f, Engine::Screen::aspect(), 0.1f, 1000.0f);
+	Camera::getCurrent().setPerspective(Camera::getCurrent().fov(), Engine::Screen::aspect(), 0.1f, 1000.0f);
 }
 
 void MainGame::initCallback() {
 	_callbackPtr = std::make_shared<Engine::Callback>(Engine::CallbackType::PINCH_TAP, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
 		if (Engine::Callback::pressTap(Engine::VirtualTap::RIGHT)) {
 			Camera::current.rotate(Engine::Callback::deltaMousePos());
+			CheckMouse();
 		}
 
 		if (Engine::Callback::pressTap(Engine::VirtualTap::MIDDLE)) {
-			Camera::current.move(Engine::Callback::deltaMousePos() * 1000.0f * Engine::Core::deltaTime());
+			Camera::current.move(Engine::Callback::deltaMousePos() * Engine::Core::deltaTime());
+			CheckMouse();
 		}
 
 		if (Engine::Callback::pressTap(Engine::VirtualTap::LEFT)) {
 			hit(Engine::Callback::mousePos().x, Engine::Screen::height() - Engine::Callback::mousePos().y, true);
+		}
+	});
+
+	_callbackPtr->add(Engine::CallbackType::SCROLL, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
+		if (Engine::TapCallbackEvent* tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
+			if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_UP) {
+				float fov = Camera::current.fov();
+				fov -= 0.1f;
+				if (fov >= 44.1f) {
+					Camera::current.setFov(fov);
+				}
+			}
+			else if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_BOTTOM) {
+				float fov = Camera::current.fov();
+				fov += 0.1f;
+				if (fov <= 46.5f) {
+					Camera::current.setFov(fov);
+				}
+			}
 		}
 	});
 
@@ -118,7 +258,6 @@ void MainGame::initCallback() {
 		Engine::VirtualKey key = releaseKeyEvent->getId();
 
 		if (key == Engine::VirtualKey::ESCAPE) {
-			//Engine::Core::close();
 			_state = State::MENU;
 			Map& map = currentMap();
 			map.load();
@@ -161,6 +300,9 @@ void MainGame::initCallback() {
 			Camera::setCurrent(map.getCamera());
 		}
 
+		if (key == Engine::VirtualKey::T) {
+			DrawLight::resetShader();
+		}
 	});
 
 	_callbackPtr->add(Engine::CallbackType::PINCH_KEY, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
@@ -168,47 +310,114 @@ void MainGame::initCallback() {
 			return;
 		}
 
-		float speedCamera = 5.0f * Engine::Core::deltaTime();
+		// Камера
+		float kForce = 1.0;
 		if (Engine::Callback::pressKey(Engine::VirtualKey::SHIFT)) {
-			speedCamera = 30.0f * Engine::Core::deltaTime();
+			kForce = 5.f;
 		}
 
 		if (Engine::Callback::pressKey(Engine::VirtualKey::S)) {
-			Camera::current.move(CAMERA_FORVARD, speedCamera);
+			Camera::current.move(CAMERA_FORVARD, kForce);
 		}
-
 		if (Engine::Callback::pressKey(Engine::VirtualKey::W)) {
-			Camera::current.move(CAMERA_BACK, speedCamera);
+			Camera::current.move(CAMERA_BACK, kForce);
 		}
-
 		if (Engine::Callback::pressKey(Engine::VirtualKey::D)) {
-			Camera::current.move(CAMERA_RIGHT, speedCamera);
+			Camera::current.move(CAMERA_RIGHT, kForce);
 		}
-
 		if (Engine::Callback::pressKey(Engine::VirtualKey::A)) {
-			Camera::current.move(CAMERA_LEFT, speedCamera);
+			Camera::current.move(CAMERA_LEFT, kForce);
 		}
-
 		if (Engine::Callback::pressKey(Engine::VirtualKey::R)) {
-			Camera::current.move(CAMERA_TOP, speedCamera);
+			Camera::current.move(CAMERA_TOP, kForce);
+		}
+		if (Engine::Callback::pressKey(Engine::VirtualKey::F)) {
+			Camera::current.move(CAMERA_DOWN, kForce);
 		}
 
-		if (Engine::Callback::pressKey(Engine::VirtualKey::F)) {
-			Camera::current.move(CAMERA_DOWN, speedCamera);
+		gml:vec3 posCam = Camera::current.pos();
+		if (posCam.z < 50.f) {
+			posCam.z = 50.f;
+			Camera::current.setPos(posCam);
 		}
+		if (posCam.z > 270.f) {
+			posCam.z = 270.f;
+			Camera::current.setPos(posCam);
+		}
+		if (posCam.x < -320.f) {
+			posCam.x = -320.f;
+			Camera::current.setPos(posCam);
+		}
+		if (posCam.x > 320.f) {
+			posCam.x = 320.f;
+			Camera::current.setPos(posCam);
+		}
+		if (posCam.y < -235.f) {
+			posCam.y = -235.f;
+			Camera::current.setPos(posCam);
+		}
+		if (posCam.y > 375.f) {
+			posCam.y = 375.f;
+			Camera::current.setPos(posCam);
+		}
+
+		// Свет
+		if (Engine::Callback::pressKey(Engine::VirtualKey::O)) {
+			lightPos.z += 1.0f;
+		}
+		if (Engine::Callback::pressKey(Engine::VirtualKey::L)) {
+			lightPos.z -= 1.0f;
+		}
+		if (Engine::Callback::pressKey(Engine::VirtualKey::H)) {
+			lightPos.x += 1.0f;
+		}
+		if (Engine::Callback::pressKey(Engine::VirtualKey::K)) {
+			lightPos.x -= 1.0f;
+		}
+		if (Engine::Callback::pressKey(Engine::VirtualKey::U)) {
+			lightPos.y += 1.0f;
+		}
+		if (Engine::Callback::pressKey(Engine::VirtualKey::J)) {
+			lightPos.y -= 1.0f;
+		}
+
+		lightObject.setPos(lightPos);
+		DRAW::setLightPos(lightPos.x, lightPos.y, lightPos.z);
 	});
 
-	_callbackPtr->add(Engine::CallbackType::MOVE, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
-		static glm::vec2 mousePos;
-		glm::vec2 currentMousePos(Engine::Callback::mousePos().x, Engine::Screen::height() - Engine::Callback::mousePos().y);
-
-		if (mousePos != currentMousePos) {
-			hit(currentMousePos.x, currentMousePos.y);
-			mousePos = currentMousePos;
+	_callbackPtr->add(Engine::CallbackType::MOVE, [this](const Engine::CallbackEventPtr& callbackEventPtr) {		
+		if (_state == State::MENU) {
+			float currentMousePos[] = { Engine::Callback::mousePos().x, Engine::Screen::height() - Engine::Callback::mousePos().y };
+			if (_mousePos[0] != currentMousePos[0] && _mousePos[1] != currentMousePos[1]) {
+				_mousePos[0] = currentMousePos[0];
+				_mousePos[1] = currentMousePos[1];
+				hit(_mousePos[0], _mousePos[1]);
+			}
 		}
 	});
 }
 
+void MainGame::CheckMouse() {
+	glm::vec2 mousePos = Engine::Callback::mousePos();
+
+	if (mousePos.x < 0.f) {
+		mousePos.x = Engine::Screen::width() - mousePos.x;
+		Engine::Core::SetCursorPos(mousePos.x, mousePos.y);
+	}
+	else if (mousePos.x > Engine::Screen::width()) {
+		mousePos.x = mousePos.x - Engine::Screen::width();
+		Engine::Core::SetCursorPos(mousePos.x, mousePos.y);
+	}
+
+	if (mousePos.y < 0.f) {
+		mousePos.y = Engine::Screen::height() - mousePos.y;
+		Engine::Core::SetCursorPos(mousePos.x, mousePos.y);
+	}
+	else if (mousePos.y > Engine::Screen::height()) {
+		mousePos.y = mousePos.y - Engine::Screen::height();
+		Engine::Core::SetCursorPos(mousePos.x, mousePos.y);
+	}
+}
 void MainGame::initPhysic() {
 
 }

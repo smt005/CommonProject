@@ -2,7 +2,7 @@
  "backColor": [0.8, 0.6, 1, 1],
 "camera" : 
 	{
-		"calcFrustum" : false,
+		"calcFrustum" : true,
 		"dist" : 50.0,
 		"fromEye" : true,
 		"pos" : [ 38.0, 46.0, 26.0],

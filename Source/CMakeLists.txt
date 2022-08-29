@@ -39,6 +39,12 @@ set(GAME_SOURCE "${GAME_DIR}/Source")
 #glm
 set(GLM_INCLUDES "${ENGINE_DIR}/ThirdParty/glm")
 
+# ImGui
+set(IMGUI_NAME ImGui)
+set(IMGUI_DIR "${ENGINE_DIR}/ThirdParty/ImGui")
+set(IMGUI_INCLUDES "${IMGUI_DIR}")
+set(IMGUI_SOURCE "${IMGUI_DIR}")
+
 # jsoncpp
 set(JSONCPP_NAME jsoncpp)
 set(JSONCPP_DIR "${ENGINE_DIR}/ThirdParty/jsoncpp")
@@ -145,6 +151,12 @@ include_directories(${FREEIMAGE_INCLUDES})
 link_directories(${FREEIMAGE_LIB})
 target_link_libraries(${PROJECT_NAME} "${FREEIMAGE_LIB}/${FREEIMAGE_NAME}.lib")
 file(COPY "${FREEIMAGE_LIB}/${FREEIMAGE_NAME}.dll" DESTINATION ${PROJECT_DIR}/../Executable/debug)
+
+# ImGui
+include_directories(${IMGUI_INCLUDES})
+add_subdirectory(${IMGUI_DIR})
+target_link_libraries(${PROJECT_NAME} ${IMGUI_NAME})
+link_directories(${IMGUI_DIR})
 
 # PhysX 4.1
 ## I want to use the C++17 standard, forsooth!

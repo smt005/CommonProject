@@ -20,6 +20,7 @@ include_directories(${FREEIMAGE_INCLUDES})
 include_directories(${PHYSX_INCLUDES})
 include_directories(${PHYSX_INCLUDES_PXSHARED})
 include_directories(${FREETYPE2_INCLUDES})
+include_directories(${IMGUI_INCLUDES})
 
 # Создание статической библиотеки
 add_library(${GAME_NAME} STATIC ${INCLUDES} ${SOURCES})

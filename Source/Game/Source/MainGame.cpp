@@ -15,8 +15,9 @@
 #include "Object/Model.h"
 #include "Object/Shape.h"
 #include "Object/Line.h"
-
+#include "ImGuiManager/UI.h"
 #include "glm/vec2.hpp"
+#include "Windows/EditMap.h"
 
 #include <memory>
 #include <set>
@@ -232,7 +233,7 @@ void MainGame::initCallback() {
 		if (Engine::Callback::pressTap(Engine::VirtualTap::LEFT)) {
 			hit(Engine::Callback::mousePos().x, Engine::Screen::height() - Engine::Callback::mousePos().y, true);
 		}
-	});
+		});
 
 	_callbackPtr->add(Engine::CallbackType::SCROLL, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
 		if (Engine::TapCallbackEvent* tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
@@ -251,7 +252,7 @@ void MainGame::initCallback() {
 				}
 			}
 		}
-	});
+		});
 
 	_callbackPtr->add(Engine::CallbackType::RELEASE_KEY, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
 		Engine::KeyCallbackEvent* releaseKeyEvent = (Engine::KeyCallbackEvent*)callbackEventPtr->get();
@@ -303,7 +304,7 @@ void MainGame::initCallback() {
 		if (key == Engine::VirtualKey::T) {
 			DrawLight::resetShader();
 		}
-	});
+		});
 
 	_callbackPtr->add(Engine::CallbackType::PINCH_KEY, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
 		if (Engine::Callback::pressKey(Engine::VirtualKey::CONTROL)) {
@@ -335,7 +336,7 @@ void MainGame::initCallback() {
 			Camera::current.move(CAMERA_DOWN, kForce);
 		}
 
-		gml:vec3 posCam = Camera::current.pos();
+	gml:vec3 posCam = Camera::current.pos();
 		if (posCam.z < 50.f) {
 			posCam.z = 50.f;
 			Camera::current.setPos(posCam);
@@ -383,9 +384,9 @@ void MainGame::initCallback() {
 
 		lightObject.setPos(lightPos);
 		DRAW::setLightPos(lightPos.x, lightPos.y, lightPos.z);
-	});
+		});
 
-	_callbackPtr->add(Engine::CallbackType::MOVE, [this](const Engine::CallbackEventPtr& callbackEventPtr) {		
+	_callbackPtr->add(Engine::CallbackType::MOVE, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
 		if (_state == State::MENU) {
 			float currentMousePos[] = { Engine::Callback::mousePos().x, Engine::Screen::height() - Engine::Callback::mousePos().y };
 			if (_mousePos[0] != currentMousePos[0] && _mousePos[1] != currentMousePos[1]) {
@@ -393,6 +394,19 @@ void MainGame::initCallback() {
 				_mousePos[1] = currentMousePos[1];
 				hit(_mousePos[0], _mousePos[1]);
 			}
+		}
+		});
+
+	_callbackPtr->add(Engine::CallbackType::RELEASE_KEY, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
+		Engine::KeyCallbackEvent* releaseKeyEvent = (Engine::KeyCallbackEvent*)callbackEventPtr->get();
+		Engine::VirtualKey key = releaseKeyEvent->getId();
+
+		if (key == Engine::VirtualKey::VK_0) {
+			UI::CloseWindow(_editMapWindow);
+		}
+
+		if (key == Engine::VirtualKey::VK_1) {
+			_editMapWindow = UI::ShowWindow<Editor::Map>();
 		}
 	});
 }

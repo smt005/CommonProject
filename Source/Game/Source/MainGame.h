@@ -58,4 +58,6 @@ private:
 	bool _qwe0_ = true;
 	bool _qwe_ = true;
 	bool _type_ = false;
+
+	std::string _editMapWindow;
 };

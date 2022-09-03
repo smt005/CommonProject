@@ -27,42 +27,11 @@ namespace Editor {
         _guiId = 0;
         ImGui::SetWindowPos(Id().c_str(), { 0.f, 0.f });
 
-        ImGui::PushItemWidth(Engine::Screen::width() - 150.f);
+        ImGui::PushItemWidth(Engine::Screen::width());
         ImGui::PushID(++_guiId);
         ImGui::InputText("", _buf, 128);
         ImGui::PopID();
         ImGui::PopItemWidth();
-
-        ImGui::SameLine();
-        ImGui::PushID(++_guiId);
-        if (ImGui::Button("Apply", ImVec2(40.f, 20.f))) {
-            std::string text(_buf);
-            if (text == "close") {
-                //Engine::Core::close();
-            }
-        }
-        ImGui::PopID();
-
-        ImGui::SameLine();
-        ImGui::PushID(++_guiId);
-        if (ImGui::Button(":", ImVec2(20.f, 20.f))) {
-            _showDemo = !_showDemo;
-        }
-        ImGui::PopID();
-
-        ImGui::SameLine();
-        ImGui::PushID(++_guiId);
-        if (ImGui::Button("?", ImVec2(20.f, 20.f))) {
-            _showDemo = !_showDemo;
-        }
-        ImGui::PopID();
-
-        ImGui::SameLine();
-        ImGui::PushID(++_guiId);
-        if (ImGui::Button("x", ImVec2(20.f, 20.f))) {
-            UI::CloseWindow(this);
-        }
-        ImGui::PopID();
 
         //...
         Commands();
@@ -123,8 +92,13 @@ namespace Editor {
     void Console::Commands() {
         if (ImGui::IsKeyReleased(525)) { // Enter
             std::string text(_buf);
+
             if (text == "close") {
                 Engine::Core::close();
+            }
+
+            if (text == "demo") {
+                _showDemo = !_showDemo;
             }
         }
     }

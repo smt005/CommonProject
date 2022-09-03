@@ -18,6 +18,7 @@
 #include "ImGuiManager/UI.h"
 #include "glm/vec2.hpp"
 #include "Windows/EditMap.h"
+#include "Windows/Console.h"
 
 #include <memory>
 #include <set>
@@ -220,6 +221,10 @@ void MainGame::resize() {
 
 void MainGame::initCallback() {
 	_callbackPtr = std::make_shared<Engine::Callback>(Engine::CallbackType::PINCH_TAP, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
+		if (Editor::Console::IsLock()) {
+			return;
+		}
+
 		if (Engine::Callback::pressTap(Engine::VirtualTap::RIGHT)) {
 			Camera::current.rotate(Engine::Callback::deltaMousePos());
 			CheckMouse();
@@ -255,6 +260,10 @@ void MainGame::initCallback() {
 		});
 
 	_callbackPtr->add(Engine::CallbackType::RELEASE_KEY, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
+		if (Editor::Console::IsLock()) {
+			return;
+		}
+
 		Engine::KeyCallbackEvent* releaseKeyEvent = (Engine::KeyCallbackEvent*)callbackEventPtr->get();
 		Engine::VirtualKey key = releaseKeyEvent->getId();
 
@@ -307,6 +316,10 @@ void MainGame::initCallback() {
 		});
 
 	_callbackPtr->add(Engine::CallbackType::PINCH_KEY, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
+		if (Editor::Console::IsLock()) {
+			return;
+		}
+
 		if (Engine::Callback::pressKey(Engine::VirtualKey::CONTROL)) {
 			return;
 		}
@@ -387,6 +400,10 @@ void MainGame::initCallback() {
 		});
 
 	_callbackPtr->add(Engine::CallbackType::MOVE, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
+		if (Editor::Console::IsLock()) {
+			return;
+		}
+
 		if (_state == State::MENU) {
 			float currentMousePos[] = { Engine::Callback::mousePos().x, Engine::Screen::height() - Engine::Callback::mousePos().y };
 			if (_mousePos[0] != currentMousePos[0] && _mousePos[1] != currentMousePos[1]) {
@@ -397,9 +414,19 @@ void MainGame::initCallback() {
 		}
 		});
 
+
 	_callbackPtr->add(Engine::CallbackType::RELEASE_KEY, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
 		Engine::KeyCallbackEvent* releaseKeyEvent = (Engine::KeyCallbackEvent*)callbackEventPtr->get();
 		Engine::VirtualKey key = releaseKeyEvent->getId();
+
+		if (key == Engine::VirtualKey::TILDE) {
+			if (UI::ShowingWindow("Console")) {
+				UI::CloseWindow("Console");
+			}
+			else {
+				_editMapWindow = UI::ShowWindow<Editor::Console>();
+			}
+		}
 
 		if (key == Engine::VirtualKey::VK_0) {
 			UI::CloseWindow(_editMapWindow);

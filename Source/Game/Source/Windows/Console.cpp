@@ -10,9 +10,10 @@ namespace Editor {
 
     Console::Console() {
         SetId("Console");
-        SetTitle("Console");
         VisibleCloseBtn(false);
         SetFlag(ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBackground);
+        ImGui::SetWindowPos(Id().c_str(), { 0.f, 0.f });
+
         _buf = new char[128];
         _buf[0] = '\0';
         lock = true;
@@ -25,7 +26,6 @@ namespace Editor {
 
     void Console::Draw() {
         _guiId = 0;
-        ImGui::SetWindowPos(Id().c_str(), { 0.f, 0.f });
 
         ImGui::PushItemWidth(Engine::Screen::width());
         ImGui::PushID(++_guiId);

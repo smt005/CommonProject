@@ -428,12 +428,13 @@ void MainGame::initCallback() {
 			}
 		}
 
-		if (key == Engine::VirtualKey::VK_0) {
-			UI::CloseWindow(_editMapWindow);
-		}
-
-		if (key == Engine::VirtualKey::VK_1) {
-			_editMapWindow = UI::ShowWindow<Editor::Map>();
+		if (key == Engine::VirtualKey::F1) {
+			if (UI::ShowingWindow("Edit map")) {
+				UI::CloseWindow("Edit map");
+			}
+			else {
+				_editMapWindow = UI::ShowWindow<Editor::Map>();
+			}
 		}
 	});
 }

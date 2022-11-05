@@ -1,0 +1,28 @@
+# 3ds Max Wavefront OBJ Exporter v0.99 - (c)2007 guruware
+# File Created: 06.08.2022 21:49:21
+
+#
+# object Plane003
+#
+
+v  259.431 261.313 90.222
+v  259.431 -20.104 90.222
+v  321.130 261.313 90.222
+v  321.130 -20.104 90.222
+# 4 vertices
+
+vn 0.000 0.000 1.000
+# 1 vertex normals
+
+vt 0.000 4.071 0.500
+vt 0.000 -3.071 0.500
+vt 1.000 4.071 0.500
+vt 1.000 -3.071 0.500
+# 4 texture coords
+
+o Plane003
+g Plane003
+f 1/1/1 2/2/1 3/3/1 
+f 4/4/1 3/3/1 2/2/1 
+# 2 faces
+

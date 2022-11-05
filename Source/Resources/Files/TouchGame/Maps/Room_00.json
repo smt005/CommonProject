@@ -1,0 +1,109 @@
+{
+ "backColor": [0.8, 0.6, 1, 1],
+ "camera": {
+  "calcFrustum": true,
+  "dist": 50.0,
+  "fromEye": true,
+  "pos": [32.0, -45.0, 26.0],
+  "speed": 5.0,
+  "speedRotate": 0.005,
+  "vector": [-0.58, 0.79, -0.2]
+ },
+ "objects": [
+  {
+   "name": "Walls_00",
+   "model": "Walls_00",
+   "visible": true
+  },
+  {
+   "name": "Floor_00",
+   "model": "Floor_00",
+   "visible": true
+  },
+  {
+   "name": "Ceiling_00",
+   "model": "Ceiling_00"
+  },
+  {
+   "name": "Lamp_00",
+   "model": "Lamp_00",
+   "pos": [0, 0, 38],
+   "visible": true
+  },
+  {
+   "name": "Carpet_00",
+   "model": "Carpet_00",
+   "visible": true
+  },
+  {
+   "name": "Picture_border_00",
+   "model": "Picture_border_00",
+   "pos": [0, 50, 25],
+   "visible": true
+  },
+  {
+   "name": "Picture_00",
+   "model": "Picture_00",
+   "pos": [0, 50, 25],
+   "visible": true
+  },
+  {
+   "name": "Table_00",
+   "model": "Table_00",
+   "pos": [0, 0, 0],
+   "visible": true
+  },
+  {
+   "name": "Stool_00",
+   "model": "Stool_00",
+   "pos": [0, 20, 0],
+   "visible": true
+  },
+  {
+   "name": "Stool_01",
+   "model": "Stool_00",
+   "pos": [0, -20, 0],
+   "visible": true
+  },
+  {
+   "name": "Stool_02",
+   "model": "Stool_00",
+   "pos": [-10, 0, 0],
+   "visible": true
+  },
+  {
+   "name": "Stool_03",
+   "model": "Stool_00",
+   "pos": [10, 0, 0],
+   "visible": true
+  },
+  {
+   "name": "Teapot_00",
+   "model": "Teapot_00",
+   "pos": [0, 0, 11],
+   "visible": true
+  },
+  {
+   "name": "Cup_00",
+   "model": "Cup_00",
+   "pos": [3, 10, 11],
+   "visible": true
+  }, {
+   "name": "Saucer_00",
+   "model": "Saucer_00",
+   "pos": [-1, 10, 11],
+   "visible": true
+  },
+  {
+   "name": "Cup_01",
+   "model": "Cup_00",
+   "pos": [-3, -10, 11],
+   "visible": true
+  }, {
+   "name": "Saucer_01",
+   "model": "Saucer_00",
+   "pos": [1, -10, 11],
+   "visible": true
+  }
+ ]
+}

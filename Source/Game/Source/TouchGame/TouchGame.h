@@ -11,7 +11,7 @@ class Greed;
 namespace Engine { class Callback; }
 typedef std::shared_ptr<Engine::Callback> CallbackPtr;
 
-class MainGame final : public Engine::Game
+class TouchGame final : public Engine::Game
 {
 	enum class State {
 		MENU,
@@ -20,9 +20,9 @@ class MainGame final : public Engine::Game
 	};
 
 public:
-	MainGame();
-	~MainGame();
-	std::filesystem::path getSourcesDir() override { return "..\\..\\Source\\Resources\\Files\\MainGame"; }
+	TouchGame();
+	~TouchGame();
+	std::filesystem::path getSourcesDir() override { return "..\\..\\Source\\Resources\\Files\\TouchGame"; }
 
 	void init() override;
 	void update() override;

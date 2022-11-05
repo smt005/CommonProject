@@ -1,0 +1,138 @@
+{
+ "backColor": [0.3, 0.6, 0.9, 1],
+ "camera" : 
+	{
+		"calcFrustum" : false,
+		"dist" : 50.0,
+		"fromEye" : true,
+		"speed" : -5,
+		"fov" : 50,
+		"speedRotate" : 0.005,
+		"pos" : [ 82.8, -45.7, 166.8],
+		"vector" : [ -0.3185, -0.9376, -0.1393]
+	},
+ "objects": [
+  {
+   "name": "Shkaff_koridor",
+   "model": "Shkaff_koridor"
+  },
+  {
+   "name": "Tumbochka_shirokaya",
+   "model": "Tumbochka_shirokaya"
+  },
+  {
+   "name": "Walls",
+   "model": "Walls"
+  },
+  {
+   "name": "Walls_vanna",
+   "model": "Walls_vanna"
+  },  
+  {
+   "name": "Floor",
+   "model": "Floor"
+  },
+  {
+   "name": "Ceiling",
+   "model": "Ceiling"
+  },
+  {
+   "name": "Window1",
+   "model": "Window1"
+  },
+  {
+   "name": "Window1",
+   "model": "Window1"
+  },
+  {
+   "name": "Window1.2",
+   "model": "Window1.2"
+  },
+  {
+   "name": "Window2",
+   "model": "Window2"
+  },
+  {
+   "name": "Window2.2",
+   "model": "Window2.2"
+  },
+  {
+   "name": "Divan",
+   "model": "Divan",
+   "pos": [-244, 209, 0]
+  },
+  {
+   "name": "PC_stol_90",
+   "model": "PC_stol_90"
+  },
+  {
+   "name": "Kitchen1",
+   "model": "Kitchen1"
+  },
+  {
+   "name": "Kitchen1.2",
+   "model": "Kitchen1.2"
+  },
+  {
+   "name": "Kitchen2",
+   "model": "Kitchen2"
+  },
+  {
+   "name": "Holod",
+   "model": "Holod"
+  },
+  {
+   "name": "Vanna",
+   "model": "Vanna",
+   "pos": [232, -293, 0]
+  },
+  {
+   "name": "Dver",
+   "model": "Dver"
+  },
+  {
+   "name": "Dver_kitchen",
+   "model": "Dver_kitchen"
+  },
+  {
+   "name": "Stol_00",
+   "model": "Stol_00"
+  },
+  {
+   "name": "Stiralca_01",
+   "model": "Stiralca_01"
+  },
+  {
+   "name": "Tumbochka_vanna_01",
+   "model": "Tumbochka_vanna_01"
+  },
+  {
+   "name": "Stol_vanna_01",
+   "model": "Stol_vanna_01"
+  },
+  {
+   "name": "Rakovina_01",
+   "model": "Rakovina_01"
+  },
+  {
+   "name": "Rakovina_kitchen",
+   "model": "Rakovina_kitchen"
+  },
+  {
+   "name": "Plita",
+   "model": "Plita"
+  },
+  {
+   "name": "Unitaz_01",
+   "model": "Unitaz_01"
+  },
+  {
+   "name": "Batareia",
+   "model": "Batareia"
+  },
+  {
+   "name": "Stori",
+   "model": "Stori"
+  }
+ ]
+}

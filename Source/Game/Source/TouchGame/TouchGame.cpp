@@ -1,5 +1,5 @@
 
-#include "MainGame.h"
+#include "TouchGame.h"
 #include "Core.h"
 #include "Callback/Callback.h"
 #include "Callback/CallbackEvent.h"
@@ -18,6 +18,7 @@
 #include "ImGuiManager/UI.h"
 #include "glm/vec2.hpp"
 
+#include  "ImGuiManager/Editor/EditorModel.h"
 #include  "ImGuiManager/Editor/EditMap.h"
 #include  "ImGuiManager/Editor/Console.h"
 
@@ -26,19 +27,19 @@
 
 #define DRAW DrawLight
 
-std::string MainGame::_resourcesDir;
+std::string TouchGame::_resourcesDir;
 const std::string saveFileName("../../../Executable/Save.json");
 Object lightObject;
 vec3 lightPos(-500.0f, -500.0f, 500.0f);
 
-MainGame::MainGame()
+TouchGame::TouchGame()
 	: _indexCurrentMap(-1)
-	, _updateTime (0)
+	, _updateTime(0)
 	, _state(State::MENU)
 {
 }
 
-MainGame::~MainGame() {
+TouchGame::~TouchGame() {
 	_callbackPtr.reset();
 
 	if (_greed) {
@@ -47,7 +48,7 @@ MainGame::~MainGame() {
 	}
 }
 
-void MainGame::init() {
+void TouchGame::init() {
 	_greed = new Greed(100.0f, 10.0f);
 	_greed->setPos({ 0.0f, 0.0f, 0.1f });
 
@@ -92,7 +93,7 @@ void MainGame::init() {
 		}*/
 
 		_indexCurrentMap = 0;
-		_state = MainGame::State::GAME;
+		_state = TouchGame::State::GAME;
 	}
 
 	//lightObject.set("light", "Lamp_00", lightPos);
@@ -101,10 +102,11 @@ void MainGame::init() {
 	initCallback();
 }
 
-void MainGame::update() {
+void TouchGame::update() {
 	if (_state == State::MENU) {
 		return;
-	} else if (_state == State::EXIT) {
+	}
+	else if (_state == State::EXIT) {
 		Engine::Core::close();
 		return;
 	}
@@ -119,17 +121,17 @@ void MainGame::update() {
 	std::map<std::string, bool>& visibleMap = _maps[_indexCurrentMap].second;*/
 }
 
-void MainGame::draw() {
+void TouchGame::draw() {
 	DRAW::viewport();
 	DRAW::clearColor();
 
 	// Draw
 	DRAW::prepare();
 
-	if (_state == MainGame::State::MENU) {
+	if (_state == TouchGame::State::MENU) {
 		DRAW::draw(*Map::getByName("Menu"));
 	}
-	else if (_state == MainGame::State::EXIT) {
+	else if (_state == TouchGame::State::EXIT) {
 		Engine::Core::close();
 	}
 	else {
@@ -141,7 +143,7 @@ void MainGame::draw() {
 	Draw::draw(lightObject);
 }
 
-void MainGame::Drawline() {
+void TouchGame::Drawline() {
 	DrawLine::prepare();
 
 	if (_qwe0_) {
@@ -204,7 +206,7 @@ void MainGame::Drawline() {
 					float* pos = &vertexes[i];
 					float* norm = &normals[i];
 
-					float pointsX[] = { pos[0], pos[1], pos[2], pos[0] + norm[0] * _lenghtNormal, pos[1] + norm[1] * _lenghtNormal, pos[2] + norm[2] * _lenghtNormal};
+					float pointsX[] = { pos[0], pos[1], pos[2], pos[0] + norm[0] * _lenghtNormal, pos[1] + norm[1] * _lenghtNormal, pos[2] + norm[2] * _lenghtNormal };
 					Line lineX(pointsX, 2, Line::LINE);
 					lineX.setLineWidth(_widthNormal);
 					lineX.color = Color::RED;
@@ -216,12 +218,15 @@ void MainGame::Drawline() {
 	}
 }
 
-void MainGame::resize() {
+void TouchGame::resize() {
 	Camera::getCurrent().setPerspective(Camera::getCurrent().fov(), Engine::Screen::aspect(), 0.1f, 1000.0f);
 }
 
-void MainGame::initCallback() {
+void TouchGame::initCallback() {
 	_callbackPtr = std::make_shared<Engine::Callback>(Engine::CallbackType::PINCH_TAP, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
+		if (UI::ShowingWindow("Edit model")) {
+			return;
+		}
 		if (Editor::Console::IsLock()) {
 			return;
 		}
@@ -242,7 +247,10 @@ void MainGame::initCallback() {
 		});
 
 	_callbackPtr->add(Engine::CallbackType::SCROLL, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
-		if (Engine::TapCallbackEvent* tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
+		if (Engine::TapCallbackEvent * tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
+			if (UI::ShowingWindow("Edit model")) {
+				return;
+			}
 			if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_UP) {
 				float fov = Camera::current.fov();
 				fov -= 0.1f;
@@ -261,6 +269,9 @@ void MainGame::initCallback() {
 		});
 
 	_callbackPtr->add(Engine::CallbackType::RELEASE_KEY, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
+		if (UI::ShowingWindow("Edit model")) {
+			return;
+		}
 		if (Editor::Console::IsLock()) {
 			return;
 		}
@@ -430,6 +441,14 @@ void MainGame::initCallback() {
 		}
 
 		if (key == Engine::VirtualKey::F1) {
+			if (UI::ShowingWindow("Edit model")) {
+				UI::CloseWindow("Edit model");
+			}
+			else {
+				_editMapWindow = UI::ShowWindow<Editor::ModelEditor>();
+			}
+		}
+		if (key == Engine::VirtualKey::F2) {
 			if (UI::ShowingWindow("Edit map")) {
 				UI::CloseWindow("Edit map");
 			}
@@ -437,10 +456,10 @@ void MainGame::initCallback() {
 				_editMapWindow = UI::ShowWindow<Editor::Map>();
 			}
 		}
-	});
+		});
 }
 
-void MainGame::CheckMouse() {
+void TouchGame::CheckMouse() {
 	glm::vec2 mousePos = Engine::Callback::mousePos();
 
 	if (mousePos.x < 0.f) {
@@ -461,11 +480,11 @@ void MainGame::CheckMouse() {
 		Engine::Core::SetCursorPos(mousePos.x, mousePos.y);
 	}
 }
-void MainGame::initPhysic() {
+void TouchGame::initPhysic() {
 
 }
 
-bool MainGame::load()
+bool TouchGame::load()
 {
 	Json::Value saveData;
 	if (!help::loadJson(saveFileName, saveData) || saveData.empty()) {
@@ -484,7 +503,7 @@ bool MainGame::load()
 	return true;
 }
 
-void MainGame::save()
+void TouchGame::save()
 {
 	Json::Value saveData;
 
@@ -501,9 +520,9 @@ void MainGame::save()
 #endif // _DEBUG
 }
 
-Map& MainGame::currentMap() {
+Map& TouchGame::currentMap() {
 	std::string currentmapStr;
-	if (_state == MainGame::State::MENU) {
+	if (_state == TouchGame::State::MENU) {
 		currentmapStr = "Menu";
 	}
 	else {
@@ -518,7 +537,7 @@ Map& MainGame::currentMap() {
 	return *mapPtr;
 }
 
-void MainGame::changeMap(const bool right) {
+void TouchGame::changeMap(const bool right) {
 	size_t size = _maps.size();
 	if (size < 2) {
 		return;
@@ -534,7 +553,7 @@ void MainGame::changeMap(const bool right) {
 	}
 }
 
-void MainGame::hit(const int x, const int y, const bool action) {
+void TouchGame::hit(const int x, const int y, const bool action) {
 	std::set<std::string> objectsUnderMouse;
 
 	for (Object* object : currentMap().objects) {
@@ -546,7 +565,7 @@ void MainGame::hit(const int x, const int y, const bool action) {
 	if (objectsUnderMouse.find("Door_00") != objectsUnderMouse.end() || objectsUnderMouse.find("Door_rotate_00") != objectsUnderMouse.end()) {
 		currentMap().getObjectByName("Door_00").setVisible(false);
 		currentMap().getObjectByName("Door_rotate_00").setVisible(true);
-		
+
 		if (objectsUnderMouse.find("Door_rotate_00") != objectsUnderMouse.end() && action) {
 			_state = State::EXIT;
 		}

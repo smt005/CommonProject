@@ -41,4 +41,6 @@ private:
 
 	Greed* _greed = nullptr;
 
+	float _force = 1.0f;
+
 };

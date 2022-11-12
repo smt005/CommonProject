@@ -17,6 +17,7 @@
 #include "Object/Line.h"
 #include "ImGuiManager/UI.h"
 #include "glm/vec2.hpp"
+#include "Physics/Physics.h"
 
 #include  "ImGuiManager/Editor/EditorModel.h"
 #include  "ImGuiManager/Editor/EditMap.h"
@@ -24,6 +25,7 @@
 
 #include <memory>
 #include <set>
+
 
 #define DRAW DrawLight
 
@@ -59,12 +61,15 @@ void TouchGame::init() {
 
 	DRAW::setClearColor(0.3f, 0.6f, 0.9f, 1.0f);
 
+	initPhysic();
+
 	update();
 	initCallback();
 }
 
 void TouchGame::update() {
-
+	Engine::Physics::updateScene(Engine::Core::deltaTime() * 10.f);
+	Map::getByName("Menu")->updatePhysixs();
 }
 
 void TouchGame::draw() {
@@ -159,7 +164,17 @@ void TouchGame::initCallback() {
 		}
 
 		if (Engine::Callback::pressTap(Engine::VirtualTap::LEFT)) {
-			hit(Engine::Callback::mousePos().x, Engine::Screen::height() - Engine::Callback::mousePos().y, true);
+			//hit(Engine::Callback::mousePos().x, Engine::Screen::height() - Engine::Callback::mousePos().y, true);
+
+			glm::vec3 cursorPos3 = Camera::current.corsorCoord();
+			Object& object = Map::getByName("Menu")->getObjectByName("Cylinder");
+			glm::vec3 pos3 = object.getPos();
+			glm::vec3 forceVec3 = cursorPos3 - pos3;
+			forceVec3 = glm::normalize(forceVec3);
+			forceVec3 *= _force;
+			object.addForce(forceVec3);
+
+			//object.setPos(cursorPos3);
 		}
 		});
 
@@ -271,10 +286,27 @@ void TouchGame::initCallback() {
 				UI::ShowWindow<Editor::Map>();
 			}
 		}
+
+		if (key == Engine::VirtualKey::S && Engine::Callback::pressKey(Engine::VirtualKey::CONTROL)) {
+			save();
+		}
+
+		if (key == Engine::VirtualKey::L && Engine::Callback::pressKey(Engine::VirtualKey::CONTROL)) {
+			load();
+		}
+
+		if (key == Engine::VirtualKey::SPACE) {
+			Object& object = Map::getByName("Menu")->getObjectByName("Cylinder");
+			glm::vec3 pos3 = {0.f, 0.f , 10.f};
+			object.setActorPos(pos3);
+		}
 	});
 }
 
 void TouchGame::initPhysic() {
+	Engine::Physics::init();
+	Engine::Physics::createScene();
+	Map::getByName("Menu")->initPhysixs();
 
 }
 

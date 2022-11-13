@@ -34,9 +34,7 @@ const std::string saveFileName("../../../Executable/Save.json");
 Object lightObject;
 vec3 lightPos(-500.0f, -500.0f, 500.0f);
 
-TouchGame::TouchGame()
-
-{
+TouchGame::TouchGame() {
 }
 
 TouchGame::~TouchGame() {
@@ -61,15 +59,16 @@ void TouchGame::init() {
 
 	DRAW::setClearColor(0.3f, 0.6f, 0.9f, 1.0f);
 
-	initPhysic();
+	Map::AddCurrentMap(Map::getByName("Menu"));
 
+	initPhysic();
 	update();
 	initCallback();
 }
 
 void TouchGame::update() {
 	Engine::Physics::updateScene(Engine::Core::deltaTime() * 10.f);
-	Map::getByName("Menu")->updatePhysixs();
+	Map::GetFirstCurrentMap().updatePhysixs();
 }
 
 void TouchGame::draw() {
@@ -78,7 +77,14 @@ void TouchGame::draw() {
 
 	// Draw
 	DRAW::prepare();
-	DRAW::draw(*Map::getByName("Menu"));
+	for (Map::Ptr& map : Map::GetCurrentMaps()) {
+		DRAW::draw(*map);
+	}
+
+	// MapEditor
+	if (Object* object = Editor::MapEditor::NewObject()) {
+		DRAW::draw(*object);
+	}
 }
 
 void TouchGame::Drawline() {
@@ -148,10 +154,7 @@ void TouchGame::CheckMouse() {
 
 void TouchGame::initCallback() {
 	_callbackPtr = std::make_shared<Engine::Callback>(Engine::CallbackType::PINCH_TAP, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
-		if (UI::ShowingWindow("Edit model")) {
-			return;
-		}
-		if (Editor::Console::IsLock()) {
+		if (UI::ShowingWindow("Edit model") || Editor::Console::IsLock()) {
 			return;
 		}
 
@@ -164,25 +167,26 @@ void TouchGame::initCallback() {
 		}
 
 		if (Engine::Callback::pressTap(Engine::VirtualTap::LEFT)) {
-			//hit(Engine::Callback::mousePos().x, Engine::Screen::height() - Engine::Callback::mousePos().y, true);
+			if (UI::ShowingWindow("Edit model")) {
+				return;
+			}
 
 			glm::vec3 cursorPos3 = Camera::current.corsorCoord();
-			Object& object = Map::getByName("Menu")->getObjectByName("Cylinder");
+			Object& object = Map::GetFirstCurrentMap().getObjectByName("Cylinder");
 			glm::vec3 pos3 = object.getPos();
 			glm::vec3 forceVec3 = cursorPos3 - pos3;
 			forceVec3 = glm::normalize(forceVec3);
 			forceVec3 *= _force;
 			object.addForce(forceVec3);
-
-			//object.setPos(cursorPos3);
 		}
-		});
+	});
 
 	_callbackPtr->add(Engine::CallbackType::SCROLL, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
 		if (Engine::TapCallbackEvent * tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
-			if (UI::ShowingWindow("Edit model")) {
+			if (UI::ShowingWindow("Edit model") || Editor::Console::IsLock()) {
 				return;
 			}
+
 			if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_UP) {
 				float fov = Camera::current.fov();
 				fov -= 0.1f;
@@ -200,10 +204,21 @@ void TouchGame::initCallback() {
 		}
 		});
 
-	_callbackPtr->add(Engine::CallbackType::RELEASE_KEY, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
-		if (UI::ShowingWindow("Edit model")) {
+	_callbackPtr->add(Engine::CallbackType::PRESS_TAP, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
+		if (Editor::Console::IsLock()) {
 			return;
 		}
+
+		//if (Engine::Callback::pressTap(Engine::VirtualTap::LEFT)) {
+			if (Object* newObject = Editor::MapEditor::NewObject()) {
+				Editor::MapEditor::AddObjectToMap();
+			}
+		//}
+
+		Engine::Core::log("QWE");
+	});
+
+	_callbackPtr->add(Engine::CallbackType::RELEASE_KEY, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
 		if (Editor::Console::IsLock()) {
 			return;
 		}
@@ -217,7 +232,7 @@ void TouchGame::initCallback() {
 	});
 
 	_callbackPtr->add(Engine::CallbackType::PINCH_KEY, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
-		if (Editor::Console::IsLock()) {
+		if (UI::ShowingWindow("Edit model") || Editor::Console::IsLock()) {
 			return;
 		}
 
@@ -252,9 +267,11 @@ void TouchGame::initCallback() {
 	});
 
 	_callbackPtr->add(Engine::CallbackType::MOVE, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
-		if (Editor::Console::IsLock()) {
+		if (UI::ShowingWindow("Edit model") || Editor::Console::IsLock()) {
 			return;
 		}
+
+		//...
 	});
 
 	_callbackPtr->add(Engine::CallbackType::RELEASE_KEY, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
@@ -283,7 +300,7 @@ void TouchGame::initCallback() {
 				UI::CloseWindow("Edit map");
 			}
 			else {
-				UI::ShowWindow<Editor::Map>();
+				UI::ShowWindow<Editor::MapEditor>();
 			}
 		}
 
@@ -295,8 +312,12 @@ void TouchGame::initCallback() {
 			load();
 		}
 
+		if (UI::WindowDisplayed() || Editor::Console::IsLock()) {
+			return;
+		}
+
 		if (key == Engine::VirtualKey::SPACE) {
-			Object& object = Map::getByName("Menu")->getObjectByName("Cylinder");
+			Object& object = Map::GetFirstCurrentMap().getObjectByName("Cylinder");
 			glm::vec3 pos3 = {0.f, 0.f , 10.f};
 			object.setActorPos(pos3);
 		}
@@ -306,7 +327,7 @@ void TouchGame::initCallback() {
 void TouchGame::initPhysic() {
 	Engine::Physics::init();
 	Engine::Physics::createScene();
-	Map::getByName("Menu")->initPhysixs();
+	Map::GetFirstCurrentMap().initPhysixs();
 
 }
 

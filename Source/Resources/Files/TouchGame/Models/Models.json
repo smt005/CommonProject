@@ -1,22 +1,27 @@
 {
+	"Box_01" : 
+	{
+		"shape" : "Models/Common/Box_01.obj",
+		"texture" : "Textures/Common/Furnishings.Fabrics.Velour.Blue.jpg"
+	},
 	"Cylinder" : 
 	{
 		"shape" : "Models/Common/Cylinder.obj",
 		"texture" : "Textures/Common/Polishing.jpg"
 	},
-	"Cylinder2" : 
+	"Map_256" : 
 	{
-		"shape" : "Models/Common/Cylinder.obj",
-		"texture" : "Textures/Colors/Green.jpg"
+		"shape" : "Models/Map_256.obj",
+		"texture" : "Textures/Common/Concrete.jpg"
 	},
-	"Cylinder3" : 
+	"Map_2560" : 
 	{
-		"shape" : "Models/Common/Terrain.obj",
-		"texture" : "Textures/Common/Polishing.jpg"
+		"shape" : "Models/Map_2560.obj",
+		"texture" : "Textures/Common/Concrete.jpg"
 	},
-	"Terrain" : 
+	"Vorota" : 
 	{
-		"shape" : "Models/Common/Terrain.obj",
-		"texture" : "Textures/Common/Metals.jpg"
+		"shape" : "Models/Common/Vorota.obj",
+		"texture" : "Textures/Common/Finishes.jpg"
 	}
 }

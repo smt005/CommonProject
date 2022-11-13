@@ -194,7 +194,7 @@ void MainGame::Drawline() {
 	if (_qwe_) {
 		Map& map = *Map::getByName(_maps[_indexCurrentMap].first);
 
-		for (auto& object : map.objects) {
+		for (auto& object : map.GetObjects()) {
 			if (object->visible()) {
 				float* vertexes = object->getModel().getMesh().vertexes();
 				float* normals = object->getModel().getMesh().normals();
@@ -434,7 +434,7 @@ void MainGame::initCallback() {
 				UI::CloseWindow("Edit map");
 			}
 			else {
-				_editMapWindow = UI::ShowWindow<Editor::Map>();
+				_editMapWindow = UI::ShowWindow<Editor::MapEditor>();
 			}
 		}
 	});
@@ -537,7 +537,7 @@ void MainGame::changeMap(const bool right) {
 void MainGame::hit(const int x, const int y, const bool action) {
 	std::set<std::string> objectsUnderMouse;
 
-	for (Object* object : currentMap().objects) {
+	for (Object* object : currentMap().GetObjects()) {
 		if (object->visible() && object->hit(x, y)) {
 			objectsUnderMouse.emplace(object->getName());
 		}

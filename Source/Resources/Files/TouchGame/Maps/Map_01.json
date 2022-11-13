@@ -1,0 +1,79 @@
+{
+  "backColor": [0.8, 0.6, 1, 1],
+  "camera": {
+    "calcFrustum": false,
+    "dist": 50.0,
+    "fromEye": true,
+    "pos": [-25, 32, 23],
+    "speed": -0.5,
+    "speedRotate": 0.0075,
+    "vector": [0.37432354688644409, -0.85704034566879272, -0.35406747460365295]
+  },
+  "objects": [
+    {
+      "name": "Cylinder",
+      "model": "Cylinder",
+      "physics": "convex",
+      "pos": [15, 15, 30]
+    },
+	{
+      "name": "Map_2560",
+      "model": "Map_2560",
+      "physics": "triangle"
+    },
+    {
+      "name": "Vorota_left",
+      "model": "Vorota",
+      "physics": "triangle",
+      "pos": [-100, 0, 0]
+    },
+	{
+      "name": "Vorota_left2",
+      "model": "Vorota",
+      "physics": "triangle",
+      "pos": [-200, 0, 0]
+    },
+    {
+      "name": "Vorota_right",
+      "model": "Vorota",
+      "physics": "triangle",
+      "pos": [100, 0, 0]
+    },
+    {
+      "name": "Vorota_right2",
+      "model": "Vorota",
+      "physics": "triangle",
+      "pos": [200, 0, 0]
+    },
+    {
+      "name": "Box_10",
+      "model": "Box_01",
+      "physics": "convex",
+      "pos": [10, 0, 35]
+    },
+    {
+      "name": "Box_10",
+      "model": "Box_01",
+      "physics": "convex",
+      "pos": [10, 0, 35]
+    },
+    {
+      "name": "Box_01",
+      "model": "Box_01",
+      "physics": "convex",
+      "pos": [0, 10, 35]
+    },
+    {
+      "name": "Box_11",
+      "model": "Box_01",
+      "physics": "convex",
+      "pos": [10, 10, 35]
+    },
+    {
+      "name": "Box_00",
+      "model": "Box_01",
+      "physics": "convex",
+      "pos": [0, 0, 35]
+    }
+  ]
+}

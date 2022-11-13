@@ -209,13 +209,13 @@ void TouchGame::initCallback() {
 			return;
 		}
 
+		hit(Engine::Callback::mousePos().x, Engine::Screen::height() - Engine::Callback::mousePos().y);
+
 		//if (Engine::Callback::pressTap(Engine::VirtualTap::LEFT)) {
 			if (Object* newObject = Editor::MapEditor::NewObject()) {
 				Editor::MapEditor::AddObjectToMap();
 			}
 		//}
-
-		Engine::Core::log("QWE");
 	});
 
 	_callbackPtr->add(Engine::CallbackType::RELEASE_KEY, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
@@ -227,7 +227,9 @@ void TouchGame::initCallback() {
 		Engine::VirtualKey key = releaseKeyEvent->getId();
 
 		if (key == Engine::VirtualKey::ESCAPE) {
-			Engine::Core::close();
+			Map::Ptr& map = Map::SetCurrentMap(Map::getByName("Menu"));
+			Camera::setCurrent(map->getCamera());
+			//Engine::Core::close();
 		}
 	});
 
@@ -367,13 +369,30 @@ void TouchGame::save()
 #endif // _DEBUG
 }
 
-void TouchGame::hit(const int x, const int y, const bool action) {
-	/*std::set<std::string> objectsUnderMouse;
+void TouchGame::hit(const int x, const int y) {
+	std::map<std::string, Object*> objectsUnderMouse;
 
-	for (Object* object : currentMap().objects) {
+	for (Object* object : Map::GetFirstCurrentMap().GetObjects()) {
 		if (object->visible() && object->hit(x, y)) {
-			objectsUnderMouse.emplace(object->getName());
+			objectsUnderMouse.emplace(object->getName(), object);
 		}
-	}*/
+	}
 
+	if (!objectsUnderMouse.empty()) {
+		if (objectsUnderMouse.find("Menu_new_btn") != objectsUnderMouse.end()) {
+			Map::Ptr& map = Map::SetCurrentMap(Map::getByName("Map_00"));
+			map->initPhysixs();
+			Camera::setCurrent(map->getCamera());
+		}
+
+		if (objectsUnderMouse.find("Menu_next_btn") != objectsUnderMouse.end()) {
+			Map::Ptr& map = Map::SetCurrentMap(Map::getByName("Map_01"));
+			map->initPhysixs();
+			Camera::setCurrent(map->getCamera());
+		}
+
+		if (objectsUnderMouse.find("Menu_exit_btn") != objectsUnderMouse.end()) {
+			Engine::Core::close();
+		}
+	}
 }

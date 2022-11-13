@@ -19,6 +19,16 @@
 		"shape" : "Models/Map_2560.obj",
 		"texture" : "Textures/Common/Concrete.jpg"
 	},
+	"Menu_Box256" : 
+	{
+		"shape" : "Models/Menu/Box_256.obj",
+		"texture" : "Textures/Common/Metals.jpg"
+	},
+	"Menu_Button" : 
+	{
+		"shape" : "Models/Menu/Button.obj",
+		"texture" : "Textures/Common/Concrete_00.jpg"
+	},
 	"Vorota" : 
 	{
 		"shape" : "Models/Common/Vorota.obj",

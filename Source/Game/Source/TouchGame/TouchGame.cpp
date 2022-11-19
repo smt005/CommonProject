@@ -19,6 +19,8 @@
 #include "glm/vec2.hpp"
 #include "Physics/Physics.h"
 
+#include "Maps/MenuMap.h"
+
 #include  "ImGuiManager/Editor/EditorModel.h"
 #include  "ImGuiManager/Editor/EditMap.h"
 #include  "ImGuiManager/Editor/Console.h"
@@ -59,7 +61,10 @@ void TouchGame::init() {
 
 	DRAW::setClearColor(0.3f, 0.6f, 0.9f, 1.0f);
 
-	Map::AddCurrentMap(Map::getByName("Menu"));
+	MenuMap::Ptr menuMap(new MenuMap());
+	menuMap->create("Menu");
+	Map::AddCurrentMap(Map::add(menuMap));
+	//Map::AddCurrentMap(Map::getByName("Menu"));
 
 	initPhysic();
 	update();
@@ -67,8 +72,12 @@ void TouchGame::init() {
 }
 
 void TouchGame::update() {
+	Map& map = Map::GetFirstCurrentMap();
+
+	map.action();
+
 	Engine::Physics::updateScene(Engine::Core::deltaTime() * 10.f);
-	Map::GetFirstCurrentMap().updatePhysixs();
+	map.updatePhysixs();
 }
 
 void TouchGame::draw() {
@@ -82,7 +91,7 @@ void TouchGame::draw() {
 	}
 
 	// MapEditor
-	if (Object* object = Editor::MapEditor::NewObject()) {
+	if (Object::Ptr object = Editor::MapEditor::NewObject()) {
 		DRAW::draw(*object);
 	}
 }
@@ -212,7 +221,7 @@ void TouchGame::initCallback() {
 		hit(Engine::Callback::mousePos().x, Engine::Screen::height() - Engine::Callback::mousePos().y);
 
 		//if (Engine::Callback::pressTap(Engine::VirtualTap::LEFT)) {
-			if (Object* newObject = Editor::MapEditor::NewObject()) {
+			if (Object::Ptr newObject = Editor::MapEditor::NewObject()) {
 				Editor::MapEditor::AddObjectToMap();
 			}
 		//}
@@ -370,9 +379,9 @@ void TouchGame::save()
 }
 
 void TouchGame::hit(const int x, const int y) {
-	std::map<std::string, Object*> objectsUnderMouse;
+	std::map<std::string, Object::Ptr> objectsUnderMouse;
 
-	for (Object* object : Map::GetFirstCurrentMap().GetObjects()) {
+	for (Object::Ptr object : Map::GetFirstCurrentMap().GetObjects()) {
 		if (object->visible() && object->hit(x, y)) {
 			objectsUnderMouse.emplace(object->getName(), object);
 		}
@@ -381,12 +390,14 @@ void TouchGame::hit(const int x, const int y) {
 	if (!objectsUnderMouse.empty()) {
 		if (objectsUnderMouse.find("Menu_new_btn") != objectsUnderMouse.end()) {
 			Map::Ptr& map = Map::SetCurrentMap(Map::getByName("Map_00"));
+			map->getCamera() = Camera::getCurrent();
 			map->initPhysixs();
 			Camera::setCurrent(map->getCamera());
 		}
 
 		if (objectsUnderMouse.find("Menu_next_btn") != objectsUnderMouse.end()) {
 			Map::Ptr& map = Map::SetCurrentMap(Map::getByName("Map_01"));
+			map->getCamera() = Camera::getCurrent();
 			map->initPhysixs();
 			Camera::setCurrent(map->getCamera());
 		}

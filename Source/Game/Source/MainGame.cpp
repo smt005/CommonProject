@@ -537,7 +537,7 @@ void MainGame::changeMap(const bool right) {
 void MainGame::hit(const int x, const int y, const bool action) {
 	std::set<std::string> objectsUnderMouse;
 
-	for (Object* object : currentMap().GetObjects()) {
+	for (Object::Ptr object : currentMap().GetObjects()) {
 		if (object->visible() && object->hit(x, y)) {
 			objectsUnderMouse.emplace(object->getName());
 		}

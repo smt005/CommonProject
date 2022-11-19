@@ -24,10 +24,34 @@
 		"shape" : "Models/Menu/Box_256.obj",
 		"texture" : "Textures/Common/Metals.jpg"
 	},
-	"Menu_Button" : 
+	"Menu_Close_btn" : 
 	{
 		"shape" : "Models/Menu/Button.obj",
-		"texture" : "Textures/Common/Concrete_00.jpg"
+		"texture" : "Textures/Menu/Exit_btn.jpg"
+	},
+	"Menu_New_btn" : 
+	{
+		"shape" : "Models/Menu/Button.obj",
+		"texture" : "Textures/Menu/New_btn.jpg"
+	},
+	"Menu_Next_btn" : 
+	{
+		"shape" : "Models/Menu/Button.obj",
+		"texture" : "Textures/Menu/Next_btn.jpg"
+	},
+	"PuckW" : null,
+	"PuckWh" : null,
+	"PuckWhi" : null,
+	"PuckWhit" : null,
+	"PuckWhite" : 
+	{
+		"shape" : "Models/Common/Cylinder.obj",
+		"texture" : "Textures/Colors/White.png"
+	},
+	"TargetGreen" : 
+	{
+		"shape" : "Models/Common/Cylinder.obj",
+		"texture" : "Textures/Colors/Green.png"
 	},
 	"Vorota" : 
 	{

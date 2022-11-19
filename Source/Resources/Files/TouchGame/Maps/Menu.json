@@ -27,17 +27,17 @@
     },
 		{
       "name": "Menu_new_btn",
-      "model": "Menu_Button",
+      "model": "Menu_New_btn",
       "pos": [0, -200, 28]
     },
 	{
       "name": "Menu_next_btn",
-      "model": "Menu_Button",
+      "model": "Menu_Next_btn",
       "pos": [0, -200, 25.5]
     },
 	{
       "name": "Menu_exit_btn",
-      "model": "Menu_Button",
+      "model": "Menu_Close_btn",
       "pos": [0, -200, 23]
     },
     {

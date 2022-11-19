@@ -147,9 +147,7 @@ void TouchGame::Drawline() {
 void TouchGame::resize() {
 	Camera::getCurrent().setPerspective(Camera::getCurrent().fov(), Engine::Screen::aspect(), 0.1f, 1000.0f);
 
-	if (CameraTemp::Ptr cameraPtr = CameraTemp::CurrentPtr()) {
-		cameraPtr->Resize();
-	}
+	CameraTemp::GetLink().Resize();
 }
 
 void TouchGame::CheckMouse() {

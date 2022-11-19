@@ -90,9 +90,6 @@ bool MenuMap::create(const string& name) {
 		hit(Engine::Callback::mousePos().x, Engine::Screen::height() - Engine::Callback::mousePos().y);
 	});
 
-	//...
-	CameraTemp::SetCurrent(std::make_shared<CameraPerspective>());
-
 	return true;
 }
 
@@ -106,9 +103,10 @@ void MenuMap::action() {
 		}
 	}
 
-	if (CameraPerspective* cameraPtr = dynamic_cast<CameraPerspective*>(CameraTemp::CurrentPtr().get())) {		
+	if (CameraPerspective* cameraPtr = CameraTemp::GetPtr<CameraPerspective>()) {
 		cameraPtr->LookAt(Camera::getCurrent().pos(), Camera::getCurrent().vector());
 	}
+
 }
 
 void MenuMap::hit(const int x, const int y) {

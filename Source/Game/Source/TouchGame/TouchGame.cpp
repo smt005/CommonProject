@@ -363,6 +363,12 @@ bool TouchGame::load()
 		Camera::current.setJsonData(cameraData);
 	}
 
+	if (!saveData["cameraTemp"].empty()) {
+		Json::Value& cameraData = saveData["cameraTemp"];
+		CameraTemp::GetLink().Load(cameraData);
+	}
+
+
 #if _DEBUG
 	Engine::Core::log("LOAD: " + saveFileName + "\n" + help::stringFroJson(saveData));
 #endif // _DEBUG
@@ -374,10 +380,18 @@ void TouchGame::save()
 {
 	Json::Value saveData;
 
-	Json::Value cameraData;
-	Camera::current.getJsonData(cameraData);
+	{
+		Json::Value cameraData;
+		Camera::current.getJsonData(cameraData);
+		saveData["camera"] = cameraData;
+	}
 
-	saveData["camera"] = cameraData;
+	{
+		Json::Value cameraData;
+		CameraTemp::GetLink().Save(cameraData);
+		saveData["cameraTemp"] = cameraData;
+	}
+
 	saveData["testKey"] = "testValue";
 
 	help::saveJson(saveFileName, saveData);

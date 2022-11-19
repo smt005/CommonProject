@@ -6,6 +6,7 @@
 #include "Screen.h"
 #include "Common/Help.h"
 #include "Draw/Camera.h"
+#include "Draw/Camera/CameraTemp.h"
 #include "Draw/Draw.h"
 #include "Draw/DrawLight.h"
 #include "Draw/DrawLine.h"
@@ -60,7 +61,7 @@ void TouchGame::init() {
 
 	DRAW::setClearColor(0.3f, 0.6f, 0.9f, 1.0f);
 
-	bool typeMap = false;
+	bool typeMap = true;
 
 	if (typeMap) {
 		// MenuMap
@@ -145,6 +146,10 @@ void TouchGame::Drawline() {
 
 void TouchGame::resize() {
 	Camera::getCurrent().setPerspective(Camera::getCurrent().fov(), Engine::Screen::aspect(), 0.1f, 1000.0f);
+
+	if (CameraTemp::Ptr cameraPtr = CameraTemp::CurrentPtr()) {
+		cameraPtr->Resize();
+	}
 }
 
 void TouchGame::CheckMouse() {

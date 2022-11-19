@@ -5,6 +5,8 @@
 #include "Callback/CallbackEvent.h"
 #include "Screen.h"
 #include "Draw/Camera.h"
+#include "Draw/Camera/CameraTemp.h"
+#include "Draw/Camera/CameraPerspective.h"
 
 // Puck
 void MenuMap::Puck::action() {
@@ -88,6 +90,9 @@ bool MenuMap::create(const string& name) {
 		hit(Engine::Callback::mousePos().x, Engine::Screen::height() - Engine::Callback::mousePos().y);
 	});
 
+	//...
+	CameraTemp::SetCurrent(std::make_shared<CameraPerspective>());
+
 	return true;
 }
 
@@ -99,6 +104,10 @@ void MenuMap::action() {
 		if (_tact == 100) {
 			enableForce = true;
 		}
+	}
+
+	if (CameraPerspective* cameraPtr = dynamic_cast<CameraPerspective*>(CameraTemp::CurrentPtr().get())) {		
+		cameraPtr->LookAt(Camera::getCurrent().pos(), Camera::getCurrent().vector());
 	}
 }
 

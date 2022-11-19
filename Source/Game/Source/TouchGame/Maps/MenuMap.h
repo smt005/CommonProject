@@ -4,6 +4,9 @@
 #include "Object/Map.h"
 #include "Object/Object.h"
 
+namespace Engine { class Callback; }
+typedef std::shared_ptr<Engine::Callback> CallbackPtr;
+
 class MenuMap final : public Map {
 private:
 	class Puck : public Object {
@@ -27,6 +30,7 @@ private:
 		float _force = -0.5f;
 	};
 
+// MenuMap
 public:
 	MenuMap();
 	~MenuMap() {
@@ -36,10 +40,19 @@ public:
 	bool create(const string& name) override;
 	void action() override;
 
+	void hit(const int x, const int y);
+
 private:
 	int _tact = 0;
+	CallbackPtr _callbackPtr;
 
 private:
 	static Target::Ptr target;
 	static bool enableForce;
+};
+
+// MenuOrtoMap
+class MenuOrtoMap final : public Map {
+public:
+	bool create(const string& name) override;
 };

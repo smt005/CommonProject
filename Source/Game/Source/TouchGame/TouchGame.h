@@ -29,7 +29,6 @@ public:
 	bool load();
 	void save();
 
-	void hit(const int x, const int y);
 	void Drawline();
 
 public:

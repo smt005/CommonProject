@@ -1,6 +1,10 @@
 
 #include "TouchGame/Maps/MenuMap.h"
 #include "Core.h"
+#include "Callback/Callback.h"
+#include "Callback/CallbackEvent.h"
+#include "Screen.h"
+#include "Draw/Camera.h"
 
 // Puck
 void MenuMap::Puck::action() {
@@ -79,6 +83,11 @@ bool MenuMap::create(const string& name) {
 		}
 	}
 
+	// Callback
+	_callbackPtr = std::make_shared<Engine::Callback>(Engine::CallbackType::PRESS_TAP, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
+		hit(Engine::Callback::mousePos().x, Engine::Screen::height() - Engine::Callback::mousePos().y);
+	});
+
 	return true;
 }
 
@@ -91,4 +100,36 @@ void MenuMap::action() {
 			enableForce = true;
 		}
 	}
+}
+
+void MenuMap::hit(const int x, const int y) {
+	std::map<std::string, Object::Ptr> objectsUnderMouse;
+
+	if (Object::hitObjects(x, y, Map::GetFirstCurrentMap().GetObjects(), objectsUnderMouse)) {
+		if (objectsUnderMouse.find("Menu_new_btn") != objectsUnderMouse.end()) {
+			Map::Ptr& map = Map::SetCurrentMap(Map::getByName("Map_00"));
+			map->getCamera() = Camera::getCurrent();
+			map->initPhysixs();
+			Camera::setCurrent(map->getCamera());
+		}
+
+		if (objectsUnderMouse.find("Menu_next_btn") != objectsUnderMouse.end()) {
+			Map::Ptr& map = Map::SetCurrentMap(Map::getByName("Map_01"));
+			map->getCamera() = Camera::getCurrent();
+			map->initPhysixs();
+			Camera::setCurrent(map->getCamera());
+		}
+
+		if (objectsUnderMouse.find("Menu_exit_btn") != objectsUnderMouse.end()) {
+			Engine::Core::close();
+		}
+	}
+}
+
+// MenuOrtoMap
+bool MenuOrtoMap::create(const string& name) {
+	if (!Map::create(name)) {
+		return false;
+	}
+	return true;
 }

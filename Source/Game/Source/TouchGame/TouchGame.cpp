@@ -3,7 +3,6 @@
 #include "Core.h"
 #include "Callback/Callback.h"
 #include "Callback/CallbackEvent.h"
-#include "Callback/CallbackEvent.h"
 #include "Screen.h"
 #include "Common/Help.h"
 #include "Draw/Camera.h"
@@ -61,10 +60,19 @@ void TouchGame::init() {
 
 	DRAW::setClearColor(0.3f, 0.6f, 0.9f, 1.0f);
 
-	MenuMap::Ptr menuMap(new MenuMap());
-	menuMap->create("Menu");
-	Map::AddCurrentMap(Map::add(menuMap));
-	//Map::AddCurrentMap(Map::getByName("Menu"));
+	bool typeMap = false;
+
+	if (typeMap) {
+		// MenuMap
+		MenuMap::Ptr menuMap(new MenuMap());
+		menuMap->create("Menu");
+		Map::AddCurrentMap(Map::add(menuMap));
+	} else {
+		// MenuOrtoMap
+		MenuOrtoMap::Ptr menuMap(new MenuOrtoMap());
+		menuMap->create("MenuOrto");
+		Map::AddCurrentMap(Map::add(menuMap));
+	}
 
 	initPhysic();
 	update();
@@ -217,8 +225,6 @@ void TouchGame::initCallback() {
 		if (Editor::Console::IsLock()) {
 			return;
 		}
-
-		hit(Engine::Callback::mousePos().x, Engine::Screen::height() - Engine::Callback::mousePos().y);
 
 		//if (Engine::Callback::pressTap(Engine::VirtualTap::LEFT)) {
 			if (Object::Ptr newObject = Editor::MapEditor::NewObject()) {
@@ -378,32 +384,3 @@ void TouchGame::save()
 #endif // _DEBUG
 }
 
-void TouchGame::hit(const int x, const int y) {
-	std::map<std::string, Object::Ptr> objectsUnderMouse;
-
-	for (Object::Ptr object : Map::GetFirstCurrentMap().GetObjects()) {
-		if (object->visible() && object->hit(x, y)) {
-			objectsUnderMouse.emplace(object->getName(), object);
-		}
-	}
-
-	if (!objectsUnderMouse.empty()) {
-		if (objectsUnderMouse.find("Menu_new_btn") != objectsUnderMouse.end()) {
-			Map::Ptr& map = Map::SetCurrentMap(Map::getByName("Map_00"));
-			map->getCamera() = Camera::getCurrent();
-			map->initPhysixs();
-			Camera::setCurrent(map->getCamera());
-		}
-
-		if (objectsUnderMouse.find("Menu_next_btn") != objectsUnderMouse.end()) {
-			Map::Ptr& map = Map::SetCurrentMap(Map::getByName("Map_01"));
-			map->getCamera() = Camera::getCurrent();
-			map->initPhysixs();
-			Camera::setCurrent(map->getCamera());
-		}
-
-		if (objectsUnderMouse.find("Menu_exit_btn") != objectsUnderMouse.end()) {
-			Engine::Core::close();
-		}
-	}
-}

@@ -39,10 +39,11 @@
 		"shape" : "Models/Menu/Button.obj",
 		"texture" : "Textures/Menu/Next_btn.jpg"
 	},
-	"PuckW" : null,
-	"PuckWh" : null,
-	"PuckWhi" : null,
-	"PuckWhit" : null,
+	"Plane_1_1" : 
+	{
+		"shape" : "Models/Common/Plane_1_1.obj",
+		"texture" : "Textures/Test/Matrix4_4_color.jpg"
+	},
 	"PuckWhite" : 
 	{
 		"shape" : "Models/Common/Cylinder.obj",

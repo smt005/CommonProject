@@ -8,6 +8,7 @@
 #include "Draw/Camera.h"
 //#include "Draw/Camera_Prototype_0/CameraTemp.h"
 #include "Draw/Camera_Prototype_1/CameraProt2.h"
+#include "Draw/Camera_Prototype_1/CameraControl.h"
 #include "Draw/Draw.h"
 #include "Draw/DrawLight.h"
 #include "Draw/DrawLine.h"
@@ -370,8 +371,10 @@ bool TouchGame::load()
 	}*/
 
 	if (!saveData["CameraProt2"].empty()) {
-		Json::Value& cameraData = saveData["CameraProt2"];
-		CameraProt2::GetLink().Load(cameraData);
+		if (CameraControl* cameraPtr = CameraProt2::GetPtr<CameraControl>()) {
+			cameraPtr->Load(saveData["CameraControl"]);
+			//cameraPtr->Enable(true);
+		}
 	}
 
 #if _DEBUG
@@ -398,9 +401,9 @@ void TouchGame::save()
 	}*/
 
 	{
-		Json::Value cameraData;
-		CameraProt2::GetLink().Save(cameraData);
-		saveData["CameraProt2"] = cameraData;
+		if (CameraControl* cameraPtr = CameraProt2::GetPtr<CameraControl>()) {
+			cameraPtr->Save(saveData["CameraProt2"]);
+		}
 	}
 
 	saveData["testKey"] = "testValue";

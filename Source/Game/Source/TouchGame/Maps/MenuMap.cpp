@@ -8,6 +8,7 @@
 #include "Draw/Camera_Prototype_0/CameraTemp.h"
 //#include "Draw/Camera_Prototype_0/CameraPerspective.h"
 #include "Draw/Camera_Prototype_1/CameraProt2.h"
+#include "Draw/Camera_Prototype_1/CameraControl.h"
 
 // Puck
 void MenuMap::Puck::action() {
@@ -91,6 +92,11 @@ bool MenuMap::create(const string& name) {
 		hit(Engine::Callback::mousePos().x, Engine::Screen::height() - Engine::Callback::mousePos().y);
 	});
 
+	// Camera
+	if (CameraControl* cameraPtr = CameraProt2::GetPtr<CameraControl>()) {
+		cameraPtr->Enable(true);
+	}
+
 	return true;
 }
 
@@ -108,7 +114,7 @@ void MenuMap::action() {
 		cameraPtr->LookAt(Camera::getCurrent().pos(), Camera::getCurrent().vector());
 	}*/
 
-	CameraProt2::GetLink().LookAt(Camera::getCurrent().pos(), Camera::getCurrent().vector());
+	//CameraProt2::GetLink().LookAt(Camera::getCurrent().pos(), Camera::getCurrent().vector());
 }
 
 void MenuMap::hit(const int x, const int y) {

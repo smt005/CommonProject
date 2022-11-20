@@ -6,7 +6,8 @@
 #include "Screen.h"
 #include "Draw/Camera.h"
 #include "Draw/Camera_Prototype_0/CameraTemp.h"
-#include "Draw/Camera_Prototype_0/CameraPerspective.h"
+//#include "Draw/Camera_Prototype_0/CameraPerspective.h"
+#include "Draw/Camera_Prototype_1/CameraProt2.h"
 
 // Puck
 void MenuMap::Puck::action() {
@@ -103,10 +104,11 @@ void MenuMap::action() {
 		}
 	}
 
-	if (CameraPerspective* cameraPtr = CameraTemp::GetPtr<CameraPerspective>()) {
+	/*if (CameraPerspective* cameraPtr = CameraTemp::GetPtr<CameraPerspective>()) {
 		cameraPtr->LookAt(Camera::getCurrent().pos(), Camera::getCurrent().vector());
-	}
+	}*/
 
+	CameraProt2::GetLink().LookAt(Camera::getCurrent().pos(), Camera::getCurrent().vector());
 }
 
 void MenuMap::hit(const int x, const int y) {

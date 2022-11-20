@@ -6,7 +6,8 @@
 #include "Screen.h"
 #include "Common/Help.h"
 #include "Draw/Camera.h"
-#include "Draw/Camera_Prototype_0/CameraTemp.h"
+//#include "Draw/Camera_Prototype_0/CameraTemp.h"
+#include "Draw/Camera_Prototype_1/CameraProt2.h"
 #include "Draw/Draw.h"
 #include "Draw/DrawLight.h"
 #include "Draw/DrawLine.h"
@@ -146,8 +147,8 @@ void TouchGame::Drawline() {
 
 void TouchGame::resize() {
 	Camera::getCurrent().setPerspective(Camera::getCurrent().fov(), Engine::Screen::aspect(), 0.1f, 1000.0f);
-
-	CameraTemp::GetLink().Resize();
+	//CameraTemp::GetLink().Resize();
+	CameraProt2::GetLink().Resize();
 }
 
 void TouchGame::CheckMouse() {
@@ -363,11 +364,15 @@ bool TouchGame::load()
 		Camera::current.setJsonData(cameraData);
 	}
 
-	if (!saveData["cameraTemp"].empty()) {
+	/*if (!saveData["cameraTemp"].empty()) {
 		Json::Value& cameraData = saveData["cameraTemp"];
 		CameraTemp::GetLink().Load(cameraData);
-	}
+	}*/
 
+	if (!saveData["CameraProt2"].empty()) {
+		Json::Value& cameraData = saveData["CameraProt2"];
+		CameraProt2::GetLink().Load(cameraData);
+	}
 
 #if _DEBUG
 	Engine::Core::log("LOAD: " + saveFileName + "\n" + help::stringFroJson(saveData));
@@ -386,10 +391,16 @@ void TouchGame::save()
 		saveData["camera"] = cameraData;
 	}
 
-	{
+	/*{
 		Json::Value cameraData;
 		CameraTemp::GetLink().Save(cameraData);
 		saveData["cameraTemp"] = cameraData;
+	}*/
+
+	{
+		Json::Value cameraData;
+		CameraProt2::GetLink().Save(cameraData);
+		saveData["CameraProt2"] = cameraData;
 	}
 
 	saveData["testKey"] = "testValue";

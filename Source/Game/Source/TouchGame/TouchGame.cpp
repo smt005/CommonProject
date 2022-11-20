@@ -5,9 +5,6 @@
 #include "Callback/CallbackEvent.h"
 #include "Screen.h"
 #include "Common/Help.h"
-#include "Draw/Camera.h"
-//#include "Draw/Camera_Prototype_0/CameraTemp.h"
-#include "Draw/Camera_Prototype_1/CameraProt2.h"
 #include "Draw/Camera_Prototype_1/CameraControl.h"
 #include "Draw/Draw.h"
 #include "Draw/DrawLight.h"
@@ -54,12 +51,7 @@ void TouchGame::init() {
 	_greed = new Greed(100.0f, 10.0f);
 	_greed->setPos({ 0.0f, 0.0f, 0.1f });
 
-	if (!load()) {
-		Camera::current.setFromEye(true);
-		Camera::current.setPos(glm::vec3(0.f, 95.f, 0.f));
-		Camera::current.setVector(glm::vec3(0.f, -1.f, 0.f));
-		Camera::current.setDist(1.0f);
-	}
+	load();
 
 	DRAW::setClearColor(0.3f, 0.6f, 0.9f, 1.0f);
 
@@ -147,8 +139,6 @@ void TouchGame::Drawline() {
 }
 
 void TouchGame::resize() {
-	Camera::getCurrent().setPerspective(Camera::getCurrent().fov(), Engine::Screen::aspect(), 0.1f, 1000.0f);
-	//CameraTemp::GetLink().Resize();
 	CameraProt2::GetLink().Resize();
 }
 
@@ -180,26 +170,19 @@ void TouchGame::initCallback() {
 			return;
 		}
 
-		if (Engine::Callback::pressTap(Engine::VirtualTap::RIGHT)) {
-			Camera::current.rotate(Engine::Callback::deltaMousePos());
-		}
-
-		if (Engine::Callback::pressTap(Engine::VirtualTap::MIDDLE)) {
-			Camera::current.move(Engine::Callback::deltaMousePos() * Engine::Core::deltaTime());
-		}
-
 		if (Engine::Callback::pressTap(Engine::VirtualTap::LEFT)) {
 			if (UI::ShowingWindow("Edit model")) {
 				return;
 			}
 
+			/* NEW_CAMERA
 			glm::vec3 cursorPos3 = Camera::current.corsorCoord();
 			Object& object = Map::GetFirstCurrentMap().getObjectByName("Cylinder");
 			glm::vec3 pos3 = object.getPos();
 			glm::vec3 forceVec3 = cursorPos3 - pos3;
 			forceVec3 = glm::normalize(forceVec3);
 			forceVec3 *= _force;
-			object.addForce(forceVec3);
+			object.addForce(forceVec3);*/
 		}
 	});
 
@@ -208,7 +191,7 @@ void TouchGame::initCallback() {
 			if (UI::ShowingWindow("Edit model") || Editor::Console::IsLock()) {
 				return;
 			}
-
+			/* NEW_CAMERA
 			if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_UP) {
 				float fov = Camera::current.fov();
 				fov -= 0.1f;
@@ -222,7 +205,7 @@ void TouchGame::initCallback() {
 				if (fov <= 46.5f) {
 					Camera::current.setFov(fov);
 				}
-			}
+			}*/
 		}
 		});
 
@@ -248,7 +231,7 @@ void TouchGame::initCallback() {
 
 		if (key == Engine::VirtualKey::ESCAPE) {
 			Map::Ptr& map = Map::SetCurrentMap(Map::getByName("Menu"));
-			Camera::setCurrent(map->getCamera());
+			// NEW_CAMERA Camera::setCurrent(map->getCamera());
 			//Engine::Core::close();
 		}
 	});
@@ -257,42 +240,13 @@ void TouchGame::initCallback() {
 		if (UI::ShowingWindow("Edit model") || Editor::Console::IsLock()) {
 			return;
 		}
-
-		if (Engine::Callback::pressKey(Engine::VirtualKey::CONTROL)) {
-			return;
-		}
-
-		// Камера
-		float kForce = 1.0;
-		if (Engine::Callback::pressKey(Engine::VirtualKey::SHIFT)) {
-			kForce = 5.f;
-		}
-
-		if (Engine::Callback::pressKey(Engine::VirtualKey::S)) {
-			Camera::current.move(CAMERA_FORVARD, kForce);
-		}
-		if (Engine::Callback::pressKey(Engine::VirtualKey::W)) {
-			Camera::current.move(CAMERA_BACK, kForce);
-		}
-		if (Engine::Callback::pressKey(Engine::VirtualKey::D)) {
-			Camera::current.move(CAMERA_RIGHT, kForce);
-		}
-		if (Engine::Callback::pressKey(Engine::VirtualKey::A)) {
-			Camera::current.move(CAMERA_LEFT, kForce);
-		}
-		if (Engine::Callback::pressKey(Engine::VirtualKey::R)) {
-			Camera::current.move(CAMERA_TOP, kForce);
-		}
-		if (Engine::Callback::pressKey(Engine::VirtualKey::F)) {
-			Camera::current.move(CAMERA_DOWN, kForce);
-		}
+		//...
 	});
 
 	_callbackPtr->add(Engine::CallbackType::MOVE, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
 		if (UI::ShowingWindow("Edit model") || Editor::Console::IsLock()) {
 			return;
 		}
-
 		//...
 	});
 
@@ -360,20 +314,9 @@ bool TouchGame::load()
 		return false;
 	}
 
-	if (!saveData["camera"].empty()) {
-		Json::Value& cameraData = saveData["camera"];
-		Camera::current.setJsonData(cameraData);
-	}
-
-	/*if (!saveData["cameraTemp"].empty()) {
-		Json::Value& cameraData = saveData["cameraTemp"];
-		CameraTemp::GetLink().Load(cameraData);
-	}*/
-
 	if (!saveData["CameraProt2"].empty()) {
 		if (CameraControl* cameraPtr = CameraProt2::GetPtr<CameraControl>()) {
 			cameraPtr->Load(saveData["CameraControl"]);
-			//cameraPtr->Enable(true);
 		}
 	}
 
@@ -387,18 +330,6 @@ bool TouchGame::load()
 void TouchGame::save()
 {
 	Json::Value saveData;
-
-	{
-		Json::Value cameraData;
-		Camera::current.getJsonData(cameraData);
-		saveData["camera"] = cameraData;
-	}
-
-	/*{
-		Json::Value cameraData;
-		CameraTemp::GetLink().Save(cameraData);
-		saveData["cameraTemp"] = cameraData;
-	}*/
 
 	{
 		if (CameraControl* cameraPtr = CameraProt2::GetPtr<CameraControl>()) {

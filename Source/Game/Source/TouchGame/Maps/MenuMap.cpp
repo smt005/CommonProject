@@ -4,9 +4,6 @@
 #include "Callback/Callback.h"
 #include "Callback/CallbackEvent.h"
 #include "Screen.h"
-#include "Draw/Camera.h"
-#include "Draw/Camera_Prototype_0/CameraTemp.h"
-//#include "Draw/Camera_Prototype_0/CameraPerspective.h"
 #include "Draw/Camera_Prototype_1/CameraProt2.h"
 #include "Draw/Camera_Prototype_1/CameraControl.h"
 
@@ -109,12 +106,6 @@ void MenuMap::action() {
 			enableForce = true;
 		}
 	}
-
-	/*if (CameraPerspective* cameraPtr = CameraTemp::GetPtr<CameraPerspective>()) {
-		cameraPtr->LookAt(Camera::getCurrent().pos(), Camera::getCurrent().vector());
-	}*/
-
-	//CameraProt2::GetLink().LookAt(Camera::getCurrent().pos(), Camera::getCurrent().vector());
 }
 
 void MenuMap::hit(const int x, const int y) {
@@ -123,16 +114,16 @@ void MenuMap::hit(const int x, const int y) {
 	if (Object::hitObjects(x, y, Map::GetFirstCurrentMap().GetObjects(), objectsUnderMouse)) {
 		if (objectsUnderMouse.find("Menu_new_btn") != objectsUnderMouse.end()) {
 			Map::Ptr& map = Map::SetCurrentMap(Map::getByName("Map_00"));
-			map->getCamera() = Camera::getCurrent();
+			// NEW_CAMERA map->getCamera() = Camera::getCurrent();
 			map->initPhysixs();
-			Camera::setCurrent(map->getCamera());
+			// NEW_CAMERA Camera::setCurrent(map->getCamera());
 		}
 
 		if (objectsUnderMouse.find("Menu_next_btn") != objectsUnderMouse.end()) {
 			Map::Ptr& map = Map::SetCurrentMap(Map::getByName("Map_01"));
-			map->getCamera() = Camera::getCurrent();
+			// NEW_CAMERA map->getCamera() = Camera::getCurrent();
 			map->initPhysixs();
-			Camera::setCurrent(map->getCamera());
+			// NEW_CAMERA Camera::setCurrent(map->getCamera());
 		}
 
 		if (objectsUnderMouse.find("Menu_exit_btn") != objectsUnderMouse.end()) {

@@ -6,7 +6,7 @@
 #include "Screen.h"
 #include "Common/Help.h"
 #include "Draw/Camera.h"
-#include "Draw/Camera/CameraTemp.h"
+#include "Draw/Camera_Prototype_0/CameraTemp.h"
 #include "Draw/Draw.h"
 #include "Draw/DrawLight.h"
 #include "Draw/DrawLine.h"

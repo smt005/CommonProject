@@ -5,8 +5,8 @@
 #include "Callback/CallbackEvent.h"
 #include "Screen.h"
 #include "Draw/Camera.h"
-#include "Draw/Camera/CameraTemp.h"
-#include "Draw/Camera/CameraPerspective.h"
+#include "Draw/Camera_Prototype_0/CameraTemp.h"
+#include "Draw/Camera_Prototype_0/CameraPerspective.h"
 
 // Puck
 void MenuMap::Puck::action() {

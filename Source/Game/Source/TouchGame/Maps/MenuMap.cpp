@@ -90,6 +90,7 @@ bool MenuMap::create(const string& name) {
 	});
 
 	// Camera
+	CameraProt2::Set<CameraProt2>(getCamera());
 	if (CameraControl* cameraPtr = CameraProt2::GetPtr<CameraControl>()) {
 		cameraPtr->Enable(true);
 	}

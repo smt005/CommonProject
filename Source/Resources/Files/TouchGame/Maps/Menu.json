@@ -1,81 +1,95 @@
 {
-  "backColor": [0.8, 0.6, 1, 1],
-  "camera":{
-		"calcFrustum" : false,
-		"dist" : 50.0,
-		"fromEye" : true,
+  "backColor": [ 0.8, 0.6, 1, 1 ],
+  "camera": {
+    "class": "CameraControl",
+    "current": true,
+		"direct" : 
+		[
+			0.005,
+			0.96,
+			-0.27
+		],
 		"pos" : 
 		[
-			1.1237337589263916,
-			-212.64540100097656,
-			33.355735778808594
+			0.0,
+			-215,
+			35
 		],
-		"speed" : -0.5,
-		"speedRotate" : 0.0074999998323619366,
-		"vector" : 
-		[
-			-0.0020351891871541739,
-			0.96905440092086792,
-			-0.24683877825737
-		]
-	},
+    "type": "perspective",
+    "speed": 0.1
+  },
   "objects": [
   	{
       "name": "Menu_Box256",
       "model": "Menu_Box256",
-      "physics": "triangle"
+      "physics": "triangle",
+	  "_visible": false
     },
 		{
       "name": "Menu_new_btn",
       "model": "Menu_New_btn",
-      "pos": [0, -200, 28]
+      "pos": [0, -200, 28],
+	  "_visible": false
     },
 	{
       "name": "Menu_next_btn",
       "model": "Menu_Next_btn",
-      "pos": [0, -200, 25.5]
+      "pos": [0, -200, 25.5],
+	  "_visible": false
     },
 	{
       "name": "Menu_exit_btn",
       "model": "Menu_Close_btn",
-      "pos": [0, -200, 23]
+      "pos": [0, -200, 23],
+	  "_visible": false
     },
     {
       "name": "Cylinder",
       "model": "Cylinder",
       "physics": "convex",
-      "pos": [15, 15, 30]
+      "pos": [15, 15, 30],
+	  "_visible": false
     },
 
     {
       "name": "Box_10",
       "model": "Box_01",
       "physics": "convex",
-      "pos": [10, 0, 35]
+      "pos": [10, 0, 35],
+	  "_visible": false
     },
     {
       "name": "Box_10",
       "model": "Box_01",
       "physics": "convex",
-      "pos": [10, 0, 35]
+      "pos": [10, 0, 35],
+	  "_visible": false
     },
     {
       "name": "Box_01",
       "model": "Box_01",
       "physics": "convex",
-      "pos": [0, 10, 35]
+      "pos": [0, 10, 35],
+	  "_visible": false
     },
     {
       "name": "Box_11",
       "model": "Box_01",
       "physics": "convex",
-      "pos": [10, 10, 35]
+      "pos": [10, 10, 35],
+	  "_visible": false
     },
     {
       "name": "Box_00",
       "model": "Box_01",
       "physics": "convex",
-      "pos": [0, 0, 35]
+      "pos": [0, 0, 35],
+	  "_visible": false
+    },
+    {
+      "name": "Glider",
+      "model": "Glider",
+      "pos": [0, 0, 10]
     }
   ]
 }

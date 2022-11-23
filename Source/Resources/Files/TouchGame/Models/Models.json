@@ -9,6 +9,11 @@
 		"shape" : "Models/Common/Cylinder.obj",
 		"texture" : "Textures/Common/Polishing.jpg"
 	},
+	"Glider" : 
+	{
+		"shape" : "Models/Glider_00.obj",
+		"texture" : "Textures/Test/Matrix4_4_color.jpg"
+	},
 	"Map_256" : 
 	{
 		"shape" : "Models/Map_256.obj",
@@ -39,10 +44,15 @@
 		"shape" : "Models/Menu/Button.obj",
 		"texture" : "Textures/Menu/Next_btn.jpg"
 	},
+	"PlaneFrontX" : 
+	{
+		"shape" : "Models/Common/PlaneVerticalFrontX_1_1.obj",
+		"texture" : "Textures/Test/Matrix4_4_color.jpg"
+	},
 	"Plane_1_1" : 
 	{
 		"shape" : "Models/Common/Plane_1_1.obj",
-		"texture" : "Textures/Test/Matrix4_4_color.jpg"
+		"texture" : "Textures/UI/Target.png"
 	},
 	"PuckWhite" : 
 	{

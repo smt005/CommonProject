@@ -77,7 +77,7 @@ bool MenuMap::create(const string& name) {
 		for (int j = -15; j < 15; ++j) {
 			const string name = "Garbage_"s + std::to_string(i) + std::to_string(j);
 			const string modelName = "Box_01";
-			const vec3 pos{ (float)i * 15.f, (float)j * 15.f, float(i+j)* 15.f };
+			const vec3 pos{ (float)i * 15.f, (float)j * 15.f, std::abs(float(i+j)* 15.f)};
 
 			Object::Ptr object = objects.emplace_back(std::make_shared<Object>(name, modelName, pos));
 			object->setTypeActorPhysics(Engine::Physics::Type::CONVEX);
@@ -88,12 +88,6 @@ bool MenuMap::create(const string& name) {
 	_callbackPtr = std::make_shared<Engine::Callback>(Engine::CallbackType::PRESS_TAP, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
 		hit(Engine::Callback::mousePos().x, Engine::Screen::height() - Engine::Callback::mousePos().y);
 	});
-
-	// Camera
-	CameraProt2::Set<CameraProt2>(getCamera());
-	if (CameraControl* cameraPtr = CameraProt2::GetPtr<CameraControl>()) {
-		cameraPtr->Enable(true);
-	}
 
 	return true;
 }

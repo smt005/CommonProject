@@ -1,81 +1,18 @@
 {
-  "backColor": [0.8, 0.6, 1, 1],
-  "camera":{
-		"calcFrustum" : false,
-		"dist" : 50.0,
-		"fromEye" : true,
-		"pos" : 
-		[
-			1.1237337589263916,
-			-212.64540100097656,
-			33.355735778808594
-		],
-		"speed" : -0.5,
-		"speedRotate" : 0.0074999998323619366,
-		"vector" : 
-		[
-			-0.0020351891871541739,
-			0.96905440092086792,
-			-0.24683877825737
-		]
-	},
+  "backColor": [ 0.8, 0.6, 1, 1 ],
+  "camera": {
+	"_class": "CameraControl",
+	"current": true,
+    "direct": [ 0, -1, 0 ],
+    "pos": [ 0, 0, 0 ],
+	"speed": 0.01,
+    "type": "ortho"
+  },
   "objects": [
-  	{
-      "name": "Menu_Box256",
-      "model": "Menu_Box256",
-      "physics": "triangle"
-    },
-		{
-      "name": "Menu_new_btn",
-      "model": "Menu_New_btn",
-      "pos": [0, -200, 28]
-    },
-	{
-      "name": "Menu_next_btn",
-      "model": "Menu_Next_btn",
-      "pos": [0, -200, 25.5]
-    },
-	{
-      "name": "Menu_exit_btn",
-      "model": "Menu_Close_btn",
-      "pos": [0, -200, 23]
-    },
     {
-      "name": "Cylinder",
-      "model": "Cylinder",
-      "physics": "convex",
-      "pos": [15, 15, 30]
-    },
-
-    {
-      "name": "Box_10",
-      "model": "Box_01",
-      "physics": "convex",
-      "pos": [10, 0, 35]
-    },
-    {
-      "name": "Box_10",
-      "model": "Box_01",
-      "physics": "convex",
-      "pos": [10, 0, 35]
-    },
-    {
-      "name": "Box_01",
-      "model": "Box_01",
-      "physics": "convex",
-      "pos": [0, 10, 35]
-    },
-    {
-      "name": "Box_11",
-      "model": "Box_01",
-      "physics": "convex",
-      "pos": [10, 10, 35]
-    },
-    {
-      "name": "Box_00",
-      "model": "Box_01",
-      "physics": "convex",
-      "pos": [0, 0, 35]
+      "name": "Plane_1_1",
+      "model": "Plane_1_1",
+      "pos": [ 0, 0, 0 ]
     }
   ]
 }

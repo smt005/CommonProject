@@ -51,22 +51,33 @@ void TouchGame::init() {
 	_greed = new Greed(100.0f, 10.0f);
 	_greed->setPos({ 0.0f, 0.0f, 0.1f });
 
-	load();
+	//load();
 
 	DRAW::setClearColor(0.3f, 0.6f, 0.9f, 1.0f);
 
-	bool typeMap = true;
+	int typeMap = 0;
 
-	if (typeMap) {
+	if (typeMap == 1) {
 		// MenuMap
 		MenuMap::Ptr menuMap(new MenuMap());
 		menuMap->create("Menu");
 		Map::AddCurrentMap(Map::add(menuMap));
-	} else {
+	} else if (typeMap == 2) {
 		// MenuOrtoMap
 		MenuOrtoMap::Ptr menuMap(new MenuOrtoMap());
 		menuMap->create("MenuOrto");
 		Map::AddCurrentMap(Map::add(menuMap));
+	} else {
+		{
+			MenuMap::Ptr menuMap(new MenuMap());
+			menuMap->create("Menu");
+			Map::AddCurrentMap(Map::add(menuMap));
+		}
+		{
+			MenuOrtoMap::Ptr menuMap(new MenuOrtoMap());
+			menuMap->create("MenuOrto");
+			Map::AddCurrentMap(Map::add(menuMap));
+		}
 	}
 
 	initPhysic();
@@ -88,8 +99,9 @@ void TouchGame::draw() {
 	DRAW::clearColor();
 
 	// Draw
-	DRAW::prepare();
 	for (Map::Ptr& map : Map::GetCurrentMaps()) {
+		CameraProt2::Set<CameraProt2>(map->getCamera());
+		DRAW::prepare();
 		DRAW::draw(*map);
 	}
 
@@ -314,9 +326,10 @@ bool TouchGame::load()
 		return false;
 	}
 
-	if (!saveData["CameraProt2"].empty()) {
-		if (CameraControl* cameraPtr = CameraProt2::GetPtr<CameraControl>()) {
-			cameraPtr->Load(saveData["CameraControl"]);
+	if (!saveData["Camera"].empty()) {
+		if (CameraControl* cameraPtr = dynamic_cast<CameraControl*>(Map::GetFirstCurrentMap().getCamera().get())) {
+			cameraPtr->Load(saveData["Camera"]);
+			cameraPtr->Enable(true);
 		}
 	}
 
@@ -331,10 +344,8 @@ void TouchGame::save()
 {
 	Json::Value saveData;
 
-	{
-		if (CameraControl* cameraPtr = CameraProt2::GetPtr<CameraControl>()) {
-			cameraPtr->Save(saveData["CameraProt2"]);
-		}
+	if (CameraControl* cameraPtr = dynamic_cast<CameraControl*>(Map::GetFirstCurrentMap().getCamera().get())) {
+		cameraPtr->Save(saveData["Camera"]);
 	}
 
 	saveData["testKey"] = "testValue";

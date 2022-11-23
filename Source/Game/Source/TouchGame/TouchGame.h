@@ -19,6 +19,7 @@ public:
 	std::filesystem::path getSourcesDir() override { return "..\\..\\Source\\Resources\\Files\\TouchGame"; }
 
 	void init() override;
+	void close() override;
 	void update() override;
 	void draw() override;
 	void resize() override;
@@ -27,19 +28,19 @@ public:
 	void initCallback();
 	void initPhysic();
 	bool load();
+	bool loadCamera();
 	void save();
 
 	void Drawline();
+
+	void MakeGreed();
+	void RemoveGreed();
 
 public:
 	static std::string _resourcesDir;
 
 private:
 	CallbackPtr _callbackPtr;
-	std::vector<std::pair<std::string, std::map<std::string, bool>>> _maps;
-
+	std::string _currentGamMap;
 	Greed* _greed = nullptr;
-
-	float _force = 1.0f;
-
 };

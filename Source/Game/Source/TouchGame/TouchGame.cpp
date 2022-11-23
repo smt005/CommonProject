@@ -40,49 +40,31 @@ TouchGame::TouchGame() {
 
 TouchGame::~TouchGame() {
 	_callbackPtr.reset();
-
-	if (_greed) {
-		delete _greed;
-		_greed = nullptr;
-	}
+	RemoveGreed();
 }
 
 void TouchGame::init() {
-	_greed = new Greed(100.0f, 10.0f);
-	_greed->setPos({ 0.0f, 0.0f, 0.1f });
-
-	//load();
+	load();
 
 	DRAW::setClearColor(0.3f, 0.6f, 0.9f, 1.0f);
 
-	int typeMap = 0;
+	//...
+	MenuMap::Ptr menuMap(new MenuMap());
+	menuMap->create("Menu");
+	Map::AddCurrentMap(Map::add(menuMap));
 
-	if (typeMap == 1) {
-		// MenuMap
-		MenuMap::Ptr menuMap(new MenuMap());
-		menuMap->create("Menu");
-		Map::AddCurrentMap(Map::add(menuMap));
-	} else if (typeMap == 2) {
-		// MenuOrtoMap
-		MenuOrtoMap::Ptr menuMap(new MenuOrtoMap());
-		menuMap->create("MenuOrto");
-		Map::AddCurrentMap(Map::add(menuMap));
-	} else {
-		{
-			MenuMap::Ptr menuMap(new MenuMap());
-			menuMap->create("Menu");
-			Map::AddCurrentMap(Map::add(menuMap));
-		}
-		{
-			MenuOrtoMap::Ptr menuMap(new MenuOrtoMap());
-			menuMap->create("MenuOrto");
-			Map::AddCurrentMap(Map::add(menuMap));
-		}
-	}
+	MenuOrtoMap::Ptr menuOrthoMap(new MenuOrtoMap());
+	menuOrthoMap->create("MenuOrto");
+	Map::AddCurrentMap(Map::add(menuOrthoMap));
 
+	//...
 	initPhysic();
 	update();
 	initCallback();
+}
+
+void TouchGame::close() {
+	save();
 }
 
 void TouchGame::update() {
@@ -98,6 +80,9 @@ void TouchGame::draw() {
 	DRAW::viewport();
 	DRAW::clearColor();
 
+	// Grid
+	Drawline();
+
 	// Draw
 	for (Map::Ptr& map : Map::GetCurrentMaps()) {
 		CameraProt2::Set<CameraProt2>(map->getCamera());
@@ -112,42 +97,11 @@ void TouchGame::draw() {
 }
 
 void TouchGame::Drawline() {
-	DrawLine::prepare();
-
-	{
-		float points[] = { 0.0f, 0.0f, 0.0f, 10.0f, 20.0f, 20.0f,
-							10.0f, 20.0f, 20.0f, 20.0f, 20.0f, 20.0f };
-		Line line(points, 4, Line::LINE);
-		line.setLineWidth(5.0f);
-		line.color = Color::GREEN;
-
-		DrawLine::draw(line);
+	if (_greed) {
+		CameraProt2::Set<CameraProt2>(Map::GetFirstCurrentMap().getCamera());
+		DrawLine::prepare();
+		DrawLine::draw(*_greed);
 	}
-
-	{
-		float points[] = { 20.0f, 30.0f, 0.0f,
-							20.0f, 30.0f, 20.0f,
-							30.0f, 30.0f, 20.0f };
-		Line line(points, 3, Line::LOOP);
-		line.setLineWidth(5.0f);
-		line.color = { 0.3f, 0.6f, 0.9f,0.5f };
-
-		DrawLine::draw(line);
-	}
-
-	{
-		float points[] = { 30.0f, 40.0f, 0.0f,
-							30.0f, 40.0f, 20.0f,
-							40.0f, 40.0f, 20.0f };
-		Line line(points, 3, Line::STRIP);
-		line.setLineWidth(5.0f);
-		line.color = Color::RED;
-		line.color.setAlpha(0.5);
-
-		DrawLine::draw(line);
-	}
-
-	DrawLine::draw(*_greed);
 }
 
 void TouchGame::resize() {
@@ -292,12 +246,21 @@ void TouchGame::initCallback() {
 			}
 		}
 
+		//...
+		if (key == Engine::VirtualKey::G && Engine::Callback::pressKey(Engine::VirtualKey::CONTROL)) {
+			if (_greed) {
+				RemoveGreed();
+			} else {
+				MakeGreed();
+			}
+		}
+
 		if (key == Engine::VirtualKey::S && Engine::Callback::pressKey(Engine::VirtualKey::CONTROL)) {
 			save();
 		}
 
 		if (key == Engine::VirtualKey::L && Engine::Callback::pressKey(Engine::VirtualKey::CONTROL)) {
-			load();
+			loadCamera();
 		}
 
 		if (UI::WindowDisplayed() || Editor::Console::IsLock()) {
@@ -321,23 +284,41 @@ void TouchGame::initPhysic() {
 
 bool TouchGame::load()
 {
-	Json::Value saveData;
-	if (!help::loadJson(saveFileName, saveData) || saveData.empty()) {
+	Json::Value loadData;
+	if (!help::loadJson(saveFileName, loadData) || loadData.empty()) {
 		return false;
 	}
 
-	if (!saveData["Camera"].empty()) {
+	//...
+	if (loadData["Greed"].isBool() && loadData["Greed"].asBool()) {
+		MakeGreed();
+	} else {
+		RemoveGreed();
+	}
+
+#if _DEBUG
+	Engine::Core::log("LOAD: " + saveFileName + "\n" + help::stringFroJson(loadData));
+#endif // _DEBUG
+
+	return true;
+}
+
+bool TouchGame::loadCamera() {
+	Json::Value loadData;
+	if (!help::loadJson(saveFileName, loadData) || loadData.empty()) {
+		return false;
+	}
+
+	if (!loadData["Camera"].empty()) {
 		if (CameraControl* cameraPtr = dynamic_cast<CameraControl*>(Map::GetFirstCurrentMap().getCamera().get())) {
-			cameraPtr->Load(saveData["Camera"]);
+			cameraPtr->Load(loadData["Camera"]);
 			cameraPtr->Enable(true);
 		}
 	}
 
 #if _DEBUG
-	Engine::Core::log("LOAD: " + saveFileName + "\n" + help::stringFroJson(saveData));
+	Engine::Core::log("LOAD_CAMERA: " + saveFileName + "\n" + help::stringFroJson(loadData));
 #endif // _DEBUG
-
-	return true;
 }
 
 void TouchGame::save()
@@ -348,8 +329,11 @@ void TouchGame::save()
 		cameraPtr->Save(saveData["Camera"]);
 	}
 
-	saveData["testKey"] = "testValue";
+	if (_greed) {
+		saveData["Greed"] = true;
+	}
 
+	//...
 	help::saveJson(saveFileName, saveData);
 
 #if _DEBUG
@@ -357,3 +341,14 @@ void TouchGame::save()
 #endif // _DEBUG
 }
 
+void TouchGame::MakeGreed() {
+	_greed = new Greed(100.0f, 10.0f);
+	_greed->setPos({ 0.0f, 0.0f, 0.1f });
+}
+
+void TouchGame::RemoveGreed() {
+	if (_greed) {
+		delete _greed;
+		_greed = nullptr;
+	}
+}

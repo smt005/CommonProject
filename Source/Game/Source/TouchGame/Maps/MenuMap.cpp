@@ -106,7 +106,7 @@ void MenuMap::action() {
 void MenuMap::hit(const int x, const int y) {
 	std::map<std::string, Object::Ptr> objectsUnderMouse;
 
-	if (Object::hitObjects(x, y, Map::GetFirstCurrentMap().GetObjects(), objectsUnderMouse)) {
+	if (Object::hitObjects(x, y, Map::GetFirstCurrentMap().GetObjects(), objectsUnderMouse, getCamera()->ProjectView())) {
 		if (objectsUnderMouse.find("Menu_new_btn") != objectsUnderMouse.end()) {
 			Map::Ptr& map = Map::SetCurrentMap(Map::getByName("Map_00"));
 			// NEW_CAMERA map->getCamera() = Camera::getCurrent();

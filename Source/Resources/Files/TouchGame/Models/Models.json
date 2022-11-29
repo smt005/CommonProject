@@ -1,72 +1,106 @@
 {
-	"Box_01" : 
-	{
-		"shape" : "Models/Common/Box_01.obj",
-		"texture" : "Textures/Common/Furnishings.Fabrics.Velour.Blue.jpg"
-	},
-	"Cylinder" : 
-	{
-		"shape" : "Models/Common/Cylinder.obj",
-		"texture" : "Textures/Common/Polishing.jpg"
-	},
-	"Glider" : 
-	{
-		"shape" : "Models/Glider_00.obj",
-		"texture" : "Textures/Test/Matrix4_4_color.jpg"
-	},
-	"Map_256" : 
-	{
-		"shape" : "Models/Map_256.obj",
-		"texture" : "Textures/Common/Concrete.jpg"
-	},
-	"Map_2560" : 
-	{
-		"shape" : "Models/Map_2560.obj",
-		"texture" : "Textures/Common/Concrete.jpg"
-	},
-	"Menu_Box256" : 
-	{
-		"shape" : "Models/Menu/Box_256.obj",
-		"texture" : "Textures/Common/Metals.jpg"
-	},
-	"Menu_Close_btn" : 
-	{
-		"shape" : "Models/Menu/Button.obj",
-		"texture" : "Textures/Menu/Exit_btn.jpg"
-	},
-	"Menu_New_btn" : 
-	{
-		"shape" : "Models/Menu/Button.obj",
-		"texture" : "Textures/Menu/New_btn.jpg"
-	},
-	"Menu_Next_btn" : 
-	{
-		"shape" : "Models/Menu/Button.obj",
-		"texture" : "Textures/Menu/Next_btn.jpg"
-	},
-	"PlaneFrontX" : 
-	{
-		"shape" : "Models/Common/PlaneVerticalFrontX_1_1.obj",
-		"texture" : "Textures/Test/Matrix4_4_color.jpg"
-	},
-	"Plane_1_1" : 
-	{
-		"shape" : "Models/Common/Plane_1_1.obj",
-		"texture" : "Textures/UI/Target.png"
-	},
-	"PuckWhite" : 
-	{
-		"shape" : "Models/Common/Cylinder.obj",
-		"texture" : "Textures/Colors/White.png"
-	},
-	"TargetGreen" : 
-	{
-		"shape" : "Models/Common/Cylinder.obj",
-		"texture" : "Textures/Colors/Green.png"
-	},
-	"Vorota" : 
-	{
-		"shape" : "Models/Common/Vorota.obj",
-		"texture" : "Textures/Common/Finishes.jpg"
-	}
+  "Box_01": {
+    "shape": "Models/Common/Box_01.obj",
+    "texture": "Textures/Common/Furnishings.Fabrics.Velour.Blue.jpg"
+  },
+  "Menu_Close_btn": {
+    "shape": "Models/Menu/Button.obj",
+    "texture": "Textures/Menu/Exit_btn.jpg"
+  },
+  "Menu_New_btn": {
+    "shape": "Models/Menu/Button.obj",
+    "texture": "Textures/Menu/New_btn.jpg"
+  },
+  "Menu_Next_btn": {
+    "shape": "Models/Menu/Button.obj",
+    "texture": "Textures/Menu/Next_btn.jpg"
+  },
+  "PlaneFrontX": {
+    "shape": "Models/Common/PlaneVerticalFrontX_1_1.obj",
+    "texture": "Textures/Test/Matrix4_4_color.jpg"
+  },
+  "Plane_1_1": {
+    "shape": "Models/Common/Plane_1_1.obj",
+    "texture": "Textures/UI/Target.png"
+  },
+  "Map_00": {
+    "shape": "Models/Map_00.obj",
+    "texture": "Textures/Common/Finishes.jpg"
+  },
+  "Map_256": {
+    "shape": "Models/Map_256.obj",
+    "texture": "Textures/Common/Finishes.jpg"
+  },
+  "Map_2560": {
+    "shape": "Models/Map_2560.obj",
+    "texture": "Textures/Common/Concrete.jpg"
+  },
+  "Plane_60": {
+    "shape": "Models/MapCommon/Terrain/Plane_60.obj",
+    "texture": "Textures/Common/Metal_148.jpg"
+  },
+  "Box_20": {
+    "shape": "Models/MapCommon/Terrain/Box_20.obj",
+    "texture": "Textures/Common/Metal_148.jpg"
+  },
+  "Box_40": {
+    "shape": "Models/MapCommon/Terrain/Box_40.obj",
+    "texture": "Textures/Common/Metal_148.jpg"
+  },
+  "Box_down_20": {
+    "shape": "Models/MapCommon/Terrain/Box_down_20.obj",
+    "texture": "Textures/Common/Metal_148.jpg"
+  },
+  "Box_down_40": {
+    "shape": "Models/MapCommon/Terrain/Box_down_40.obj",
+    "texture": "Textures/Common/Metal_148.jpg"
+  },
+  "Cylinder_40": {
+    "shape": "Models/MapCommon/Terrain/Cylinder_40.obj",
+    "texture": "Textures/Common/Metal_148.jpg"
+  },
+  "Cylinedr_down_40": {
+    "shape": "Models/MapCommon/Terrain/Cylinedr_down_40.obj",
+    "texture": "Textures/Common/Metal_148.jpg"
+  },
+  "Gate_60": {
+    "shape": "Models/MapCommon/Terrain/Gate_60.obj",
+    "texture": "Textures/Common/Metal_148.jpg"
+  },
+  "Puck_5": {
+    "shape": "Models/MapCommon/Puck/Puck_5.obj",
+    "texture": "Textures/Common/Metal_148.jpg"
+  },
+  "Puck_7_5": {
+    "shape": "Models/MapCommon/Puck/Puck_7_5.obj",
+    "texture": "Textures/Common/Metal_148.jpg"
+  },
+  "Puck_10": {
+    "shape": "Models/MapCommon/Puck/Puck_10.obj",
+    "texture": "Textures/Common/Metal_148.jpg"
+  },
+  "Box_5": {
+    "shape": "Models/MapCommon/Convex/Box_5.obj",
+    "texture": "Textures/Common/Metal_148.jpg"
+  },
+  "Box_10": {
+    "shape": "Models/MapCommon/Convex/Box_10.obj",
+    "texture": "Textures/Common/Metal_148.jpg"
+  },
+  "Sphere_5": {
+    "shape": "Models/MapCommon/Convex/Sphere_5.obj",
+    "texture": "Textures/Common/Metal_148.jpg"
+  },
+  "Sphere_10": {
+    "shape": "Models/MapCommon/Convex/Sphere_10.obj",
+    "texture": "Textures/Common/Metal_148.jpg"
+  },
+  "PuckWhite": {
+    "shape": "Models/Common/Cylinder.obj",
+    "texture": "Textures/Colors/White.png"
+  },
+  "TargetGreen": {
+    "shape": "Models/Common/Cylinder.obj",
+    "texture": "Textures/Colors/Green.png"
+  }
 }

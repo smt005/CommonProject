@@ -10,9 +10,10 @@
   },
   "objects": [
     {
-      "name": "Plane_1_1",
+      "name": "Target",
       "model": "Plane_1_1",
-      "pos": [ 0, 0, 0 ]
+      "pos": [ 0, 0, 0 ],
+	  "visible": false
     }
   ]
 }

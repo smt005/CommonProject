@@ -14,10 +14,10 @@
 #include "Object/Model.h"
 #include "Object/Shape.h"
 #include "Object/Line.h"
+#include "Object/Text.h"
 #include "ImGuiManager/UI.h"
 #include "glm/vec2.hpp"
 #include "Physics/Physics.h"
-
 #include "Maps/MenuMap.h"
 
 #include  "ImGuiManager/Editor/EditorModel.h"
@@ -39,6 +39,11 @@ TouchGame::TouchGame() {
 }
 
 TouchGame::~TouchGame() {
+	if (_text) {
+		delete _text;
+		_text = nullptr;
+	}
+
 	_callbackPtr.reset();
 	RemoveGreed();
 }
@@ -94,6 +99,10 @@ void TouchGame::draw() {
 	if (Object::Ptr object = Editor::MapEditor::NewObject()) {
 		DRAW::draw(*object);
 	}
+
+	// Text
+	DrawText();
+
 }
 
 void TouchGame::Drawline() {
@@ -101,6 +110,16 @@ void TouchGame::Drawline() {
 		CameraProt2::Set<CameraProt2>(Map::GetFirstCurrentMap().getCamera());
 		DrawLine::prepare();
 		DrawLine::draw(*_greed);
+	}
+}
+
+void TouchGame::DrawText() {
+	if (!_text) {
+		if (Object::Ptr objectPtr = Map::GetCurrentMaps()[1]->getObjectPtrByName("Target")) {
+			_text = new Engine::TextNew("018", "Fonts/tahoma.ttf");
+			_text->SavePNG();
+			objectPtr->getModel().texture().SetId(_text->IdTexture());
+		}
 	}
 }
 

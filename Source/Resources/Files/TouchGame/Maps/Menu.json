@@ -11,6 +11,12 @@
     "speed": 0.2
   },
   "objects": [
+  	{
+      "name": "Map_2560",
+      "model": "Map_2560",
+      "physics": "triangle",
+      "pos": [0, 0, -100.5]
+    },
 	{
       "name": "Menu_new_btn",
       "model": "Menu_New_btn",
@@ -25,69 +31,6 @@
       "name": "Menu_exit_btn",
       "model": "Menu_Close_btn",
       "pos": [0, -200, 23]
-    },
-	{
-      "name": "Map_2560",
-      "model": "Map_2560",
-	  "physics": "triangle",
-      "pos": [0, 0, -51]
-    },
-    {
-      "name": "Plane_60",
-      "model": "Plane_60",
-      "physics": "triangle",
-      "pos": [0, 0, 0]
-    },
-    {
-      "name": "Plane_60",
-      "model": "Plane_60",
-      "physics": "triangle",
-      "pos": [60, 0, 0]
-    }
-	,
-    {
-      "name": "Plane_60",
-      "model": "Cylinder_40",
-      "physics": "triangle",
-      "pos": [0, 60, 0]
-    },
-    {
-      "name": "Plane_60",
-      "model": "Cylinedr_down_40",
-      "physics": "triangle",
-      "pos": [60, 60, 0]
-    },
-    {
-      "name": "Plane_60",
-      "model": "Box_down_20",
-      "physics": "triangle",
-      "pos": [-60, 60, 0]
-    }
-	,
-    {
-      "name": "Plane_60",
-      "model": "Plane_60",
-      "physics": "triangle",
-      "pos": [60, -60, 0]
-    },
-    {
-      "name": "Plane_60",
-      "model": "Box_20",
-      "physics": "triangle",
-      "pos": [0, -60, 0]
-    },
-    {
-      "name": "Plane_60",
-      "model": "Box_40",
-      "physics": "triangle",
-      "pos": [-60, -60, 0]
-    }
-	,
-    {
-      "name": "Plane_60",
-      "model": "Gate_60",
-      "physics": "triangle",
-      "pos": [-60, 0, 0]
     }
   ]
 }

@@ -9,6 +9,8 @@ class Map;
 class Greed;
 
 namespace Engine { class Callback; }
+namespace Engine { class TextNew; }
+
 typedef std::shared_ptr<Engine::Callback> CallbackPtr;
 
 class TouchGame final : public Engine::Game
@@ -32,6 +34,7 @@ public:
 	void save();
 
 	void Drawline();
+	void DrawText();
 
 	void MakeGreed();
 	void RemoveGreed();
@@ -43,4 +46,5 @@ private:
 	CallbackPtr _callbackPtr;
 	std::string _currentGamMap;
 	Greed* _greed = nullptr;
+	Engine::TextNew* _text = nullptr;
 };

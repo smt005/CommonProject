@@ -9,7 +9,7 @@ class Map;
 class Greed;
 
 namespace Engine { class Callback; }
-namespace Engine { class TextNew; }
+namespace Engine { class Text; }
 
 typedef std::shared_ptr<Engine::Callback> CallbackPtr;
 
@@ -46,5 +46,5 @@ private:
 	CallbackPtr _callbackPtr;
 	std::string _currentGamMap;
 	Greed* _greed = nullptr;
-	Engine::TextNew* _text = nullptr;
+	Engine::Text* _text = nullptr;
 };

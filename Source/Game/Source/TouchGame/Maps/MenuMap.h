@@ -49,9 +49,6 @@ private:
 private:
 	static Target::Ptr target;
 	static bool enableForce;
-
-public:
-	static unsigned int idTextTexture;
 };
 
 // MenuOrtoMap

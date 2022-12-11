@@ -13,7 +13,7 @@
       "name": "Target",
       "model": "Plane_1_1",
       "pos": [ 0, 0, 0 ],
-	  "_visible": false
+	  "visible": false
     }
   ]
 }

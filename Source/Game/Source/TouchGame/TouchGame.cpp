@@ -5,7 +5,7 @@
 #include "Callback/CallbackEvent.h"
 #include "Screen.h"
 #include "Common/Help.h"
-#include "Draw/Camera_Prototype_1/CameraControl.h"
+#include "Draw/Camera/CameraControl.h"
 #include "Draw/Draw.h"
 #include "Draw/DrawLight.h"
 #include "Draw/DrawLine.h"
@@ -90,7 +90,7 @@ void TouchGame::draw() {
 
 	// Draw
 	for (Map::Ptr& map : Map::GetCurrentMaps()) {
-		CameraProt2::Set<CameraProt2>(map->getCamera());
+		Camera::Set<Camera>(map->getCamera());
 		DRAW::prepare();
 		DRAW::draw(*map);
 	}
@@ -107,24 +107,28 @@ void TouchGame::draw() {
 
 void TouchGame::Drawline() {
 	if (_greed) {
-		CameraProt2::Set<CameraProt2>(Map::GetFirstCurrentMap().getCamera());
+		Camera::Set<Camera>(Map::GetFirstCurrentMap().getCamera());
 		DrawLine::prepare();
 		DrawLine::draw(*_greed);
 	}
 }
 
 void TouchGame::DrawText() {
-	if (!_text) {
-		if (Object::Ptr objectPtr = Map::GetCurrentMaps()[1]->getObjectPtrByName("Target")) {
-			_text = new Engine::TextNew("018", "Fonts/tahoma.ttf");
+	if (_text) {
+		_text->Draw();
+	} else {
+		/*if (Object::Ptr objectPtr = Map::GetCurrentMaps()[1]->getObjectPtrByName("Target")) {
+			_text = new Engine::Text("018", "Fonts/tahoma.ttf");
 			_text->SavePNG();
 			objectPtr->getModel().texture().SetId(_text->IdTexture());
-		}
+		}*/
+
+		_text = new Engine::Text("018", "Fonts/tahoma.ttf");
 	}
 }
 
 void TouchGame::resize() {
-	CameraProt2::GetLink().Resize();
+	Camera::GetLink().Resize();
 }
 
 void TouchGame::CheckMouse() {

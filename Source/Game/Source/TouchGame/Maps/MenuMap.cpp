@@ -6,10 +6,9 @@
 #include "Screen.h"
 #include "Object/Object.h"
 #include "Physics/Physics.h"
-#include "Draw/Camera_Prototype_1/CameraProt2.h"
-#include "Draw/Camera_Prototype_1/CameraControl.h"
+#include "Draw/Camera/Camera.h"
+#include "Draw/Camera/CameraControl.h"
 #include <cstdlib>
-#include "Test/FreeType2/FreeType2Example.h"
 
 // Puck
 void MenuMap::Puck::action() {
@@ -46,16 +45,12 @@ void MenuMap::Target::action() {
 // MenuMap
 MenuMap::Target::Ptr MenuMap::target;
 bool MenuMap::enableForce = false;
-unsigned int MenuMap::idTextTexture = 0;
 
 MenuMap::MenuMap() {
 	Engine::Core::log("MenuMap::MenuMap() ");
 };
 
 bool MenuMap::create(const string& name) {
-	idTextTexture = Test::FreeType2Main("Test text!");
-
-	//...
 	if (!Map::create(name)) {
 		return false;
 	}

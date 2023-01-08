@@ -117,13 +117,8 @@ void TouchGame::DrawText() {
 	if (_text) {
 		_text->Draw();
 	} else {
-		/*if (Object::Ptr objectPtr = Map::GetCurrentMaps()[1]->getObjectPtrByName("Target")) {
-			_text = new Engine::Text("018", "Fonts/tahoma.ttf");
-			_text->SavePNG();
-			objectPtr->getModel().texture().SetId(_text->IdTexture());
-		}*/
-
-		_text = new Engine::Text("018", "Fonts/tahoma.ttf");
+		_text = new Engine::Text("123", "Fonts/tahoma.ttf");
+		//_text->SavePNG();
 	}
 }
 

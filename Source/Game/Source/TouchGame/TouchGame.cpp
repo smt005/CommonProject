@@ -117,8 +117,7 @@ void TouchGame::DrawText() {
 	if (_text) {
 		_text->Draw();
 	} else {
-		_text = new Engine::Text("123", "Fonts/tahoma.ttf");
-		//_text->SavePNG();
+		_text = new Engine::Text(_textStr, _textSize, "ofont.ru_Miama Nueva.ttf");
 	}
 }
 
@@ -158,15 +157,6 @@ void TouchGame::initCallback() {
 			if (UI::ShowingWindow("Edit model")) {
 				return;
 			}
-
-			/* NEW_CAMERA
-			glm::vec3 cursorPos3 = Camera::current.corsorCoord();
-			Object& object = Map::GetFirstCurrentMap().getObjectByName("Cylinder");
-			glm::vec3 pos3 = object.getPos();
-			glm::vec3 forceVec3 = cursorPos3 - pos3;
-			forceVec3 = glm::normalize(forceVec3);
-			forceVec3 *= _force;
-			object.addForce(forceVec3);*/
 		}
 	});
 
@@ -175,21 +165,52 @@ void TouchGame::initCallback() {
 			if (UI::ShowingWindow("Edit model") || Editor::Console::IsLock()) {
 				return;
 			}
-			/* NEW_CAMERA
-			if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_UP) {
-				float fov = Camera::current.fov();
-				fov -= 0.1f;
-				if (fov >= 44.1f) {
-					Camera::current.setFov(fov);
+
+			if (Engine::Callback::pressKey(Engine::VirtualKey::SHIFT)) {
+				if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_UP) {
+					++_itFonts;
+					if (_itFonts == _fonts.end()) {
+						_itFonts = _fonts.begin();
+					}
+					delete _text;
+					const std::string& font = *_itFonts;
+					_text = new Engine::Text(_textStr, _textSize, font);
+				}
+				else if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_BOTTOM) {
+					if (_itFonts == _fonts.begin()) {
+						_itFonts = std::prev(_fonts.end());
+					} else {
+						--_itFonts;
+					}
+					delete _text;
+					const std::string& font = *_itFonts;
+					_text = new Engine::Text(_textStr, _textSize, font);
+				}
+			} else {
+				if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_UP) {
+					if (Engine::Callback::pressKey(Engine::VirtualKey::CONTROL)) {
+						_textSize += 10;
+					} else {
+						++_textSize;
+					}
+					delete _text;
+					const std::string& font = *_itFonts;
+					_text = new Engine::Text(_textStr, _textSize, font);
+				}
+				else if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_BOTTOM) {
+					if (Engine::Callback::pressKey(Engine::VirtualKey::CONTROL)) {
+						_textSize -= 10;
+					} else {
+						--_textSize;
+					}
+					if (_textSize < 2) {
+						_textSize = 2;
+					}
+					delete _text;
+					const std::string& font = *_itFonts;
+					_text = new Engine::Text(_textStr, _textSize, font);
 				}
 			}
-			else if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_BOTTOM) {
-				float fov = Camera::current.fov();
-				fov += 0.1f;
-				if (fov <= 46.5f) {
-					Camera::current.setFov(fov);
-				}
-			}*/
 		}
 		});
 

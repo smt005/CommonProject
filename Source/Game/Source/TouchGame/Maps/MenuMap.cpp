@@ -76,8 +76,8 @@ bool MenuMap::create(const string& name) {
 	}
 
 	// Garbage
-	for (int i = -15; i <= 15; ++i) {
-		for (int j = -15; j < 15; ++j) {
+	for (int i = -25; i <= 25; ++i) {
+		for (int j = -25; j < 25; ++j) {
 			const string name = "Garbage_"s + std::to_string(i) + std::to_string(j);
 			const string modelName = "Box_01";
 			const vec3 pos{ (float)i * 15.f, (float)j * 15.f, std::abs(float(i+j)* 15.f)};
@@ -88,8 +88,8 @@ bool MenuMap::create(const string& name) {
 	}
 
 	// Map
-	int halfCountI = 1;// 0;
-	int halfCountJ = 1;// 0;
+	int halfCountI = 10;
+	int halfCountJ = 10;
 	float sizeCell = 60.f;
 
 	std::vector<std::string> listModel{ "Plane_60", "Box_20", "Plane_60",

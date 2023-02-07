@@ -47,4 +47,8 @@ private:
 	std::string _currentGamMap;
 	Greed* _greed = nullptr;
 	Engine::Text* _text = nullptr;
+	int _textSize = 800;
+	std::string _textStr = "Wf";
+	std::vector<std::string> _fonts = {"Futured.ttf", "ofont.ru_Jolly.ttf","ofont.ru_Miama Nueva.ttf","ofont.ru_Newtown.ttf","ofont.ru_Patsy Sans.ttf","ofont.ru_Radiotechnika.ttf","ofont.ru_Shablon.ttf","ofont.ru_Zekton.ttf","ofont.ru_Zing Rust.ttf","tahoma.ttf" };
+	std::vector<std::string>::iterator _itFonts = _fonts.begin();
 };

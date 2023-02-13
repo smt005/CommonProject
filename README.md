@@ -3,7 +3,7 @@
 # Пример скачивания репозитория с помощью git
 cd D:/Test
 
-git clone https://github.com/smt005/FindObjectGame.git
+git clone https://github.com/smt005/CommonProject
 
 cd D:/Test/FindObjectGame
 

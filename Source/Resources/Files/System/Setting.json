@@ -2,10 +2,10 @@
 	"window" : 
 	{
 		"fullscreen" : false,
-		"height" : 796.0,
-		"left" : 2111.0,
+		"height" : 866.0,
+		"left" : 1.0,
 		"title" : "Window_default",
 		"top" : 31.0,
-		"width" : 1626.0
+		"width" : 1368.0
 	}
 }

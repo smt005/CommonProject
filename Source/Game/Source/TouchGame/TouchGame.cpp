@@ -114,11 +114,11 @@ void TouchGame::Drawline() {
 }
 
 void TouchGame::DrawText() {
-	if (_text) {
+	/*if (_text) {
 		_text->Draw();
 	} else {
 		_text = new Engine::Text(_textStr, _textSize, "ofont.ru_Miama Nueva.ttf");
-	}
+	}*/
 }
 
 void TouchGame::resize() {
@@ -166,7 +166,7 @@ void TouchGame::initCallback() {
 				return;
 			}
 
-			if (Engine::Callback::pressKey(Engine::VirtualKey::SHIFT)) {
+			/*if (Engine::Callback::pressKey(Engine::VirtualKey::SHIFT)) {
 				if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_UP) {
 					++_itFonts;
 					if (_itFonts == _fonts.end()) {
@@ -210,7 +210,7 @@ void TouchGame::initCallback() {
 					const std::string& font = *_itFonts;
 					_text = new Engine::Text(_textStr, _textSize, font);
 				}
-			}
+			}*/
 		}
 		});
 

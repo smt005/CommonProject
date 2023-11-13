@@ -1,0 +1,12 @@
+{
+	"Sphere_10" : 
+	{
+		"shape" : "Models/Convex/Sphere_10.obj",
+		"texture" : "Textures/ice/ice_9.jpg"
+	},
+	"Plane" : 
+	{
+		"shape" : "Models/Interface/Plane_1_1_z.obj",
+		"texture" : "Textures/Interface/Target.png"
+	}
+}

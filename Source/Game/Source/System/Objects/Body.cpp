@@ -18,7 +18,28 @@ void Body::action() {
 
 glm::vec3 Body::GetVector() {
 	glm::vec3 sumGravityVector = { 0.f, 0.f, 0.f };
+	glm::vec3 pos = getPos();
 
+	//...
+	_points.push_back(pos);
+	if (_points.size() > 100) {
+		_points.pop_front();
+	}
+	const size_t countPoints = _points.size();
+	float* pathPoints = new float[countPoints * 3];
+	size_t index = 0;
+	for (glm::vec3& p : _points) {
+		pathPoints[index] = p.x;
+		++index;
+		pathPoints[index] = p.y;
+		++index;
+		pathPoints[index] = p.z;
+		++index;
+	}
+	_path.set(pathPoints, countPoints);
+	//_path.color = { 0.1f, 0.1f, 0.9f, 0.5f };
+
+	//...
 	for (auto& objPtr : system->GetObjects()) {
 		if (!objPtr->hasPhysics() || objPtr->tag != 123) {
 			continue;
@@ -29,7 +50,7 @@ glm::vec3 Body::GetVector() {
 			continue;
 		}
 
-		glm::vec3 gravityVector = body->getPos() - getPos();
+		glm::vec3 gravityVector = body->getPos() - pos;
 		float dist = glm::length(gravityVector);
 		gravityVector = glm::normalize(gravityVector);
 
@@ -43,10 +64,16 @@ glm::vec3 Body::GetVector() {
 	if (sumGravity < 0.0001f && getName() != "Sun") {
 		removeObject.push_back(this);
 	}
+
+	//float points[] = { pos.x, pos.y, pos.z, pos.x + sumGravityVector.x * 100.f, pos.y + sumGravityVector.y * 100.f, pos.z + sumGravityVector.z * 100.f };
+	float points[] = { pos.x, pos.y, pos.z, pos.x + sumGravityVector.x, pos.y + sumGravityVector.y, pos.z + sumGravityVector.z };
+	_forceVector.set(points, 2);
+	_forceVector.color = { 0.1f, 0.9f, 0.1f, 0.5f };
+
 	return sumGravityVector;
 }
 
-const Line& Body::LineToCenter() {
+Line& Body::LineToCenter() {
 	glm::vec3 pos = getPos();
 
 	float points[] = { pos.x, pos.y, pos.z, centerSystem.x, centerSystem.y, centerSystem.z };
@@ -55,7 +82,7 @@ const Line& Body::LineToCenter() {
 	return _lineToCenter;
 }
 
-const Line& Body::LineToMassCenter() {
+Line& Body::LineToMassCenter() {
 	glm::vec3 pos = getPos();
 
 	float points[] = { pos.x, pos.y, pos.z, centerMassSystem.x, centerMassSystem.y, centerMassSystem.z };

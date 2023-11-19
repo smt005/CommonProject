@@ -1,12 +1,26 @@
 {
-	"Sphere_10" : 
-	{
-		"shape" : "Models/Convex/Sphere_10.obj",
-		"texture" : "Textures/ice/ice_9.jpg"
-	},
-	"Plane" : 
-	{
-		"shape" : "Models/Interface/Plane_1_1_z.obj",
-		"texture" : "Textures/Interface/Target.png"
-	}
+  "OrangeStar": {
+    "shape": "Models/Convex/Sphere_10.obj",
+    "texture": "Textures/star/orange_star.jpg"
+  },
+  "BrownStone": {
+    "shape": "Models/Convex/Sphere_5.obj",
+    "texture": "Textures/planet/brown_stone.jpg"
+  },
+  "GrayStone": {
+    "shape": "Models/Convex/Sphere_5.obj",
+    "texture": "Textures/planet/gray_stone.jpg"
+  },
+  "IceBlue": {
+    "shape": "Models/Convex/Sphere_5.obj",
+    "texture": "Textures/planet/ice_blue.jpg"
+  },
+  "IceLight": {
+    "shape": "Models/Convex/Sphere_5.obj",
+    "texture": "Textures/planet/ice_light.jpg"
+  },
+  "Plane": {
+    "shape": "Models/Interface/Plane_1_1_z.obj",
+    "texture": "Textures/Interface/Target.png"
+  }
 }

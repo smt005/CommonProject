@@ -58,10 +58,13 @@ void System::init() {
 	{
 		Body::system = mainMap;
 		
-		Body* sunObject = new Body("Sun", "Sphere_10", { 0.1f, 0.1f, 0.0f });
+		Body* sunObject = new Body("Sun", "OrangeStar", { 0.1f, 0.1f, 0.0f });
 		sunObject->createActorPhysics();
 		sunObject->setMass(10000.f);
+		sunObject->LinePath().color = { 0.9f, 0.1f, 0.1f, 0.5f };
 		mainMap->addObject(sunObject);
+
+		_suns.emplace_back(sunObject);
 	}
 
 	// Interface
@@ -127,7 +130,7 @@ void System::Drawline() {
 		DrawLine::draw(*_greed);
 	}
 	else {
-		_greed = new Greed(100.0f, 10.0f);
+		_greed = new Greed(10000.0f, 1000.0f);
 		_greed->setPos({ 0.0f, 0.0f, 0.1f });
 	}
 
@@ -165,6 +168,26 @@ void System::Drawline() {
 
 			Body* body = static_cast<Body*>(objPtr.get());
 			DrawLine::draw(body->LineToMassCenter());
+		}
+	}
+	if (showForceVector) {
+		for (auto& objPtr : Map::GetFirstCurrentMap().GetObjects()) {
+			if (!objPtr->hasPhysics() && objPtr->tag != 123) {
+				continue;
+			}
+
+			Body* body = static_cast<Body*>(objPtr.get());
+			DrawLine::draw(body->LineForceVector());
+		}
+	}
+	if (showPath) {
+		for (auto& objPtr : Map::GetFirstCurrentMap().GetObjects()) {
+			if (!objPtr->hasPhysics() && objPtr->tag != 123) {
+				continue;
+			}
+
+			Body* body = static_cast<Body*>(objPtr.get());
+			DrawLine::draw(body->LinePath());
 		}
 	}
 }
@@ -233,10 +256,10 @@ void System::initCallback() {
 	});
 
 	_callbackPtr->add(Engine::CallbackType::RELEASE_KEY, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
-		if (Engine::Callback::pressKey(Engine::VirtualKey::SPACE)) {
-			Engine::KeyCallbackEvent* releaseKeyEvent = (Engine::KeyCallbackEvent*)callbackEventPtr->get();
-			Engine::VirtualKey key = releaseKeyEvent->getId();
+		Engine::KeyCallbackEvent* releaseKeyEvent = (Engine::KeyCallbackEvent*)callbackEventPtr->get();
+		Engine::VirtualKey key = releaseKeyEvent->getId();
 
+		if (Engine::Callback::pressKey(Engine::VirtualKey::SPACE)) {
 			if (key == Engine::VirtualKey::VK_1) {
 				if (showCenterMass) {
 					showCenterMass = false;
@@ -253,6 +276,36 @@ void System::initCallback() {
 					showCenter = true;
 				}
 			}
+			if (key == Engine::VirtualKey::VK_3) {
+				if (showForceVector) {
+					showForceVector = false;
+				}
+				else {
+					showForceVector = true;
+				}
+			}
+			if (key == Engine::VirtualKey::VK_4) {
+				if (showPath) {
+					showPath = false;
+				}
+				else {
+					showPath = true;
+				}
+			}
+		}
+
+		//...
+		if (key == Engine::VirtualKey::Z) {
+			--_curentSunn;
+			if (_curentSunn >= _suns.size()) {
+				_curentSunn = _suns.size() - 1;
+			}
+		}
+		if (key == Engine::VirtualKey::X) {
+			++_curentSunn;
+			if (_curentSunn >= _suns.size()) {
+				_curentSunn = 0;
+			}
 		}
 	});
 
@@ -267,11 +320,19 @@ void System::initCallback() {
 	_callbackPtr->add(Engine::CallbackType::RELEASE_TAP, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
 		if (_points.size() == 2) {
 			std::string name = "Body_" + std::to_string(Map::GetFirstCurrentMap().GetObjects().size());
-			Body* object = new Body(name, "Sphere_10", _points[0]);
-			object->createActorPhysics();
+			Body* object = nullptr;
+			
 			if (Engine::Callback::pressKey(Engine::VirtualKey::SPACE)) {
+				object = new Body(name, "OrangeStar", _points[0]);
+				object->LinePath().color = { 0.9f, 0.1f, 0.1f, 0.5f };
+				object->createActorPhysics();
 				object->setMass(help::random(1000.f, 10000.f));
+
+				_suns.emplace_back(object);
 			} else {
+				object = new Body(name, "BrownStone", _points[0]);
+				object->LinePath().color = { 0.1f, 0.1f, 0.9f, 0.5f };
+				object->createActorPhysics();
 				object->setMass(help::random(0.1f, 1.f));
 			}
 			object->addForce((_points[0] - _points[1]) * object->mass);
@@ -291,8 +352,13 @@ void System::initCallback() {
 
 			if (Engine::Callback::pressKey(Engine::VirtualKey::S)) {
 				if (CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get())) {
-					auto& sun = Map::GetFirstCurrentMap().getObjectByName("Sun");
-					cameraPtr->SetPosOutside(sun.getPos());
+					//auto& sun = Map::GetFirstCurrentMap().getObjectByName("Sun");
+					//cameraPtr->SetPosOutside(sun.getPos());
+
+					if (!_suns.empty()) {
+						auto sun = _suns[_curentSunn];
+						cameraPtr->SetPosOutside(sun->getPos());
+					}
 				}
 			}
 		}
@@ -308,10 +374,10 @@ void System::initCallback() {
 			float dist = cameraPtr->GetDistanceOutside();
 
 			if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_UP) {
-				dist -= Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 30.f : 10.f;
+				dist -= Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 50.f : 10.f;
 			}
 			else if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_BOTTOM) {
-				dist += Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 30.f : 10.f;
+				dist += Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 50.f : 10.f;
 			}
 
 			if (dist < 10.f) {

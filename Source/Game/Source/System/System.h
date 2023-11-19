@@ -9,6 +9,7 @@
 class Map;
 class Greed;
 class Line;
+class Body;
 
 namespace Engine { class Callback; }
 namespace Engine { class Text; }
@@ -40,8 +41,13 @@ private:
 	Line* _interfaceLine = nullptr;
 	std::vector<glm::vec3> _points;
 	
+	size_t _curentSunn = 0;
+	std::vector<Body*> _suns;
+
 	bool showCenter = false;
-	bool showCenterMass = true;
+	bool showCenterMass = false;
+	bool showForceVector = false;
+	bool showPath = false;
 
 	CallbackPtr _callbackPtr;
 

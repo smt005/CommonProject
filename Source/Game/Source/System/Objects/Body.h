@@ -4,6 +4,8 @@
 #include "glm/vec3.hpp"
 #include "Object/Map.h"
 #include "Object/Line.h"
+#include <list>
+#include "glm/vec3.hpp"
 
 class Body final : public Object {
 public:
@@ -18,12 +20,22 @@ public:
 	void action() override;
 
 	glm::vec3 GetVector();
-	const Line& LineToCenter();
-	const Line& LineToMassCenter();
+	Line& LineToCenter();
+	Line& LineToMassCenter();
+
+	Line& LineForceVector() {
+		return _forceVector;
+	}
+	Line& LinePath() {
+		return _path;
+	}
 
 private:
 	Line _lineToCenter;
 	Line _lineToMassCenter;
+	Line _forceVector;
+	Line _path;
+	std::list<glm::vec3> _points;
 
 public:
 	static glm::vec3 CenterSystem();

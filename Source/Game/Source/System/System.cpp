@@ -105,6 +105,7 @@ void System::update() {
 
 	Body::CenterSystem();
 	Body::CenterMassSystem();
+	Body::UpdateRalatovePos();
 }
 
 void System::draw() {
@@ -190,6 +191,17 @@ void System::Drawline() {
 			DrawLine::draw(body->LinePath());
 		}
 	}
+	if (showRelativePath) {
+		for (auto& objPtr : Map::GetFirstCurrentMap().GetObjects()) {
+			if (!objPtr->hasPhysics() && objPtr->tag != 123) {
+				continue;
+			}
+
+			Body* body = static_cast<Body*>(objPtr.get());
+			DrawLine::draw(body->RelativelyLinePath());
+		}
+	}
+	
 }
 
 void System::resize() {
@@ -259,37 +271,50 @@ void System::initCallback() {
 		Engine::KeyCallbackEvent* releaseKeyEvent = (Engine::KeyCallbackEvent*)callbackEventPtr->get();
 		Engine::VirtualKey key = releaseKeyEvent->getId();
 
-		if (Engine::Callback::pressKey(Engine::VirtualKey::SPACE)) {
-			if (key == Engine::VirtualKey::VK_1) {
-				if (showCenterMass) {
-					showCenterMass = false;
-				}
-				else {
-					showCenterMass = true;
-				}
+		//if (Engine::Callback::pressKey(Engine::VirtualKey::SPACE)) {}
+		if (key == Engine::VirtualKey::VK_1) {
+			if (showCenterMass) {
+				showCenterMass = false;
 			}
-			if (key == Engine::VirtualKey::VK_2) {
-				if (showCenter) {
-					showCenter = false;
-				}
-				else {
-					showCenter = true;
-				}
+			else {
+				showCenterMass = true;
 			}
-			if (key == Engine::VirtualKey::VK_3) {
-				if (showForceVector) {
-					showForceVector = false;
-				}
-				else {
-					showForceVector = true;
-				}
+		}
+		if (key == Engine::VirtualKey::VK_2) {
+			if (showCenter) {
+				showCenter = false;
 			}
-			if (key == Engine::VirtualKey::VK_4) {
-				if (showPath) {
-					showPath = false;
-				}
-				else {
-					showPath = true;
+			else {
+				showCenter = true;
+			}
+		}
+		if (key == Engine::VirtualKey::VK_3) {
+			if (showForceVector) {
+				showForceVector = false;
+			}
+			else {
+				showForceVector = true;
+			}
+		}
+		if (key == Engine::VirtualKey::VK_4) {
+			if (showPath) {
+				showPath = false;
+			}
+			else {
+				showPath = true;
+			}
+		}
+		if (key == Engine::VirtualKey::VK_5) {
+			if (showRelativePath) {
+				showRelativePath = false;
+				Body::centerBody = nullptr;
+			}
+			else {
+				showRelativePath = true;
+
+				if (!_suns.empty()) {
+					auto sun = _suns[_curentSunn];
+					Body::centerBody = sun;
 				}
 			}
 		}

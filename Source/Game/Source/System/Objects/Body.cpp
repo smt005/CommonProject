@@ -6,6 +6,7 @@ Map::Ptr Body::system;
 glm::vec3 Body::centerSystem;
 glm::vec3 Body::centerMassSystem;
 std::vector<Object*> Body::removeObject;
+Body* Body::centerBody = nullptr;
 
 void Body::action() {
 	if (!hasPhysics()) {
@@ -37,7 +38,7 @@ glm::vec3 Body::GetVector() {
 		++index;
 	}
 	_path.set(pathPoints, countPoints);
-	//_path.color = { 0.1f, 0.1f, 0.9f, 0.5f };
+	delete[] pathPoints;
 
 	//...
 	for (auto& objPtr : system->GetObjects()) {
@@ -91,6 +92,53 @@ Line& Body::LineToMassCenter() {
 	return _lineToMassCenter;
 }
 
+void Body::CalculateRelativelyLinePath() {
+	if (!centerBody) {
+		return;
+	}
+
+	if (_path.getCount() != centerBody->_path.getCount()) {
+		return;
+	}
+
+	const size_t countPoints = _points.size();
+	float* relativelyPoints = new float[countPoints * 3];
+	size_t i = 0;
+
+	auto itPoint = _points.begin();
+	auto itEnd = _points.end();
+	auto itCenterPoint = centerBody->_points.begin();
+
+	std::vector<glm::vec3> rel;
+	rel.reserve(countPoints);
+
+	glm::vec3 centerPos = centerBody->getPos();
+
+	while (itPoint != itEnd) {
+		glm::vec3 d = *itPoint - *itCenterPoint;
+		d += centerPos;
+		rel.emplace_back(d);
+
+		++itPoint;
+		++itCenterPoint;
+	}
+
+	{
+		float* pathPoints = new float[countPoints * 3];
+		size_t index = 0;
+		for (glm::vec3& p : rel) {
+			pathPoints[index] = p.x;
+			++index;
+			pathPoints[index] = p.y;
+			++index;
+			pathPoints[index] = p.z;
+			++index;
+		}
+		_relativelyPath.set(pathPoints, countPoints);
+		delete[] pathPoints;
+	}
+}
+
 // STATIC
 glm::vec3 Body::CenterSystem() {
 	float count = 0.f;
@@ -124,6 +172,16 @@ glm::vec3 Body::CenterMassSystem() {
 
 	centerMassSystem = sunPosMass / sumMass;
 	return centerMassSystem;
+}
+
+void Body::UpdateRalatovePos() {
+	for (auto& objPtr : system->GetObjects()) {
+		if (!objPtr->hasPhysics() || objPtr->tag != 123) {
+			continue;
+		}
+
+		static_cast<Body*>(objPtr.get())->CalculateRelativelyLinePath();
+	}
 }
 
 void Body::RemoveBody() {

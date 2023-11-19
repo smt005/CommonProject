@@ -47,7 +47,8 @@ private:
 	bool showCenter = false;
 	bool showCenterMass = false;
 	bool showForceVector = false;
-	bool showPath = false;
+	bool showPath = true;
+	bool showRelativePath = false;
 
 	CallbackPtr _callbackPtr;
 

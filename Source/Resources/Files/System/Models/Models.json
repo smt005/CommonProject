@@ -1,7 +1,8 @@
 {
   "OrangeStar": {
     "shape": "Models/Convex/Sphere_10.obj",
-    "texture": "Textures/star/orange_star.jpg"
+    "texture": "Textures/star/orange_star.jpg",
+    "scale": 5
   },
   "BrownStone": {
     "shape": "Models/Convex/Sphere_5.obj",

@@ -220,6 +220,7 @@ bool System::load() {
 		if (CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get())) {
 			cameraPtr->Load(loadData["Camera"]);
 			cameraPtr->Enable(true);
+			cameraPtr->SetDistanceOutside(1000.f);
 		}
 	}
 
@@ -344,26 +345,36 @@ void System::initCallback() {
 
 	_callbackPtr->add(Engine::CallbackType::RELEASE_TAP, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
 		if (_points.size() == 2) {
-			std::string name = "Body_" + std::to_string(Map::GetFirstCurrentMap().GetObjects().size());
-			Body* object = nullptr;
-			
-			if (Engine::Callback::pressKey(Engine::VirtualKey::SPACE)) {
-				object = new Body(name, "OrangeStar", _points[0]);
-				object->LinePath().color = { 0.9f, 0.1f, 0.1f, 0.5f };
-				object->createActorPhysics();
-				object->setMass(help::random(1000.f, 10000.f));
+			if (Engine::TapCallbackEvent* tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
+				if (tapCallbackEvent->_id == Engine::VirtualTap::LEFT) {
+					std::string name = "Body_" + std::to_string(Map::GetFirstCurrentMap().GetObjects().size());
+					Body* object = nullptr;
 
-				_suns.emplace_back(object);
-			} else {
-				object = new Body(name, "BrownStone", _points[0]);
-				object->LinePath().color = { 0.1f, 0.1f, 0.9f, 0.5f };
-				object->createActorPhysics();
-				object->setMass(help::random(0.1f, 1.f));
+					object = new Body(name, "BrownStone", _points[0]);
+					object->LinePath().color = { 0.1f, 0.1f, 0.9f, 0.5f };
+					object->createActorPhysics();
+					object->setMass(help::random(0.1f, 1.f));
+
+					object->addForce((_points[0] - _points[1])* object->mass);
+					Map::GetFirstCurrentMap().addObject(object);
+					_points.clear();
+				}
+				if (tapCallbackEvent->_id == Engine::VirtualTap::RIGHT) {
+					std::string name = "Body_" + std::to_string(Map::GetFirstCurrentMap().GetObjects().size());
+					Body* object = nullptr;
+
+					object = new Body(name, "OrangeStar", _points[0]);
+					object->LinePath().color = { 0.9f, 0.1f, 0.1f, 0.5f };
+					object->createActorPhysics();
+					object->setMass(help::random(1000.f, 10000.f));
+
+					_suns.emplace_back(object);
+
+					object->addForce((_points[0] - _points[1])* object->mass);
+					Map::GetFirstCurrentMap().addObject(object);
+					_points.clear();
+				}
 			}
-			object->addForce((_points[0] - _points[1]) * object->mass);
-			Map::GetFirstCurrentMap().addObject(object);
-
-			_points.clear();
 		}
 	});
 
@@ -377,9 +388,6 @@ void System::initCallback() {
 
 			if (Engine::Callback::pressKey(Engine::VirtualKey::S)) {
 				if (CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get())) {
-					//auto& sun = Map::GetFirstCurrentMap().getObjectByName("Sun");
-					//cameraPtr->SetPosOutside(sun.getPos());
-
 					if (!_suns.empty()) {
 						auto sun = _suns[_curentSunn];
 						cameraPtr->SetPosOutside(sun->getPos());
@@ -399,10 +407,10 @@ void System::initCallback() {
 			float dist = cameraPtr->GetDistanceOutside();
 
 			if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_UP) {
-				dist -= Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 50.f : 10.f;
+				dist -= Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 150.f : 30.f;
 			}
 			else if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_BOTTOM) {
-				dist += Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 50.f : 10.f;
+				dist += Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 150.f : 30.f;
 			}
 
 			if (dist < 10.f) {

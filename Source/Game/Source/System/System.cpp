@@ -220,7 +220,7 @@ bool System::load() {
 		if (CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get())) {
 			cameraPtr->Load(loadData["Camera"]);
 			cameraPtr->Enable(true);
-			cameraPtr->SetDistanceOutside(1000.f);
+			cameraPtr->SetDistanceOutside(5000.f);
 		}
 	}
 
@@ -360,18 +360,32 @@ void System::initCallback() {
 					_points.clear();
 				}
 				if (tapCallbackEvent->_id == Engine::VirtualTap::RIGHT) {
-					std::string name = "Body_" + std::to_string(Map::GetFirstCurrentMap().GetObjects().size());
+					std::string name = "Sun_" + std::to_string(Map::GetFirstCurrentMap().GetObjects().size());
 					Body* object = nullptr;
 
 					object = new Body(name, "OrangeStar", _points[0]);
 					object->LinePath().color = { 0.9f, 0.1f, 0.1f, 0.5f };
 					object->createActorPhysics();
-					object->setMass(help::random(1000.f, 10000.f));
+
+					if (false) {
+						object->setMass(help::random(1000.f, 10000.f));
+						object->addForce((_points[0] - _points[1])* object->mass);
+					} else {
+						object->setMass(10000.f);
+						glm::vec3 velocity = _points[0] - _points[1];
+						object->SetLinearVelocity(velocity);
+
+						{
+							if (_suns.size() == 1) {
+								glm::vec3 velocityFirst = -velocity;
+								_suns.front()->SetLinearVelocity(velocityFirst);
+							}
+						}
+					}
 
 					_suns.emplace_back(object);
-
-					object->addForce((_points[0] - _points[1])* object->mass);
 					Map::GetFirstCurrentMap().addObject(object);
+
 					_points.clear();
 				}
 			}
@@ -407,10 +421,10 @@ void System::initCallback() {
 			float dist = cameraPtr->GetDistanceOutside();
 
 			if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_UP) {
-				dist -= Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 150.f : 30.f;
+				dist -= Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 250.f : 100.f;
 			}
 			else if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_BOTTOM) {
-				dist += Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 150.f : 30.f;
+				dist += Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 250.f : 100.f;
 			}
 
 			if (dist < 10.f) {

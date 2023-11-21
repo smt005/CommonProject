@@ -326,11 +326,25 @@ void System::initCallback() {
 			if (_curentSunn >= _suns.size()) {
 				_curentSunn = _suns.size() - 1;
 			}
+
+			if (showRelativePath) {
+				if (!_suns.empty()) {
+					auto sun = _suns[_curentSunn];
+					Body::centerBody = sun;
+				}
+			}
 		}
 		if (key == Engine::VirtualKey::X) {
 			++_curentSunn;
 			if (_curentSunn >= _suns.size()) {
 				_curentSunn = 0;
+			}
+
+			if (showRelativePath) {
+				if (!_suns.empty()) {
+					auto sun = _suns[_curentSunn];
+					Body::centerBody = sun;
+				}
 			}
 		}
 	});

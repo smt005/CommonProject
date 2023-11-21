@@ -33,14 +33,19 @@ System::~System() {;
 }
 
 void System::init() {
-	DRAW::setClearColor(0.3f, 0.6f, 0.9f, 1.0f);
+	//DRAW::setClearColor(0.3f, 0.6f, 0.9f, 1.0f);
+	//DRAW::setClearColor(0.1f, 0.2f, 0.3f, 1.0f);
+	DRAW::setClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 
 	Map::Ptr mainMap(new Map());
 	Map::AddCurrentMap(Map::add(mainMap));
 
 	//...
 	if (!load()) {
-		mainMap->getCamera() = std::make_shared<CameraControlOutside>();
+		//mainMap->getCamera() = std::make_shared<CameraControlOutside>();
+		_camearSide = std::make_shared<CameraControlOutside>();
+		mainMap->getCamera() = _camearSide;
+
 		if (CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get())) {
 			cameraPtr->SetPerspective();
 			cameraPtr->SetPos({ 10, 10, 10 });
@@ -69,12 +74,14 @@ void System::init() {
 
 	// Interface
 	{
-		Object& obj = mainMap->addObjectToPos("Plane", { 2.f, 3.f, 0.f });
+		Object& obj = mainMap->addObjectToPos("DottedCircleTarget", { 2.f, 3.f, 0.f });
 		obj.setName("Target");
+		obj.setVisible(false);
 	}
 	{
-		Object& obj = mainMap->addObjectToPos("Plane", { 14.f, 12.f, 0.f });
+		Object& obj = mainMap->addObjectToPos("Target", { 14.f, 12.f, 0.f });
 		obj.setName("Vector");
+		obj.setVisible(false);
 	}
 }
 
@@ -131,8 +138,16 @@ void System::Drawline() {
 		DrawLine::draw(*_greed);
 	}
 	else {
-		_greed = new Greed(10000.0f, 1000.0f);
+		_greed = new Greed(10000.0f, 1000.0f, { {0.5f, 0.25f, 0.25f, 0.125f}, { 0.125f, 0.125f, 0.5f, 0.125f }, { 0.75f, 1.f, 0.75f, 0.95f } });
 		_greed->setPos({ 0.0f, 0.0f, 0.1f });
+	}
+
+	if (_greedBig) {
+		DrawLine::draw(*_greedBig);
+	}
+	else {
+		_greedBig = new Greed(100000.0f, 10000.0f, { {0.5f, 0.25f, 0.25f, 0.125f}, { 0.125f, 0.125f, 0.5f, 0.125f }, { 0.75f, 1.f, 0.75f, 0.95f } });
+		_greedBig->setPos({ 0.0f, 0.0f, 0.1f });
 	}
 
 	if (_interfaceLine) {
@@ -215,15 +230,35 @@ bool System::load() {
 		return false;
 	}
 
-	if (!loadData["Camera"].empty()) {
-		Map::GetFirstCurrentMap().getCamera() = std::make_shared<CameraControlOutside>();
+	/*if (!loadData["Camera"].empty()) {
+		//Map::GetFirstCurrentMap().getCamera() = std::make_shared<CameraControlOutside>();
+		_camearSide = std::make_shared<CameraControlOutside>();
+		Map::GetFirstCurrentMap().getCamera() = _camearSide;
+
 		if (CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get())) {
 			cameraPtr->Load(loadData["Camera"]);
 			cameraPtr->Enable(true);
 			cameraPtr->SetDistanceOutside(5000.f);
 		}
+	}*/
+
+	if (!loadData["CameraSide"].empty()) {
+		_camearSide = std::make_shared<CameraControlOutside>();
+		
+		dynamic_cast<CameraControlOutside*>(_camearSide.get())->Load(loadData["CameraSide"]);
+		dynamic_cast<CameraControlOutside*>(_camearSide.get())->Enable(true);
+		dynamic_cast<CameraControlOutside*>(_camearSide.get())->SetDistanceOutside(5000.f);
+
+		Map::GetFirstCurrentMap().getCamera() = _camearSide;
 	}
 
+	if (!loadData["CamearTop"].empty()) {
+		_camearTop = std::make_shared<CameraControlOutside>();
+
+		dynamic_cast<CameraControlOutside*>(_camearTop.get())->Load(loadData["CamearTop"]);
+		dynamic_cast<CameraControlOutside*>(_camearTop.get())->Enable(true);
+		dynamic_cast<CameraControlOutside*>(_camearTop.get())->SetDistanceOutside(5000.f);
+	}
 
 #if _DEBUG
 	Engine::Core::log("LOAD: " + saveFileName + "\n" + help::stringFroJson(loadData));
@@ -234,8 +269,15 @@ void System::save() {
 	//return; // TEMP_ .................................................
 	Json::Value saveData;
 
-	if (CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get())) {
-		cameraPtr->Save(saveData["Camera"]);
+	//if (CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get())) {
+		//cameraPtr->Save(saveData["Camera"]);
+	//}
+
+	if (_camearSide) {
+		_camearSide->Save(saveData["CameraSide"]);
+	}
+	if (_camearTop) {
+		_camearTop->Save(saveData["CamearTop"]);
 	}
 
 	//...
@@ -253,6 +295,7 @@ void System::initCallback() {
 				if (_points.empty()) {
 					_points.emplace_back(Map::GetFirstCurrentMap().getCamera()->corsorCoord());
 					Map::GetFirstCurrentMap().getObjectByName("Target").setPos(_points[0]);
+					Map::GetFirstCurrentMap().getObjectByName("Target").setVisible(true);
 				}
 			}
 		}
@@ -265,6 +308,7 @@ void System::initCallback() {
 		if (_points.size() == 2) {
 			_points[1] = Map::GetFirstCurrentMap().getCamera()->corsorCoord();
 			Map::GetFirstCurrentMap().getObjectByName("Vector").setPos(_points[1]);
+			Map::GetFirstCurrentMap().getObjectByName("Vector").setVisible(true);
 		}
 	});
 
@@ -273,6 +317,32 @@ void System::initCallback() {
 		Engine::VirtualKey key = releaseKeyEvent->getId();
 
 		//if (Engine::Callback::pressKey(Engine::VirtualKey::SPACE)) {}
+
+		if (key == Engine::VirtualKey::V) {
+			if (_camearTop != Map::GetFirstCurrentMap().getCamera()) {
+				if (!_camearTop) {
+					_camearTop = std::make_shared<CameraControlOutside>();
+					static_cast<CameraControlOutside*>(_camearTop.get())->SetPerspective();
+					static_cast<CameraControlOutside*>(_camearTop.get())->SetPos({ 1.f, 1.f, 10.f });
+					static_cast<CameraControlOutside*>(_camearTop.get())->SetDirect({ -1.f, -1.f, 0.1f });
+					static_cast<CameraControlOutside*>(_camearTop.get())->SetSpeed(1.0);
+					static_cast<CameraControlOutside*>(_camearTop.get())->Enable(true);
+				}
+
+				static_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get())->enableCallback = false;
+				static_cast<CameraControlOutside*>(_camearTop.get())->enableCallback = true;
+				Map::GetFirstCurrentMap().getCamera() = _camearTop;
+
+				//DRAW::setClearColor(0.7f, 0.8f, 0.9f, 1.0f);
+			} else {
+				static_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get())->enableCallback = false;
+				static_cast<CameraControlOutside*>(_camearSide.get())->enableCallback = true;
+				Map::GetFirstCurrentMap().getCamera() = _camearSide;
+
+				//DRAW::setClearColor(0.1f, 0.2f, 0.3f, 1.0f);
+			}
+		}
+
 		if (key == Engine::VirtualKey::VK_1) {
 			if (showCenterMass) {
 				showCenterMass = false;
@@ -372,6 +442,9 @@ void System::initCallback() {
 					object->addForce((_points[0] - _points[1])* object->mass);
 					Map::GetFirstCurrentMap().addObject(object);
 					_points.clear();
+
+					Map::GetFirstCurrentMap().getObjectByName("Target").setVisible(false);
+					Map::GetFirstCurrentMap().getObjectByName("Vector").setVisible(false);
 				}
 				if (tapCallbackEvent->_id == Engine::VirtualTap::RIGHT) {
 					std::string name = "Sun_" + std::to_string(Map::GetFirstCurrentMap().GetObjects().size());

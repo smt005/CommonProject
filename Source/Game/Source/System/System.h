@@ -13,6 +13,7 @@ class Body;
 
 namespace Engine { class Callback; }
 namespace Engine { class Text; }
+class Camera;
 
 typedef std::shared_ptr<Engine::Callback> CallbackPtr;
 
@@ -38,6 +39,7 @@ public:
 
 private:
 	Greed* _greed = nullptr;
+	Greed* _greedBig = nullptr;
 	Line* _interfaceLine = nullptr;
 	std::vector<glm::vec3> _points;
 	
@@ -51,6 +53,8 @@ private:
 	bool showRelativePath = false;
 
 	CallbackPtr _callbackPtr;
+	std::shared_ptr<Camera> _camearSide;
+	std::shared_ptr<Camera> _camearTop;
 
 public:
 	static std::string _resourcesDir;

@@ -2,11 +2,12 @@
   "OrangeStar": {
     "shape": "Models/Convex/Sphere_10.obj",
     "texture": "Textures/star/orange_star.jpg",
-    "scale": 5
+    "scale": 4
   },
   "BrownStone": {
     "shape": "Models/Convex/Sphere_5.obj",
-    "texture": "Textures/planet/brown_stone.jpg"
+    "texture": "Textures/planet/brown_stone.jpg",
+	"scale": 2
   },
   "GrayStone": {
     "shape": "Models/Convex/Sphere_5.obj",
@@ -20,8 +21,14 @@
     "shape": "Models/Convex/Sphere_5.obj",
     "texture": "Textures/planet/ice_light.jpg"
   },
-  "Plane": {
+  "DottedCircleTarget": {
     "shape": "Models/Interface/Plane_1_1_z.obj",
-    "texture": "Textures/Interface/Target.png"
+    "texture": "Textures/Interface/dotted_circle_target.png",
+    "scale": 200
+  },
+  "Target": {
+    "shape": "Models/Interface/Plane_1_1_z.obj",
+    "texture": "Textures/Interface/Target.png",
+    "scale": 200
   }
 }

@@ -19,8 +19,8 @@
 #include "ImGuiManager/UI.h"
 #include "glm/vec2.hpp"
 #include "Physics/Physics.h"
-
-#include "Objects//Body.h"
+#include "Sound/Sound.h"
+#include "Objects/Body.h"
 
 #define DRAW DrawLight
 std::string System::_resourcesDir;
@@ -83,6 +83,8 @@ void System::init() {
 		obj.setName("Vector");
 		obj.setVisible(false);
 	}
+
+	Sound::Init();
 }
 
 void System::InitPhysic() {

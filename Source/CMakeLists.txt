@@ -39,6 +39,12 @@ set(GAME_SOURCE "${GAME_DIR}/Source")
 #glm
 set(GLM_INCLUDES "${ENGINE_DIR}/ThirdParty/glm")
 
+# OpenAL
+set(OPENAL_NAME OpenAL)
+set(OPENAL_DIR "${ENGINE_DIR}/ThirdParty/OpenAL")
+set(OPENAL_INCLUDES "${OPENAL_DIR}/include")
+set(OPENAL_SOURCE "${OPENAL_DIR}")
+
 # ImGui
 set(IMGUI_NAME ImGui)
 set(IMGUI_DIR "${ENGINE_DIR}/ThirdParty/ImGui")
@@ -122,6 +128,12 @@ link_directories(${GAME_DIR})
 
 #Resources
 #add_subdirectory(${RESOURCES_DIR})
+
+# OpenAL
+include_directories(${OPENAL_INCLUDES})
+link_directories(${OPENAL_DIR})
+add_subdirectory(${OPENAL_DIR})
+target_link_libraries(${PROJECT_NAME} ${OPENAL_NAME})
 
 #glm
 include_directories(${GLM_INCLUDES})

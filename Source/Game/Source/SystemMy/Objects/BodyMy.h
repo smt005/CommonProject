@@ -21,17 +21,18 @@ public:
 	};
 
 	BodyMy(const string& name, const string& modelName, const vec3& pos)
-		: Object( name, modelName, pos, Engine::Physics::Type::CONVEX)
+		: Object( name, modelName, pos)
 	{
 		tag = 123;
 	}
 
 	void action() override;
-
+	void AddForceMy(const glm::vec3& forceVec);
 	glm::vec3 GetVector();
+
+	void CalculateRelativelyLinePath();
 	Line& LineToCenter();
 	Line& LineToMassCenter();
-
 	Line& LineForceVector() {
 		return _forceVector;
 	}
@@ -41,17 +42,8 @@ public:
 	Line& RelativelyLinePath() {
 		return _relativelyPath;
 	}
-	
-	void CalculateRelativelyLinePath();
 
-
-	void AddForceMy(const glm::vec3& forceVec);
 	glm::vec3 _velocity = { 0.f, 0.f, 0.f };
-
-	float speed = 0;
-	float minSpeed = 0;
-	float maxSpeed = 0;
-	double time = 0;
 
 private:
 	Line _lineToCenter;

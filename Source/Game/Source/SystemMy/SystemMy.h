@@ -32,7 +32,6 @@ public:
 
 	void Drawline();
 
-	void InitPhysic();
 	void initCallback();
 	bool load();
 	void save();

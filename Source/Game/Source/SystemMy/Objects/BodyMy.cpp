@@ -22,22 +22,6 @@ void BodyMy::ApplyForce(const double dt) {
 		pos += data.body->_velocity * (float)dt;
 
 		data.body->setPos(pos);
-
-		/*{
-			data.body->speed = glm::length(data.body->_velocity);
-			if (data.body->speed > .1f) {
-				if (data.body->time > 100) {
-					data.body->minSpeed = data.body->speed < data.body->minSpeed  ? data.body->speed : data.body->minSpeed;
-				} else {
-					data.body->minSpeed = data.body->speed;
-					data.body->time += dt;
-				}
-
-				data.body->maxSpeed = data.body->speed > data.body->maxSpeed ? data.body->speed : data.body->maxSpeed;
-
-				std::cout << "speed: " << data.body->speed << " [" << data.body->minSpeed << " : " << data.body->maxSpeed << "] " << std::endl;
-			}
-		}*/
 	}
 
 	bodyes.clear();
@@ -53,7 +37,6 @@ void BodyMy::action() {
 	}
 
 	glm::vec3 gravityVector = GetVector();
-	//addForce(gravityVector, Engine::Physics::Force::FORCE);
 	AddForceMy(gravityVector);
 }
 
@@ -106,7 +89,6 @@ glm::vec3 BodyMy::GetVector() {
 		removeObject.push_back(this);
 	}
 
-	//float points[] = { pos.x, pos.y, pos.z, pos.x + sumGravityVector.x * 100.f, pos.y + sumGravityVector.y * 100.f, pos.z + sumGravityVector.z * 100.f };
 	float points[] = { pos.x, pos.y, pos.z, pos.x + sumGravityVector.x, pos.y + sumGravityVector.y, pos.z + sumGravityVector.z };
 	_forceVector.set(points, 2);
 	_forceVector.color = { 0.1f, 0.9f, 0.1f, 0.5f };
@@ -225,7 +207,7 @@ void BodyMy::UpdateRalatovePos() {
 }
 
 void BodyMy::RemoveBody() {
-	/*auto& objects = system->GetObjects();
+	auto& objects = system->GetObjects();
 	for (auto obj : removeObject) {
 		auto it = std::find_if(objects.begin(), objects.end(), [obj](const auto& objPtr) {
 			return objPtr.get() == obj;
@@ -234,5 +216,5 @@ void BodyMy::RemoveBody() {
 		if (it != objects.end()) {
 			objects.erase(it);
 		}
-	}*/
+	}
 }

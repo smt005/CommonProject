@@ -5,7 +5,6 @@
 #include "Callback/CallbackEvent.h"
 #include "Screen.h"
 #include "Common/Help.h"
-//#include "Draw/Camera/CameraControl.h"
 #include "Draw/Camera/CameraControlOutside.h"
 #include "Draw/Draw.h"
 #include "Draw/DrawLight.h"
@@ -18,8 +17,6 @@
 #include "Object/Text.h"
 #include "ImGuiManager/UI.h"
 #include "glm/vec2.hpp"
-#include "Physics/Physics.h"
-
 #include "Objects/BodyMy.h"
 
 #define DRAW DrawLight
@@ -59,14 +56,12 @@ void SystemMy::init() {
 
 	//...
 	initCallback();
-	//InitPhysic();
 
 	//...
 	{
 		BodyMy::system = mainMap;
 		
 		BodyMy* sunObject = new BodyMy("Sun", "OrangeStar", { 0.1f, 0.1f, 0.0f });
-		//sunObject->createActorPhysics();
 		sunObject->setMass(1000000.f);
 		sunObject->LinePath().color = { 0.9f, 0.1f, 0.1f, 0.5f };
 		mainMap->addObject(sunObject);
@@ -87,17 +82,6 @@ void SystemMy::init() {
 	}
 }
 
-void SystemMy::InitPhysic() {
-	//Engine::Physics::init();
-	//Engine::Physics::GetGravity({0.f, 0.f, 0.f});
-	//Engine::Physics::createScene();
-	//Map::GetFirstCurrentMap().initPhysixs();
-
-	/*for (auto& objPtr : Map::GetFirstCurrentMap().GetObjects()) {
-		objPtr->setMass(objPtr->mass);
-	}*/
-}
-
 void SystemMy::close() {
 	save();
 }
@@ -108,14 +92,10 @@ void SystemMy::update() {
 		return;
 	}
 	time = Engine::Core::currentTime();
-	
-	//BodyMy::RemoveBody();
 
 	Map& map = Map::GetFirstCurrentMap();
 	map.action();
 
-	//Engine::Physics::updateScene(Engine::Core::deltaTime() * 1.f);
-	//map.updatePhysixs();
 	BodyMy::ApplyForce(dt);
 
 	BodyMy::CenterSystem();
@@ -432,7 +412,7 @@ void SystemMy::initCallback() {
 			for (int i = 0; i < 100; ++i) {
 				//update();
 
-				double dt = 10;
+				double dt = 15;
 				Map& map = Map::GetFirstCurrentMap();
 				map.action();
 				BodyMy::ApplyForce(dt);
@@ -449,9 +429,7 @@ void SystemMy::initCallback() {
 
 					object = new BodyMy(name, "BrownStone", _points[0]);
 					object->LinePath().color = { 0.1f, 0.1f, 0.9f, 0.5f };
-					//object->createActorPhysics();
 					object->setMass(help::random(10.f, 100.f));
-					//object->setMass(10.f);
 
 					if (!Engine::Callback::pressKey(Engine::VirtualKey::SPACE)) {
 						glm::vec3 velocity = _points[0] - _points[1];
@@ -476,51 +454,13 @@ void SystemMy::initCallback() {
 					Map::GetFirstCurrentMap().getObjectByName("Target").setVisible(false);
 					Map::GetFirstCurrentMap().getObjectByName("Vector").setVisible(false);
 				}
-				/*if (tapCallbackEvent->_id == Engine::VirtualTap::MIDDLE) {
-					std::string name = "Body_" + std::to_string(Map::GetFirstCurrentMap().GetObjects().size());
-					BodyMy* object = nullptr;
 
-					object = new BodyMy(name, "BrownStone", _points[0]);
-					object->LinePath().color = { 0.1f, 0.1f, 0.9f, 0.5f };
-					object->createActorPhysics();
-					object->setMass(help::random(0.1f, 1.f));
-
-					if (_suns.empty())
-					{
-						object->addForce((_points[0] - _points[1]) * object->mass);
-					} else {
-						glm::vec3 gravityVector = object->getPos() - _suns[_curentSunn]->getPos();
-						float dist = glm::length(gravityVector);
-						float g = _suns[_curentSunn]->mass / (dist * dist);
-						float vel = std::sqrtf(g * dist);
-
-						glm::vec3 velocity;
-						float g90 = glm::pi<float>() / 2.0;
-
-						gravityVector = glm::normalize(gravityVector);
-
-						velocity.x = gravityVector.x * std::cos(g90) - gravityVector.y * std::sin(g90);
-						velocity.y = gravityVector.x * std::sin(g90) + gravityVector.y * std::cos(g90);
-						velocity.z = 0.f;
-
-						velocity *= vel;
-
-						object->SetLinearVelocity(velocity);
-					}
-
-					Map::GetFirstCurrentMap().addObject(object);
-					_points.clear();
-
-					Map::GetFirstCurrentMap().getObjectByName("Target").setVisible(false);
-					Map::GetFirstCurrentMap().getObjectByName("Vector").setVisible(false);
-				}*/
 				if (tapCallbackEvent->_id == Engine::VirtualTap::RIGHT) {
 					std::string name = "Sun_" + std::to_string(Map::GetFirstCurrentMap().GetObjects().size());
 					BodyMy* object = nullptr;
 
 					object = new BodyMy(name, "OrangeStar", _points[0]);
 					object->LinePath().color = { 0.9f, 0.1f, 0.1f, 0.5f };
-					object->createActorPhysics();
 
 					if (false) {
 						object->setMass(help::random(500000.f, 1000000.f));

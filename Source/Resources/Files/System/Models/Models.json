@@ -2,12 +2,12 @@
   "OrangeStar": {
     "shape": "Models/Convex/Sphere_10.obj",
     "texture": "Textures/star/orange_star.jpg",
-    "scale": 4
+    "scale": 12
   },
   "BrownStone": {
     "shape": "Models/Convex/Sphere_5.obj",
     "texture": "Textures/planet/brown_stone.jpg",
-	"scale": 2
+	"scale": 8
   },
   "GrayStone": {
     "shape": "Models/Convex/Sphere_5.obj",

@@ -39,6 +39,30 @@ public:
 	bool load();
 	void save();
 
+	int GetOrbite() const {
+		return _orbite;
+	}
+	void SetOrbite(int orbite) {
+		_orbite = orbite;
+	}
+
+	void SetTimeSpeed(int timeSpeed) {
+		_timeSpeed = timeSpeed;
+	}
+
+	bool PerspectiveView() {
+		return _perspectiveView;
+	}
+
+	void SetPerspectiveView(bool perspectiveView);
+
+	bool ViewByObject() {
+		return _viewByObject;
+	}
+
+	void SetViewByObject(bool viewByObject);
+	void NormalizeSystem();
+
 private:
 	Greed* _greed = nullptr;
 	Greed* _greedBig = nullptr;
@@ -57,6 +81,17 @@ private:
 	CallbackPtr _callbackPtr;
 	std::shared_ptr<Camera> _camearSide;
 	std::shared_ptr<Camera> _camearTop;
+
+	struct LockMouse {
+		bool lockPinch = false;
+		float bottomHeight = 60.f;
+
+	} _lockMouse;
+
+	int _orbite = 0;
+	int _timeSpeed = 1;
+	bool _viewByObject = false;
+	bool _perspectiveView = true;
 
 public:
 	static std::string _resourcesDir;

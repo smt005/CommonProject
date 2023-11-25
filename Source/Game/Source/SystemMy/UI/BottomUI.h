@@ -9,7 +9,8 @@ class SystemMy;
 
 class BottomUI final : public UI::Window {
 public:
-	BottomUI(/*SystemMy* mystemMy*/);
+	BottomUI();
+	BottomUI(SystemMy* systemMy);
 	void OnOpen() override;
 	void Update() override;
 	void Draw() override;
@@ -18,7 +19,8 @@ private:
 	float _x = 0.f;
 	float _y = 0.f;
 	float _width = 100.f;
-	float _height = 30.f;
+	float _height = 65.f;
 
-	//SystemMy* _mystemMy = nullptr;
+	int timeSpeed = 1;
+	SystemMy* _systemMy = nullptr;
 };

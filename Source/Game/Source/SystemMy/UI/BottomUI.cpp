@@ -7,12 +7,20 @@
 #include "Object/Map.h"
 #include "Object/Object.h"
 
-BottomUI::BottomUI(/*SystemMy* mystemMy*/) /*: _mystemMy(mystemMy)*/ {
+BottomUI::BottomUI() {
+    SetId("BottomUI");
+}
+
+BottomUI::BottomUI(SystemMy* systemMy)
+    : UI::Window()
+    , _systemMy(systemMy)
+{
     SetId("BottomUI");
 }
 
 void BottomUI::OnOpen() {
-    SetFlag(ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
+    SetFlag(ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
+    SetAlpha(0.f);
 }
 
 void BottomUI::Update() {
@@ -24,7 +32,51 @@ void BottomUI::Update() {
 }
 
 void BottomUI::Draw() {
-    if (ImGui::Button("Reset##reset_btn", { 50.f, 20.f })) {
-        Map::GetFirstCurrentMap().GetObjects().clear();
+    if (_systemMy->GetOrbite() == 0) {
+        if (ImGui::Button("[S]", { 50.f, 50.f })) {
+            _systemMy->SetOrbite(1);
+        }
+    } else {
+        if (ImGui::Button("[O]", { 50.f, 50.f })) {
+            _systemMy->SetOrbite(0);
+        }
+    }
+
+    //...
+    ImGui::SameLine();
+    ImGuiStyle& style = ImGui::GetStyle();
+
+    volatile static float heightSlider = 18.f;
+    volatile static float widthSlider = 185.f;
+
+    style.FramePadding.y = heightSlider;
+    ImGui::PushItemWidth((Engine::Screen::width() - widthSlider));
+    ImGui::SliderInt("##time_speed_slider", &timeSpeed, 1, 100);
+    _systemMy->_timeSpeed = timeSpeed;
+    ImGui::PopItemWidth();
+
+    //...
+    ImGui::SameLine();
+    if (_systemMy->ViewByObject()) {
+        if (ImGui::Button("[X]", { 50.f, 50.f })) {
+            _systemMy->SetViewByObject(false);
+        }
+    } else {
+        if (ImGui::Button("[V]", { 50.f, 50.f })) {
+            _systemMy->SetViewByObject(true);
+        }
+    }
+
+    //...
+    ImGui::SameLine();
+    if (_systemMy->PerspectiveView()) {
+        if (ImGui::Button("[*]", { 50.f, 50.f })) {
+            _systemMy->SetPerspectiveView(false);
+        }
+    }
+    else {
+        if (ImGui::Button("[#]", { 50.f, 50.f })) {
+            _systemMy->SetPerspectiveView(true);
+        }
     }
 }

@@ -58,7 +58,7 @@ void SystemMy::init() {
 
 	//...
 	initCallback();
-	UI::ShowWindow<BottomUI>();
+	UI::ShowWindow<BottomUI>(this);
 
 	//...
 	{
@@ -90,6 +90,15 @@ void SystemMy::close() {
 }
 
 void SystemMy::update() {
+	if (_viewByObject && !_suns.empty()) {
+		if (CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get())) {
+			if (!_suns.empty()) {
+				auto sun = _suns[_curentSunn];
+				cameraPtr->SetPosOutside(sun->getPos());
+			}
+		}
+	}
+
 	double dt = Engine::Core::currentTime() - time;
 	if (dt < 10) {
 		return;
@@ -97,9 +106,15 @@ void SystemMy::update() {
 	time = Engine::Core::currentTime();
 
 	Map& map = Map::GetFirstCurrentMap();
-	map.action();
 
+	map.action();
 	BodyMy::ApplyForce(dt);
+
+	for (int it = 1; it < _timeSpeed; ++it) {
+		double dtTemp = 10;
+		map.action();
+		BodyMy::ApplyForce(dtTemp);
+	}
 
 	BodyMy::CenterSystem();
 	BodyMy::CenterMassSystem();
@@ -281,6 +296,10 @@ void SystemMy::save() {
 
 void SystemMy::initCallback() {
 	_callbackPtr = std::make_shared<Engine::Callback>(Engine::CallbackType::PRESS_TAP, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
+		if (_lockMouse.lockPinch = Engine::Callback::mousePos().y > (Engine::Screen::height() - _lockMouse.bottomHeight)) {
+			return;
+		}
+
 		if (Engine::TapCallbackEvent* tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
 			if (tapCallbackEvent->_id == Engine::VirtualTap::LEFT) {
 				if (_points.empty()) {
@@ -426,14 +445,14 @@ void SystemMy::initCallback() {
 
 	_callbackPtr->add(Engine::CallbackType::PINCH_KEY, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
 		if (Engine::Callback::pressKey(Engine::VirtualKey::Q) && Engine::Callback::pressKey(Engine::VirtualKey::SPACE)) {
-			for (int i = 0; i < 100; ++i) {
+			/*for (int i = 0; i < 100; ++i) {
 				//update();
 
 				double dt = 15;
 				Map& map = Map::GetFirstCurrentMap();
 				map.action();
 				BodyMy::ApplyForce(dt);
-			}
+			}*/
 		}
 	});
 
@@ -448,9 +467,10 @@ void SystemMy::initCallback() {
 					object->LinePath().color = { 0.1f, 0.1f, 0.9f, 0.5f };
 					object->setMass(help::random(10.f, 100.f));
 
-					if (!Engine::Callback::pressKey(Engine::VirtualKey::SPACE)) {
+					//if (!Engine::Callback::pressKey(Engine::VirtualKey::SPACE)) {
+					if (_orbite) {
 						glm::vec3 velocity = _points[0] - _points[1];
-						velocity /= 100.f;
+						velocity /= 1000.f;
 						object->_velocity = velocity;
 					} else {
 						glm::vec3 gravityVector = object->getPos() - _suns[_curentSunn]->getPos();
@@ -545,4 +565,55 @@ void SystemMy::initCallback() {
 			cameraPtr->SetDistanceOutside(dist);
 		}
 	});
+}
+
+void SystemMy::SetPerspectiveView(bool perspectiveView) {
+	_perspectiveView = perspectiveView;
+
+	if (_perspectiveView) {
+		static_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get())->enableCallback = false;
+		static_cast<CameraControlOutside*>(_camearSide.get())->enableCallback = true;
+		Map::GetFirstCurrentMap().getCamera() = _camearSide;
+	} else {
+		if (!_camearTop) {
+			_camearTop = std::make_shared<CameraControlOutside>();
+			static_cast<CameraControlOutside*>(_camearTop.get())->SetPerspective();
+			static_cast<CameraControlOutside*>(_camearTop.get())->SetPos({ 1.f, 1.f, 10.f });
+			static_cast<CameraControlOutside*>(_camearTop.get())->SetDirect({ -1.f, -1.f, 0.1f });
+			static_cast<CameraControlOutside*>(_camearTop.get())->SetSpeed(1.0);
+			static_cast<CameraControlOutside*>(_camearTop.get())->Enable(true);
+		}
+
+		static_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get())->enableCallback = false;
+		static_cast<CameraControlOutside*>(_camearTop.get())->enableCallback = true;
+		Map::GetFirstCurrentMap().getCamera() = _camearTop;
+	}
+}
+
+void SystemMy::SetViewByObject(bool viewByObject) {
+	_viewByObject = viewByObject;
+
+	if (_viewByObject) {
+		NormalizeSystem();
+	}
+}
+
+void SystemMy::NormalizeSystem() {
+	glm::vec3 starVelocity = _suns[_curentSunn]->_velocity;
+	glm::vec3 starPos = _suns[_curentSunn]->getPos();
+
+	for (Object::Ptr& objectPtr : Map::GetFirstCurrentMap().GetObjects()) {
+		if (objectPtr->tag != 123) {
+			continue;
+		}
+
+		glm::vec3 velocity = static_cast<BodyMy*>(objectPtr.get())->_velocity;
+		velocity -= starVelocity;
+		static_cast<BodyMy*>(objectPtr.get())->_velocity = velocity;
+
+		glm::vec3 pos = objectPtr->getPos();
+		pos -= starPos;
+		objectPtr->setPos(pos);
+
+	}
 }

@@ -10,6 +10,7 @@ class Map;
 class Greed;
 class Line;
 class BodyMy;
+class BottomUI;
 
 namespace Engine { class Callback; }
 namespace Engine { class Text; }
@@ -20,6 +21,8 @@ typedef std::shared_ptr<Engine::Callback> CallbackPtr;
 class SystemMy final : public Engine::Game
 {
 public:
+	friend BottomUI;
+
 	SystemMy();
 	~SystemMy();
 	std::filesystem::path getSourcesDir() override { return "..\\..\\Source\\Resources\\Files\\System"; }

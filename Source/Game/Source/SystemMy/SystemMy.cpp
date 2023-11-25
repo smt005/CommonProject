@@ -18,6 +18,8 @@
 #include "ImGuiManager/UI.h"
 #include "glm/vec2.hpp"
 #include "Objects/BodyMy.h"
+#include "ImGuiManager/UI.h"
+#include "UI/BottomUI.h"
 
 #define DRAW DrawLight
 std::string SystemMy::_resourcesDir;
@@ -56,6 +58,7 @@ void SystemMy::init() {
 
 	//...
 	initCallback();
+	UI::ShowWindow<BottomUI>();
 
 	//...
 	{
@@ -285,6 +288,20 @@ void SystemMy::initCallback() {
 					Map::GetFirstCurrentMap().getObjectByName("Target").setPos(_points[0]);
 					Map::GetFirstCurrentMap().getObjectByName("Target").setVisible(true);
 				}
+			}
+		}
+	});
+
+	_callbackPtr->add(Engine::CallbackType::PRESS_KEY, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
+		Engine::KeyCallbackEvent* releaseKeyEvent = (Engine::KeyCallbackEvent*)callbackEventPtr->get();
+		Engine::VirtualKey key = releaseKeyEvent->getId();
+
+		if (key == Engine::VirtualKey::P) {
+			if (UI::ShowingWindow("BottomUI")) {
+				UI::CloseWindow("BottomUI");
+			}
+			else {
+				UI::ShowWindow<BottomUI>();
 			}
 		}
 	});

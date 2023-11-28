@@ -20,12 +20,21 @@
 #include "Objects/BodyMy.h"
 #include "ImGuiManager/UI.h"
 #include "UI/BottomUI.h"
+#include "UI/SystemManager.h"
+#include "SaveManager.h"
+#include "Objects/SystemMap.h"
 
 #define DRAW DrawLight
 std::string SystemMy::_resourcesDir;
 double SystemMy::time = 0;
 
 const std::string saveFileName("../../../Executable/Save.json");
+
+double minDt = std::numeric_limits<double>::max();
+double maxDt = std::numeric_limits<double>::min();
+
+volatile static bool _newBool_ = true;
+volatile static bool _oldBool_ = false;
 
 SystemMy::SystemMy() {
 }
@@ -38,14 +47,20 @@ void SystemMy::init() {
 	//DRAW::setClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 	DRAW::setClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 
-	Map::Ptr mainMap(new Map());
-	Map::AddCurrentMap(Map::add(mainMap));
+	//...
+	if (_newBool_) {
+		_systemMap = std::shared_ptr<SystemMap>(new SystemMap("MAIN"));
+		_systemMap->Load();
+	}
+
+	if (_oldBool_) {
+		SaveManager::GetMap();
+	}
 
 	//...
 	if (!load()) {
-		//mainMap->getCamera() = std::make_shared<CameraControlOutside>();
 		_camearSide = std::make_shared<CameraControlOutside>();
-		mainMap->getCamera() = _camearSide;
+		Map::GetFirstCurrentMap().getCamera() = _camearSide;
 
 		if (CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get())) {
 			cameraPtr->SetPerspective();
@@ -60,26 +75,14 @@ void SystemMy::init() {
 	initCallback();
 	UI::ShowWindow<BottomUI>(this);
 
-	//...
-	{
-		BodyMy::system = mainMap;
-		
-		BodyMy* sunObject = new BodyMy("Sun", "OrangeStar", { 0.1f, 0.1f, 0.0f });
-		sunObject->setMass(1000000.f);
-		sunObject->LinePath().color = { 0.9f, 0.1f, 0.1f, 0.5f };
-		mainMap->addObject(sunObject);
-
-		_suns.emplace_back(sunObject);
-	}
-
 	// Interface
 	{
-		Object& obj = mainMap->addObjectToPos("DottedCircleTarget", { 2.f, 3.f, 0.f });
+		Object& obj = Map::GetFirstCurrentMap().addObjectToPos("DottedCircleTarget", { 2.f, 3.f, 0.f });
 		obj.setName("Target");
 		obj.setVisible(false);
 	}
 	{
-		Object& obj = mainMap->addObjectToPos("Target", { 14.f, 12.f, 0.f });
+		Object& obj = Map::GetFirstCurrentMap().addObjectToPos("Target", { 14.f, 12.f, 0.f });
 		obj.setName("Vector");
 		obj.setVisible(false);
 	}
@@ -90,35 +93,60 @@ void SystemMy::close() {
 }
 
 void SystemMy::update() {
-	if (_viewByObject && !_suns.empty()) {
+	if (time == 0) {
+		time = Engine::Core::currentTime();
+		return;
+	}
+	double dt = Engine::Core::currentTime() - time;
+
+	if (dt > 0) {
+		minDt = dt < minDt ? dt : minDt;
+	}
+	maxDt = dt > maxDt ? dt : maxDt;
+
+	if (dt < 10) {
+		return;
+	}
+	if (dt > 20) {
+		dt = 20;
+	}
+	time = Engine::Core::currentTime();
+
+	if (_newBool_) {
+		if (_timeSpeed == 1) {
+			_systemMap->Update(dt);
+		} else {
+			for (int it = 0; it < _timeSpeed; ++it) {
+				double dtTemp = 10;
+				_systemMap->Update(dt);
+			}
+		}
+	}
+
+	if (_viewByObject && !BodyMy::_suns.empty()) {
 		if (CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get())) {
-			if (!_suns.empty()) {
-				auto sun = _suns[_curentSunn];
+			if (!BodyMy::_suns.empty()) {
+				auto sun = BodyMy::_suns[BodyMy::_curentSunn];
 				cameraPtr->SetPosOutside(sun->getPos());
 			}
 		}
 	}
 
-	double dt = Engine::Core::currentTime() - time;
-	if (dt < 10) {
-		return;
-	}
-	time = Engine::Core::currentTime();
-
-	Map& map = Map::GetFirstCurrentMap();
-
-	map.action();
-	BodyMy::ApplyForce(dt);
-
-	for (int it = 1; it < _timeSpeed; ++it) {
-		double dtTemp = 10;
+	if (_oldBool_) {
+		Map& map = Map::GetFirstCurrentMap();
 		map.action();
-		BodyMy::ApplyForce(dtTemp);
-	}
+		BodyMy::ApplyForce(dt);
 
-	BodyMy::CenterSystem();
-	BodyMy::CenterMassSystem();
-	BodyMy::UpdateRalatovePos();
+		for (int it = 1; it < _timeSpeed; ++it) {
+			double dtTemp = 10;
+			map.action();
+			BodyMy::ApplyForce(dtTemp);
+		}
+
+		BodyMy::CenterSystem();
+		BodyMy::CenterMassSystem();
+		BodyMy::UpdateRalatovePos();
+	}
 }
 
 void SystemMy::draw() {
@@ -128,11 +156,19 @@ void SystemMy::draw() {
 	// Grid
 	Drawline();
 
-	// Draw
-	for (Map::Ptr& map : Map::GetCurrentMaps()) {
-		Camera::Set<Camera>(map->getCamera());
+	if (_newBool_) { 	// Draw SystemMap
+		Camera::Set<Camera>(_camearSide);
 		DRAW::prepare();
-		DRAW::draw(*map);
+		DRAW::DrawMap(*_systemMap);
+	}
+
+	// Draw
+	if (_oldBool_) {
+		for (Map::Ptr& map : Map::GetCurrentMaps()) {
+			Camera::Set<Camera>(map->getCamera());
+			DRAW::prepare();
+			DRAW::draw(*map);
+		}
 	}
 }
 
@@ -296,9 +332,11 @@ void SystemMy::save() {
 
 void SystemMy::initCallback() {
 	_callbackPtr = std::make_shared<Engine::Callback>(Engine::CallbackType::PRESS_TAP, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
-		if (_lockMouse.lockPinch = Engine::Callback::mousePos().y > (Engine::Screen::height() - _lockMouse.bottomHeight)) {
+		_lockMouse.lockPinch = Engine::Callback::mousePos().y > (Engine::Screen::height() - _lockMouse.bottomHeight);
+		if (_lockMouse.IsLock()) {
 			return;
 		}
+
 
 		if (Engine::TapCallbackEvent* tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
 			if (tapCallbackEvent->_id == Engine::VirtualTap::LEFT) {
@@ -315,12 +353,23 @@ void SystemMy::initCallback() {
 		Engine::KeyCallbackEvent* releaseKeyEvent = (Engine::KeyCallbackEvent*)callbackEventPtr->get();
 		Engine::VirtualKey key = releaseKeyEvent->getId();
 
-		if (key == Engine::VirtualKey::P) {
+		if (key == Engine::VirtualKey::Q) {
 			if (UI::ShowingWindow("BottomUI")) {
 				UI::CloseWindow("BottomUI");
 			}
 			else {
-				UI::ShowWindow<BottomUI>();
+				UI::ShowWindow<BottomUI>(this);
+			}
+		}
+
+		if (key == Engine::VirtualKey::W) {
+			if (UI::ShowingWindow("SystemManager")) {
+				UI::CloseWindow("SystemManager");
+				_lockMouse.lockAllPinch = false;
+			}
+			else {
+				UI::ShowWindow<SystemManager>(this);
+				_lockMouse.lockAllPinch = true;
 			}
 		}
 	});
@@ -407,8 +456,8 @@ void SystemMy::initCallback() {
 			else {
 				showRelativePath = true;
 
-				if (!_suns.empty()) {
-					auto sun = _suns[_curentSunn];
+				if (!BodyMy::_suns.empty()) {
+					auto sun = BodyMy::_suns[BodyMy::_curentSunn];
 					BodyMy::centerBody = sun;
 				}
 			}
@@ -416,27 +465,27 @@ void SystemMy::initCallback() {
 
 		//...
 		if (key == Engine::VirtualKey::Z) {
-			--_curentSunn;
-			if (_curentSunn >= _suns.size()) {
-				_curentSunn = _suns.size() - 1;
+			--BodyMy::_curentSunn;
+			if (BodyMy::_curentSunn >= BodyMy::_suns.size()) {
+				BodyMy::_curentSunn = BodyMy::_suns.size() - 1;
 			}
 
 			if (showRelativePath) {
-				if (!_suns.empty()) {
-					auto sun = _suns[_curentSunn];
+				if (!BodyMy::_suns.empty()) {
+					auto sun = BodyMy::_suns[BodyMy::_curentSunn];
 					BodyMy::centerBody = sun;
 				}
 			}
 		}
 		if (key == Engine::VirtualKey::X) {
-			++_curentSunn;
-			if (_curentSunn >= _suns.size()) {
-				_curentSunn = 0;
+			++BodyMy::_curentSunn;
+			if (BodyMy::_curentSunn >= BodyMy::_suns.size()) {
+				BodyMy::_curentSunn = 0;
 			}
 
 			if (showRelativePath) {
-				if (!_suns.empty()) {
-					auto sun = _suns[_curentSunn];
+				if (!BodyMy::_suns.empty()) {
+					auto sun = BodyMy::_suns[BodyMy::_curentSunn];
 					BodyMy::centerBody = sun;
 				}
 			}
@@ -444,20 +493,13 @@ void SystemMy::initCallback() {
 	});
 
 	_callbackPtr->add(Engine::CallbackType::PINCH_KEY, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
-		if (Engine::Callback::pressKey(Engine::VirtualKey::Q) && Engine::Callback::pressKey(Engine::VirtualKey::SPACE)) {
-			/*for (int i = 0; i < 100; ++i) {
-				//update();
-
-				double dt = 15;
-				Map& map = Map::GetFirstCurrentMap();
-				map.action();
-				BodyMy::ApplyForce(dt);
-			}*/
-		}
+		/*if (Engine::Callback::pressKey(Engine::VirtualKey::Q) && Engine::Callback::pressKey(Engine::VirtualKey::SPACE)) {
+			//...
+		}*/
 	});
 
 	_callbackPtr->add(Engine::CallbackType::RELEASE_TAP, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
-		if (_points.size() == 2) {
+		if (_points.size() == 2 || (_orbite == 0 && _points.size() == 1)) {
 			if (Engine::TapCallbackEvent* tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
 				if (tapCallbackEvent->_id == Engine::VirtualTap::LEFT) {
 					std::string name = "Body_" + std::to_string(Map::GetFirstCurrentMap().GetObjects().size());
@@ -465,7 +507,8 @@ void SystemMy::initCallback() {
 
 					object = new BodyMy(name, "BrownStone", _points[0]);
 					object->LinePath().color = { 0.1f, 0.1f, 0.9f, 0.5f };
-					object->setMass(help::random(10.f, 100.f));
+					//object->setMass(help::random(10.f, 100.f));
+					object->setMass(100.f);
 
 					//if (!Engine::Callback::pressKey(Engine::VirtualKey::SPACE)) {
 					if (_orbite) {
@@ -473,16 +516,18 @@ void SystemMy::initCallback() {
 						velocity /= 1000.f;
 						object->_velocity = velocity;
 					} else {
-						glm::vec3 gravityVector = object->getPos() - _suns[_curentSunn]->getPos();
-						glm::vec3 normalizeGravityVector = glm::normalize(gravityVector);
+						if (BodyMy::_curentSunn >= 0 && BodyMy::_curentSunn < BodyMy::_suns.size()) {
+							glm::vec3 gravityVector = object->getPos() - BodyMy::_suns[BodyMy::_curentSunn]->getPos();
+							glm::vec3 normalizeGravityVector = glm::normalize(gravityVector);
 
-						float g90 = glm::pi<float>() / 2.0;
-						glm::vec3 velocity(normalizeGravityVector.x * std::cos(g90) - normalizeGravityVector.y * std::sin(g90),
-										normalizeGravityVector.x * std::sin(g90) + normalizeGravityVector.y * std::cos(g90),
-										0.f);
+							float g90 = glm::pi<float>() / 2.0;
+							glm::vec3 velocity(normalizeGravityVector.x * std::cos(g90) - normalizeGravityVector.y * std::sin(g90),
+											normalizeGravityVector.x * std::sin(g90) + normalizeGravityVector.y * std::cos(g90),
+											0.f);
 
-						velocity *= std::sqrtf(BodyMy::G * _suns[_curentSunn]->mass / glm::length(gravityVector));
-						object->_velocity = velocity;
+							velocity *= std::sqrtf(BodyMy::G * BodyMy::_suns[BodyMy::_curentSunn]->mass / glm::length(gravityVector));
+							object->_velocity = velocity;
+						}
 					}
 
 					Map::GetFirstCurrentMap().addObject(object);
@@ -508,14 +553,14 @@ void SystemMy::initCallback() {
 						object->SetLinearVelocity(velocity);
 
 						{
-							if (_suns.size() == 1) {
+							if (BodyMy::_suns.size() == 1) {
 								glm::vec3 velocityFirst = -velocity;
-								_suns.front()->SetLinearVelocity(velocityFirst);
+								BodyMy::_suns.front()->SetLinearVelocity(velocityFirst);
 							}
 						}
 					}
 
-					_suns.emplace_back(object);
+					BodyMy::_suns.emplace_back(object);
 					Map::GetFirstCurrentMap().addObject(object);
 
 					_points.clear();
@@ -534,8 +579,8 @@ void SystemMy::initCallback() {
 
 			if (Engine::Callback::pressKey(Engine::VirtualKey::S)) {
 				if (CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get())) {
-					if (!_suns.empty()) {
-						auto sun = _suns[_curentSunn];
+					if (!BodyMy::_suns.empty()) {
+						auto sun = BodyMy::_suns[BodyMy::_curentSunn];
 						cameraPtr->SetPosOutside(sun->getPos());
 					}
 				}
@@ -599,8 +644,12 @@ void SystemMy::SetViewByObject(bool viewByObject) {
 }
 
 void SystemMy::NormalizeSystem() {
-	glm::vec3 starVelocity = _suns[_curentSunn]->_velocity;
-	glm::vec3 starPos = _suns[_curentSunn]->getPos();
+	if (BodyMy::_suns.empty()) {
+		return;
+	}
+
+	glm::vec3 starVelocity = BodyMy::_suns[BodyMy::_curentSunn]->_velocity;
+	glm::vec3 starPos = BodyMy::_suns[BodyMy::_curentSunn]->getPos();
 
 	for (Object::Ptr& objectPtr : Map::GetFirstCurrentMap().GetObjects()) {
 		if (objectPtr->tag != 123) {

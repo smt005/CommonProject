@@ -9,6 +9,7 @@
 
 BottomUI::BottomUI() {
     SetId("BottomUI");
+    Close();
 }
 
 BottomUI::BottomUI(SystemMy* systemMy)
@@ -32,24 +33,25 @@ void BottomUI::Update() {
 }
 
 void BottomUI::Draw() {
+    volatile static float widthSlider = 185.f;
+    volatile static float framePadding = 18.f;
+
+    ImGuiStyle& style = ImGui::GetStyle();
+    style.FramePadding.y = 18.f;
+
     if (_systemMy->GetOrbite() == 0) {
-        if (ImGui::Button("[S]", { 50.f, 50.f })) {
+        if (ImGui::Button("[O]", { 50.f, 50.f })) {
             _systemMy->SetOrbite(1);
         }
     } else {
-        if (ImGui::Button("[O]", { 50.f, 50.f })) {
+        if (ImGui::Button("[S]", { 50.f, 50.f })) {
             _systemMy->SetOrbite(0);
         }
     }
 
     //...
     ImGui::SameLine();
-    ImGuiStyle& style = ImGui::GetStyle();
 
-    volatile static float heightSlider = 18.f;
-    volatile static float widthSlider = 185.f;
-
-    style.FramePadding.y = heightSlider;
     ImGui::PushItemWidth((Engine::Screen::width() - widthSlider));
     ImGui::SliderInt("##time_speed_slider", &timeSpeed, 1, 100);
     _systemMy->_timeSpeed = timeSpeed;
@@ -79,4 +81,6 @@ void BottomUI::Draw() {
             _systemMy->SetPerspectiveView(true);
         }
     }
+
+    style.FramePadding.y = 3.f;
 }

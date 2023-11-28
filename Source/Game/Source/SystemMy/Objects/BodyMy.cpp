@@ -4,6 +4,9 @@
 
 float BodyMy::G = 0.01f;
 Map::Ptr BodyMy::system;
+size_t BodyMy::_curentSunn = 0;
+std::vector<BodyMy*> BodyMy::_suns;
+
 glm::vec3 BodyMy::centerSystem;
 glm::vec3 BodyMy::centerMassSystem;
 std::vector<Object*> BodyMy::removeObject;
@@ -11,7 +14,7 @@ BodyMy* BodyMy::centerBody = nullptr;
 
 std::vector<BodyMy::ForceData> BodyMy::bodyes;
 
-void BodyMy::ApplyForce(const double dt) {
+void BodyMy::ApplyForce(double dt) {
 	for (ForceData& data : bodyes) {
 		glm::vec3 acceleration = data.forceVec3 / data.body->mass;
 		glm::vec3 newVelocity = acceleration * (float)dt;
@@ -37,7 +40,9 @@ void BodyMy::action() {
 	}
 
 	glm::vec3 gravityVector = GetVector();
-	AddForceMy(gravityVector);
+	if (glm::length(gravityVector) != 0.f) {
+		AddForceMy(gravityVector);
+	}
 }
 
 glm::vec3 BodyMy::GetVector() {
@@ -46,7 +51,7 @@ glm::vec3 BodyMy::GetVector() {
 
 	//...
 	_points.push_back(pos);
-	if (_points.size() > 100) {
+	if (_points.size() > 1000) {
 		_points.pop_front();
 	}
 	const size_t countPoints = _points.size();
@@ -163,6 +168,10 @@ void BodyMy::CalculateRelativelyLinePath() {
 
 // STATIC
 glm::vec3 BodyMy::CenterSystem() {
+	if (!system) {
+		return { 0, 0, 0 };
+	}
+
 	float count = 0.f;
 	glm::vec3 centerPos = {0.f, 0.f, 0.f};
 
@@ -180,6 +189,10 @@ glm::vec3 BodyMy::CenterSystem() {
 }
 
 glm::vec3 BodyMy::CenterMassSystem() {
+	if (!system) {
+		return { 0, 0, 0 };
+	}
+
 	float sumMass = 0.f;
 	glm::vec3 sunPosMass = { 0.f, 0.f, 0.f };
 
@@ -197,6 +210,10 @@ glm::vec3 BodyMy::CenterMassSystem() {
 }
 
 void BodyMy::UpdateRalatovePos() {
+	if (!system) {
+		return;
+	}
+
 	for (auto& objPtr : system->GetObjects()) {
 		if (objPtr->tag != 123) {
 			continue;
@@ -207,6 +224,10 @@ void BodyMy::UpdateRalatovePos() {
 }
 
 void BodyMy::RemoveBody() {
+	if (!system) {
+		return;
+	}
+
 	auto& objects = system->GetObjects();
 	for (auto obj : removeObject) {
 		auto it = std::find_if(objects.begin(), objects.end(), [obj](const auto& objPtr) {

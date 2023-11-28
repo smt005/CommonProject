@@ -7,6 +7,7 @@
 #include "glm/vec3.hpp"
 
 class Map;
+class SystemMap;
 class Greed;
 class Line;
 class BodyMy;
@@ -64,13 +65,12 @@ public:
 	void NormalizeSystem();
 
 private:
+	std::shared_ptr<SystemMap> _systemMap;
+
 	Greed* _greed = nullptr;
 	Greed* _greedBig = nullptr;
 	Line* _interfaceLine = nullptr;
 	std::vector<glm::vec3> _points;
-	
-	size_t _curentSunn = 0;
-	std::vector<BodyMy*> _suns;
 
 	bool showCenter = false;
 	bool showCenterMass = false;
@@ -84,7 +84,12 @@ private:
 
 	struct LockMouse {
 		bool lockPinch = false;
+		bool lockAllPinch = false;
 		float bottomHeight = 60.f;
+
+		bool IsLock() {
+			return lockPinch || lockAllPinch;
+		}
 
 	} _lockMouse;
 

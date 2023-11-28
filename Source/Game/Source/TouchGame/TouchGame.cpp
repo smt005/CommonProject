@@ -358,6 +358,8 @@ bool TouchGame::loadCamera() {
 #if _DEBUG
 	Engine::Core::log("LOAD_CAMERA: " + saveFileName + "\n" + help::stringFroJson(loadData));
 #endif // _DEBUG
+
+	return true;
 }
 
 void TouchGame::save()

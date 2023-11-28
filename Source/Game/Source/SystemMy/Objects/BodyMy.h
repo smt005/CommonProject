@@ -63,11 +63,14 @@ public:
 public:
 	static float G;
 	static Map::Ptr system;
+	static size_t _curentSunn;
+	static std::vector<BodyMy*> _suns;
+
 	static glm::vec3 centerSystem;
 	static glm::vec3 centerMassSystem;
 	static std::vector<Object*> removeObject;
 	static BodyMy* centerBody;
 
 	static std::vector<ForceData> bodyes;
-	static void ApplyForce(const double dt);
+	static void ApplyForce(double dt);
 };

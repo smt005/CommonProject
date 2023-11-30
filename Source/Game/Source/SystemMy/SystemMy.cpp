@@ -33,6 +33,10 @@ const std::string saveFileName("../../../Executable/Save.json");
 double minDt = std::numeric_limits<double>::max();
 double maxDt = std::numeric_limits<double>::min();
 
+/*
+_newBool_
+_oldBool_
+*/
 volatile static bool _newBool_ = true;
 volatile static bool _oldBool_ = false;
 
@@ -289,7 +293,7 @@ bool SystemMy::load() {
 		
 		dynamic_cast<CameraControlOutside*>(_camearSide.get())->Load(loadData["CameraSide"]);
 		dynamic_cast<CameraControlOutside*>(_camearSide.get())->Enable(true);
-		dynamic_cast<CameraControlOutside*>(_camearSide.get())->SetDistanceOutside(5000.f);
+		dynamic_cast<CameraControlOutside*>(_camearSide.get())->SetDistanceOutside(15000.f);
 
 		Map::GetFirstCurrentMap().getCamera() = _camearSide;
 	}
@@ -502,37 +506,62 @@ void SystemMy::initCallback() {
 		if (_points.size() == 2 || (_orbite == 0 && _points.size() == 1)) {
 			if (Engine::TapCallbackEvent* tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
 				if (tapCallbackEvent->_id == Engine::VirtualTap::LEFT) {
-					std::string name = "Body_" + std::to_string(Map::GetFirstCurrentMap().GetObjects().size());
-					BodyMy* object = nullptr;
+					if (_newBool_) {
+						ValueT mass = 100;
 
-					object = new BodyMy(name, "BrownStone", _points[0]);
-					object->LinePath().color = { 0.1f, 0.1f, 0.9f, 0.5f };
-					//object->setMass(help::random(10.f, 100.f));
-					object->setMass(100.f);
+						if (!_orbite) {
+							if (Body* star = _systemMap->GetBody("Sun")) {
+								glm::vec3 gravityVector = _points[0] - star->GetPos();
+								glm::vec3 normalizeGravityVector = glm::normalize(gravityVector);
 
-					//if (!Engine::Callback::pressKey(Engine::VirtualKey::SPACE)) {
-					if (_orbite) {
-						glm::vec3 velocity = _points[0] - _points[1];
-						velocity /= 1000.f;
-						object->_velocity = velocity;
-					} else {
-						if (BodyMy::_curentSunn >= 0 && BodyMy::_curentSunn < BodyMy::_suns.size()) {
-							glm::vec3 gravityVector = object->getPos() - BodyMy::_suns[BodyMy::_curentSunn]->getPos();
-							glm::vec3 normalizeGravityVector = glm::normalize(gravityVector);
+								float g90 = glm::pi<float>() / 2.0;
+								glm::vec3 velocity(normalizeGravityVector.x* std::cos(g90) - normalizeGravityVector.y * std::sin(g90),
+									normalizeGravityVector.x* std::sin(g90) + normalizeGravityVector.y * std::cos(g90),
+									0.f);
 
-							float g90 = glm::pi<float>() / 2.0;
-							glm::vec3 velocity(normalizeGravityVector.x * std::cos(g90) - normalizeGravityVector.y * std::sin(g90),
-											normalizeGravityVector.x * std::sin(g90) + normalizeGravityVector.y * std::cos(g90),
-											0.f);
-
-							velocity *= std::sqrtf(BodyMy::G * BodyMy::_suns[BodyMy::_curentSunn]->mass / glm::length(gravityVector));
-							object->_velocity = velocity;
+								velocity *= std::sqrtf(_systemMap->_constGravity * star->_mass / glm::length(gravityVector));
+								_systemMap->Add("BrownStone", _points[0], velocity, mass, "");
+							}
+						} else {
+							glm::vec3 velocity = _points[0] - _points[1];
+							velocity /= 1000.f;
+							_systemMap->Add("BrownStone", _points[0], velocity, mass, "");
 						}
 					}
 
-					Map::GetFirstCurrentMap().addObject(object);
-					_points.clear();
+					if (_oldBool_) {
+						std::string name = "Body_" + std::to_string(Map::GetFirstCurrentMap().GetObjects().size());
+						BodyMy* object = nullptr;
 
+						object = new BodyMy(name, "BrownStone", _points[0]);
+						object->LinePath().color = { 0.1f, 0.1f, 0.9f, 0.5f };
+						//object->setMass(help::random(10.f, 100.f));
+						object->setMass(100.f);
+
+						//if (!Engine::Callback::pressKey(Engine::VirtualKey::SPACE)) {
+						if (_orbite) {
+							glm::vec3 velocity = _points[0] - _points[1];
+							velocity /= 1000.f;
+							object->_velocity = velocity;
+						} else {
+							if (BodyMy::_curentSunn >= 0 && BodyMy::_curentSunn < BodyMy::_suns.size()) {
+								glm::vec3 gravityVector = object->getPos() - BodyMy::_suns[BodyMy::_curentSunn]->getPos();
+								glm::vec3 normalizeGravityVector = glm::normalize(gravityVector);
+
+								float g90 = glm::pi<float>() / 2.0;
+								glm::vec3 velocity(normalizeGravityVector.x * std::cos(g90) - normalizeGravityVector.y * std::sin(g90),
+												normalizeGravityVector.x * std::sin(g90) + normalizeGravityVector.y * std::cos(g90),
+												0.f);
+
+								velocity *= std::sqrtf(BodyMy::G * BodyMy::_suns[BodyMy::_curentSunn]->mass / glm::length(gravityVector));
+								object->_velocity = velocity;
+							}
+						}
+
+						Map::GetFirstCurrentMap().addObject(object);
+					}
+
+					_points.clear();
 					Map::GetFirstCurrentMap().getObjectByName("Target").setVisible(false);
 					Map::GetFirstCurrentMap().getObjectByName("Vector").setVisible(false);
 				}

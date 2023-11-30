@@ -3,8 +3,16 @@
 #include "../../Engine/Source/Object/Model.h"
 #include "../../Engine/Source/Common/Help.h"
 
-Body::Body(const std::string& nameModel) {
-	_model = Model::getByName(nameModel);
+Body::Body(const std::string& nameModel)
+	: _model(Model::getByName(nameModel))
+{}
+
+Body::Body(const std::string& nameModel, const Vector3& pos, const Vector3& velocity, ValueT mass, const std::string& name)
+	: _mass(mass)
+	, _velocity(velocity)
+	, _model(Model::getByName(nameModel))
+{
+	SetPos(pos);
 }
 
 Body::~Body() {
@@ -141,4 +149,23 @@ bool SystemMap::Load() {
 	}
 
 	return true;
+}
+
+Vector3 SystemMap::CenterMass() {
+	ValueT sumMass = 0;
+	Vector3 sunPosMass(0, 0, 0);
+
+	for (Body* body : _bodies) {
+		sunPosMass += body->GetPos() * body->_mass;
+		sumMass += body->_mass;
+	}
+
+	return sunPosMass / sumMass;
+}
+
+Body* SystemMap::GetBody(const char* chName) {
+	auto itBody = std::find_if(_bodies.begin(), _bodies.end(), [chName](const Body* body) {
+		return body->_name && chName && strcmp(body->_name, chName) == 0;
+	});
+	return itBody != _bodies.end() ? *itBody : nullptr;
 }

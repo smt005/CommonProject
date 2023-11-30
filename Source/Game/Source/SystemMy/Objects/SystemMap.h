@@ -21,12 +21,14 @@ class Body final  {
 public:
 	Body(std::shared_ptr<Model>& model) : _model(model) {}
 	Body(const std::string& nameModel);
+	Body(const std::string& nameModel, const Vector3& pos, const Vector3& velocity, ValueT mass, const std::string& name);
 	~Body();
 
 	void SetName(const std::string& name) {
 		size_t size = name.size();
 		_name = new char[size + 1];
 		memcpy(_name, name.data(), size);
+		_name[size] = '\0';
 	}
 
 	Vector3 GetPos() const { 
@@ -58,6 +60,7 @@ public:
 	}
 
 private:
+public:
 	char* _name = nullptr;
 	ValueT _mass = 0;
 	Vector3 _velocity = { 0, 0, 0 };
@@ -76,6 +79,9 @@ public:
 	void Update(double dt);
 	void Save();
 	bool Load();
+
+	Vector3 CenterMass();
+	Body* GetBody(const char* chName);
 
 	template<typename ... Args>
 	Body& Add(Args&& ... args) {

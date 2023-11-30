@@ -17,7 +17,6 @@
 #include "Object/Text.h"
 #include "ImGuiManager/UI.h"
 #include "glm/vec2.hpp"
-#include "Objects/BodyMy.h"
 #include "ImGuiManager/UI.h"
 #include "UI/BottomUI.h"
 #include "UI/SystemManager.h"
@@ -33,13 +32,6 @@ const std::string saveFileName("../../../Executable/Save.json");
 double minDt = std::numeric_limits<double>::max();
 double maxDt = std::numeric_limits<double>::min();
 
-/*
-_newBool_
-_oldBool_
-*/
-volatile static bool _newBool_ = true;
-volatile static bool _oldBool_ = false;
-
 SystemMy::SystemMy() {
 }
 
@@ -52,14 +44,8 @@ void SystemMy::init() {
 	DRAW::setClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 
 	//...
-	if (_newBool_) {
-		_systemMap = std::shared_ptr<SystemMap>(new SystemMap("MAIN"));
-		_systemMap->Load();
-	}
-
-	if (_oldBool_) {
-		SaveManager::GetMap();
-	}
+	_systemMap = std::shared_ptr<SystemMap>(new SystemMap("MAIN"));
+	_systemMap->Load();
 
 	//...
 	if (!load()) {
@@ -116,40 +102,13 @@ void SystemMy::update() {
 	}
 	time = Engine::Core::currentTime();
 
-	if (_newBool_) {
-		if (_timeSpeed == 1) {
-			_systemMap->Update(dt);
-		} else {
-			for (int it = 0; it < _timeSpeed; ++it) {
-				double dtTemp = 10;
-				_systemMap->Update(dt);
-			}
-		}
-	}
-
-	if (_viewByObject && !BodyMy::_suns.empty()) {
-		if (CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get())) {
-			if (!BodyMy::_suns.empty()) {
-				auto sun = BodyMy::_suns[BodyMy::_curentSunn];
-				cameraPtr->SetPosOutside(sun->getPos());
-			}
-		}
-	}
-
-	if (_oldBool_) {
-		Map& map = Map::GetFirstCurrentMap();
-		map.action();
-		BodyMy::ApplyForce(dt);
-
-		for (int it = 1; it < _timeSpeed; ++it) {
+	if (_timeSpeed == 1) {
+		_systemMap->Update(dt);
+	} else {
+		for (int it = 0; it < _timeSpeed; ++it) {
 			double dtTemp = 10;
-			map.action();
-			BodyMy::ApplyForce(dtTemp);
+			_systemMap->Update(dt);
 		}
-
-		BodyMy::CenterSystem();
-		BodyMy::CenterMassSystem();
-		BodyMy::UpdateRalatovePos();
 	}
 }
 
@@ -160,20 +119,10 @@ void SystemMy::draw() {
 	// Grid
 	Drawline();
 
-	if (_newBool_) { 	// Draw SystemMap
-		Camera::Set<Camera>(_camearSide);
-		DRAW::prepare();
-		DRAW::DrawMap(*_systemMap);
-	}
-
-	// Draw
-	if (_oldBool_) {
-		for (Map::Ptr& map : Map::GetCurrentMaps()) {
-			Camera::Set<Camera>(map->getCamera());
-			DRAW::prepare();
-			DRAW::draw(*map);
-		}
-	}
+	// Draw SystemMap
+	Camera::Set<Camera>(_camearSide);
+	DRAW::prepare();
+	DRAW::DrawMap(*_systemMap);
 }
 
 void SystemMy::Drawline() {
@@ -213,54 +162,19 @@ void SystemMy::Drawline() {
 
 	//
 	if (showCenter) {
-		for (auto& objPtr : Map::GetFirstCurrentMap().GetObjects()) {
-			if (objPtr->tag != 123) {
-				continue;
-			}
-
-			BodyMy* body = static_cast<BodyMy*>(objPtr.get());
-			DrawLine::draw(body->LineToCenter());
-		}
+		//...
 	}
 	if (showCenterMass) {
-		for (auto& objPtr : Map::GetFirstCurrentMap().GetObjects()) {
-			if (objPtr->tag != 123) {
-				continue;
-			}
-
-			BodyMy* body = static_cast<BodyMy*>(objPtr.get());
-			DrawLine::draw(body->LineToMassCenter());
-		}
+		//...
 	}
 	if (showForceVector) {
-		for (auto& objPtr : Map::GetFirstCurrentMap().GetObjects()) {
-			if (objPtr->tag != 123) {
-				continue;
-			}
-
-			BodyMy* body = static_cast<BodyMy*>(objPtr.get());
-			DrawLine::draw(body->LineForceVector());
-		}
+		//...
 	}
 	if (showPath) {
-		for (auto& objPtr : Map::GetFirstCurrentMap().GetObjects()) {
-			if (objPtr->tag != 123) {
-				continue;
-			}
-
-			BodyMy* body = static_cast<BodyMy*>(objPtr.get());
-			DrawLine::draw(body->LinePath());
-		}
+		//...
 	}
 	if (showRelativePath) {
-		for (auto& objPtr : Map::GetFirstCurrentMap().GetObjects()) {
-			if (objPtr->tag != 123) {
-				continue;
-			}
-
-			BodyMy* body = static_cast<BodyMy*>(objPtr.get());
-			DrawLine::draw(body->RelativelyLinePath());
-		}
+		//...
 	}
 	
 }
@@ -455,44 +369,21 @@ void SystemMy::initCallback() {
 		if (key == Engine::VirtualKey::VK_5) {
 			if (showRelativePath) {
 				showRelativePath = false;
-				BodyMy::centerBody = nullptr;
+				//...
 			}
 			else {
 				showRelativePath = true;
 
-				if (!BodyMy::_suns.empty()) {
-					auto sun = BodyMy::_suns[BodyMy::_curentSunn];
-					BodyMy::centerBody = sun;
-				}
+				//...
 			}
 		}
 
 		//...
 		if (key == Engine::VirtualKey::Z) {
-			--BodyMy::_curentSunn;
-			if (BodyMy::_curentSunn >= BodyMy::_suns.size()) {
-				BodyMy::_curentSunn = BodyMy::_suns.size() - 1;
-			}
-
-			if (showRelativePath) {
-				if (!BodyMy::_suns.empty()) {
-					auto sun = BodyMy::_suns[BodyMy::_curentSunn];
-					BodyMy::centerBody = sun;
-				}
-			}
+			//...
 		}
 		if (key == Engine::VirtualKey::X) {
-			++BodyMy::_curentSunn;
-			if (BodyMy::_curentSunn >= BodyMy::_suns.size()) {
-				BodyMy::_curentSunn = 0;
-			}
-
-			if (showRelativePath) {
-				if (!BodyMy::_suns.empty()) {
-					auto sun = BodyMy::_suns[BodyMy::_curentSunn];
-					BodyMy::centerBody = sun;
-				}
-			}
+			//...
 		}
 	});
 
@@ -506,92 +397,32 @@ void SystemMy::initCallback() {
 		if (_points.size() == 2 || (_orbite == 0 && _points.size() == 1)) {
 			if (Engine::TapCallbackEvent* tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
 				if (tapCallbackEvent->_id == Engine::VirtualTap::LEFT) {
-					if (_newBool_) {
-						ValueT mass = 100;
+					ValueT mass = 100;
 
-						if (!_orbite) {
-							if (Body* star = _systemMap->GetBody("Sun")) {
-								glm::vec3 gravityVector = _points[0] - star->GetPos();
-								glm::vec3 normalizeGravityVector = glm::normalize(gravityVector);
+					if (!_orbite) {
+						if (Body* star = _systemMap->GetBody("Sun")) {
+							glm::vec3 gravityVector = _points[0] - star->GetPos();
+							glm::vec3 normalizeGravityVector = glm::normalize(gravityVector);
 
-								float g90 = glm::pi<float>() / 2.0;
-								glm::vec3 velocity(normalizeGravityVector.x* std::cos(g90) - normalizeGravityVector.y * std::sin(g90),
-									normalizeGravityVector.x* std::sin(g90) + normalizeGravityVector.y * std::cos(g90),
-									0.f);
+							float g90 = glm::pi<float>() / 2.0;
+							glm::vec3 velocity(normalizeGravityVector.x* std::cos(g90) - normalizeGravityVector.y * std::sin(g90),
+								normalizeGravityVector.x* std::sin(g90) + normalizeGravityVector.y * std::cos(g90),
+								0.f);
 
-								velocity *= std::sqrtf(_systemMap->_constGravity * star->_mass / glm::length(gravityVector));
-								_systemMap->Add("BrownStone", _points[0], velocity, mass, "");
-							}
-						} else {
-							glm::vec3 velocity = _points[0] - _points[1];
-							velocity /= 1000.f;
+							velocity *= std::sqrtf(_systemMap->_constGravity * star->_mass / glm::length(gravityVector));
 							_systemMap->Add("BrownStone", _points[0], velocity, mass, "");
 						}
-					}
-
-					if (_oldBool_) {
-						std::string name = "Body_" + std::to_string(Map::GetFirstCurrentMap().GetObjects().size());
-						BodyMy* object = nullptr;
-
-						object = new BodyMy(name, "BrownStone", _points[0]);
-						object->LinePath().color = { 0.1f, 0.1f, 0.9f, 0.5f };
-						//object->setMass(help::random(10.f, 100.f));
-						object->setMass(100.f);
-
-						//if (!Engine::Callback::pressKey(Engine::VirtualKey::SPACE)) {
-						if (_orbite) {
-							glm::vec3 velocity = _points[0] - _points[1];
-							velocity /= 1000.f;
-							object->_velocity = velocity;
-						} else {
-							if (BodyMy::_curentSunn >= 0 && BodyMy::_curentSunn < BodyMy::_suns.size()) {
-								glm::vec3 gravityVector = object->getPos() - BodyMy::_suns[BodyMy::_curentSunn]->getPos();
-								glm::vec3 normalizeGravityVector = glm::normalize(gravityVector);
-
-								float g90 = glm::pi<float>() / 2.0;
-								glm::vec3 velocity(normalizeGravityVector.x * std::cos(g90) - normalizeGravityVector.y * std::sin(g90),
-												normalizeGravityVector.x * std::sin(g90) + normalizeGravityVector.y * std::cos(g90),
-												0.f);
-
-								velocity *= std::sqrtf(BodyMy::G * BodyMy::_suns[BodyMy::_curentSunn]->mass / glm::length(gravityVector));
-								object->_velocity = velocity;
-							}
-						}
-
-						Map::GetFirstCurrentMap().addObject(object);
+					} else {
+						glm::vec3 velocity = _points[0] - _points[1];
+						velocity /= 1000.f;
+						_systemMap->Add("BrownStone", _points[0], velocity, mass, "");
 					}
 
 					_points.clear();
-					Map::GetFirstCurrentMap().getObjectByName("Target").setVisible(false);
-					Map::GetFirstCurrentMap().getObjectByName("Vector").setVisible(false);
 				}
 
 				if (tapCallbackEvent->_id == Engine::VirtualTap::RIGHT) {
-					std::string name = "Sun_" + std::to_string(Map::GetFirstCurrentMap().GetObjects().size());
-					BodyMy* object = nullptr;
-
-					object = new BodyMy(name, "OrangeStar", _points[0]);
-					object->LinePath().color = { 0.9f, 0.1f, 0.1f, 0.5f };
-
-					if (false) {
-						object->setMass(help::random(500000.f, 1000000.f));
-						object->AddForceMy((_points[0] - _points[1])* object->mass);
-					} else {
-						object->setMass(1000000.f);
-						glm::vec3 velocity = _points[0] - _points[1];
-						object->SetLinearVelocity(velocity);
-
-						{
-							if (BodyMy::_suns.size() == 1) {
-								glm::vec3 velocityFirst = -velocity;
-								BodyMy::_suns.front()->SetLinearVelocity(velocityFirst);
-							}
-						}
-					}
-
-					BodyMy::_suns.emplace_back(object);
-					Map::GetFirstCurrentMap().addObject(object);
-
+					//...
 					_points.clear();
 				}
 			}
@@ -600,20 +431,7 @@ void SystemMy::initCallback() {
 
 	_callbackPtr->add(Engine::CallbackType::PINCH_KEY, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
 		if (Engine::Callback::pressKey(Engine::VirtualKey::SPACE)) {
-			if (Engine::Callback::pressKey(Engine::VirtualKey::C)) {
-				if (CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get())) {
-					cameraPtr->SetPosOutside(BodyMy::centerSystem);
-				}
-			}
-
-			if (Engine::Callback::pressKey(Engine::VirtualKey::S)) {
-				if (CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get())) {
-					if (!BodyMy::_suns.empty()) {
-						auto sun = BodyMy::_suns[BodyMy::_curentSunn];
-						cameraPtr->SetPosOutside(sun->getPos());
-					}
-				}
-			}
+			//...
 		}
 	});
 
@@ -673,25 +491,5 @@ void SystemMy::SetViewByObject(bool viewByObject) {
 }
 
 void SystemMy::NormalizeSystem() {
-	if (BodyMy::_suns.empty()) {
-		return;
-	}
-
-	glm::vec3 starVelocity = BodyMy::_suns[BodyMy::_curentSunn]->_velocity;
-	glm::vec3 starPos = BodyMy::_suns[BodyMy::_curentSunn]->getPos();
-
-	for (Object::Ptr& objectPtr : Map::GetFirstCurrentMap().GetObjects()) {
-		if (objectPtr->tag != 123) {
-			continue;
-		}
-
-		glm::vec3 velocity = static_cast<BodyMy*>(objectPtr.get())->_velocity;
-		velocity -= starVelocity;
-		static_cast<BodyMy*>(objectPtr.get())->_velocity = velocity;
-
-		glm::vec3 pos = objectPtr->getPos();
-		pos -= starPos;
-		objectPtr->setPos(pos);
-
-	}
+	//...
 }

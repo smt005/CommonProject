@@ -1,10 +1,4 @@
 
-//#include "TouchGame/TouchGame.h"
-//#define NAME_GAME TouchGame
-
-//#include "System/System.h"
-//#define NAME_GAME System
-
 #include "SystemMy/SystemMy.h"
 #define NAME_GAME SystemMy
 

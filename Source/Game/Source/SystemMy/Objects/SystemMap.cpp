@@ -1,5 +1,4 @@
 #include "SystemMap.h"
-#include "BodyMy.h"
 #include "../../Engine/Source/Object/Model.h"
 #include "../../Engine/Source/Common/Help.h"
 

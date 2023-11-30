@@ -4,11 +4,6 @@
 
 #include "../SaveManager.h"
 
-//#include "Screen.h"
-//#include "../SystemMy.h"
-//#include "Object/Map.h"
-//#include "Object/Object.h"
-
 SystemManager::SystemManager() {
     SetId("SystemManager");
     Close();

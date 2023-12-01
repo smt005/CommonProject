@@ -5,6 +5,7 @@
 #include <vector>
 #include <memory>
 #include "glm/vec3.hpp"
+#include "Objects/SystemClass.h"
 
 class Map;
 
@@ -13,10 +14,6 @@ class Line;
 class BodyMy;
 class MainUI;
 class SystemManager;
-
-namespace ARR {
-	class SystemMap;
-}
 
 namespace Engine { class Callback; }
 namespace Engine { class Text; }
@@ -71,7 +68,7 @@ public:
 	void NormalizeSystem();
 
 private:
-	std::shared_ptr<ARR::SystemMap> _systemMap;
+	std::shared_ptr<SystemMap> _systemMap;
 
 	Greed* _greed = nullptr;
 	Greed* _greedBig = nullptr;

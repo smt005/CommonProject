@@ -6,6 +6,7 @@
 #include "Core.h"
 #include "Screen.h"
 #include "../SystemMy.h"
+#include "../Objects/SystemClass.h"
 #include "../Objects/SystemMap.h"
 #include "../Objects/SystemMapArr.h"
 

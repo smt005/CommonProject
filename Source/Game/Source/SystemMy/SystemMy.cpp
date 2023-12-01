@@ -21,6 +21,7 @@
 #include "UI/MainUI.h"
 #include "UI/SystemManager.h"
 #include "SaveManager.h"
+#include "Objects/SystemClass.h"
 #include "Objects/SystemMap.h"
 #include "Objects/SystemMapArr.h"
 #include "Objects/SystemTypes.h"
@@ -46,7 +47,7 @@ void SystemMy::init() {
 	DRAW::setClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 
 	//...
-	_systemMap = std::shared_ptr<ARR::SystemMap>(new ARR::SystemMap("MAIN"));
+	_systemMap = std::shared_ptr<SystemMap>(new SystemMap("MAIN"));
 	_systemMap->Load();
 
 	//...
@@ -417,7 +418,7 @@ void SystemMy::initCallback() {
 					ValueT mass = 100;
 
 					if (!_orbite) {
-						if (ARR::Body* star = _systemMap->GetBody("Sun")) {
+						if (Body* star = _systemMap->GetBody("Sun")) {
 							glm::vec3 gravityVector = _points[0] - star->GetPos();
 							glm::vec3 normalizeGravityVector = glm::normalize(gravityVector);
 

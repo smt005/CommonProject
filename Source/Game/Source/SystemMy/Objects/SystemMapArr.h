@@ -103,5 +103,7 @@ public:
 	ValueT _constGravity = 0.01f;
 	std::string _name;
 	std::vector<Body*> _bodies;
+
+	//std::vector<>
 };
 }

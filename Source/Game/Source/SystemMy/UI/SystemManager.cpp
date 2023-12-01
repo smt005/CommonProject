@@ -6,6 +6,8 @@
 #include "../Objects/SystemMap.h"
 #include "../Objects/SystemTypes.h"
 #include "../SystemMy.h"
+#include "../Objects/SystemClass.h"
+#include "../Objects/SystemMap.h"
 #include "../Objects/SystemMapArr.h"
 #include "../SaveManager.h"
 
@@ -54,13 +56,13 @@ void SystemManager::Draw() {
     ImGui::Dummy(ImVec2(0.f, 0.f));
     if (ImGui::Button("Correct system", { 128.f, 32.f })) {      
         if (_systemMy && _systemMy->_systemMap) {
-            ARR::SystemMap& systemMap = *_systemMy->_systemMap;
+            SystemMap& systemMap = *_systemMy->_systemMap;
 
-            if (ARR::Body* star = systemMap.GetBody("Sun")) {
+            if (Body* star = systemMap.GetBody("Sun")) {
                 Vector3 starPos = star->GetPos();
                 Vector3 starVel = star->_velocity;
 
-                for (ARR::Body* body : systemMap.Objects()) {
+                for (Body* body : systemMap.Objects()) {
                     Vector3 pos = body->GetPos();
                     Vector3 vel = body->_velocity;
 
@@ -77,9 +79,9 @@ void SystemManager::Draw() {
     ImGui::Dummy(ImVec2(0.f, 0.f));
     if (ImGui::Button("Generate", { 128.f, 32.f })) {
         if (_systemMy && _systemMy->_systemMap) {
-            ARR::SystemMap& systemMap = *_systemMy->_systemMap;
+            SystemMap& systemMap = *_systemMy->_systemMap;
 
-            ARR::Body* star = systemMap.GetBody("Sun");
+            Body* star = systemMap.GetBody("Sun");
             if (star) {
                 Vector3 starPos = star->GetPos();
                 float starMass = star->_mass;

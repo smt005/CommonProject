@@ -1,43 +1,57 @@
 
-#include "BottomUI.h"
+#include "MainUI.h"
+
 #include "imgui.h"
 
+#include "Core.h"
 #include "Screen.h"
 #include "../SystemMy.h"
-#include "Object/Map.h"
-#include "Object/Object.h"
+#include "../Objects/SystemMap.h"
+#include "../Objects/SystemMapArr.h"
 
-BottomUI::BottomUI() {
-    SetId("BottomUI");
+MainUI::MainUI() {
+    SetId("MainUI");
     Close();
 }
 
-BottomUI::BottomUI(SystemMy* systemMy)
+MainUI::MainUI(SystemMy* systemMy)
     : UI::Window()
     , _systemMy(systemMy)
 {
-    SetId("BottomUI");
+    SetId("MainUI");
 }
 
-void BottomUI::OnOpen() {
+void MainUI::OnOpen() {
     SetFlag(ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
     SetAlpha(0.f);
 }
 
-void BottomUI::Update() {
-    _y = Engine::Screen::height() - _height;
+void MainUI::Update() {
+    _height = Engine::Screen::height();
     _width = Engine::Screen::width();
 
     ImGui::SetWindowPos(Id().c_str(), { _x, _y });
     ImGui::SetWindowSize(Id().c_str(), { _width, _height });
 }
 
-void BottomUI::Draw() {
-    volatile static float widthSlider = 185.f;
+void MainUI::Draw() {
+    int FPS = static_cast<int>(1 / Engine::Core::deltaTime());
+
+    volatile static float widthSlider = 190.f;
     volatile static float framePadding = 18.f;
+    volatile static float offsetBottom = 90.f;
 
     ImGuiStyle& style = ImGui::GetStyle();
     style.FramePadding.y = 18.f;
+
+    // Top
+    if (_systemMy && _systemMy->_systemMap) {
+        int time = _systemMy->_systemMap->time;
+        ImGui::Text("Time: %d FPS: %d", time, FPS);
+    }
+
+    // Bottom
+    ImGui::Dummy(ImVec2(0.f, (_height - offsetBottom)));
 
     if (_systemMy->GetOrbite() == 0) {
         if (ImGui::Button("[O]", { 50.f, 50.f })) {
@@ -53,7 +67,7 @@ void BottomUI::Draw() {
     ImGui::SameLine();
 
     ImGui::PushItemWidth((Engine::Screen::width() - widthSlider));
-    ImGui::SliderInt("##time_speed_slider", &timeSpeed, 1, 100);
+    ImGui::SliderInt("##time_speed_slider", &timeSpeed, -100, 100);
     _systemMy->_timeSpeed = timeSpeed;
     ImGui::PopItemWidth();
 
@@ -71,7 +85,7 @@ void BottomUI::Draw() {
 
     //...
     ImGui::SameLine();
-    if (_systemMy->PerspectiveView()) {
+    /*if (_systemMy->PerspectiveView()) {
         if (ImGui::Button("[*]", { 50.f, 50.f })) {
             _systemMy->SetPerspectiveView(false);
         }
@@ -80,7 +94,12 @@ void BottomUI::Draw() {
         if (ImGui::Button("[#]", { 50.f, 50.f })) {
             _systemMy->SetPerspectiveView(true);
         }
+    }*/
+
+    if (ImGui::Button((_systemMy->_systemMap->threadEnable ? "[...]" : "[.]"), { 50.f, 50.f })) {
+        _systemMy->_systemMap->threadEnable = !_systemMy->_systemMap->threadEnable;
     }
 
+    //...
     style.FramePadding.y = 3.f;
 }

@@ -8,7 +8,7 @@
 #include "../UI/SpatialGrid.h"
 #include "../../Engine/Source/Object/Model.h"
 
-namespace S00 {
+namespace ARR {
 class SystemMap;
 
 class Body final  {

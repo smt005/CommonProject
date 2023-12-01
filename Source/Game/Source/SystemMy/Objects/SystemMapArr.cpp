@@ -1,10 +1,10 @@
-#include "SystemMap.h"
+#include "SystemMapArr.h"
 #include <thread>
 
 #include "../../Engine/Source/Object/Model.h"
 #include "../../Engine/Source/Common/Help.h"
 
-using namespace S00;
+using namespace ARR;
 Body::Body(const std::string& nameModel)
 	: _model(Model::getByName(nameModel))
 {}

@@ -18,10 +18,12 @@
 #include "ImGuiManager/UI.h"
 #include "glm/vec2.hpp"
 #include "ImGuiManager/UI.h"
-#include "UI/BottomUI.h"
+#include "UI/MainUI.h"
 #include "UI/SystemManager.h"
 #include "SaveManager.h"
 #include "Objects/SystemMap.h"
+#include "Objects/SystemMapArr.h"
+#include "Objects/SystemTypes.h"
 
 #define DRAW DrawLight
 std::string SystemMy::_resourcesDir;
@@ -44,7 +46,7 @@ void SystemMy::init() {
 	DRAW::setClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 
 	//...
-	_systemMap = std::shared_ptr<SystemMap>(new SystemMap("MAIN"));
+	_systemMap = std::shared_ptr<ARR::SystemMap>(new ARR::SystemMap("MAIN"));
 	_systemMap->Load();
 
 	//...
@@ -63,7 +65,7 @@ void SystemMy::init() {
 
 	//...
 	initCallback();
-	UI::ShowWindow<BottomUI>(this);
+	UI::ShowWindow<MainUI>(this);
 
 	// Interface
 	{
@@ -102,13 +104,17 @@ void SystemMy::update() {
 	}
 	time = Engine::Core::currentTime();
 
-	if (_timeSpeed == 1) {
+	if (_timeSpeed == 0) {
+		return;
+	}
+
+	dt = 10;
+	int _timeSpeedAbs = std::abs(_timeSpeed);
+	dt = dt * (_timeSpeed / _timeSpeedAbs);
+
+	for (int it = 0; it < _timeSpeedAbs; ++it) {
+		double dtTemp = 10;
 		_systemMap->Update(dt);
-	} else {
-		for (int it = 0; it < _timeSpeed; ++it) {
-			double dtTemp = 10;
-			_systemMap->Update(dt);
-		}
 	}
 }
 
@@ -129,7 +135,16 @@ void SystemMy::Drawline() {
 	Camera::Set<Camera>(Map::GetFirstCurrentMap().getCamera());
 	DrawLine::prepare();
 
-	if (_greed) {
+	if (_systemMap) {
+		//DrawLine::SetIdentityMatrix();
+		//Vector3 centerMass = _systemMap->CenterMass();
+		Vector3 centerMass = _systemMap->GetBody("Sun")->GetPos();
+		float cm[3] = { centerMass.x, centerMass.y, centerMass.z };
+		DrawLine::SetIdentityMatrixByPos(cm);
+		DrawLine::Draw(_systemMap->spatialGrid);
+	}
+
+	/*if (_greed) {
 		DrawLine::draw(*_greed);
 	}
 	else {
@@ -143,7 +158,9 @@ void SystemMy::Drawline() {
 	else {
 		_greedBig = new Greed(100000.0f, 10000.0f, { {0.5f, 0.25f, 0.25f, 0.125f}, { 0.125f, 0.125f, 0.5f, 0.125f }, { 0.75f, 1.f, 0.75f, 0.95f } });
 		_greedBig->setPos({ 0.0f, 0.0f, 0.1f });
-	}
+	}*/
+
+
 
 	if (_interfaceLine) {
 		if (_points.size() == 2) {
@@ -272,11 +289,11 @@ void SystemMy::initCallback() {
 		Engine::VirtualKey key = releaseKeyEvent->getId();
 
 		if (key == Engine::VirtualKey::Q) {
-			if (UI::ShowingWindow("BottomUI")) {
-				UI::CloseWindow("BottomUI");
+			if (UI::ShowingWindow("MainUI")) {
+				UI::CloseWindow("MainUI");
 			}
 			else {
-				UI::ShowWindow<BottomUI>(this);
+				UI::ShowWindow<MainUI>(this);
 			}
 		}
 
@@ -400,7 +417,7 @@ void SystemMy::initCallback() {
 					ValueT mass = 100;
 
 					if (!_orbite) {
-						if (Body* star = _systemMap->GetBody("Sun")) {
+						if (ARR::Body* star = _systemMap->GetBody("Sun")) {
 							glm::vec3 gravityVector = _points[0] - star->GetPos();
 							glm::vec3 normalizeGravityVector = glm::normalize(gravityVector);
 
@@ -445,10 +462,10 @@ void SystemMy::initCallback() {
 			float dist = cameraPtr->GetDistanceOutside();
 
 			if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_UP) {
-				dist -= Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 250.f : 100.f;
+				dist -= Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 2500.f : 100.f;
 			}
 			else if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_BOTTOM) {
-				dist += Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 250.f : 100.f;
+				dist += Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 2500.f : 100.f;
 			}
 
 			if (dist < 10.f) {

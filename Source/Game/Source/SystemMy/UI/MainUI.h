@@ -7,10 +7,10 @@
 
 class SystemMy;
 
-class BottomUI final : public UI::Window {
+class MainUI final : public UI::Window {
 public:
-	BottomUI();
-	BottomUI(SystemMy* systemMy);
+	MainUI();
+	MainUI(SystemMy* systemMy);
 	void OnOpen() override;
 	void Update() override;
 	void Draw() override;

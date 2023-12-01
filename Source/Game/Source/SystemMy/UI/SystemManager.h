@@ -19,7 +19,7 @@ private:
 	float _x = 10.f;
 	float _y = 10.f;
 	float _width = 145.f;
-	float _height = 110.f;
+	float _height = 160.f;
 
 	SystemMy* _systemMy = nullptr;
 };

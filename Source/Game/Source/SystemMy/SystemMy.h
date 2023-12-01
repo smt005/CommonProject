@@ -7,11 +7,16 @@
 #include "glm/vec3.hpp"
 
 class Map;
-class SystemMap;
+
 class Greed;
 class Line;
 class BodyMy;
-class BottomUI;
+class MainUI;
+class SystemManager;
+
+namespace ARR {
+	class SystemMap;
+}
 
 namespace Engine { class Callback; }
 namespace Engine { class Text; }
@@ -22,7 +27,8 @@ typedef std::shared_ptr<Engine::Callback> CallbackPtr;
 class SystemMy final : public Engine::Game
 {
 public:
-	friend BottomUI;
+	friend MainUI;
+	friend SystemManager;
 
 	SystemMy();
 	~SystemMy();
@@ -65,7 +71,7 @@ public:
 	void NormalizeSystem();
 
 private:
-	std::shared_ptr<SystemMap> _systemMap;
+	std::shared_ptr<ARR::SystemMap> _systemMap;
 
 	Greed* _greed = nullptr;
 	Greed* _greedBig = nullptr;

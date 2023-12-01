@@ -14,6 +14,18 @@ class SystemMap;
 class Body final  {
 	friend SystemMap;
 
+	struct Data {
+		ValueT mass;
+		Vector3 pos;
+		Vector3 force;
+
+		Data(const ValueT _mass, Vector3&& _pos)
+			: mass(_mass)
+			, pos(_pos)
+			, force(0, 0, 0)
+		{}
+	};
+
 public:
 	Body(std::shared_ptr<Model>& model) : _model(model) {}
 	Body(const std::string& nameModel);
@@ -60,9 +72,10 @@ public:
 	char* _name = nullptr;
 	ValueT _mass = 0;
 	Vector3 _velocity = { 0, 0, 0 };
-	Vector3 _force = { 0, 0, 0 };
+	//Vector3 _force = { 0, 0, 0 };
 	Matrix44 _matrix = Matrix44(1);
 	std::shared_ptr<Model> _model;
+	Data* _dataPtr = nullptr;
 };
 
 class SystemMap final {
@@ -82,16 +95,22 @@ public:
 	template<typename ... Args>
 	Body& Add(Args&& ... args) {
 		Body* body = new Body(std::forward<Args>(args)...);
-		return *_bodies.emplace_back(body);
+		_bodies.emplace_back(body);
+		DataAssociation(); // TODO:
+		return *body;
 	}
 
 	Body& Add(Body* body) {
-		return *_bodies.emplace_back(body);
+		_bodies.emplace_back(body);
+		DataAssociation(); // TODO:
+		return *body;
 	}
 
 	std::vector<Body*>& Objects() {
 		return _bodies;
 	}
+
+	void DataAssociation();
 
 public:
 	SpatialGrid spatialGrid;
@@ -103,7 +122,6 @@ public:
 	ValueT _constGravity = 0.01f;
 	std::string _name;
 	std::vector<Body*> _bodies;
-
-	//std::vector<>
+	std::vector<Body::Data> _datas;
 };
 }

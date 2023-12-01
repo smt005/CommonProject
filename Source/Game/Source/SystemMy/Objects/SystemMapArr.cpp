@@ -35,20 +35,25 @@ SystemMap::~SystemMap() {
 void SystemMap::Update(double dt) {
 	auto getForce = [&](size_t statIndex, size_t endIndex) {
 		for (size_t index = statIndex; index < endIndex; ++index) {
-			Body* body = _bodies[index];
+			Body::Data& data = _datas[index];
 
-			Vector3& forceVec = body->_force;
+			ValueT mass = data.mass;
+			Vector3& pos = data.pos;
+			Vector3& forceVec = data.force;
+			forceVec.x = 0;
+			forceVec.y = 0;
+			forceVec.z = 0;
 
-			for (Body* otherBody : _bodies) {
-				if (body == otherBody) {
+			for (Body::Data& otherBody : _datas) {
+				if (&data == &otherBody) {
 					continue;
 				}
 
-				Vector3 gravityVec = otherBody->GetPos() - body->GetPos();
+				Vector3 gravityVec = otherBody.pos - pos;
 				ValueT dist = glm::length(gravityVec);
 				gravityVec = glm::normalize(gravityVec);
 
-				ValueT force = _constGravity * (body->_mass * otherBody->_mass) / (dist * dist);
+				ValueT force = _constGravity * (mass * otherBody.mass) / (dist * dist);
 				gravityVec *= force;
 				forceVec += gravityVec;
 			}
@@ -85,16 +90,13 @@ void SystemMap::Update(double dt) {
 	}
 
 	for (Body* body : _bodies) {
-		Vector3 acceleration = body->_force / body->_mass;
+		Vector3 acceleration = body->_dataPtr->force / body->_mass;
 		Vector3 newVelocity = acceleration * static_cast<ValueT>(dt);
 
 		body->_velocity += newVelocity;
 
-		Vector3 pos = body->GetPos();
-		pos += body->_velocity * static_cast<ValueT>(dt);
-		body->SetPos(pos);
-
-		body->_force = { 0, 0, 0 };
+		body->_dataPtr->pos += body->_velocity * static_cast<ValueT>(dt);
+		body->SetPos(body->_dataPtr->pos);
 	}
 
 	if (dt > 0) {
@@ -194,6 +196,15 @@ bool SystemMap::Load() {
 	}
 
 	return true;
+}
+
+void SystemMap::DataAssociation() {
+	_datas.clear();
+	_datas.reserve(_bodies.size());
+
+	for (Body* body : _bodies) {
+		body->_dataPtr = &(_datas.emplace_back(body->_mass, body->GetPos()));
+	}
 }
 
 Vector3 SystemMap::CenterMass() {

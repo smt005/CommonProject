@@ -96,7 +96,7 @@ public:
 public:
 	SpatialGrid spatialGrid;
 	int time = 0;
-	bool threadEnable = false;
+	bool threadEnable = true;
 
 private:
 public:

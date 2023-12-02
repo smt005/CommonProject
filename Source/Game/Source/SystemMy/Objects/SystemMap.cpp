@@ -11,7 +11,7 @@ Body::Body(const std::string& nameModel)
 	: _model(Model::getByName(nameModel))
 {}
 
-Body::Body(const std::string& nameModel, const Vector3& pos, const Vector3& velocity, ValueT mass, const std::string& name)
+Body::Body(const std::string& nameModel, const glm::vec3& pos, const glm::vec3& velocity, float mass, const std::string& name)
 	: _mass(mass)
 	, _velocity(velocity)
 	, _model(Model::getByName(nameModel))
@@ -45,18 +45,18 @@ void SystemMap::Update(double dt) {
 		for (size_t index = statIndex; index < endIndex; ++index) {
 			Body* body = _bodies[index];
 
-			Vector3& forceVec = body->_force;
+			glm::vec3& forceVec = body->_force;
 
 			for (Body* otherBody : _bodies) {
 				if (body == otherBody) {
 					continue;
 				}
 
-				Vector3 gravityVec = otherBody->GetPos() - body->GetPos();
-				ValueT dist = glm::length(gravityVec);
+				glm::vec3 gravityVec = otherBody->GetPos() - body->GetPos();
+				float dist = glm::length(gravityVec);
 				gravityVec = glm::normalize(gravityVec);
 
-				ValueT force = _constGravity * (body->_mass * otherBody->_mass) / (dist * dist);
+				float force = _constGravity * (body->_mass * otherBody->_mass) / (dist * dist);
 				gravityVec *= force;
 				forceVec += gravityVec;
 			}
@@ -93,13 +93,13 @@ void SystemMap::Update(double dt) {
 	}
 
 	for (Body* body : _bodies) {
-		Vector3 acceleration = body->_force / body->_mass;
-		Vector3 newVelocity = acceleration * static_cast<ValueT>(dt);
+		glm::vec3 acceleration = body->_force / body->_mass;
+		glm::vec3 newVelocity = acceleration * static_cast<float>(dt);
 
 		body->_velocity += newVelocity;
 
-		Vector3 pos = body->GetPos();
-		pos += body->_velocity * static_cast<ValueT>(dt);
+		glm::vec3 pos = body->GetPos();
+		pos += body->_velocity * static_cast<float>(dt);
 		body->SetPos(pos);
 
 		body->_force = { 0, 0, 0 };
@@ -175,14 +175,14 @@ bool SystemMap::Load() {
 		std::string name = jsonObject["name"].isString() ? jsonObject["name"].asString() : "";
 		float mass = jsonObject["mass"].isDouble() ? jsonObject["mass"].asDouble() : 1.f;
 
-		Vector3 pos(0.f, 0.f, 0.f);
+		glm::vec3 pos(0.f, 0.f, 0.f);
 		if (jsonObject["pos"].isArray()) {
 			pos.x = jsonObject["pos"][0].asDouble();
 			pos.y = jsonObject["pos"][1].asDouble();
 			pos.z = jsonObject["pos"][2].asDouble();
 		}
 
-		Vector3 vel(0.f, 0.f, 0.f);
+		glm::vec3 vel(0.f, 0.f, 0.f);
 		if (jsonObject["vel"].isArray()) {
 			vel.x = jsonObject["vel"][0].asDouble();
 			vel.y = jsonObject["vel"][1].asDouble();
@@ -204,9 +204,9 @@ bool SystemMap::Load() {
 	return true;
 }
 
-Vector3 SystemMap::CenterMass() {
-	ValueT sumMass = 0;
-	Vector3 sunPosMass(0, 0, 0);
+glm::vec3 SystemMap::CenterMass() {
+	float sumMass = 0;
+	glm::vec3 sunPosMass(0, 0, 0);
 
 	for (Body* body : _bodies) {
 		sunPosMass += body->GetPos() * body->_mass;

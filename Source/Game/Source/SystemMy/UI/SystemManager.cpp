@@ -4,7 +4,6 @@
 #include "imgui.h"
 #include <glm/ext/scalar_constants.hpp>
 #include "../Objects/SystemMap.h"
-#include "../Objects/SystemTypes.h"
 #include "../SystemMy.h"
 #include "../Objects/SystemClass.h"
 #include "../Objects/SystemMap.h"
@@ -61,12 +60,12 @@ void SystemManager::Draw() {
             SystemMap& systemMap = *_systemMy->_systemMap;
 
             if (Body* star = systemMap.GetBody("Sun")) {
-                Vector3 starPos = star->GetPos();
-                Vector3 starVel = star->_velocity;
+                glm::vec3 starPos = star->GetPos();
+                glm::vec3 starVel = star->_velocity;
 
                 for (Body* body : systemMap.Objects()) {
-                    Vector3 pos = body->GetPos();
-                    Vector3 vel = body->_velocity;
+                    glm::vec3 pos = body->GetPos();
+                    glm::vec3 vel = body->_velocity;
 
                     pos -= starPos;
                     vel -= starVel;
@@ -85,7 +84,7 @@ void SystemManager::Draw() {
 
             Body* star = systemMap.GetBody("Sun");
             if (star) {
-                Vector3 starPos = star->GetPos();
+                glm::vec3 starPos = star->GetPos();
                 float starMass = star->_mass;
 
                 float dist = 1000.0f;
@@ -98,7 +97,7 @@ void SystemManager::Draw() {
                             continue;
                         }
 
-                        Vector3 pos(iX * dist, iY * dist, 0);
+                        glm::vec3 pos(iX * dist, iY * dist, 0);
                         float mass = 100.f;
 
                         glm::vec3 gravityVector = pos - starPos;
@@ -124,7 +123,7 @@ void SystemManager::Draw() {
 
             Body* star = systemMap.GetBody("Sun");
             if (star) {
-                Vector3 starPos = star->GetPos();
+                glm::vec3 starPos = star->GetPos();
                 float starMass = star->_mass;
 
                 size_t count = 999;
@@ -137,7 +136,7 @@ void SystemManager::Draw() {
                     float iX = dist * std::cos(angle) - dist * std::sin(angle);
                     float iY = dist * std::sin(angle) + dist * std::cos(angle);
 
-                    Vector3 pos(iX, iY, 0);
+                    glm::vec3 pos(iX, iY, 0);
                     float mass = 100.f;
 
                     glm::vec3 gravityVector = pos - starPos;

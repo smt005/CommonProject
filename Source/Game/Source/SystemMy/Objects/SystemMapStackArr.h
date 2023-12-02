@@ -20,12 +20,12 @@ class Body final  {
 
 public:
 	struct Data {
-		ValueT mass;
-		Vector3 pos;
-		Vector3 force;
+		float mass;
+		glm::vec3 pos;
+		glm::vec3 force;
 
 		Data() = default;
-		Data(const ValueT _mass, Vector3&& _pos)
+		Data(const float _mass, glm::vec3&& _pos)
 			: mass(_mass)
 			, pos(_pos)
 			, force(0, 0, 0)
@@ -35,7 +35,7 @@ public:
 	Body() = default;
 	Body(std::shared_ptr<Model>& model) : _model(model) {}
 	Body(const std::string& nameModel);
-	Body(const std::string& nameModel, const Vector3& pos, const Vector3& velocity, ValueT mass, const std::string& name);
+	Body(const std::string& nameModel, const glm::vec3& pos, const glm::vec3& velocity, float mass, const std::string& name);
 	~Body();
 
 	void SetName(const std::string& name) {
@@ -45,8 +45,8 @@ public:
 		_name[size] = '\0';
 	}
 
-	Vector3 GetPos() const { 
-		return Vector3(_matrix[3][0], _matrix[3][1], _matrix[3][2]);
+	glm::vec3 GetPos() const { 
+		return glm::vec3(_matrix[3][0], _matrix[3][1], _matrix[3][2]);
 	}
 
 	template<typename T>
@@ -73,17 +73,17 @@ public:
 		return *_model;
 	}
 	
-	const Matrix44& getMatrix() const {
+	const glm::mat4x4& getMatrix() const {
 		return _matrix;
 	}
 
 private:
 public:
 	char* _name = nullptr;
-	ValueT _mass = 0;
-	Vector3 _velocity = { 0, 0, 0 };
+	float _mass = 0;
+	glm::vec3 _velocity = { 0, 0, 0 };
 
-	Matrix44 _matrix = Matrix44(1);
+	glm::mat4x4 _matrix = glm::mat4x4(1);
 	std::shared_ptr<Model> _model;
 	Data* _dataPtr = nullptr;
 };
@@ -100,7 +100,7 @@ public:
 	void Save();
 	bool Load();
 
-	Vector3 CenterMass();
+	glm::vec3 CenterMass();
 	Body* GetBody(const char* chName);
 
 	template<typename ... Args>
@@ -130,7 +130,7 @@ public:
 
 private:
 public:
-	ValueT _constGravity = 0.01f;
+	float _constGravity = 0.01f;
 	std::string _name;
 	std::vector<Body*> _bodies;
 };

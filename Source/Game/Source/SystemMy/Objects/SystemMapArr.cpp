@@ -10,7 +10,7 @@ Body::Body(const std::string& nameModel)
 	: _model(Model::getByName(nameModel))
 {}
 
-Body::Body(const std::string& nameModel, const Vector3& pos, const Vector3& velocity, ValueT mass, const std::string& name)
+Body::Body(const std::string& nameModel, const glm::vec3& pos, const glm::vec3& velocity, float mass, const std::string& name)
 	: _mass(mass)
 	, _velocity(velocity)
 	, _model(Model::getByName(nameModel))
@@ -44,9 +44,9 @@ void SystemMap::Update(double dt) {
 		for (size_t index = statIndex; index <= endIndex; ++index) {
 			Body::Data& data = _datas[index];
 
-			ValueT mass = data.mass;
-			Vector3& pos = data.pos;
-			Vector3& forceVec = data.force;
+			float mass = data.mass;
+			glm::vec3& pos = data.pos;
+			glm::vec3& forceVec = data.force;
 			forceVec.x = 0;
 			forceVec.y = 0;
 			forceVec.z = 0;
@@ -56,11 +56,11 @@ void SystemMap::Update(double dt) {
 					continue;
 				}
 
-				Vector3 gravityVec = otherBody.pos - pos;
-				ValueT dist = glm::length(gravityVec);
+				glm::vec3 gravityVec = otherBody.pos - pos;
+				float dist = glm::length(gravityVec);
 				gravityVec = glm::normalize(gravityVec);
 
-				ValueT force = _constGravity * (mass * otherBody.mass) / (dist * dist);
+				float force = _constGravity * (mass * otherBody.mass) / (dist * dist);
 				gravityVec *= force;
 				forceVec += gravityVec;
 			}
@@ -103,12 +103,12 @@ void SystemMap::Update(double dt) {
 	}
 
 	for (Body* body : _bodies) {
-		Vector3 acceleration = body->_dataPtr->force / body->_mass;
-		Vector3 newVelocity = acceleration * static_cast<ValueT>(dt);
+		glm::vec3 acceleration = body->_dataPtr->force / body->_mass;
+		glm::vec3 newVelocity = acceleration * static_cast<float>(dt);
 
 		body->_velocity += newVelocity;
 
-		body->_dataPtr->pos += body->_velocity * static_cast<ValueT>(dt);
+		body->_dataPtr->pos += body->_velocity * static_cast<float>(dt);
 		body->SetPos(body->_dataPtr->pos);
 	}
 
@@ -183,14 +183,14 @@ bool SystemMap::Load() {
 		std::string name = jsonObject["name"].isString() ? jsonObject["name"].asString() : "";
 		float mass = jsonObject["mass"].isDouble() ? jsonObject["mass"].asDouble() : 1.f;
 
-		Vector3 pos(0.f, 0.f, 0.f);
+		glm::vec3 pos(0.f, 0.f, 0.f);
 		if (jsonObject["pos"].isArray()) {
 			pos.x = jsonObject["pos"][0].asDouble();
 			pos.y = jsonObject["pos"][1].asDouble();
 			pos.z = jsonObject["pos"][2].asDouble();
 		}
 
-		Vector3 vel(0.f, 0.f, 0.f);
+		glm::vec3 vel(0.f, 0.f, 0.f);
 		if (jsonObject["vel"].isArray()) {
 			vel.x = jsonObject["vel"][0].asDouble();
 			vel.y = jsonObject["vel"][1].asDouble();
@@ -224,9 +224,9 @@ void SystemMap::DataAssociation() {
 	}
 }
 
-Vector3 SystemMap::CenterMass() {
-	ValueT sumMass = 0;
-	Vector3 sunPosMass(0, 0, 0);
+glm::vec3 SystemMap::CenterMass() {
+	float sumMass = 0;
+	glm::vec3 sunPosMass(0, 0, 0);
 
 	for (Body* body : _bodies) {
 		sunPosMass += body->GetPos() * body->_mass;

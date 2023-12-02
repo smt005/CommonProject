@@ -26,7 +26,6 @@
 #include "Objects/SystemMapArr.h"
 #include "Objects/SystemMapStackArr.h"
 #include "Objects/SystemMapStaticArr.h"
-#include "Objects/SystemTypes.h"
 
 #define DRAW DrawLight
 std::string SystemMy::_resourcesDir;
@@ -127,7 +126,7 @@ void SystemMy::update() {
 
 	CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get());
 	if (cameraPtr) {
-		Vector3 centerMass = _systemMap->GetBody("Sun")->GetPos();
+		glm::vec3 centerMass = _systemMap->GetBody("Sun")->GetPos();
 		cameraPtr->SetPosOutside(centerMass);
 	}
 }
@@ -151,8 +150,8 @@ void SystemMy::Drawline() {
 
 	if (_systemMap) {
 		//DrawLine::SetIdentityMatrix();
-		//Vector3 centerMass = _systemMap->CenterMass();
-		Vector3 centerMass = _systemMap->GetBody("Sun")->GetPos();
+		//glm::vec3 centerMass = _systemMap->CenterMass();
+		glm::vec3 centerMass = _systemMap->GetBody("Sun")->GetPos();
 		float cm[3] = { centerMass.x, centerMass.y, centerMass.z };
 		DrawLine::SetIdentityMatrixByPos(cm);
 		DrawLine::Draw(_systemMap->spatialGrid);
@@ -428,7 +427,7 @@ void SystemMy::initCallback() {
 		if (_points.size() == 2 || (_orbite == 0 && _points.size() == 1)) {
 			if (Engine::TapCallbackEvent* tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
 				if (tapCallbackEvent->_id == Engine::VirtualTap::LEFT) {
-					ValueT mass = 100;
+					float mass = 100;
 
 					if (!_orbite) {
 						if (Body* star = _systemMap->GetBody("Sun")) {

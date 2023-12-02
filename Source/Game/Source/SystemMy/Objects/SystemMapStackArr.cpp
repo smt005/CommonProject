@@ -1,11 +1,15 @@
-#include "SystemMapArr.h"
-#if SYSTEM_MAP == 1
+#include "SystemMapStackArr.h"
+#if SYSTEM_MAP == 2
 
 #include <thread>
+#include "../Objects/SystemClass.h"
 #include "../../Engine/Source/Object/Model.h"
 #include "../../Engine/Source/Common/Help.h"
 
-using namespace ARR;
+using namespace SARR;
+
+SystemStackData* SystemStackData::dataPtr = nullptr;
+
 Body::Body(const std::string& nameModel)
 	: _model(Model::getByName(nameModel))
 {}
@@ -40,9 +44,16 @@ void SystemMap::Update(double dt, int countForceTime) {
 }
 
 void SystemMap::Update(double dt) {
+	size_t sizeData = SystemStackData::dataPtr->size;
+	if (sizeData <= 1) {
+		return;
+	}
+	
+	Body::Data* datas = SystemStackData::dataPtr->bodies;
+
 	auto getForce = [&](size_t statIndex, size_t endIndex) {
 		for (size_t index = statIndex; index <= endIndex; ++index) {
-			Body::Data& data = _datas[index];
+			Body::Data& data = datas[index];
 
 			ValueT mass = data.mass;
 			Vector3& pos = data.pos;
@@ -51,7 +62,9 @@ void SystemMap::Update(double dt) {
 			forceVec.y = 0;
 			forceVec.z = 0;
 
-			for (Body::Data& otherBody : _datas) {
+			for (size_t otherIndex = 0; otherIndex < sizeData; ++otherIndex) {
+				Body::Data& otherBody = datas[otherIndex];
+
 				if (&data == &otherBody) {
 					continue;
 				}
@@ -103,6 +116,10 @@ void SystemMap::Update(double dt) {
 	}
 
 	for (Body* body : _bodies) {
+		if (body->_dataPtr == nullptr) {
+			continue;
+		}
+
 		Vector3 acceleration = body->_dataPtr->force / body->_mass;
 		Vector3 newVelocity = acceleration * static_cast<ValueT>(dt);
 
@@ -216,12 +233,20 @@ bool SystemMap::Load() {
 }
 
 void SystemMap::DataAssociation() {
-	_datas.clear();
-	_datas.reserve(_bodies.size());
+	size_t size = _bodies.size();
+	Body::Data* bodies = SystemStackData::dataPtr->bodies;
 
-	for (Body* body : _bodies) {
-		body->_dataPtr = &(_datas.emplace_back(body->_mass, body->GetPos()));
+	for (size_t index = 0; index < size; ++index) {
+		Body* body = _bodies[index];
+		Body::Data& data = bodies[index];
+
+		data.mass = body->_mass;
+		data.pos = body->GetPos();
+
+		body->_dataPtr = &data;
 	}
+
+	SystemStackData::dataPtr->size = size;
 }
 
 Vector3 SystemMap::CenterMass() {

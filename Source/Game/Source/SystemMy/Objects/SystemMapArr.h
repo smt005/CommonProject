@@ -1,4 +1,8 @@
+
 #pragma once
+#include "../Objects/SystemClass.h"
+
+#if SYSTEM_MAP == 1
 
 #include <string>
 #include <vector>
@@ -72,7 +76,7 @@ public:
 	char* _name = nullptr;
 	ValueT _mass = 0;
 	Vector3 _velocity = { 0, 0, 0 };
-	//Vector3 _force = { 0, 0, 0 };
+
 	Matrix44 _matrix = Matrix44(1);
 	std::shared_ptr<Model> _model;
 	Data* _dataPtr = nullptr;
@@ -85,6 +89,7 @@ public:
 	SystemMap(const std::string& name);
 	~SystemMap();
 
+	void Update(double dt, int countForceTime);
 	void Update(double dt);
 	void Save();
 	bool Load();
@@ -115,7 +120,7 @@ public:
 public:
 	SpatialGrid spatialGrid;
 	int time = 0;
-	bool threadEnable = false;
+	bool threadEnable = true;
 
 private:
 public:
@@ -125,3 +130,5 @@ public:
 	std::vector<Body::Data> _datas;
 };
 }
+
+#endif

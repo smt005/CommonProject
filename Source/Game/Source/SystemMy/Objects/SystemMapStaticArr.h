@@ -2,7 +2,7 @@
 #pragma once
 #include "../Objects/SystemClass.h"
 
-#if SYSTEM_MAP == 0
+#if SYSTEM_MAP == 3
 
 #include <string>
 #include <vector>
@@ -12,13 +12,27 @@
 #include "../UI/SpatialGrid.h"
 #include "../../Engine/Source/Object/Model.h"
 
-namespace S00 {
+namespace STATIC_ARR {
 class SystemMap;
 
 class Body final  {
 	friend SystemMap;
 
 public:
+	struct Data {
+		ValueT mass;
+		Vector3 pos;
+		Vector3 force;
+
+		Data() = default;
+		Data(const ValueT _mass, Vector3&& _pos)
+			: mass(_mass)
+			, pos(_pos)
+			, force(0, 0, 0)
+		{}
+	};
+
+	Body() = default;
 	Body(std::shared_ptr<Model>& model) : _model(model) {}
 	Body(const std::string& nameModel);
 	Body(const std::string& nameModel, const Vector3& pos, const Vector3& velocity, ValueT mass, const std::string& name);
@@ -40,6 +54,10 @@ public:
 		_matrix[3][0] = pos[0];
 		_matrix[3][1] = pos[1];
 		_matrix[3][2] = pos[2];
+
+		if (_dataPtr) {
+			_dataPtr->pos = pos;
+		}
 	}
 
 	const char* const Name() const {
@@ -64,9 +82,20 @@ public:
 	char* _name = nullptr;
 	ValueT _mass = 0;
 	Vector3 _velocity = { 0, 0, 0 };
-	Vector3 _force = { 0, 0, 0 };
+
 	Matrix44 _matrix = Matrix44(1);
 	std::shared_ptr<Model> _model;
+	Data* _dataPtr = nullptr;
+};
+
+struct SystemStackData {
+	SystemStackData() = default;
+
+	size_t size = 0;
+	size_t capacity = 2000;
+	Body::Data bodies[2000];
+
+	static SystemStackData data;
 };
 
 class SystemMap final {
@@ -87,16 +116,22 @@ public:
 	template<typename ... Args>
 	Body& Add(Args&& ... args) {
 		Body* body = new Body(std::forward<Args>(args)...);
-		return *_bodies.emplace_back(body);
+		_bodies.emplace_back(body);
+		DataAssociation(); // TODO:
+		return *body;
 	}
 
 	Body& Add(Body* body) {
-		return *_bodies.emplace_back(body);
+		_bodies.emplace_back(body);
+		DataAssociation(); // TODO:
+		return *body;
 	}
 
 	std::vector<Body*>& Objects() {
 		return _bodies;
 	}
+
+	void DataAssociation();
 
 public:
 	SpatialGrid spatialGrid;
@@ -109,6 +144,7 @@ public:
 	std::string _name;
 	std::vector<Body*> _bodies;
 };
+
 }
 
 #endif

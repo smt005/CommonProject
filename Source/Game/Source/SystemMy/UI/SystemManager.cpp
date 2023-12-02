@@ -9,6 +9,8 @@
 #include "../Objects/SystemClass.h"
 #include "../Objects/SystemMap.h"
 #include "../Objects/SystemMapArr.h"
+#include "../Objects/SystemMapStackArr.h"
+#include "../Objects/SystemMapStaticArr.h"
 #include "../SaveManager.h"
 
 SystemManager::SystemManager() {
@@ -77,7 +79,7 @@ void SystemManager::Draw() {
     }
 
     ImGui::Dummy(ImVec2(0.f, 0.f));
-    if (ImGui::Button("Generate", { 128.f, 32.f })) {
+    if (ImGui::Button("Generate 1", { 128.f, 32.f })) {
         if (_systemMy && _systemMy->_systemMap) {
             SystemMap& systemMap = *_systemMy->_systemMap;
 
@@ -110,6 +112,47 @@ void SystemManager::Draw() {
                         velocity *= std::sqrtf(systemMap._constGravity * starMass / glm::length(gravityVector));
                         systemMap.Add("BrownStone", pos, velocity, mass, "");
                     }
+                }
+            }
+        }
+    }
+
+    ImGui::Dummy(ImVec2(0.f, 0.f));
+    if (ImGui::Button("Generate 2", { 128.f, 32.f })) {
+        if (_systemMy && _systemMy->_systemMap) {
+            SystemMap& systemMap = *_systemMy->_systemMap;
+
+            Body* star = systemMap.GetBody("Sun");
+            if (star) {
+                Vector3 starPos = star->GetPos();
+                float starMass = star->_mass;
+
+                size_t count = 999;
+                float dDist = 25.f;
+                float dist = 5000.f;
+                float angle = 0.f;
+                float dAngle = glm::pi<float>() / 10.f;
+
+                for (size_t i = 0; i < count; ++i) {
+                    float iX = dist * std::cos(angle) - dist * std::sin(angle);
+                    float iY = dist * std::sin(angle) + dist * std::cos(angle);
+
+                    Vector3 pos(iX, iY, 0);
+                    float mass = 100.f;
+
+                    glm::vec3 gravityVector = pos - starPos;
+                    glm::vec3 normalizeGravityVector = glm::normalize(gravityVector);
+
+                    float g90 = glm::pi<float>() / 2.0;
+                    glm::vec3 velocity(normalizeGravityVector.x * std::cos(g90) - normalizeGravityVector.y * std::sin(g90),
+                        normalizeGravityVector.x * std::sin(g90) + normalizeGravityVector.y * std::cos(g90),
+                        0.f);
+
+                    velocity *= std::sqrtf(systemMap._constGravity * starMass / glm::length(gravityVector));
+                    systemMap.Add("BrownStone", pos, velocity, mass, "");
+
+                    dist += dDist;
+                    angle += dAngle;
                 }
             }
         }

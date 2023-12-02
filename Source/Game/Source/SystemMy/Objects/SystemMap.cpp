@@ -1,6 +1,8 @@
 #include "SystemMap.h"
-#include <thread>
 
+#if SYSTEM_MAP == 0
+
+#include <thread>
 #include "../../Engine/Source/Object/Model.h"
 #include "../../Engine/Source/Common/Help.h"
 
@@ -29,6 +31,12 @@ SystemMap::SystemMap(const std::string& name)
 SystemMap::~SystemMap() {
 	for (Body* body : _bodies) {
 		delete body;
+	}
+}
+
+void SystemMap::Update(double dt, int countForceTime) {
+	for (int index = 0; index < countForceTime; ++index) {
+		Update(dt);
 	}
 }
 
@@ -214,3 +222,5 @@ Body* SystemMap::GetBody(const char* chName) {
 	});
 	return itBody != _bodies.end() ? *itBody : nullptr;
 }
+
+#endif

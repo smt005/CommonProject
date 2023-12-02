@@ -23,4 +23,8 @@ private:
 
 	int timeSpeed = 1;
 	SystemMy* _systemMy = nullptr;
+
+	int minFPS = -1;// std::numeric_limits<int>::max();
+	int FPS = 0;
+	int maxFPS = -1;
 };

@@ -9,6 +9,8 @@
 #include "../Objects/SystemClass.h"
 #include "../Objects/SystemMap.h"
 #include "../Objects/SystemMapArr.h"
+#include "../Objects/SystemMapStackArr.h"
+#include "../Objects/SystemMapStaticArr.h"
 
 MainUI::MainUI() {
     SetId("MainUI");
@@ -36,8 +38,8 @@ void MainUI::Update() {
 }
 
 void MainUI::Draw() {
-    int FPS = static_cast<int>(1 / Engine::Core::deltaTime());
-
+    FPS = static_cast<int>(1 / Engine::Core::deltaTime());
+    
     volatile static float widthSlider = 190.f;
     volatile static float framePadding = 18.f;
     volatile static float offsetBottom = 90.f;
@@ -48,7 +50,16 @@ void MainUI::Draw() {
     // Top
     if (_systemMy && _systemMy->_systemMap) {
         int time = _systemMy->_systemMap->time;
-        ImGui::Text("Time: %d FPS: %d", time, FPS);
+        if (time == 10) {
+            minFPS = FPS;
+            maxFPS = FPS;
+        }
+        if (time > 10) {
+            minFPS = FPS < minFPS ? minFPS = FPS : minFPS;
+            maxFPS = FPS > maxFPS ? maxFPS = FPS : maxFPS;
+        }
+        int countBody = _systemMy->_systemMap->Objects().size();
+        ImGui::Text("Time: %d Count: %d FPS: %d - %d - %d", time, countBody, minFPS, FPS, maxFPS);
     }
 
     // Bottom

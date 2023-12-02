@@ -24,6 +24,8 @@
 #include "Objects/SystemClass.h"
 #include "Objects/SystemMap.h"
 #include "Objects/SystemMapArr.h"
+#include "Objects/SystemMapStackArr.h"
+#include "Objects/SystemMapStaticArr.h"
 #include "Objects/SystemTypes.h"
 
 #define DRAW DrawLight
@@ -109,13 +111,24 @@ void SystemMy::update() {
 		return;
 	}
 
-	dt = 10;
+	dt = 100;
 	int _timeSpeedAbs = std::abs(_timeSpeed);
 	dt = dt * (_timeSpeed / _timeSpeedAbs);
 
-	for (int it = 0; it < _timeSpeedAbs; ++it) {
+	if (_timeSpeedAbs == 1) {
+		_systemMap->Update(dt);
+	} else {
+		_systemMap->Update(dt, _timeSpeedAbs);
+	}
+	/*for (int it = 0; it < _timeSpeedAbs; ++it) {
 		double dtTemp = 10;
 		_systemMap->Update(dt);
+	}*/
+
+	CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get());
+	if (cameraPtr) {
+		Vector3 centerMass = _systemMap->GetBody("Sun")->GetPos();
+		cameraPtr->SetPosOutside(centerMass);
 	}
 }
 
@@ -225,7 +238,7 @@ bool SystemMy::load() {
 		
 		dynamic_cast<CameraControlOutside*>(_camearSide.get())->Load(loadData["CameraSide"]);
 		dynamic_cast<CameraControlOutside*>(_camearSide.get())->Enable(true);
-		dynamic_cast<CameraControlOutside*>(_camearSide.get())->SetDistanceOutside(15000.f);
+		dynamic_cast<CameraControlOutside*>(_camearSide.get())->SetDistanceOutside(50000.f);
 
 		Map::GetFirstCurrentMap().getCamera() = _camearSide;
 	}
@@ -463,10 +476,10 @@ void SystemMy::initCallback() {
 			float dist = cameraPtr->GetDistanceOutside();
 
 			if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_UP) {
-				dist -= Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 2500.f : 100.f;
+				dist -= Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 5000.f : 2000.f;
 			}
 			else if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_BOTTOM) {
-				dist += Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 2500.f : 100.f;
+				dist += Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 5000.f : 2000.f;
 			}
 
 			if (dist < 10.f) {

@@ -5,11 +5,13 @@
 #include <glm/ext/scalar_constants.hpp>
 #include "../Objects/SystemMap.h"
 #include "../SystemMy.h"
+#include "Math/Vector.h"
 #include "../Objects/SystemClass.h"
 #include "../Objects/SystemMap.h"
 #include "../Objects/SystemMapArr.h"
 #include "../Objects/SystemMapStackArr.h"
 #include "../Objects/SystemMapStaticArr.h"
+#include "../Objects/SystemMapMyVec.h"
 #include "../SaveManager.h"
 
 SystemManager::SystemManager() {
@@ -60,18 +62,23 @@ void SystemManager::Draw() {
             SystemMap& systemMap = *_systemMy->_systemMap;
 
             if (Body* star = systemMap.GetBody("Sun")) {
-                glm::vec3 starPos = star->GetPos();
-                glm::vec3 starVel = star->_velocity;
+                auto starPosT = star->GetPos();
+                auto starVelT = star->_velocity;
+                glm::vec3 starPos = glm::vec3(starPosT.x, starPosT.y, starPosT.z);
+                glm::vec3 starVel = glm::vec3(starVelT.x, starVelT.y, starVelT.z);
 
                 for (Body* body : systemMap.Objects()) {
-                    glm::vec3 pos = body->GetPos();
-                    glm::vec3 vel = body->_velocity;
+                    auto posT = body->GetPos();
+                    auto velT = body->_velocity;
+                    glm::vec3 pos = glm::vec3(posT.x, posT.y, posT.z);
+                    glm::vec3 vel = glm::vec3(velT.x, velT.y, velT.z);
 
                     pos -= starPos;
                     vel -= starVel;
 
                     body->SetPos(pos);
                     body->SetVelocity(vel);
+                    
                 }
             }
         }
@@ -84,7 +91,8 @@ void SystemManager::Draw() {
 
             Body* star = systemMap.GetBody("Sun");
             if (star) {
-                glm::vec3 starPos = star->GetPos();
+                auto starPosT = star->GetPos();
+                glm::vec3 starPos = glm::vec3(starPosT.x, starPosT.y, starPosT.z);
                 float starMass = star->_mass;
 
                 float dist = 1000.0f;
@@ -123,7 +131,8 @@ void SystemManager::Draw() {
 
             Body* star = systemMap.GetBody("Sun");
             if (star) {
-                glm::vec3 starPos = star->GetPos();
+                auto starPosT = star->GetPos();
+                glm::vec3 starPos = glm::vec3(starPosT.x, starPosT.y, starPosT.z);
                 float starMass = star->_mass;
 
                 size_t count = 999;

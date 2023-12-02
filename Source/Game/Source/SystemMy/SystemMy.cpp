@@ -21,11 +21,13 @@
 #include "UI/MainUI.h"
 #include "UI/SystemManager.h"
 #include "SaveManager.h"
+#include "Math/Vector.h"
 #include "Objects/SystemClass.h"
 #include "Objects/SystemMap.h"
 #include "Objects/SystemMapArr.h"
 #include "Objects/SystemMapStackArr.h"
 #include "Objects/SystemMapStaticArr.h"
+#include "Objects/SystemMapMyVec.h"
 
 #define DRAW DrawLight
 std::string SystemMy::_resourcesDir;
@@ -114,19 +116,12 @@ void SystemMy::update() {
 	int _timeSpeedAbs = std::abs(_timeSpeed);
 	dt = dt * (_timeSpeed / _timeSpeedAbs);
 
-	if (_timeSpeedAbs == 1) {
-		_systemMap->Update(dt);
-	} else {
-		_systemMap->Update(dt, _timeSpeedAbs);
-	}
-	/*for (int it = 0; it < _timeSpeedAbs; ++it) {
-		double dtTemp = 10;
-		_systemMap->Update(dt);
-	}*/
+	_systemMap->Update(dt, _timeSpeedAbs);
 
 	CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get());
 	if (cameraPtr) {
-		glm::vec3 centerMass = _systemMap->GetBody("Sun")->GetPos();
+		auto centerMassT = _systemMap->GetBody("Sun")->GetPos();
+		glm::vec3 centerMass = glm::vec3(centerMassT.x, centerMassT.y, centerMassT.z);
 		cameraPtr->SetPosOutside(centerMass);
 	}
 }
@@ -151,7 +146,8 @@ void SystemMy::Drawline() {
 	if (_systemMap) {
 		//DrawLine::SetIdentityMatrix();
 		//glm::vec3 centerMass = _systemMap->CenterMass();
-		glm::vec3 centerMass = _systemMap->GetBody("Sun")->GetPos();
+		auto centerMassT = _systemMap->GetBody("Sun")->GetPos();
+		glm::vec3 centerMass = glm::vec3(centerMassT.x, centerMassT.y, centerMassT.z);
 		float cm[3] = { centerMass.x, centerMass.y, centerMass.z };
 		DrawLine::SetIdentityMatrixByPos(cm);
 		DrawLine::Draw(_systemMap->spatialGrid);
@@ -431,7 +427,8 @@ void SystemMy::initCallback() {
 
 					if (!_orbite) {
 						if (Body* star = _systemMap->GetBody("Sun")) {
-							glm::vec3 gravityVector = _points[0] - star->GetPos();
+							auto starPosT = star->GetPos();
+							glm::vec3 gravityVector = _points[0] - glm::vec3(starPosT.x, starPosT.y, starPosT.z);
 							glm::vec3 normalizeGravityVector = glm::normalize(gravityVector);
 
 							float g90 = glm::pi<float>() / 2.0;

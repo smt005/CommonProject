@@ -11,6 +11,7 @@
 #include "../Objects/SystemMapArr.h"
 #include "../Objects/SystemMapStackArr.h"
 #include "../Objects/SystemMapStaticArr.h"
+#include "../Objects/SystemMapMyVec.h"
 
 MainUI::MainUI() {
     SetId("MainUI");

@@ -1,6 +1,6 @@
 #pragma once
 
-#define SYSTEM_MAP 4
+#define SYSTEM_MAP 5
 
 #if SYSTEM_MAP == 0
 
@@ -52,5 +52,14 @@ namespace MY_VEC_ARR {
 using SystemMap = MY_VEC_ARR::SystemMap;
 using Body = MY_VEC_ARR::Body;
 using SystemStackData = MY_VEC_ARR::SystemStackData;
+
+#elif SYSTEM_MAP == 5
+
+namespace MAP_DOUBLE {
+	class SystemMap;
+	class Body;
+}
+using SystemMap = MAP_DOUBLE::SystemMap;
+using Body = MAP_DOUBLE::Body;
 
 #endif

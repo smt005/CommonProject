@@ -12,6 +12,7 @@
 #include "../Objects/SystemMapStackArr.h"
 #include "../Objects/SystemMapStaticArr.h"
 #include "../Objects/SystemMapMyVec.h"
+#include "../Objects/SystemMapDouble.h"
 #include "../SaveManager.h"
 
 SystemManager::SystemManager() {

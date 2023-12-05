@@ -25,10 +25,9 @@
 #include "Objects/SystemClass.h"
 #include "Objects/SystemMap.h"
 #include "Objects/SystemMapArr.h"
-#include "Objects/SystemMapStackArr.h"
 #include "Objects/SystemMapStaticArr.h"
-#include "Objects/SystemMapMyVec.h"
 #include "Objects/SystemMapDouble.h"
+#include "Objects/SystemMapEasyMerger.h"
 
 #define DRAW DrawLight
 std::string SystemMy::_resourcesDir;
@@ -113,17 +112,26 @@ void SystemMy::update() {
 		return;
 	}
 
-	dt = 100;
+	/*dt = 100;
 	int _timeSpeedAbs = std::abs(_timeSpeed);
 	dt = dt * (_timeSpeed / _timeSpeedAbs);
 
-	_systemMap->Update(dt, _timeSpeedAbs);
+	_systemMap->Update(dt, _timeSpeedAbs);*/
+
+	if (_timeSpeed <= 100) {
+		_systemMap->Update((double)_timeSpeed);
+	} else {
+		int day = _timeSpeed - 100;
+		_systemMap->Update(100, day);
+	}
 
 	CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get());
 	if (cameraPtr) {
-		auto centerMassT = _systemMap->GetBody("Sun")->GetPos();
-		glm::vec3 centerMass = glm::vec3(centerMassT.x, centerMassT.y, centerMassT.z);
-		cameraPtr->SetPosOutside(centerMass);
+		if (auto* starPtr = _systemMap->GetBody("Sun")) {
+			auto centerMassT = starPtr->GetPos();
+			glm::vec3 centerMass = glm::vec3(centerMassT.x, centerMassT.y, centerMassT.z);
+			cameraPtr->SetPosOutside(centerMass);
+		}
 	}
 }
 
@@ -145,32 +153,15 @@ void SystemMy::Drawline() {
 	DrawLine::prepare();
 
 	if (_systemMap) {
-		//DrawLine::SetIdentityMatrix();
-		//glm::vec3 centerMass = _systemMap->CenterMass();
-		auto centerMassT = _systemMap->GetBody("Sun")->GetPos();
-		glm::vec3 centerMass = glm::vec3(centerMassT.x, centerMassT.y, centerMassT.z);
-		float cm[3] = { centerMass.x, centerMass.y, centerMass.z };
-		DrawLine::SetIdentityMatrixByPos(cm);
-		DrawLine::Draw(_systemMap->spatialGrid);
+		auto* starPtr = _systemMap->GetBody("Sun");
+		if (starPtr) {
+			auto centerMassT = starPtr->GetPos();
+			glm::vec3 centerMass = glm::vec3(centerMassT.x, centerMassT.y, centerMassT.z);
+			float cm[3] = { centerMass.x, centerMass.y, centerMass.z };
+			DrawLine::SetIdentityMatrixByPos(cm);
+			DrawLine::Draw(_systemMap->spatialGrid);
+		}
 	}
-
-	/*if (_greed) {
-		DrawLine::draw(*_greed);
-	}
-	else {
-		_greed = new Greed(10000.0f, 1000.0f, { {0.5f, 0.25f, 0.25f, 0.125f}, { 0.125f, 0.125f, 0.5f, 0.125f }, { 0.75f, 1.f, 0.75f, 0.95f } });
-		_greed->setPos({ 0.0f, 0.0f, 0.1f });
-	}
-
-	if (_greedBig) {
-		DrawLine::draw(*_greedBig);
-	}
-	else {
-		_greedBig = new Greed(100000.0f, 10000.0f, { {0.5f, 0.25f, 0.25f, 0.125f}, { 0.125f, 0.125f, 0.5f, 0.125f }, { 0.75f, 1.f, 0.75f, 0.95f } });
-		_greedBig->setPos({ 0.0f, 0.0f, 0.1f });
-	}*/
-
-
 
 	if (_interfaceLine) {
 		if (_points.size() == 2) {

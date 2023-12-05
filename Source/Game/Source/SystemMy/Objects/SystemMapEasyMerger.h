@@ -2,17 +2,17 @@
 #pragma once
 #include "../Objects/SystemClass.h"
 
-#if SYSTEM_MAP == 2
+#if SYSTEM_MAP == 6
 
 #include <string>
 #include <vector>
 #include <memory>
-#include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
+#include "Math/Vector.h"
 #include "../UI/SpatialGrid.h"
 #include "../../Engine/Source/Object/Model.h"
 
-namespace STATIC_ARR {
+namespace MAP_EASY_MERGE {
 class SystemMap;
 
 class Body final  {
@@ -20,12 +20,12 @@ class Body final  {
 
 public:
 	struct Data {
-		float mass;
-		glm::vec3 pos;
-		glm::vec3 force;
+		double mass;
+		Math::Vector3d pos;
+		Math::Vector3d force;
 
 		Data() = default;
-		Data(const float _mass, glm::vec3&& _pos)
+		Data(const double _mass, Math::Vector3d&& _pos)
 			: mass(_mass)
 			, pos(_pos)
 			, force(0, 0, 0)
@@ -35,7 +35,7 @@ public:
 	Body() = default;
 	Body(std::shared_ptr<Model>& model) : _model(model) {}
 	Body(const std::string& nameModel);
-	Body(const std::string& nameModel, const glm::vec3& pos, const glm::vec3& velocity, float mass, const std::string& name);
+	Body(const std::string& nameModel, const Math::Vector3d& pos, const Math::Vector3d& velocity, double mass, const std::string& name);
 	~Body();
 
 	void SetName(const std::string& name) {
@@ -45,8 +45,8 @@ public:
 		_name[size] = '\0';
 	}
 
-	glm::vec3 GetPos() const { 
-		return glm::vec3(_matrix[3][0], _matrix[3][1], _matrix[3][2]);
+	Math::Vector3d GetPos() const {
+		return Math::Vector3d(_matrix[3][0], _matrix[3][1], _matrix[3][2]);
 	}
 
 	template<typename T>
@@ -80,23 +80,14 @@ public:
 private:
 public:
 	char* _name = nullptr;
-	float _mass = 0;
-	glm::vec3 _velocity = { 0, 0, 0 };
+	double _mass = 0;
+	Math::Vector3d _velocity;
 
 	glm::mat4x4 _matrix = glm::mat4x4(1);
 	std::shared_ptr<Model> _model;
 	Data* _dataPtr = nullptr;
 };
 
-struct SystemStackData {
-	SystemStackData() = default;
-
-	size_t size = 0;
-	size_t capacity = 2000;
-	Body::Data bodies[2000];
-
-	static SystemStackData data;
-};
 
 class SystemMap final {
 public:
@@ -110,7 +101,7 @@ public:
 	void Save();
 	bool Load();
 
-	glm::vec3 CenterMass();
+	Math::Vector3d CenterMass();
 	Body* GetBody(const char* chName);
 
 	template<typename ... Args>
@@ -140,9 +131,10 @@ public:
 
 private:
 public:
-	float _constGravity = 0.01f;
+	double _constGravity = 0.01f;
 	std::string _name;
 	std::vector<Body*> _bodies;
+	std::vector<Body::Data> _datas;
 };
 
 }

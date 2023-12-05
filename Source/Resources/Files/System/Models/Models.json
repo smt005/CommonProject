@@ -7,7 +7,7 @@
   "BrownStone": {
     "shape": "Models/Convex/Sphere_5.obj",
     "texture": "Textures/planet/brown_stone.jpg",
-	"scale": 20
+	"scale": 33
   },
   "GrayStone": {
     "shape": "Models/Convex/Sphere_5.obj",

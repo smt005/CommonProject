@@ -1,6 +1,6 @@
 #pragma once
 
-#define SYSTEM_MAP 5
+#define SYSTEM_MAP 6
 
 #if SYSTEM_MAP == 0
 
@@ -50,5 +50,14 @@ namespace MAP_DOUBLE {
 }
 using SystemMap = MAP_DOUBLE::SystemMap;
 using Body = MAP_DOUBLE::Body;
+
+#elif SYSTEM_MAP == 6
+
+namespace MAP_EASY_MERGE {
+	class SystemMap;
+	class Body;
+}
+using SystemMap = MAP_EASY_MERGE::SystemMap;
+using Body = MAP_EASY_MERGE::Body;
 
 #endif

@@ -9,10 +9,9 @@
 #include "../Objects/SystemClass.h"
 #include "../Objects/SystemMap.h"
 #include "../Objects/SystemMapArr.h"
-#include "../Objects/SystemMapStackArr.h"
 #include "../Objects/SystemMapStaticArr.h"
-#include "../Objects/SystemMapMyVec.h"
 #include "../Objects/SystemMapDouble.h"
+#include "../Objects/SystemMapEasyMerger.h"
 #include "../SaveManager.h"
 
 SystemManager::SystemManager() {
@@ -82,6 +81,28 @@ void SystemManager::Draw() {
                     
                 }
             }
+        }
+    }
+
+    ImGui::Dummy(ImVec2(0.f, 0.f));
+    if (ImGui::Button("Clear", { 128.f, 32.f })) {
+        if (_systemMy && _systemMy->_systemMap) {
+            SystemMap& systemMap = *_systemMy->_systemMap;
+
+            std::vector<Body*> bodies;
+
+            for (auto* bodyPtr : systemMap._bodies) {
+                auto* namePtr = bodyPtr->Name();
+
+                if (namePtr && std::string(namePtr) == "Sun") {
+                    bodies.emplace_back(bodyPtr);
+                } else {
+                    delete bodyPtr;
+                }
+            }
+
+            std::swap(systemMap._bodies, bodies);
+            _systemMy->_systemMap->DataAssociation();
         }
     }
 

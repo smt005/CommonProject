@@ -9,10 +9,10 @@
 #include "../Objects/SystemClass.h"
 #include "../Objects/SystemMap.h"
 #include "../Objects/SystemMapArr.h"
-#include "../Objects/SystemMapStackArr.h"
 #include "../Objects/SystemMapStaticArr.h"
 #include "../Objects/SystemMapMyVec.h"
 #include "../Objects/SystemMapDouble.h"
+#include "../Objects/SystemMapEasyMerger.h"
 
 MainUI::MainUI() {
     SetId("MainUI");
@@ -81,7 +81,7 @@ void MainUI::Draw() {
     ImGui::SameLine();
 
     ImGui::PushItemWidth((Engine::Screen::width() - widthSlider));
-    ImGui::SliderInt("##time_speed_slider", &timeSpeed, -100, 100);
+    ImGui::SliderInt("##time_speed_slider", &timeSpeed, 0, 110);
     _systemMy->_timeSpeed = timeSpeed;
     ImGui::PopItemWidth();
 

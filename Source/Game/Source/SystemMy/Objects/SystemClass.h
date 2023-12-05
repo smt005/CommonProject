@@ -20,17 +20,6 @@ namespace ARR {
 using SystemMap = ARR::SystemMap;
 using Body = ARR::Body;
 
-#elif SYSTEM_MAP == 2
-
-namespace SARR {
-	class SystemMap;
-	class Body;
-	class SystemStackData;
-}
-using SystemMap = SARR::SystemMap;
-using Body = SARR::Body;
-using SystemStackData = SARR::SystemStackData;
-
 #elif SYSTEM_MAP == 3
 
 namespace STATIC_ARR {

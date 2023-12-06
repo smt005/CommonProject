@@ -30,6 +30,11 @@ public:
 			, pos(_pos)
 			, force(0, 0, 0)
 		{}
+		Data(const double _mass, const Math::Vector3d& _pos, const Math::Vector3d& _force)
+			: mass(_mass)
+			, pos(_pos)
+			, force(_force)
+		{}
 	};
 
 	Body() = default;
@@ -51,6 +56,7 @@ public:
 
 	template<typename T>
 	void SetPos(T&& pos) {
+		_matrix = glm::mat4x4(1);
 		_matrix[3][0] = pos[0];
 		_matrix[3][1] = pos[1];
 		_matrix[3][2] = pos[2];
@@ -67,6 +73,10 @@ public:
 	template<typename T>
 	void SetVelocity(T&& velocity) {
 		_velocity = velocity;
+	}
+
+	bool HetModel() const {
+		return _model ? true : false;
 	}
 
 	Model& getModel() {

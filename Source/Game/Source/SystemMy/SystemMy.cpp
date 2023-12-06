@@ -112,12 +112,6 @@ void SystemMy::update() {
 		return;
 	}
 
-	/*dt = 100;
-	int _timeSpeedAbs = std::abs(_timeSpeed);
-	dt = dt * (_timeSpeed / _timeSpeedAbs);
-
-	_systemMap->Update(dt, _timeSpeedAbs);*/
-
 	if (_timeSpeed <= 100) {
 		_systemMap->Update((double)_timeSpeed);
 	} else {
@@ -151,6 +145,22 @@ void SystemMy::draw() {
 void SystemMy::Drawline() {
 	Camera::Set<Camera>(Map::GetFirstCurrentMap().getCamera());
 	DrawLine::prepare();
+
+	if (_greed) {
+		DrawLine::draw(*_greed);
+	}
+	else {
+		_greed = new Greed(10000.0f, 1000.0f, { {0.5f, 0.25f, 0.25f, 0.125f}, { 0.125f, 0.125f, 0.5f, 0.125f }, { 0.75f, 1.f, 0.75f, 0.95f } });
+		_greed->setPos({ 0.0f, 0.0f, 0.1f });
+	}
+
+	if (_greedBig) {
+		DrawLine::draw(*_greedBig);
+	}
+	else {
+		_greedBig = new Greed(100000.0f, 10000.0f, { {0.5f, 0.25f, 0.25f, 0.125f}, { 0.125f, 0.125f, 0.5f, 0.125f }, { 0.75f, 1.f, 0.75f, 0.95f } });
+		_greedBig->setPos({ 0.0f, 0.0f, 0.1f });
+	}
 
 	if (_systemMap) {
 		auto* starPtr = _systemMap->GetBody("Sun");

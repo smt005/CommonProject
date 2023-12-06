@@ -2,6 +2,8 @@
 #if SYSTEM_MAP == 6
 
 #include <thread>
+#include <list>
+#include <unordered_map>
 #include "../Objects/SystemClass.h"
 #include "../../Engine/Source/Object/Model.h"
 #include "../../Engine/Source/Common/Help.h"
@@ -47,7 +49,13 @@ void SystemMap::Update(double dt) {
 		return;
 	}
 
+	double mergeDist = 100.f;
+	using Indices = std::list<int>;
+	std::unordered_map<int, Indices> mergeList;
+
 	auto getForce = [&](size_t statIndex, size_t endIndex) {
+		std::pair<int, Indices>* mergePair = nullptr;
+
 		for (size_t index = statIndex; index <= endIndex; ++index) {
 			Body::Data& data = _datas[index];
 
@@ -72,6 +80,23 @@ void SystemMap::Update(double dt) {
 				double force = _constGravity * (mass * otherBody.mass) / (dist * dist);
 				gravityVec *= force;
 				forceVec += gravityVec;
+
+				//...
+				if (dist < mergeDist) {
+					if (!mergePair) {
+						mergePair = new std::pair<int, Indices>(index, Indices());
+						mergePair->second.push_back(index);
+					}
+
+					mergePair->second.push_back(otherIndex);
+				}
+			}
+
+			if (mergePair) {
+				// TEMP_ 
+				mergeList.emplace(std::move(*mergePair));
+				delete mergePair;
+				mergePair = nullptr;
 			}
 		}
 	};
@@ -79,7 +104,7 @@ void SystemMap::Update(double dt) {
 	unsigned int counThread = static_cast<double>(thread::hardware_concurrency());
 	int lastIndex = _bodies.size() - 1;
 
-	if (threadEnable && ((lastIndex * 2) > counThread)) {
+	/*if (threadEnable && ((lastIndex * 2) > counThread)) {
 		double counThreadD = static_cast<double>(counThread);
 		
 		double lastIndexD = static_cast<double>(lastIndex);
@@ -107,8 +132,84 @@ void SystemMap::Update(double dt) {
 		for (thread& th : threads) {
 			th.join();
 		}
-	} else {
+	} else*/
+	{
 		getForce(0, _bodies.size() - 1);
+	}
+
+	//...
+	
+	std::vector<Body*> newBodies;
+	std::vector<Body::Data> newDatas;
+
+	newBodies.reserve(1000);
+	newDatas.reserve(1000);
+
+	if (!mergeList.empty()) {
+		for (auto& mergePair : mergeList) {
+			if (_datas[mergePair.first].mass == 0 || !_bodies[mergePair.first]) {
+				continue;
+			}
+
+			double sumMass = 0;
+			Math::Vector3d sumPulse;
+			Math::Vector3d sumForce;
+			Math::Vector3d sumPos;
+			double countPos = 0;// static_cast<size_t>(mergePair.second.size());
+
+			Body* newBody = nullptr;
+
+			for (auto& index : mergePair.second) {
+				if (!_bodies[index]) {
+					continue;
+				}
+
+				Body::Data& data = _datas[index];
+				if (data.mass == 0) {
+					continue;
+				}
+
+				sumForce += data.force;
+				sumPos += data.pos;
+				sumMass += data.mass;
+				sumPulse += _bodies[index]->_velocity * data.mass;
+			
+				if (!newBody) {
+					double _mass_ = _bodies[index]->_mass;
+					Math::Vector3d _velocity_ = _bodies[index]->_velocity;
+					Math::Vector3d _pos_ = _bodies[index]->GetPos();
+					std::string nameMode = _bodies[index]->HetModel() ? _bodies[index]->getModel().getName() : "BrownStone";
+
+					newBody = newBodies.emplace_back(new Body(nameMode));
+					newBody->_dataPtr = &newDatas.emplace_back(sumMass, sumPos, sumForce);
+				}
+
+				delete _bodies[index];
+				_bodies[index] = nullptr;				
+
+				data.mass = 0;
+				countPos += 1;
+			}
+
+			sumPos /= countPos;
+
+			newBody->_dataPtr->force = sumForce;
+			newBody->_mass = sumMass;
+			newBody->_dataPtr->mass = sumMass;
+			
+			newBody->_velocity = sumPulse / sumMass;
+
+			{
+				double _mass_ = newBody->_mass;
+				Math::Vector3d _velocity_ = newBody->_velocity;
+				Math::Vector3d _pos_ = newBody->GetPos();
+				std::string nameMode = newBody->HetModel() ? newBody->getModel().getName() : "not_model";
+
+				std::cout << "KOP_CPP: NEW vel: " << _velocity_ << " pos: " << _pos_ << " mass: " << _mass_ << " model: " << nameMode << std::endl;
+			}
+		}
+
+		std::cout << std::endl;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////
@@ -116,7 +217,7 @@ void SystemMap::Update(double dt) {
 	// Äëÿ òåñòà
 	// Íå êîððåêòíàÿ îïòèìèçàöèÿ ò.ê. â ìîìåíòå ñèëû íà òåëî ìîãóò êîìïåíñèðîâàòü äðóã äðóãà, â ðåçóëüòàòå ñóìàðíàÿ ñèëà áóäåò ðàâíà íóëþ.
 
-	float longÂistanceFromStar = 50000.f;
+	float longÂistanceFromStar = 150000.f;
 	size_t needDataAssociation = std::numeric_limits<double>::min();
 	std::vector<size_t> indRem;
 
@@ -127,8 +228,11 @@ void SystemMap::Update(double dt) {
 
 	for (size_t index = 0; index < size; ++index) {
 		Body* body = _bodies[index];
+		if (!body) {
+			continue;
+		}
 
-		static double minForce = 0.001f;
+		static double minForce = std::numeric_limits<double>::min();
 		if ((body->_dataPtr->force.length() < minForce) && (star && (posStar - body->GetPos()).length() > longÂistanceFromStar)) {
 			delete body;
 			_bodies[index] = nullptr;
@@ -162,6 +266,72 @@ void SystemMap::Update(double dt) {
 
 	////////////////////////////////////////////////////////////////////////////////////////////
 
+	if (!newBodies.empty()) {
+		size_t newSize = newBodies.size();
+
+		for (size_t index = 0; index < newSize; ++index) {
+			Body* body = newBodies[index];
+
+			{
+				double _mass_ = body->_mass;
+				Math::Vector3d _velocity_ = body->_velocity;
+				Math::Vector3d _pos_ = body->GetPos();
+				std::string nameMode = body->HetModel() ? body->getModel().getName() : "not_model";
+
+				std::cout << "KOP_CPP: UPD 00 vel: " << _velocity_ << " pos: " << _pos_ << " mass: " << _mass_ << " model: " << nameMode << std::endl;
+			}
+
+			Math::Vector3d acceleration = body->_dataPtr->force / body->_mass;
+			Math::Vector3d newVelocity = acceleration * static_cast<double>(dt);
+
+			body->_velocity += newVelocity;
+
+			body->_dataPtr->pos += body->_velocity * static_cast<double>(dt);
+			body->SetPos(body->_dataPtr->pos);
+
+			{
+				double _mass_ = body->_mass;
+				Math::Vector3d _velocity_ = body->_velocity;
+				Math::Vector3d _pos_ = body->GetPos();
+				std::string nameMode = body->HetModel() ? body->getModel().getName() : "not_model";
+
+				std::cout << "KOP_CPP: UPD 01  vel: " << _velocity_ << " pos: " << _pos_ << " mass: " << _mass_ << " model: " << nameMode << std::endl;
+			}
+		}
+		
+		std::cout << std::endl;
+
+		std::vector<Body*> bodies;
+		bodies.reserve(_bodies.size());
+
+		for (Body* body : _bodies) {
+			if (body) {
+				bodies.emplace_back(body);
+			}
+		}
+
+		for (Body* bodyFromNew : newBodies) {
+			if (bodyFromNew /*&& !bodyT*/) {
+				bodies.emplace_back(bodyFromNew);
+
+				{
+					double _mass_ = bodyFromNew->_mass;
+					Math::Vector3d _velocity_ = bodyFromNew->_velocity;
+					Math::Vector3d _pos_ = bodyFromNew->GetPos();
+					std::string nameMode = bodyFromNew->HetModel() ? bodyFromNew->getModel().getName() : "not_model";
+
+					std::cout << "KOP_CPP: RES vel: " << _velocity_ << " pos: " << _pos_ << " mass: " << _mass_ << " model: " << nameMode << std::endl;
+				}
+			}
+		}
+
+		std::cout << "..................." << std::endl << std::endl;
+		std::swap(bodies, _bodies);
+
+		DataAssociation();
+	}
+
+	//...
 	if (dt > 0) {
 		++time;
 	} else {
@@ -270,6 +440,11 @@ void SystemMap::DataAssociation() {
 	_datas.reserve(_bodies.size());
 
 	for (Body* body : _bodies) {
+		if (!body) {
+			continue;
+		}
+
+
 		body->_dataPtr = &(_datas.emplace_back(body->_mass, body->GetPos()));
 	}
 }
@@ -288,7 +463,7 @@ Math::Vector3d SystemMap::CenterMass() {
 
 Body* SystemMap::GetBody(const char* chName) {
 	auto itBody = std::find_if(_bodies.begin(), _bodies.end(), [chName](const Body* body) {
-		return body->_name && chName && strcmp(body->_name, chName) == 0;
+		return body ? (body->_name && chName && strcmp(body->_name, chName) == 0) : false;
 	});
 	return itBody != _bodies.end() ? *itBody : nullptr;
 }

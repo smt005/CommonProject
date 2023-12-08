@@ -21,7 +21,7 @@ SpatialGrid::SpatialGrid() {
 			float count = 11;
 
 			for (float index = 1; index < count; index += 1.f) {
-				float devideCount = 100.f;
+				float devideCount = 31.f;
 				float dAngle = glm::pi<float>() / devideCount;
 				float sumAngle = glm::pi<float>() * 2.f;
 				float radius = distans * index;
@@ -41,7 +41,7 @@ SpatialGrid::SpatialGrid() {
 			float count = 11;
 
 			for (float index = 1; index < count; index += 1.f) {
-				float devideCount = 100.f;
+				float devideCount = 31.f;
 				float dAngle = glm::pi<float>() / devideCount;
 				float sumAngle = glm::pi<float>() * 2.f;
 				float radius = distans * index;

@@ -155,7 +155,7 @@ void SystemMap::Update(double dt) {
 			Math::Vector3d sumPulse;
 			Math::Vector3d sumForce;
 			Math::Vector3d sumPos;
-			double countPos = 0;// static_cast<size_t>(mergePair.second.size());
+			double countPos = 0;
 
 			Body* newBody = nullptr;
 
@@ -198,25 +198,10 @@ void SystemMap::Update(double dt) {
 			newBody->_dataPtr->mass = sumMass;
 			
 			newBody->_velocity = sumPulse / sumMass;
-
-			{
-				double _mass_ = newBody->_mass;
-				Math::Vector3d _velocity_ = newBody->_velocity;
-				Math::Vector3d _pos_ = newBody->GetPos();
-				std::string nameMode = newBody->HetModel() ? newBody->getModel().getName() : "not_model";
-
-				std::cout << "KOP_CPP: NEW vel: " << _velocity_ << " pos: " << _pos_ << " mass: " << _mass_ << " model: " << nameMode << std::endl;
-			}
 		}
-
-		std::cout << std::endl;
 	}
 
-	////////////////////////////////////////////////////////////////////////////////////////////
-
-	// Для теста
-	// Не корректная оптимизация т.к. в моменте силы на тело могут компенсировать друг друга, в результате сумарная сила будет равна нулю.
-
+	// ...
 	float longВistanceFromStar = 150000.f;
 	size_t needDataAssociation = std::numeric_limits<double>::min();
 	std::vector<size_t> indRem;
@@ -264,22 +249,13 @@ void SystemMap::Update(double dt) {
 		DataAssociation();
 	}
 
-	////////////////////////////////////////////////////////////////////////////////////////////
+	//...
 
 	if (!newBodies.empty()) {
 		size_t newSize = newBodies.size();
 
 		for (size_t index = 0; index < newSize; ++index) {
 			Body* body = newBodies[index];
-
-			{
-				double _mass_ = body->_mass;
-				Math::Vector3d _velocity_ = body->_velocity;
-				Math::Vector3d _pos_ = body->GetPos();
-				std::string nameMode = body->HetModel() ? body->getModel().getName() : "not_model";
-
-				std::cout << "KOP_CPP: UPD 00 vel: " << _velocity_ << " pos: " << _pos_ << " mass: " << _mass_ << " model: " << nameMode << std::endl;
-			}
 
 			Math::Vector3d acceleration = body->_dataPtr->force / body->_mass;
 			Math::Vector3d newVelocity = acceleration * static_cast<double>(dt);
@@ -288,18 +264,7 @@ void SystemMap::Update(double dt) {
 
 			body->_dataPtr->pos += body->_velocity * static_cast<double>(dt);
 			body->SetPos(body->_dataPtr->pos);
-
-			{
-				double _mass_ = body->_mass;
-				Math::Vector3d _velocity_ = body->_velocity;
-				Math::Vector3d _pos_ = body->GetPos();
-				std::string nameMode = body->HetModel() ? body->getModel().getName() : "not_model";
-
-				std::cout << "KOP_CPP: UPD 01  vel: " << _velocity_ << " pos: " << _pos_ << " mass: " << _mass_ << " model: " << nameMode << std::endl;
-			}
 		}
-		
-		std::cout << std::endl;
 
 		std::vector<Body*> bodies;
 		bodies.reserve(_bodies.size());
@@ -311,21 +276,11 @@ void SystemMap::Update(double dt) {
 		}
 
 		for (Body* bodyFromNew : newBodies) {
-			if (bodyFromNew /*&& !bodyT*/) {
+			if (bodyFromNew) {
 				bodies.emplace_back(bodyFromNew);
-
-				{
-					double _mass_ = bodyFromNew->_mass;
-					Math::Vector3d _velocity_ = bodyFromNew->_velocity;
-					Math::Vector3d _pos_ = bodyFromNew->GetPos();
-					std::string nameMode = bodyFromNew->HetModel() ? bodyFromNew->getModel().getName() : "not_model";
-
-					std::cout << "KOP_CPP: RES vel: " << _velocity_ << " pos: " << _pos_ << " mass: " << _mass_ << " model: " << nameMode << std::endl;
-				}
 			}
 		}
 
-		std::cout << "..................." << std::endl << std::endl;
 		std::swap(bodies, _bodies);
 
 		DataAssociation();

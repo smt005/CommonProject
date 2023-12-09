@@ -18,7 +18,10 @@
 #include "ImGuiManager/UI.h"
 #include "glm/vec2.hpp"
 #include "ImGuiManager/UI.h"
-#include "UI/MainUI.h"
+
+#include "UI/TopUI.h"
+#include "UI/BottomUI.h"
+
 #include "UI/SystemManager.h"
 #include "SaveManager.h"
 #include "Math/Vector.h"
@@ -69,7 +72,9 @@ void SystemMy::init() {
 
 	//...
 	initCallback();
-	UI::ShowWindow<MainUI>(this);
+
+	UI::ShowWindow<TopUI>(this);
+	UI::ShowWindow<BottomUI>(this);
 
 	// Interface
 	{
@@ -299,18 +304,9 @@ void SystemMy::initCallback() {
 		Engine::KeyCallbackEvent* releaseKeyEvent = (Engine::KeyCallbackEvent*)callbackEventPtr->get();
 		Engine::VirtualKey key = releaseKeyEvent->getId();
 
-		if (key == Engine::VirtualKey::Q) {
-			if (UI::ShowingWindow("MainUI")) {
-				UI::CloseWindow("MainUI");
-			}
-			else {
-				UI::ShowWindow<MainUI>(this);
-			}
-		}
-
 		if (key == Engine::VirtualKey::W) {
-			if (UI::ShowingWindow("SystemManager")) {
-				UI::CloseWindow("SystemManager");
+			if (UI::ShowingWindow<SystemManager>()) {
+				UI::CloseWindowT<SystemManager>();
 				_lockMouse.lockAllPinch = false;
 			}
 			else {

@@ -18,7 +18,7 @@ SpatialGrid::SpatialGrid() {
 
 		{
 			float distans = 1000.f;
-			float count = 11;
+			float count = 10;
 
 			for (float index = 1; index < count; index += 1.f) {
 				float devideCount = 31.f;
@@ -38,7 +38,7 @@ SpatialGrid::SpatialGrid() {
 		//...
 		{
 			float distans = 10000.f;
-			float count = 11;
+			float count = 10;
 
 			for (float index = 1; index < count; index += 1.f) {
 				float devideCount = 31.f;

@@ -12,7 +12,8 @@ class Map;
 class Greed;
 class Line;
 class BodyMy;
-class MainUI;
+class TopUI;
+class BottomUI;
 class SystemManager;
 
 namespace Engine { class Callback; }
@@ -24,7 +25,8 @@ typedef std::shared_ptr<Engine::Callback> CallbackPtr;
 class SystemMy final : public Engine::Game
 {
 public:
-	friend MainUI;
+	friend TopUI;
+	friend BottomUI;
 	friend SystemManager;
 
 	SystemMy();

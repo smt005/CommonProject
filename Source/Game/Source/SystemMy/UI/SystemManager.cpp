@@ -14,20 +14,20 @@
 #include "../Objects/SystemMapEasyMerger.h"
 #include "../SaveManager.h"
 
-SystemManager::SystemManager() {
+SystemManager::SystemManager() : UI::Window(this) {
     SetId("SystemManager");
     Close();
 }
 
 SystemManager::SystemManager(SystemMy* systemMy)
-    : UI::Window()
+    : UI::Window(this)
     , _systemMy(systemMy)
 {
     SetId("SystemManager");
 }
 
 void SystemManager::OnOpen() {
-    SetFlag(ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+    SetFlag(ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize);
 
     _y = 100.f;
 

@@ -49,6 +49,8 @@ void SystemMap::Update(double dt) {
 		return;
 	}
 
+	//CHECK();
+
 	double mergeDist = 100.f;
 	using Indices = std::list<int>;
 	std::unordered_map<int, Indices> mergeList;
@@ -208,7 +210,7 @@ void SystemMap::Update(double dt) {
 
 	size_t size = _bodies.size();
 	
-	Body* star = GetBody("Sun");
+	Body* star = GetHeaviestBody(); //GetBody("Sun");
 	Math::Vector3d posStar = star ? star->GetPos() : Math::Vector3d();
 
 	for (size_t index = 0; index < size; ++index) {
@@ -285,6 +287,8 @@ void SystemMap::Update(double dt) {
 
 		DataAssociation();
 	}
+
+	//CHECK();
 
 	//...
 	if (dt > 0) {
@@ -399,9 +403,58 @@ void SystemMap::DataAssociation() {
 			continue;
 		}
 
-
 		body->_dataPtr = &(_datas.emplace_back(body->_mass, body->GetPos()));
 	}
+}
+
+Body* SystemMap::GetHeaviestBody(bool setAsStar) {
+	if (_bodies.empty()) {
+		return nullptr;
+	}
+
+	Body* heaviestBody = nullptr;
+
+	for (Body* body : _bodies) {
+		if (body) {
+			if (!heaviestBody) {
+				heaviestBody = body;
+			} else if (body->_mass > heaviestBody->_mass) {
+				heaviestBody = body;
+			}
+		}
+	}
+
+	if (heaviestBody && setAsStar) {
+		heaviestBody->_model = Model::getByName("OrangeStar");
+	}
+
+	return heaviestBody;
+}
+
+bool SystemMap::CHECK() {
+	//std::vector<Body*> _bodies;
+	//std::vector<Body::Data> _datas;
+
+	size_t bodies_size = _bodies.size();
+	size_t datas_size = _datas.size();
+
+	if (bodies_size != datas_size) {
+		return false;
+	}
+
+	for (size_t i = 0; i < bodies_size; ++i) {
+		if (!(_bodies[i] && _datas[i].mass > 0)) {
+			return false;
+		}
+		if (!_bodies[i]) {
+			return false;
+		}
+		if (_datas[i].mass == 0) {
+			return false;
+		}
+	}
+
+	return true;
 }
 
 Math::Vector3d SystemMap::CenterMass() {

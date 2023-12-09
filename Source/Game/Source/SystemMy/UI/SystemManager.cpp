@@ -61,7 +61,8 @@ void SystemManager::Draw() {
         if (_systemMy && _systemMy->_systemMap) {
             SystemMap& systemMap = *_systemMy->_systemMap;
 
-            if (Body* star = systemMap.GetBody("Sun")) {
+            if (Body* star = systemMap.GetHeaviestBody())  //systemMap.GetBody("Sun"))
+            {
                 auto starPosT = star->GetPos();
                 auto starVelT = star->_velocity;
                 glm::vec3 starPos = glm::vec3(starPosT.x, starPosT.y, starPosT.z);
@@ -89,20 +90,19 @@ void SystemManager::Draw() {
         if (_systemMy && _systemMy->_systemMap) {
             SystemMap& systemMap = *_systemMy->_systemMap;
 
+            Body* heaviestBody = systemMap.GetHeaviestBody();
             std::vector<Body*> bodies;
+            bodies.emplace_back(heaviestBody);
 
             for (auto* bodyPtr : systemMap._bodies) {
-                auto* namePtr = bodyPtr->Name();
-
-                if (namePtr && std::string(namePtr) == "Sun") {
-                    bodies.emplace_back(bodyPtr);
-                } else {
+                if (bodyPtr != heaviestBody) {
                     delete bodyPtr;
                 }
             }
 
             std::swap(systemMap._bodies, bodies);
             _systemMy->_systemMap->DataAssociation();
+            //_systemMy->_systemMap->CHECK();
         }
     }
 
@@ -111,7 +111,7 @@ void SystemManager::Draw() {
         if (_systemMy && _systemMy->_systemMap) {
             SystemMap& systemMap = *_systemMy->_systemMap;
 
-            Body* star = systemMap.GetBody("Sun");
+            Body* star = systemMap.GetHeaviestBody(); //systemMap.GetBody("Sun");
             if (star) {
                 auto starPosT = star->GetPos();
                 glm::vec3 starPos = glm::vec3(starPosT.x, starPosT.y, starPosT.z);
@@ -151,7 +151,7 @@ void SystemManager::Draw() {
         if (_systemMy && _systemMy->_systemMap) {
             SystemMap& systemMap = *_systemMy->_systemMap;
 
-            Body* star = systemMap.GetBody("Sun");
+            Body* star = systemMap.GetHeaviestBody(); //systemMap.GetBody("Sun");
             if (star) {
                 auto starPosT = star->GetPos();
                 glm::vec3 starPos = glm::vec3(starPosT.x, starPosT.y, starPosT.z);

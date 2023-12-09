@@ -134,6 +134,10 @@ public:
 
 	void DataAssociation();
 
+	Body* GetHeaviestBody(bool setAsStar = true);
+
+	bool CHECK();
+
 public:
 	SpatialGrid spatialGrid;
 	int time = 0;

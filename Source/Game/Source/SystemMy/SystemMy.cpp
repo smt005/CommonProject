@@ -126,7 +126,7 @@ void SystemMy::update() {
 
 	CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get());
 	if (cameraPtr) {
-		if (auto* starPtr = _systemMap->GetBody("Sun")) {
+		if (auto* starPtr = _systemMap->GetHeaviestBody(true)) {
 			auto centerMassT = starPtr->GetPos();
 			glm::vec3 centerMass = glm::vec3(centerMassT.x, centerMassT.y, centerMassT.z);
 			cameraPtr->SetPosOutside(centerMass);
@@ -168,8 +168,7 @@ void SystemMy::Drawline() {
 	}
 
 	if (_systemMap) {
-		auto* starPtr = _systemMap->GetBody("Sun");
-		if (starPtr) {
+		if (auto* starPtr = _systemMap->GetHeaviestBody(true)) {
 			auto centerMassT = starPtr->GetPos();
 			glm::vec3 centerMass = glm::vec3(centerMassT.x, centerMassT.y, centerMassT.z);
 			float cm[3] = { centerMass.x, centerMass.y, centerMass.z };
@@ -424,8 +423,9 @@ void SystemMy::initCallback() {
 					float mass = 100;
 
 					if (!_orbite) {
-						if (Body* star = _systemMap->GetBody("Sun")) {
-							auto starPosT = star->GetPos();
+						auto* starPtr = _systemMap->GetHeaviestBody(true);
+						if (starPtr) {
+							auto starPosT = starPtr->GetPos();
 							glm::vec3 gravityVector = _points[0] - glm::vec3(starPosT.x, starPosT.y, starPosT.z);
 							glm::vec3 normalizeGravityVector = glm::normalize(gravityVector);
 
@@ -434,7 +434,7 @@ void SystemMy::initCallback() {
 								normalizeGravityVector.x* std::sin(g90) + normalizeGravityVector.y * std::cos(g90),
 								0.f);
 
-							velocity *= std::sqrtf(_systemMap->_constGravity * star->_mass / glm::length(gravityVector));
+							velocity *= std::sqrtf(_systemMap->_constGravity * starPtr->_mass / glm::length(gravityVector));
 							_systemMap->Add("BrownStone", _points[0], velocity, mass, "");
 						}
 					} else {

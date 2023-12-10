@@ -21,6 +21,7 @@
 
 #include "UI/TopUI.h"
 #include "UI/BottomUI.h"
+#include "UI/ListHeaviestUI.h"
 
 #include "UI/SystemManager.h"
 #include "SaveManager.h"
@@ -124,17 +125,25 @@ void SystemMy::update() {
 		_systemMap->Update(100, day);
 	}
 
-	CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get());
+	/*CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get());
 	if (cameraPtr) {
 		if (auto* starPtr = _systemMap->GetHeaviestBody(true)) {
 			auto centerMassT = starPtr->GetPos();
 			glm::vec3 centerMass = glm::vec3(centerMassT.x, centerMassT.y, centerMassT.z);
 			cameraPtr->SetPosOutside(centerMass);
 		}
-	}
+	}*/
+	
+	Body& body = _systemMap->RefFocusBody();
+	auto centerMassT = body.GetPos();
+	glm::vec3 centerMass = glm::vec3(centerMassT.x, centerMassT.y, centerMassT.z);
+	dynamic_cast<CameraControlOutside*>(_camearSide.get())->SetPosOutside(centerMass);
+
 }
 
 void SystemMy::draw() {
+	Camera::Set<Camera>(_camearSide);
+
 	DRAW::viewport();
 	DRAW::clearColor();
 
@@ -148,7 +157,7 @@ void SystemMy::draw() {
 }
 
 void SystemMy::Drawline() {
-	Camera::Set<Camera>(Map::GetFirstCurrentMap().getCamera());
+	//Camera::Set<Camera>(Map::GetFirstCurrentMap().getCamera());
 	DrawLine::prepare();
 
 	if (_greed) {
@@ -310,6 +319,17 @@ void SystemMy::initCallback() {
 			}
 			else {
 				UI::ShowWindow<SystemManager>(this);
+				_lockMouse.lockAllPinch = true;
+			}
+		}
+
+		if (key == Engine::VirtualKey::E) {
+			if (UI::ShowingWindow<ListHeaviestUI>()) {
+				UI::CloseWindowT<ListHeaviestUI>();
+				_lockMouse.lockAllPinch = false;
+			}
+			else {
+				UI::ShowWindow<ListHeaviestUI>(this);
 				_lockMouse.lockAllPinch = true;
 			}
 		}

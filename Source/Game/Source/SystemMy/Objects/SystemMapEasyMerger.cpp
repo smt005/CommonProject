@@ -398,12 +398,30 @@ void SystemMap::DataAssociation() {
 	_datas.clear();
 	_datas.reserve(_bodies.size());
 
+	std::sort(_bodies.begin(), _bodies.end(), [](const Body* left, const Body* right) {
+		if (left && right) {
+			return left->_mass > right->_mass;
+		}
+		return left && !right;
+	});
+
 	for (Body* body : _bodies) {
 		if (!body) {
 			continue;
 		}
 
 		body->_dataPtr = &(_datas.emplace_back(body->_mass, body->GetPos()));
+	}
+
+	size_t sizeInfo = 10;
+	sizeInfo = sizeInfo > _bodies.size() ? _bodies.size() : 10;
+	_heaviestInfo.clear();
+	_heaviestInfo.reserve(sizeInfo);
+
+	for (size_t index = 0; index < sizeInfo; ++index) {
+		if (Body* body = _bodies[index]) {
+			_heaviestInfo.emplace_back(body, std::to_string(body->_mass));
+		}
 	}
 }
 
@@ -432,9 +450,6 @@ Body* SystemMap::GetHeaviestBody(bool setAsStar) {
 }
 
 bool SystemMap::CHECK() {
-	//std::vector<Body*> _bodies;
-	//std::vector<Body::Data> _datas;
-
 	size_t bodies_size = _bodies.size();
 	size_t datas_size = _datas.size();
 

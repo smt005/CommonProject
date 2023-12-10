@@ -136,12 +136,25 @@ public:
 
 	Body* GetHeaviestBody(bool setAsStar = true);
 
+	Body& RefFocusBody() {
+		auto it = std::find(_bodies.begin(), _bodies.end(), _focusBody);
+		if (it != _bodies.end()) {
+			return **it;
+		}
+
+		static Body defaultBody;
+		return defaultBody;
+	}
+
 	bool CHECK();
 
 public:
 	SpatialGrid spatialGrid;
 	int time = 0;
 	bool threadEnable = true;
+
+	Body* _focusBody = nullptr;
+	std::vector<std::pair<Body*, std::string>> _heaviestInfo;
 
 private:
 public:

@@ -7,23 +7,21 @@
 
 class SystemMy;
 
-class SystemManager final : public UI::Window {
+class ListHeaviestUI final : public UI::Window {
 public:
-	SystemManager();
-	SystemManager(SystemMy* systemMy);
+	ListHeaviestUI();
+	ListHeaviestUI(SystemMy* systemMy);
 	void OnOpen() override;
 	void Update() override;
 	void Draw() override;
 
 private:
-	void CreateOrbitBody(double x, double y, double z);
-	void CreateOrbitBody(double x, double y, double z, double mass, double startX, double startY, double startZ);
-
-private:
 	float _x = 10.f;
-	float _y = 10.f;
+	float _y = 100.f;
 	float _width = 145.f;
-	float _height = 400.f;
+	float _height = 390.f;
 
+	double _time = 0;
+	std::vector<std::string> _textBodies;
 	SystemMy* _systemMy = nullptr;
 };

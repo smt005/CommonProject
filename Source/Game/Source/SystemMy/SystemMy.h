@@ -6,6 +6,7 @@
 #include <memory>
 #include "glm/vec3.hpp"
 #include "Objects/SystemClass.h"
+#include "Math/Vector.h"
 
 class Map;
 
@@ -14,6 +15,7 @@ class Line;
 class BodyMy;
 class TopUI;
 class BottomUI;
+class ListHeaviestUI;
 class SystemManager;
 
 namespace Engine { class Callback; }
@@ -27,6 +29,7 @@ class SystemMy final : public Engine::Game
 public:
 	friend TopUI;
 	friend BottomUI;
+	friend ListHeaviestUI;
 	friend SystemManager;
 
 	SystemMy();
@@ -86,6 +89,7 @@ private:
 	CallbackPtr _callbackPtr;
 	std::shared_ptr<Camera> _camearSide;
 	std::shared_ptr<Camera> _camearTop;
+	Math::Vector3d focusToo;
 
 	struct LockMouse {
 		bool lockPinch = false;

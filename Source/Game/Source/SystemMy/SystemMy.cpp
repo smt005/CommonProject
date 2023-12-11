@@ -27,12 +27,9 @@
 #include "SaveManager.h"
 #include "Math/Vector.h"
 #include "Objects/SystemClass.h"
-#include "Objects/SystemMap.h"
-#include "Objects/SystemMapArr.h"
-#include "Objects/SystemMapStaticArr.h"
-#include "Objects/SystemMapDouble.h"
 #include "Objects/SystemMapEasyMerger.h"
 #include "Objects/SystemMapShared.h"
+#include "Objects/SystemMapMyShared.h"
 
 #define DRAW DrawLight
 std::string SystemMy::_resourcesDir;

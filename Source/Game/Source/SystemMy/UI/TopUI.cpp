@@ -7,13 +7,9 @@
 #include "../SystemMy.h"
 
 #include "../Objects/SystemClass.h"
-#include "../Objects/SystemMap.h"
-#include "../Objects/SystemMapArr.h"
-#include "../Objects/SystemMapStaticArr.h"
-#include "../Objects/SystemMapMyVec.h"
-#include "../Objects/SystemMapDouble.h"
 #include "../Objects/SystemMapEasyMerger.h"
 #include "../Objects/SystemMapShared.h"
+#include "../Objects/SystemMapMyShared.h"
 
 #include <cmath>
 #include <glm/ext/scalar_constants.hpp>

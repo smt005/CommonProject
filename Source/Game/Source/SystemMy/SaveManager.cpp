@@ -3,7 +3,6 @@
 #include <string>
 #include <glm/vec3.hpp>
 
-#include  "Objects/SystemMap.h"
 #include "../../Engine/Source/Common/Help.h"
 #include "../../Engine/Source/Draw/Camera/CameraControlOutside.h"
 

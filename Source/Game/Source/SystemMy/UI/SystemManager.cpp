@@ -127,8 +127,8 @@ void SystemManager::Draw() {
                 float starMass = star->_mass;
 
                 float dist = 1000.0f;
-                int countX = 15;
-                int countY = 15;
+                int countX = 10; // 15;
+                int countY = 10; // 15;
 
                 for (int iX = -countX; iX < countX; ++iX) {
                     for (int iY = -countY; iY < countY; ++iY) {

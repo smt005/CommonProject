@@ -74,6 +74,11 @@ void SystemMap::Update(double dt) {
 				double dist = Math::length(gravityVec);
 				gravityVec = Math::normalize(gravityVec);
 
+				if (dist == 0) {
+					int i = 0;
+					i = i + 1;
+				}
+
 				double force = _constGravity * (mass * otherBody.mass) / (dist * dist);
 				gravityVec *= force;
 				forceVec += gravityVec;
@@ -90,7 +95,6 @@ void SystemMap::Update(double dt) {
 			}
 
 			if (mergePair) {
-				// TEMP_ 
 				mergeList.emplace(std::move(*mergePair));
 				delete mergePair;
 				mergePair = nullptr;

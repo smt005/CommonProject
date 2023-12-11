@@ -9,6 +9,7 @@
 #include <memory>
 #include <glm/mat4x4.hpp>
 #include "Math/Vector.h"
+#include "MyStl/shared.h"
 #include "../UI/SpatialGrid.h"
 #include "../../Engine/Source/Object/Model.h"
 
@@ -18,7 +19,8 @@ class Body final  {
 	friend SystemMap;
 
 public:
-	using Ptr = std::shared_ptr<Body>;
+	using Ptr = mystd::shared<Body>;
+	//using Ptr = std::shared_ptr<Body>;
 
 	struct Data {
 		double mass;

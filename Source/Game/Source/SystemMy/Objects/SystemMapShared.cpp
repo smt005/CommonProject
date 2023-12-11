@@ -30,9 +30,6 @@ SystemMap::SystemMap(const std::string& name)
 {}
 
 SystemMap::~SystemMap() {
-	for (Body* body : _bodies) {
-		delete body;
-	}
 }
 
 void SystemMap::Update(double dt, int countForceTime) {
@@ -139,11 +136,11 @@ void SystemMap::Update(double dt) {
 
 	//...
 	
-	std::vector<Body*> newBodies;
+	std::vector<Body::Ptr> newBodies;
 	std::vector<Body::Data> newDatas;
 
-	newBodies.reserve(1000);
-	newDatas.reserve(1000);
+	newBodies.reserve(2000);
+	newDatas.reserve(2000);
 
 	if (!mergeList.empty()) {
 		for (auto& mergePair : mergeList) {
@@ -157,7 +154,7 @@ void SystemMap::Update(double dt) {
 			Math::Vector3d sumPos;
 			double countPos = 0;
 
-			Body* newBody = nullptr;
+			Body::Ptr newBody;
 
 			for (auto& index : mergePair.second) {
 				if (!_bodies[index]) {
@@ -181,11 +178,12 @@ void SystemMap::Update(double dt) {
 					std::string nameMode = _bodies[index]->HetModel() ? _bodies[index]->getModel().getName() : "BrownStone";
 
 					newBody = newBodies.emplace_back(new Body(nameMode));
+					//newBody = std::make_shared<Body>(new Body(nameMode));
+					//newBodies.emplace_back(newBody);
 					newBody->_dataPtr = &newDatas.emplace_back(sumMass, sumPos, sumForce);
 				}
 
-				delete _bodies[index];
-				_bodies[index] = nullptr;				
+				_bodies[index].reset();
 
 				data.mass = 0;
 				countPos += 1;
@@ -208,19 +206,17 @@ void SystemMap::Update(double dt) {
 
 	size_t size = _bodies.size();
 	
-	Body* star = GetHeaviestBody(); //GetBody("Sun");
+	Body::Ptr star = GetHeaviestBody();
 	Math::Vector3d posStar = star ? star->GetPos() : Math::Vector3d();
 
 	for (size_t index = 0; index < size; ++index) {
-		Body* body = _bodies[index];
+		Body::Ptr& body = _bodies[index];
 		if (!body) {
 			continue;
 		}
 
 		static double minForce = std::numeric_limits<double>::min();
 		if ((body->_dataPtr->force.length() < minForce) && (star && (posStar - body->GetPos()).length() > longÂistanceFromStar)) {
-			delete body;
-			_bodies[index] = nullptr;
 			indRem.emplace_back(index);
 			++needDataAssociation;
 			continue;
@@ -236,10 +232,10 @@ void SystemMap::Update(double dt) {
 	}
 
 	if (needDataAssociation > 0) {
-		std::vector<Body*> bodies;
+		std::vector<Body::Ptr> bodies;
 		bodies.reserve(_bodies.size() - needDataAssociation);
 
-		for (Body* body : _bodies) {
+		for (Body::Ptr& body : _bodies) {
 			if (body) {
 				bodies.emplace_back(body);
 			}
@@ -255,7 +251,7 @@ void SystemMap::Update(double dt) {
 		size_t newSize = newBodies.size();
 
 		for (size_t index = 0; index < newSize; ++index) {
-			Body* body = newBodies[index];
+			Body::Ptr& body = newBodies[index];
 
 			Math::Vector3d acceleration = body->_dataPtr->force / body->_mass;
 			Math::Vector3d newVelocity = acceleration * static_cast<double>(dt);
@@ -266,16 +262,16 @@ void SystemMap::Update(double dt) {
 			body->SetPos(body->_dataPtr->pos);
 		}
 
-		std::vector<Body*> bodies;
+		std::vector<Body::Ptr> bodies;
 		bodies.reserve(_bodies.size());
 
-		for (Body* body : _bodies) {
+		for (Body::Ptr body : _bodies) {
 			if (body) {
 				bodies.emplace_back(body);
 			}
 		}
 
-		for (Body* bodyFromNew : newBodies) {
+		for (Body::Ptr bodyFromNew : newBodies) {
 			if (bodyFromNew) {
 				bodies.emplace_back(bodyFromNew);
 			}
@@ -300,7 +296,7 @@ void SystemMap::Save() {
 	Json::Value jsonMap;
 	jsonMap["name"] = _name;
 
-	for (Body* body : Objects()) {
+	for (Body::Ptr& body : Objects()) {
 		Json::Value jsonObject;
 
 		if (body->_name) {
@@ -396,14 +392,14 @@ void SystemMap::DataAssociation() {
 	_datas.clear();
 	_datas.reserve(_bodies.size());
 
-	std::sort(_bodies.begin(), _bodies.end(), [](const Body* left, const Body* right) {
+	std::sort(_bodies.begin(), _bodies.end(), [](const Body::Ptr& left, const Body::Ptr& right) {
 		if (left && right) {
 			return left->_mass > right->_mass;
 		}
 		return left && !right;
 	});
 
-	for (Body* body : _bodies) {
+	for (Body::Ptr& body : _bodies) {
 		if (!body) {
 			continue;
 		}
@@ -417,20 +413,20 @@ void SystemMap::DataAssociation() {
 	_heaviestInfo.reserve(sizeInfo);
 
 	for (size_t index = 0; index < sizeInfo; ++index) {
-		if (Body* body = _bodies[index]) {
+		if (Body::Ptr& body = _bodies[index]) {
 			_heaviestInfo.emplace_back(body, std::to_string(body->_mass));
 		}
 	}
 }
 
-Body* SystemMap::GetHeaviestBody(bool setAsStar) {
+Body::Ptr SystemMap::GetHeaviestBody(bool setAsStar) {
 	if (_bodies.empty()) {
 		return nullptr;
 	}
 
-	Body* heaviestBody = nullptr;
+	Body::Ptr heaviestBody;
 
-	for (Body* body : _bodies) {
+	for (Body::Ptr& body : _bodies) {
 		if (body) {
 			if (!heaviestBody) {
 				heaviestBody = body;
@@ -474,7 +470,7 @@ Math::Vector3d SystemMap::CenterMass() {
 	double sumMass = 0;
 	Math::Vector3d sunPosMass(0, 0, 0);
 
-	for (Body* body : _bodies) {
+	for (Body::Ptr& body : _bodies) {
 		sunPosMass += body->GetPos() * body->_mass;
 		sumMass += body->_mass;
 	}
@@ -482,8 +478,8 @@ Math::Vector3d SystemMap::CenterMass() {
 	return sunPosMass / sumMass;
 }
 
-Body* SystemMap::GetBody(const char* chName) {
-	auto itBody = std::find_if(_bodies.begin(), _bodies.end(), [chName](const Body* body) {
+Body::Ptr SystemMap::GetBody(const char* chName) {
+	auto itBody = std::find_if(_bodies.begin(), _bodies.end(), [chName](const Body::Ptr& body) {
 		return body ? (body->_name && chName && strcmp(body->_name, chName) == 0) : false;
 	});
 	return itBody != _bodies.end() ? *itBody : nullptr;

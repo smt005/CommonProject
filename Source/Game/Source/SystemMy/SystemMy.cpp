@@ -178,7 +178,12 @@ void SystemMy::Drawline() {
 	}
 
 	if (_systemMap) {
-		if (auto* starPtr = _systemMap->GetHeaviestBody(true)) {
+#if SYSTEM_MAP < 7
+		auto* starPtr = _systemMap->GetHeaviestBody(true);
+#else
+		auto starPtr = _systemMap->GetHeaviestBody(true);
+#endif
+		if (starPtr) {
 			auto centerMassT = starPtr->GetPos();
 			glm::vec3 centerMass = glm::vec3(centerMassT.x, centerMassT.y, centerMassT.z);
 			float cm[3] = { centerMass.x, centerMass.y, centerMass.z };
@@ -444,7 +449,11 @@ void SystemMy::initCallback() {
 					float mass = 100;
 
 					if (!_orbite) {
+#if SYSTEM_MAP < 7
 						auto* starPtr = _systemMap->GetHeaviestBody(true);
+#else
+						auto starPtr = _systemMap->GetHeaviestBody(true);
+#endif
 						if (starPtr) {
 							auto starPosT = starPtr->GetPos();
 							glm::vec3 gravityVector = _points[0] - glm::vec3(starPosT.x, starPosT.y, starPosT.z);

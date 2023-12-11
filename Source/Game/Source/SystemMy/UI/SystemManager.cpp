@@ -70,7 +70,12 @@ void SystemManager::Draw() {
                 glm::vec3 starPos = glm::vec3(starPosT.x, starPosT.y, starPosT.z);
                 glm::vec3 starVel = glm::vec3(starVelT.x, starVelT.y, starVelT.z);
 
+#if SYSTEM_MAP < 7
                 for (Body* body : systemMap.Objects()) {
+#else
+                for (Body::Ptr& body : systemMap.Objects()) {
+#endif
+
                     auto posT = body->GetPos();
                     auto velT = body->_velocity;
                     glm::vec3 pos = glm::vec3(posT.x, posT.y, posT.z);
@@ -92,6 +97,7 @@ void SystemManager::Draw() {
         if (_systemMy && _systemMy->_systemMap) {
             SystemMap& systemMap = *_systemMy->_systemMap;
 
+#if SYSTEM_MAP < 7
             Body* heaviestBody = &systemMap.RefFocusBody();
             std::vector<Body*> bodies;
             bodies.emplace_back(heaviestBody);
@@ -104,7 +110,12 @@ void SystemManager::Draw() {
 
             std::swap(systemMap._bodies, bodies);
             _systemMy->_systemMap->DataAssociation();
-            //_systemMy->_systemMap->CHECK();
+#else
+            Body::Ptr heaviestBody = systemMap.GetHeaviestBody();
+            systemMap._bodies.clear();
+            systemMap._bodies.emplace_back(heaviestBody);
+            _systemMy->_systemMap->DataAssociation();
+#endif
         }
     }
 

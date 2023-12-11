@@ -18,6 +18,8 @@ class Body final  {
 	friend SystemMap;
 
 public:
+	using Ptr = std::shared_ptr<Body>;
+
 	struct Data {
 		double mass;
 		Math::Vector3d pos;
@@ -110,7 +112,7 @@ public:
 	bool Load();
 
 	Math::Vector3d CenterMass();
-	Body* GetBody(const char* chName);
+	Body::Ptr GetBody(const char* chName);
 
 	template<typename ... Args>
 	Body& Add(Args&& ... args) {
@@ -126,13 +128,13 @@ public:
 		return *body;
 	}
 
-	std::vector<Body*>& Objects() {
+	std::vector<Body::Ptr>& Objects() {
 		return _bodies;
 	}
 
 	void DataAssociation();
 
-	Body* GetHeaviestBody(bool setAsStar = true);
+	Body::Ptr GetHeaviestBody(bool setAsStar = true);
 
 	Body& RefFocusBody() {
 		auto it = std::find(_bodies.begin(), _bodies.end(), _focusBody);
@@ -151,14 +153,14 @@ public:
 	int time = 0;
 	bool threadEnable = true;
 
-	Body* _focusBody = nullptr;
-	std::vector<std::pair<Body*, std::string>> _heaviestInfo;
+	Body::Ptr _focusBody;
+	std::vector<std::pair<Body::Ptr, std::string>> _heaviestInfo;
 
 private:
 public:
 	double _constGravity = 0.01f;
 	std::string _name;
-	std::vector<Body*> _bodies;
+	std::vector<Body::Ptr> _bodies;
 	std::vector<Body::Data> _datas;
 };
 

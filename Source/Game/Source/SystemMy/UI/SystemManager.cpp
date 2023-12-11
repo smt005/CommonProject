@@ -12,6 +12,7 @@
 #include "../Objects/SystemMapStaticArr.h"
 #include "../Objects/SystemMapDouble.h"
 #include "../Objects/SystemMapEasyMerger.h"
+#include "../Objects/SystemMapShared.h"
 #include "../SaveManager.h"
 #include "Math/Vector.h"
 

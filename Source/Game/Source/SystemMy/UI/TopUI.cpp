@@ -13,6 +13,7 @@
 #include "../Objects/SystemMapMyVec.h"
 #include "../Objects/SystemMapDouble.h"
 #include "../Objects/SystemMapEasyMerger.h"
+#include "../Objects/SystemMapShared.h"
 
 #include <cmath>
 #include <glm/ext/scalar_constants.hpp>

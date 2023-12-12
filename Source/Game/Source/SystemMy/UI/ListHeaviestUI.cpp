@@ -50,12 +50,24 @@ void ListHeaviestUI::Draw() {
     if (!_systemMy || !_systemMy->_systemMap) {
         return;
     }
+
+    int _guiId = 0;
     
     auto& heaviestInfo = _systemMy->_systemMap->_heaviestInfo;
 
     for (auto& pair : heaviestInfo) {
-        if (ImGui::Button(pair.second.c_str(), { 128.f, 32.f })) {            
+        ImGui::PushID(++_guiId);
+        if (ImGui::Button(pair.second.c_str(), { 90.f, 32.f })) {            
             _systemMy->_systemMap->_focusBody = pair.first;
         }
+        ImGui::PopID();
+
+        ImGui::SameLine();
+
+        ImGui::PushID(++_guiId);
+        if (ImGui::Button("x", { 32.f, 32.f })) {
+            _systemMy->_systemMap->RemoveBody(pair.first);
+        }
+        ImGui::PopID();
     }
 }

@@ -56,17 +56,16 @@ void SystemMy::init() {
 	_systemMap->Load();
 
 	//...
-	if (!load()) {
-		_camearSide = std::make_shared<CameraControlOutside>();
-		Map::GetFirstCurrentMap().getCamera() = _camearSide;
+	_camearSide = std::make_shared<CameraControlOutside>();
+	Camera::Set<Camera>(_camearSide);
 
-		if (CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get())) {
-			cameraPtr->SetPerspective();
-			cameraPtr->SetPos({ 10, 10, 10 });
-			cameraPtr->SetDirect({ -0.440075815f, -0.717726171f, -0.539631844f });
-			cameraPtr->SetSpeed(1.0);
-			cameraPtr->Enable(true);
-		}
+	if (CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(_camearSide.get())) {
+		cameraPtr->SetPerspective();
+		cameraPtr->SetPos({ 10, 10, 10 });
+		cameraPtr->SetDirect({ -0.440075815f, -0.717726171f, -0.539631844f });
+		cameraPtr->SetSpeed(1.0);
+		cameraPtr->SetDistanceOutside(50000.f);
+		cameraPtr->Enable(true);
 	}
 
 	//...
@@ -110,7 +109,6 @@ void SystemMy::update() {
 	_systemMap->Update();
 #endif
 	
-
 	Body& body = _systemMap->RefFocusBody();
 	auto centerMassT = body.GetPos();
 	glm::vec3 centerMass = glm::vec3(centerMassT.x, centerMassT.y, centerMassT.z);
@@ -118,7 +116,7 @@ void SystemMy::update() {
 }
 
 void SystemMy::draw() {
-	Camera::Set<Camera>(_camearSide);
+	// Camera::Set<Camera>(_camearSide);
 
 	DRAW::viewport();
 	DRAW::clearColor();
@@ -127,7 +125,7 @@ void SystemMy::draw() {
 	Drawline();
 
 	// Draw SystemMap
-	Camera::Set<Camera>(_camearSide);
+	//Camera::Set<Camera>(_camearSide);
 	DRAW::prepare();
 	DRAW::DrawMap(*_systemMap);
 }
@@ -206,40 +204,9 @@ void SystemMy::resize() {
 }
 
 bool SystemMy::load() {
-	//return false; // TEMP_ .................................................
 	Json::Value loadData;
 	if (!help::loadJson(saveFileName, loadData) || loadData.empty()) {
 		return false;
-	}
-
-	/*if (!loadData["Camera"].empty()) {
-		//Map::GetFirstCurrentMap().getCamera() = std::make_shared<CameraControlOutside>();
-		_camearSide = std::make_shared<CameraControlOutside>();
-		Map::GetFirstCurrentMap().getCamera() = _camearSide;
-
-		if (CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get())) {
-			cameraPtr->Load(loadData["Camera"]);
-			cameraPtr->Enable(true);
-			cameraPtr->SetDistanceOutside(5000.f);
-		}
-	}*/
-
-	if (!loadData["CameraSide"].empty()) {
-		_camearSide = std::make_shared<CameraControlOutside>();
-		
-		dynamic_cast<CameraControlOutside*>(_camearSide.get())->Load(loadData["CameraSide"]);
-		dynamic_cast<CameraControlOutside*>(_camearSide.get())->Enable(true);
-		dynamic_cast<CameraControlOutside*>(_camearSide.get())->SetDistanceOutside(50000.f);
-
-		Map::GetFirstCurrentMap().getCamera() = _camearSide;
-	}
-
-	if (!loadData["CamearTop"].empty()) {
-		_camearTop = std::make_shared<CameraControlOutside>();
-
-		dynamic_cast<CameraControlOutside*>(_camearTop.get())->Load(loadData["CamearTop"]);
-		dynamic_cast<CameraControlOutside*>(_camearTop.get())->Enable(true);
-		dynamic_cast<CameraControlOutside*>(_camearTop.get())->SetDistanceOutside(5000.f);
 	}
 
 #if _DEBUG
@@ -248,19 +215,7 @@ bool SystemMy::load() {
 }
 
 void SystemMy::save() {
-	//return; // TEMP_ .................................................
 	Json::Value saveData;
-
-	//if (CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get())) {
-		//cameraPtr->Save(saveData["Camera"]);
-	//}
-
-	if (_camearSide) {
-		_camearSide->Save(saveData["CameraSide"]);
-	}
-	if (_camearTop) {
-		_camearTop->Save(saveData["CamearTop"]);
-	}
 
 	//...
 	help::saveJson(saveFileName, saveData);
@@ -296,22 +251,18 @@ void SystemMy::initCallback() {
 		if (key == Engine::VirtualKey::W) {
 			if (UI::ShowingWindow<SystemManager>()) {
 				UI::CloseWindowT<SystemManager>();
-				//_lockMouse.lockAllPinch = false;
 			}
 			else {
 				UI::ShowWindow<SystemManager>(this);
-				//_lockMouse.lockAllPinch = true;
 			}
 		}
 
 		if (key == Engine::VirtualKey::E) {
 			if (UI::ShowingWindow<ListHeaviestUI>()) {
 				UI::CloseWindowT<ListHeaviestUI>();
-				//_lockMouse.lockAllPinch = false;
 			}
 			else {
 				UI::ShowWindow<ListHeaviestUI>(this);
-				//_lockMouse.lockAllPinch = true;
 			}
 		}
 	});
@@ -331,82 +282,7 @@ void SystemMy::initCallback() {
 		Engine::KeyCallbackEvent* releaseKeyEvent = (Engine::KeyCallbackEvent*)callbackEventPtr->get();
 		Engine::VirtualKey key = releaseKeyEvent->getId();
 
-		//if (Engine::Callback::pressKey(Engine::VirtualKey::SPACE)) {}
-
-		if (key == Engine::VirtualKey::V) {
-			if (_camearTop != Map::GetFirstCurrentMap().getCamera()) {
-				if (!_camearTop) {
-					_camearTop = std::make_shared<CameraControlOutside>();
-					static_cast<CameraControlOutside*>(_camearTop.get())->SetPerspective();
-					static_cast<CameraControlOutside*>(_camearTop.get())->SetPos({ 1.f, 1.f, 10.f });
-					static_cast<CameraControlOutside*>(_camearTop.get())->SetDirect({ -1.f, -1.f, 0.1f });
-					static_cast<CameraControlOutside*>(_camearTop.get())->SetSpeed(1.0);
-					static_cast<CameraControlOutside*>(_camearTop.get())->Enable(true);
-				}
-
-				static_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get())->enableCallback = false;
-				static_cast<CameraControlOutside*>(_camearTop.get())->enableCallback = true;
-				Map::GetFirstCurrentMap().getCamera() = _camearTop;
-
-				//DRAW::setClearColor(0.7f, 0.8f, 0.9f, 1.0f);
-			} else {
-				static_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get())->enableCallback = false;
-				static_cast<CameraControlOutside*>(_camearSide.get())->enableCallback = true;
-				Map::GetFirstCurrentMap().getCamera() = _camearSide;
-
-				//DRAW::setClearColor(0.1f, 0.2f, 0.3f, 1.0f);
-			}
-		}
-
 		if (key == Engine::VirtualKey::VK_1) {
-			if (showCenterMass) {
-				showCenterMass = false;
-			}
-			else {
-				showCenterMass = true;
-			}
-		}
-		if (key == Engine::VirtualKey::VK_2) {
-			if (showCenter) {
-				showCenter = false;
-			}
-			else {
-				showCenter = true;
-			}
-		}
-		if (key == Engine::VirtualKey::VK_3) {
-			if (showForceVector) {
-				showForceVector = false;
-			}
-			else {
-				showForceVector = true;
-			}
-		}
-		if (key == Engine::VirtualKey::VK_4) {
-			if (showPath) {
-				showPath = false;
-			}
-			else {
-				showPath = true;
-			}
-		}
-		if (key == Engine::VirtualKey::VK_5) {
-			if (showRelativePath) {
-				showRelativePath = false;
-				//...
-			}
-			else {
-				showRelativePath = true;
-
-				//...
-			}
-		}
-
-		//...
-		if (key == Engine::VirtualKey::Z) {
-			//...
-		}
-		if (key == Engine::VirtualKey::X) {
 			//...
 		}
 	});
@@ -467,7 +343,7 @@ void SystemMy::initCallback() {
 
 	_callbackPtr->add(Engine::CallbackType::SCROLL, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
 		if (Engine::TapCallbackEvent* tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
-			CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get());
+			CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(_camearSide.get());
 			if (!cameraPtr) {
 				return;
 			}
@@ -487,39 +363,4 @@ void SystemMy::initCallback() {
 			cameraPtr->SetDistanceOutside(dist);
 		}
 	});
-}
-
-void SystemMy::SetPerspectiveView(bool perspectiveView) {
-	_perspectiveView = perspectiveView;
-
-	if (_perspectiveView) {
-		static_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get())->enableCallback = false;
-		static_cast<CameraControlOutside*>(_camearSide.get())->enableCallback = true;
-		Map::GetFirstCurrentMap().getCamera() = _camearSide;
-	} else {
-		if (!_camearTop) {
-			_camearTop = std::make_shared<CameraControlOutside>();
-			static_cast<CameraControlOutside*>(_camearTop.get())->SetPerspective();
-			static_cast<CameraControlOutside*>(_camearTop.get())->SetPos({ 1.f, 1.f, 10.f });
-			static_cast<CameraControlOutside*>(_camearTop.get())->SetDirect({ -1.f, -1.f, 0.1f });
-			static_cast<CameraControlOutside*>(_camearTop.get())->SetSpeed(1.0);
-			static_cast<CameraControlOutside*>(_camearTop.get())->Enable(true);
-		}
-
-		static_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get())->enableCallback = false;
-		static_cast<CameraControlOutside*>(_camearTop.get())->enableCallback = true;
-		Map::GetFirstCurrentMap().getCamera() = _camearTop;
-	}
-}
-
-void SystemMy::SetViewByObject(bool viewByObject) {
-	_viewByObject = viewByObject;
-
-	if (_viewByObject) {
-		NormalizeSystem();
-	}
-}
-
-void SystemMy::NormalizeSystem() {
-	//...
 }

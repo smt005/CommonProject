@@ -134,6 +134,8 @@ public:
 		return *body;
 	}
 
+	void RemoveBody(Body::Ptr& body);
+
 	std::vector<Body::Ptr>& Objects() {
 		return _bodies;
 	}
@@ -141,6 +143,7 @@ public:
 	void DataAssociation();
 
 	Body::Ptr GetHeaviestBody(bool setAsStar = true);
+	void RemoveVelocity(bool toCenter = false);
 
 	Body& RefFocusBody() {
 		auto it = std::find(_bodies.begin(), _bodies.end(), _focusBody);

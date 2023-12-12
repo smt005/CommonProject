@@ -60,19 +60,6 @@ public:
 		_timeSpeed = timeSpeed;
 	}
 
-	bool PerspectiveView() {
-		return _perspectiveView;
-	}
-
-	void SetPerspectiveView(bool perspectiveView);
-
-	bool ViewByObject() {
-		return _viewByObject;
-	}
-
-	void SetViewByObject(bool viewByObject);
-	void NormalizeSystem();
-
 private:
 	std::shared_ptr<SystemMap> _systemMap;
 
@@ -87,9 +74,11 @@ private:
 	bool showPath = true;
 	bool showRelativePath = false;
 
+	bool _orbite = true;
+	int _timeSpeed = 1;
+
 	CallbackPtr _callbackPtr;
 	std::shared_ptr<Camera> _camearSide;
-	std::shared_ptr<Camera> _camearTop;
 	Math::Vector3d focusToo;
 
 	struct LockMouse {
@@ -102,11 +91,6 @@ private:
 		}
 
 	} _lockMouse;
-
-	int _orbite = 0;
-	int _timeSpeed = 1;
-	bool _viewByObject = false;
-	bool _perspectiveView = true;
 
 public:
 	static std::string _resourcesDir;

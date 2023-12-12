@@ -62,37 +62,8 @@ void SystemManager::Draw() {
     }
 
     ImGui::Dummy(ImVec2(0.f, 0.f));
-    if (ImGui::Button("Correct system", { 128.f, 32.f })) {      
-        if (_systemMy && _systemMy->_systemMap) {
-            SystemMap& systemMap = *_systemMy->_systemMap;
-
-            if (Body* star = &systemMap.RefFocusBody())
-            {
-                auto starPosT = star->GetPos();
-                auto starVelT = star->_velocity;
-                glm::vec3 starPos = glm::vec3(starPosT.x, starPosT.y, starPosT.z);
-                glm::vec3 starVel = glm::vec3(starVelT.x, starVelT.y, starVelT.z);
-
-#if SYSTEM_MAP < 7
-                for (Body* body : systemMap.Objects()) {
-#else
-                for (Body::Ptr& body : systemMap.Objects()) {
-#endif
-
-                    auto posT = body->GetPos();
-                    auto velT = body->_velocity;
-                    glm::vec3 pos = glm::vec3(posT.x, posT.y, posT.z);
-                    glm::vec3 vel = glm::vec3(velT.x, velT.y, velT.z);
-
-                    pos -= starPos;
-                    vel -= starVel;
-
-                    body->SetPos(pos);
-                    body->SetVelocity(vel);
-                    
-                }
-            }
-        }
+    if (ImGui::Button("Correct system", { 128.f, 32.f })) {
+        _systemMy->_systemMap->RemoveVelocity(true);
     }
 
     ImGui::Dummy(ImVec2(0.f, 0.f));

@@ -69,7 +69,7 @@ void TopUI::Draw() {
         volatile static float offsetSettingBtn = 60.f;
         ImGui::SameLine(_width - offsetSettingBtn);
         if (ImGui::Button("[:]", { 50.f, 50.f })) {
-            _systemMy->SetViewByObject(false);
+            //...
         }
     }
 }

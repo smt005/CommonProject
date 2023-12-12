@@ -90,7 +90,7 @@ void BottomUI::Draw() {
 
     //...
     ImGui::SameLine();
-    if (_systemMy->ViewByObject()) {
+    /*if (_systemMy->ViewByObject()) {
         if (ImGui::Button("[X]", { 50.f, 50.f })) {
             _systemMy->SetViewByObject(false);
         }
@@ -99,7 +99,7 @@ void BottomUI::Draw() {
         if (ImGui::Button("[V]", { 50.f, 50.f })) {
             _systemMy->SetViewByObject(true);
         }
-    }
+    }*/
 
     //...
     ImGui::SameLine();

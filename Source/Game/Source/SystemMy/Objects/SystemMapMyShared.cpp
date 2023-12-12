@@ -443,6 +443,41 @@ Body::Ptr SystemMap::GetHeaviestBody(bool setAsStar) {
 	return heaviestBody;
 }
 
+void SystemMap::RemoveBody(Body::Ptr& body) {
+	auto itRemove = std::find_if(_bodies.begin(), _bodies.end(), [&body](const Body::Ptr& itBody) { return itBody == body; });
+	if (itRemove != _bodies.end()) {
+		_bodies.erase(itRemove);
+		DataAssociation();
+	}
+}
+
+void SystemMap::RemoveVelocity(bool toCenter) {
+	if (_bodies.empty()) {
+		return;
+	}
+
+	Math::Vector3d velocity;
+
+	for (Body::Ptr& body : _bodies) {
+		velocity += body->_velocity;
+	}
+
+	velocity /= static_cast<double>(_bodies.size());
+
+	toCenter = toCenter && _focusBody;
+	Math::Vector3d focusPos = toCenter ? _focusBody->GetPos() : Math::Vector3d();
+
+	for (Body::Ptr& body : _bodies) {
+		body->_velocity -= velocity;
+
+		if (toCenter) {
+			Math::Vector3d pos = _focusBody->GetPos();
+			pos -= toCenter;
+			_focusBody->SetPos(pos);
+		}
+	}
+}
+
 bool SystemMap::CHECK() {
 	size_t bodies_size = _bodies.size();
 	size_t datas_size = _datas.size();

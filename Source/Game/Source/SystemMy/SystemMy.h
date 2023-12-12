@@ -5,6 +5,7 @@
 #include <vector>
 #include <memory>
 #include "glm/vec3.hpp"
+#include "UI/CommonData.h"
 #include "Objects/SystemClass.h"
 #include "Math/Vector.h"
 
@@ -97,7 +98,7 @@ private:
 		float bottomHeight = 60.f;
 
 		bool IsLock() {
-			return lockPinch || lockAllPinch;
+			return lockPinch || (CommonData::lockAction > 0);
 		}
 
 	} _lockMouse;

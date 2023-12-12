@@ -3,6 +3,7 @@
 #include <cmath>
 #include "imgui.h"
 #include <glm/ext/scalar_constants.hpp>
+#include "CommonData.h"
 #include "../SystemMy.h"
 #include "Math/Vector.h"
 #include "../Objects/SystemClass.h"
@@ -33,6 +34,12 @@ void ListHeaviestUI::OnOpen() {
 
     ImGui::SetWindowPos(Id().c_str(), { _x, _y });
     ImGui::SetWindowSize(Id().c_str(), { _width, _height });
+
+    ++CommonData::lockAction;
+}
+
+void ListHeaviestUI::OnClose() {
+    --CommonData::lockAction;
 }
 
 void ListHeaviestUI::Update() {

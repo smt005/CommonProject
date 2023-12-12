@@ -289,11 +289,7 @@ void SystemMap::Update(double dt) {
 	//CHECK();
 
 	//...
-	if (dt > 0) {
-		++time;
-	} else {
-		--time;
-	}
+	timePassed += deltaTime;
 }
 
 void SystemMap::Save() {

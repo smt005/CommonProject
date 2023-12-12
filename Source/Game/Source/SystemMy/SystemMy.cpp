@@ -99,44 +99,22 @@ void SystemMy::update() {
 	}
 	double dt = Engine::Core::currentTime() - time;
 
-	if (dt > 0) {
-		minDt = dt < minDt ? dt : minDt;
-	}
-	maxDt = dt > maxDt ? dt : maxDt;
 
-	if (dt < 10) {
-		return;
-	}
-	if (dt > 20) {
-		dt = 20;
-	}
-	time = Engine::Core::currentTime();
-
-	if (_timeSpeed == 0) {
+	if (dt < _systemMap->deltaTime) {
 		return;
 	}
 
-	if (_timeSpeed <= 100) {
-		_systemMap->Update((double)_timeSpeed);
-	} else {
-		int day = _timeSpeed - 100;
-		_systemMap->Update(100, day);
-	}
-
-	/*CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(Map::GetFirstCurrentMap().getCamera().get());
-	if (cameraPtr) {
-		if (auto* starPtr = _systemMap->GetHeaviestBody(true)) {
-			auto centerMassT = starPtr->GetPos();
-			glm::vec3 centerMass = glm::vec3(centerMassT.x, centerMassT.y, centerMassT.z);
-			cameraPtr->SetPosOutside(centerMass);
-		}
-	}*/
+#if SYSTEM_MAP < 8
+	_systemMap->Update(dt);
+#else
+	_systemMap->Update();
+#endif
 	
+
 	Body& body = _systemMap->RefFocusBody();
 	auto centerMassT = body.GetPos();
 	glm::vec3 centerMass = glm::vec3(centerMassT.x, centerMassT.y, centerMassT.z);
 	dynamic_cast<CameraControlOutside*>(_camearSide.get())->SetPosOutside(centerMass);
-
 }
 
 void SystemMy::draw() {
@@ -318,22 +296,22 @@ void SystemMy::initCallback() {
 		if (key == Engine::VirtualKey::W) {
 			if (UI::ShowingWindow<SystemManager>()) {
 				UI::CloseWindowT<SystemManager>();
-				_lockMouse.lockAllPinch = false;
+				//_lockMouse.lockAllPinch = false;
 			}
 			else {
 				UI::ShowWindow<SystemManager>(this);
-				_lockMouse.lockAllPinch = true;
+				//_lockMouse.lockAllPinch = true;
 			}
 		}
 
 		if (key == Engine::VirtualKey::E) {
 			if (UI::ShowingWindow<ListHeaviestUI>()) {
 				UI::CloseWindowT<ListHeaviestUI>();
-				_lockMouse.lockAllPinch = false;
+				//_lockMouse.lockAllPinch = false;
 			}
 			else {
 				UI::ShowWindow<ListHeaviestUI>(this);
-				_lockMouse.lockAllPinch = true;
+				//_lockMouse.lockAllPinch = true;
 			}
 		}
 	});

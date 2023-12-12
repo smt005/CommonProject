@@ -9,6 +9,7 @@ public:
 	TopUI();
 	TopUI(SystemMy* systemMy);
 	void OnOpen() override;
+	void OnClose() override;
 	void Update() override;
 	void Draw() override;
 

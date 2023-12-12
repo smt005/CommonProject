@@ -108,6 +108,10 @@ public:
 	SystemMap(const std::string& name);
 	~SystemMap();
 
+
+	void Update() {
+		Update(deltaTime, countOfIteration);
+	}
 	void Update(double dt, int countForceTime);
 	void Update(double dt);
 	void Save();
@@ -151,6 +155,10 @@ public:
 	bool CHECK();
 
 public:
+	double deltaTime = 10;
+	size_t countOfIteration = 1;
+	double timePassed = 0;
+
 	SpatialGrid spatialGrid;
 	int time = 0;
 	bool threadEnable = true;

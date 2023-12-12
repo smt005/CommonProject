@@ -4,6 +4,7 @@
 #include <string>
 #include "Core.h"
 #include "Screen.h"
+#include "CommonData.h"
 #include "../SystemMy.h"
 
 #include "../Objects/SystemClass.h"
@@ -18,12 +19,14 @@ BottomUI::BottomUI() : UI::Window(this) {
 BottomUI::BottomUI(SystemMy* systemMy)
     : UI::Window(this)
     , _systemMy(systemMy)
-{
-}
+{}
 
 void BottomUI::OnOpen() {
     SetFlag(ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
     SetAlpha(0.f);
+}
+
+void BottomUI::OnClose() {
 }
 
 void BottomUI::Update() {
@@ -35,7 +38,6 @@ void BottomUI::Update() {
 }
 
 void BottomUI::Draw() {
-    volatile static float widthSlider = 190.f;
     volatile static float framePadding = 18.f;
     volatile static float offsetBottom = 90.f;
 
@@ -59,10 +61,32 @@ void BottomUI::Draw() {
     //...
     ImGui::SameLine();
 
+#if  SYSTEM_MAP < 8
+    volatile static float widthSlider = 190.f;
+
     ImGui::PushItemWidth((Engine::Screen::width() - widthSlider));
     ImGui::SliderInt("##time_speed_slider", &timeSpeed, 0, 110);
     _systemMy->_timeSpeed = timeSpeed;
     ImGui::PopItemWidth();
+#else
+    volatile static float widthSlider = 800.f;
+
+    int deltaTime = (int)_systemMy->_systemMap->deltaTime;
+    int countOfIteration = (int)_systemMy->_systemMap->countOfIteration;
+
+    ImGui::PushItemWidth((Engine::Screen::width() - widthSlider));
+
+    if (ImGui::SliderInt("##deltaTime_slider", &deltaTime, 0, 100)) {
+        _systemMy->_systemMap->deltaTime = (double)deltaTime;
+    }
+
+    ImGui::SameLine();
+    if (ImGui::SliderInt("##time_speed_slider", &countOfIteration, 1, 10)) {
+        _systemMy->_systemMap->countOfIteration = countOfIteration;
+    }
+
+    ImGui::PopItemWidth();
+#endif //  SYSTEM_MAP < 8
 
     //...
     ImGui::SameLine();

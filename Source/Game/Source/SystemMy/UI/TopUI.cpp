@@ -4,6 +4,7 @@
 
 #include "Core.h"
 #include "Screen.h"
+#include "CommonData.h"
 #include "../SystemMy.h"
 
 #include "../Objects/SystemClass.h"
@@ -31,6 +32,9 @@ void TopUI::OnOpen() {
     SetAlpha(0.f);
 }
 
+void TopUI::OnClose() {
+}
+
 void TopUI::Update() {
     _width = Engine::Screen::width();
 
@@ -40,7 +44,14 @@ void TopUI::Update() {
 
 void TopUI::Draw() {
     if (_systemMy && _systemMy->_systemMap) {
-        int time = _systemMy->_systemMap->time;
+        int time = 0;
+
+#if SYSTEM_MAP < 8
+        time = _systemMy->_systemMap->time;
+#else
+        time = (int)_systemMy->_systemMap->timePassed / 1000;
+#endif
+
         if (time == 10) {
             minFPS = FPS;
             maxFPS = FPS;

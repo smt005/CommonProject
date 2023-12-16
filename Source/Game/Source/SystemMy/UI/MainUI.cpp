@@ -72,7 +72,7 @@ void MainUI::InitCallback() {
 	callback.add(Engine::CallbackType::RELEASE_TAP, [](const Engine::CallbackEventPtr& callbackEventPtr) {
 		if (Engine::TapCallbackEvent* tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
 			if (tapCallbackEvent->_id == Engine::VirtualTap::LEFT) {
-				const glm::mat4x4& matCamera = systemMy->_camearSide->ProjectView();
+				const glm::mat4x4& matCamera = systemMy->_camearCurrent->ProjectView();
 				spacePtr->_focusBody = spacePtr->HitObject(matCamera);
 			}
 		}
@@ -81,14 +81,13 @@ void MainUI::InitCallback() {
 
 void MainUI::DrawOnSpace() {
 	if (!bodyMarker) {
-		bodyMarker = std::make_shared<Object>("Marker", "Target");
+		bodyMarker = std::make_shared<Object>("Marker", "Marker");
 	}
 
-	const glm::mat4x4& matCamera = systemMy->_camearSide->ProjectView();
+	const glm::mat4x4& matCamera = systemMy->_camearCurrent->ProjectView();
 
 	for (Body::Ptr& body : spacePtr->_bodies) {	
 		Math::Vector3 posOnScreen = body->PosOnScreen(matCamera, false);
-
 		float pos[] = { posOnScreen.x, posOnScreen.y, posOnScreen.z };
 
 		bodyMarker->setPos(pos);

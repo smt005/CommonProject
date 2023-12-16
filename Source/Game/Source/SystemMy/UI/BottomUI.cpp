@@ -6,7 +6,8 @@
 #include "Screen.h"
 #include "CommonData.h"
 #include "../SystemMy.h"
-
+#include "Draw/DrawLight.h"
+#include "Draw/Camera/CameraControlOutside.h"
 #include "../Objects/SystemClass.h"
 #include "../Objects/SystemMapEasyMerger.h"
 #include "../Objects/SystemMapShared.h"
@@ -49,14 +50,16 @@ void BottomUI::Draw() {
     // Bottom
     ImGui::Dummy(ImVec2(0.f, (_height - offsetBottom)));
 
-    if (_systemMy->GetOrbite() == 0) {
+    bool orbite = false;
+
+    if (orbite == 0) {
         if (ImGui::Button("[O]", { 50.f, 50.f })) {
-            _systemMy->SetOrbite(1);
+            //...
         }
     }
     else {
         if (ImGui::Button("[S]", { 50.f, 50.f })) {
-            _systemMy->SetOrbite(0);
+            //...
         }
     }
 
@@ -119,8 +122,16 @@ void BottomUI::Draw() {
     }*/
 
 
-    if (ImGui::Button((_systemMy->_systemMap->threadEnable ? "[...]" : "[.]"), { 50.f, 50.f })) {
-         _systemMy->_systemMap->threadEnable = !_systemMy->_systemMap->threadEnable;
+    if (ImGui::Button((_systemMy->_systemMap->threadEnable ? "[V]" : "[#]"), { 50.f, 50.f })) {
+         if (_systemMy->_camearCurrent == _systemMy->_camearSide) {
+             _systemMy->_camearCurrent = _systemMy->_camearTop;
+             DrawLight::setClearColor(0.7f, 0.8f, 0.9f, 1.0f); 
+             
+         }
+         else if (_systemMy->_camearCurrent == _systemMy->_camearTop) {
+             _systemMy->_camearCurrent = _systemMy->_camearSide;
+             DrawLight::setClearColor(0.1f, 0.2f, 0.3f, 1.0f);
+         }
     }
 
     //...

@@ -5,33 +5,24 @@
 #include "Callback/CallbackEvent.h"
 #include "Screen.h"
 #include "Common/Help.h"
+#include "Draw/Camera/CameraControl.h"
 #include "Draw/Camera/CameraControlOutside.h"
 #include "Draw/Draw.h"
 #include "Draw/DrawLight.h"
 #include "Draw/DrawLine.h"
-#include "Object/Map.h"
-#include "Object/Object.h"
-#include "Object/Model.h"
-#include "Object/Shape.h"
 #include "Object/Line.h"
-#include "Object/Text.h"
 #include "ImGuiManager/UI.h"
-#include "glm/vec2.hpp"
-#include "ImGuiManager/UI.h"
-
 #include "UI/MainUI.h"
-
 #include "SaveManager.h"
 #include "Math/Vector.h"
-#include "Objects/SystemClass.h"
-#include "Objects/SystemMapEasyMerger.h"
-#include "Objects/SystemMapShared.h"
+
+//#include "Objects/SystemClass.h"
+//#include "Objects/SystemMapEasyMerger.h"
+//#include "Objects/SystemMapShared.h"
 #include "Objects/SystemMapMyShared.h"
 
 #define DRAW DrawLight
 std::string SystemMy::_resourcesDir;
-double SystemMy::time = 0;
-
 const std::string saveFileName("../../../Executable/Save.json");
 
 double minDt = std::numeric_limits<double>::max();
@@ -45,8 +36,8 @@ SystemMy::~SystemMy() {;
 
 void SystemMy::init() {
 	//DRAW::setClearColor(0.3f, 0.6f, 0.9f, 1.0f);
-	//DRAW::setClearColor(0.1f, 0.2f, 0.3f, 1.0f);
-	DRAW::setClearColor(0.7f, 0.8f, 0.9f, 1.0f);
+	DRAW::setClearColor(0.1f, 0.2f, 0.3f, 1.0f);
+	//DRAW::setClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 
 	//...
 	_systemMap = std::shared_ptr<SystemMap>(new SystemMap("MAIN"));
@@ -54,35 +45,36 @@ void SystemMy::init() {
 
 	//...
 	_camearSide = std::make_shared<CameraControlOutside>();
-	Camera::Set<Camera>(_camearSide);
-
 	if (CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(_camearSide.get())) {
 		cameraPtr->SetPerspective();
-		cameraPtr->SetPos({ 10, 10, 10 });
+		cameraPtr->SetPos({ 0, 0, 0 });
 		cameraPtr->SetDirect({ -0.440075815f, -0.717726171f, -0.539631844f });
 		cameraPtr->SetSpeed(1.0);
 		cameraPtr->SetDistanceOutside(50000.f);
 		cameraPtr->Enable(true);
 	}
 
+	//...
+	_camearTop = std::make_shared<Camera>();
+	if (Camera* cameraPtr = dynamic_cast<Camera*>(_camearTop.get())) {
+		cameraPtr->SetPerspective();
+		cameraPtr->SetPos({ 0, 0, 100000 });
+		cameraPtr->SetUp({ 0.f, -1.f, 0.f });
+		cameraPtr->SetDirect({ 0.f, 0.f, -1.0f });
+	}
+
+	//...
+	//_camearCurrent = _camearSide;
+	_camearCurrent = _camearSide;
+	Camera::Set<Camera>(_camearCurrent);
+
+	//...
 	_camearScreen = std::make_shared<Camera>(Camera::Type::ORTHO);
 
 	//...
 	initCallback();
 
 	MainUI::Open(this);
-
-	// Interface
-	{
-		Object& obj = Map::GetFirstCurrentMap().addObjectToPos("DottedCircleTarget", { 2.f, 3.f, 0.f });
-		obj.setName("Target");
-		obj.setVisible(false);
-	}
-	{
-		Object& obj = Map::GetFirstCurrentMap().addObjectToPos("Target", { 14.f, 12.f, 0.f });
-		obj.setName("Vector");
-		obj.setVisible(false);
-	}
 }
 
 void SystemMy::close() {
@@ -91,15 +83,10 @@ void SystemMy::close() {
 }
 
 void SystemMy::update() {
-	if (time == 0) {
-		time = Engine::Core::currentTime();
+	if ((Engine::Core::currentTime() - _time) < _systemMap->deltaTime) {
 		return;
-	}
-	double dt = Engine::Core::currentTime() - time;
-
-
-	if (dt < _systemMap->deltaTime) {
-		return;
+	} else {
+		_time = Engine::Core::currentTime();
 	}
 
 #if SYSTEM_MAP < 8
@@ -111,11 +98,16 @@ void SystemMy::update() {
 	Body& body = _systemMap->RefFocusBody();
 	auto centerMassT = body.GetPos();
 	glm::vec3 centerMass = glm::vec3(centerMassT.x, centerMassT.y, centerMassT.z);
-	dynamic_cast<CameraControlOutside*>(_camearSide.get())->SetPosOutside(centerMass);
+	if (auto camera = dynamic_cast<CameraControlOutside*>(_camearCurrent.get())) {
+		camera->SetPosOutside(centerMass);
+	} else if (auto camera = dynamic_cast<Camera*>(_camearCurrent.get())) {
+		centerMass.z = 100000.f;
+		camera->SetPos(centerMass);
+	}
 }
 
 void SystemMy::draw() {
-	Camera::Set<Camera>(_camearSide);
+	Camera::Set<Camera>(_camearCurrent);
 
 	DRAW::viewport();
 	DRAW::clearColor();
@@ -134,7 +126,6 @@ void SystemMy::draw() {
 }
 
 void SystemMy::Drawline() {
-	//Camera::Set<Camera>(Map::GetFirstCurrentMap().getCamera());
 	DrawLine::prepare();
 
 	if (_greed) {
@@ -167,39 +158,6 @@ void SystemMy::Drawline() {
 			DrawLine::Draw(_systemMap->spatialGrid);
 		}
 	}
-
-	if (_interfaceLine) {
-		if (_points.size() == 2) {
-			glm::vec3 posTarget = Map::GetFirstCurrentMap().getObjectByName("Target").getPos();
-			glm::vec3 posVector = Map::GetFirstCurrentMap().getObjectByName("Vector").getPos();
-
-			float points[] = { posTarget.x, posTarget.y, posTarget.z, posVector.x, posVector.y, posVector.z };
-			_interfaceLine->set(points, 2);
-			DrawLine::draw(*_interfaceLine);
-		}
-	}
-	else {
-		_interfaceLine = new Line();
-		_interfaceLine->setType(0x0001);
-	}
-
-	//
-	if (showCenter) {
-		//...
-	}
-	if (showCenterMass) {
-		//...
-	}
-	if (showForceVector) {
-		//...
-	}
-	if (showPath) {
-		//...
-	}
-	if (showRelativePath) {
-		//...
-	}
-	
 }
 
 void SystemMy::resize() {
@@ -238,24 +196,13 @@ void SystemMy::initCallback() {
 
 		if (Engine::TapCallbackEvent* tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
 			if (tapCallbackEvent->_id == Engine::VirtualTap::LEFT) {
-				if (!_points.empty()) {
-					_points.emplace_back(Map::GetFirstCurrentMap().getCamera()->corsorCoord());
-					Map::GetFirstCurrentMap().getObjectByName("Target").setPos(_points[0]);
-					Map::GetFirstCurrentMap().getObjectByName("Target").setVisible(true);
-				}
+				//...
 			}
 		}
 	});
 
 	_callbackPtr->add(Engine::CallbackType::MOVE, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
-		if (_points.size() == 1) {
-			_points.emplace_back(Map::GetFirstCurrentMap().getCamera()->corsorCoord());
-		}
-		if (_points.size() == 2) {
-			_points[1] = Map::GetFirstCurrentMap().getCamera()->corsorCoord();
-			Map::GetFirstCurrentMap().getObjectByName("Vector").setPos(_points[1]);
-			Map::GetFirstCurrentMap().getObjectByName("Vector").setVisible(true);
-		}
+		//...
 	});
 
 	_callbackPtr->add(Engine::CallbackType::RELEASE_KEY, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
@@ -268,13 +215,12 @@ void SystemMy::initCallback() {
 	});
 
 	_callbackPtr->add(Engine::CallbackType::PINCH_KEY, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
-		/*if (Engine::Callback::pressKey(Engine::VirtualKey::Q) && Engine::Callback::pressKey(Engine::VirtualKey::SPACE)) {
-			//...
-		}*/
+		//...
 	});
 
 	_callbackPtr->add(Engine::CallbackType::RELEASE_TAP, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
-		if (_points.size() == 2 || (_orbite == 0 && _points.size() == 1)) {
+		bool _orbite = true;
+		/*if (_points.size() == 2 || (_orbite == 0 && _points.size() == 1)) {
 			if (Engine::TapCallbackEvent* tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
 				if (tapCallbackEvent->_id == Engine::VirtualTap::LEFT) {
 					float mass = 100;
@@ -312,7 +258,7 @@ void SystemMy::initCallback() {
 					_points.clear();
 				}
 			}
-		}
+		}*/
 	});
 
 	_callbackPtr->add(Engine::CallbackType::PINCH_KEY, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
@@ -323,7 +269,7 @@ void SystemMy::initCallback() {
 
 	_callbackPtr->add(Engine::CallbackType::SCROLL, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
 		if (Engine::TapCallbackEvent* tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
-			CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(_camearSide.get());
+			CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(_camearCurrent.get());
 			if (!cameraPtr) {
 				return;
 			}

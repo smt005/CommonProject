@@ -30,5 +30,11 @@
     "shape": "Models/Interface/Plane_1_1_z.obj",
     "texture": "Textures/Interface/Target.png",
 	"scale": 0.1
+  },
+  "Marker": {
+    "shape": "Models/Interface/Plane_1_1_z.obj",
+    "_texture": "Textures/Interface/dotted_circle.png",
+	"texture": "Textures/Interface/dotted_circle_target.png",
+	"scale": 0.025
   }
 }

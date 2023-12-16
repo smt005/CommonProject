@@ -19,11 +19,8 @@
 #include "glm/vec2.hpp"
 #include "ImGuiManager/UI.h"
 
-#include "UI/TopUI.h"
-#include "UI/BottomUI.h"
-#include "UI/ListHeaviestUI.h"
+#include "UI/MainUI.h"
 
-#include "UI/SystemManager.h"
 #include "SaveManager.h"
 #include "Math/Vector.h"
 #include "Objects/SystemClass.h"
@@ -71,8 +68,7 @@ void SystemMy::init() {
 	//...
 	initCallback();
 
-	UI::ShowWindow<TopUI>(this);
-	UI::ShowWindow<BottomUI>(this);
+	MainUI::Open(this);
 
 	// Interface
 	{
@@ -89,6 +85,7 @@ void SystemMy::init() {
 
 void SystemMy::close() {
 	save();
+	MainUI::Hide();
 }
 
 void SystemMy::update() {
@@ -235,34 +232,11 @@ void SystemMy::initCallback() {
 
 		if (Engine::TapCallbackEvent* tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
 			if (tapCallbackEvent->_id == Engine::VirtualTap::LEFT) {
-				if (_points.empty()) {
+				if (!_points.empty()) {
 					_points.emplace_back(Map::GetFirstCurrentMap().getCamera()->corsorCoord());
 					Map::GetFirstCurrentMap().getObjectByName("Target").setPos(_points[0]);
 					Map::GetFirstCurrentMap().getObjectByName("Target").setVisible(true);
 				}
-			}
-		}
-	});
-
-	_callbackPtr->add(Engine::CallbackType::PRESS_KEY, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
-		Engine::KeyCallbackEvent* releaseKeyEvent = (Engine::KeyCallbackEvent*)callbackEventPtr->get();
-		Engine::VirtualKey key = releaseKeyEvent->getId();
-
-		if (key == Engine::VirtualKey::W) {
-			if (UI::ShowingWindow<SystemManager>()) {
-				UI::CloseWindowT<SystemManager>();
-			}
-			else {
-				UI::ShowWindow<SystemManager>(this);
-			}
-		}
-
-		if (key == Engine::VirtualKey::E) {
-			if (UI::ShowingWindow<ListHeaviestUI>()) {
-				UI::CloseWindowT<ListHeaviestUI>();
-			}
-			else {
-				UI::ShowWindow<ListHeaviestUI>(this);
 			}
 		}
 	});

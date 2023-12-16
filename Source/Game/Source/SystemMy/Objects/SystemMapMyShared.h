@@ -90,6 +90,8 @@ public:
 		return _matrix;
 	}
 
+	bool hit();
+
 private:
 public:
 	char* _name = nullptr;
@@ -155,10 +157,12 @@ public:
 		return defaultBody;
 	}
 
+	Body::Ptr HitObject();
+
 	bool CHECK();
 
 public:
-	double deltaTime = 10;
+	double deltaTime = 1;
 	size_t countOfIteration = 1;
 	double timePassed = 0;
 

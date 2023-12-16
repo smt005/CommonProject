@@ -61,6 +61,7 @@ public:
 	}
 
 private:
+public:
 	std::shared_ptr<SystemMap> _systemMap;
 
 	Greed* _greed = nullptr;

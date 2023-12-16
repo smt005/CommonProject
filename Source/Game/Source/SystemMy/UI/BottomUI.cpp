@@ -43,6 +43,8 @@ void BottomUI::Draw() {
 
     ImGuiStyle& style = ImGui::GetStyle();
     style.FramePadding.y = 18.f;
+    style.GrabMinSize = 100;
+    style.FrameRounding = 3;
 
     // Bottom
     ImGui::Dummy(ImVec2(0.f, (_height - offsetBottom)));
@@ -69,19 +71,21 @@ void BottomUI::Draw() {
     _systemMy->_timeSpeed = timeSpeed;
     ImGui::PopItemWidth();
 #else
-    volatile static float widthSlider = 800.f;
+    volatile static float widthSpaceSlider = 140.f;
+    float widthSlider = Engine::Screen::width() - widthSpaceSlider;
+    widthSlider /= 2;
 
     int deltaTime = (int)_systemMy->_systemMap->deltaTime;
     int countOfIteration = (int)_systemMy->_systemMap->countOfIteration;
 
-    ImGui::PushItemWidth((Engine::Screen::width() - widthSlider));
+    ImGui::PushItemWidth(widthSlider);
 
-    if (ImGui::SliderInt("##deltaTime_slider", &deltaTime, 0, 100)) {
+    if (ImGui::SliderInt("##deltaTime_slider", &deltaTime, 1, 100, "error = %d")) {
         _systemMy->_systemMap->deltaTime = (double)deltaTime;
     }
 
     ImGui::SameLine();
-    if (ImGui::SliderInt("##time_speed_slider", &countOfIteration, 1, 10)) {
+    if (ImGui::SliderInt("##time_speed_slider", &countOfIteration, 0, 1000, "speed = %d")) {
         _systemMy->_systemMap->countOfIteration = countOfIteration;
     }
 

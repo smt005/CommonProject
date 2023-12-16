@@ -29,6 +29,6 @@
   "Target": {
     "shape": "Models/Interface/Plane_1_1_z.obj",
     "texture": "Textures/Interface/Target.png",
-    "scale": 200
+	"scale": 0.1
   }
 }

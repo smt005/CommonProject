@@ -29,11 +29,63 @@ Body::~Body() {
 	delete _name;
 }
 
-bool Body::hit() {
+// TODO:
+Math::Vector3 Body::PosOnScreen(const glm::mat4x4& matCamera, bool applySizeScreen) {
+	Math::Vector3d posOnScreen;
+
+	auto transformToScreen = [](Math::Vector3& point, const glm::mat4x4& mat) {
+		glm::vec4 p(point.x, point.y, point.z, 1.0f);
+		p = mat * p;
+
+		if (p.w != 1.0)
+		{
+			p.x /= p.w;
+			p.y /= p.w;
+			p.z /= p.w;
+		}
+
+		point.x = p.x;
+		point.y = p.y;
+		point.z = p.z;
+	};
+
+	auto transformSizeToScreen = [applySizeScreen](float& x, float& y, float& xRes, float& yRes) {
+		x = x * 0.5f + 0.5f;
+		y = y * 0.5f + 0.5f;
+
+		if (applySizeScreen) {
+			xRes = Engine::Screen::width() * x;
+			yRes = Engine::Screen::height() * y;
+		}
+	};
+
+	Math::Vector3 point = GetPos();
+	transformToScreen(point, matCamera);
+	
+	float xInt = point.x;
+	float yInt = point.y;
+
+	if (applySizeScreen) {
+		transformSizeToScreen(point.x, point.y, xInt, yInt);
+	}
+
+	posOnScreen.x = xInt;
+	posOnScreen.y = yInt;
+	posOnScreen.z = 0;
+
+	return posOnScreen;
+}
+
+// TODO:
+bool Body::hit(const glm::mat4x4& matCamera) {
+	if (!_model) {
+		return false;
+	}
+
 	const int xTap = Engine::Callback::mousePos().x;
 	const int yTap = Engine::Screen::height() - Engine::Callback::mousePos().y;
 
-	auto transformToScreen = [](glm::vec3& point, glm::mat4x4& mat) {
+	auto transformToScreen = [](glm::vec3& point, const glm::mat4x4& mat) {
 		glm::vec4 p(point.x, point.y, point.z, 1.0f);
 		p = mat * p;
 
@@ -73,11 +125,8 @@ bool Body::hit() {
 		return res;
 	};
 
-	if (!_model) {
-		return 0;
-	}
+	//glm::mat4x4 matCamera = Camera::GetLink().ProjectView();
 
-	glm::mat4x4 matCamera = Camera::GetLink().ProjectView();
 	const Mesh& mesh = _model->getMesh();
 
 	for (int index = 0; index < mesh.countIndex(); index += 3)
@@ -608,9 +657,9 @@ Body::Ptr SystemMap::GetBody(const char* chName) {
 	return itBody != _bodies.end() ? *itBody : nullptr;
 }
 
-Body::Ptr SystemMap::HitObject() {
+Body::Ptr SystemMap::HitObject(const glm::mat4x4& matCamera) {
 	for (Body::Ptr& body : _bodies) {
-		if (body->hit()) {
+		if (body->hit(matCamera)) {
 			return body;
 		}
 	}

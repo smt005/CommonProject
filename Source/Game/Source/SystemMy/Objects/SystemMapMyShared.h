@@ -90,7 +90,8 @@ public:
 		return _matrix;
 	}
 
-	bool hit();
+	Math::Vector3 PosOnScreen(const glm::mat4x4& matCamera, bool applySizeScreen);
+	bool hit(const glm::mat4x4& matCamera);
 
 private:
 public:
@@ -157,7 +158,7 @@ public:
 		return defaultBody;
 	}
 
-	Body::Ptr HitObject();
+	Body::Ptr HitObject(const glm::mat4x4& matCamera);
 
 	bool CHECK();
 
@@ -171,6 +172,7 @@ public:
 	bool threadEnable = true;
 
 	Body::Ptr _focusBody;
+	Body::Ptr _selectBody;
 	std::vector<std::pair<Body::Ptr, std::string>> _heaviestInfo;
 
 private:

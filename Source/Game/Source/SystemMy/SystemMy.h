@@ -80,6 +80,7 @@ public:
 
 	CallbackPtr _callbackPtr;
 	std::shared_ptr<Camera> _camearSide;
+	std::shared_ptr<Camera> _camearScreen;
 	Math::Vector3d focusToo;
 
 	struct LockMouse {

@@ -7,15 +7,20 @@
 #include "Draw/Camera/CameraControlOutside.h"
 #include "Callback/Callback.h"
 #include "Callback/CallbackEvent.h"
+#include "Draw/DrawLight.h"
 
 #include "SystemMy/SystemMy.h"
 #include "SystemMy/Objects/SystemMapMyShared.h"
+#include "Object/Object.h"
+#include "Object/Model.h"
 
 //#include "iostream"
 
 namespace {
 	Engine::Callback callback;
 	std::shared_ptr<SystemMap> spacePtr;
+	Object::Ptr bodyMarker;
+
 }
 
 SystemMy* MainUI::systemMy = nullptr;
@@ -67,10 +72,26 @@ void MainUI::InitCallback() {
 	callback.add(Engine::CallbackType::RELEASE_TAP, [](const Engine::CallbackEventPtr& callbackEventPtr) {
 		if (Engine::TapCallbackEvent* tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
 			if (tapCallbackEvent->_id == Engine::VirtualTap::LEFT) {
-				if (Body::Ptr body = spacePtr->HitObject()) {
-					spacePtr->_focusBody = body;
-				}
+				const glm::mat4x4& matCamera = systemMy->_camearSide->ProjectView();
+				spacePtr->_focusBody = spacePtr->HitObject(matCamera);
 			}
 		}
 	});
+}
+
+void MainUI::DrawOnSpace() {
+	if (!bodyMarker) {
+		bodyMarker = std::make_shared<Object>("Marker", "Target");
+	}
+
+	const glm::mat4x4& matCamera = systemMy->_camearSide->ProjectView();
+
+	for (Body::Ptr& body : spacePtr->_bodies) {	
+		Math::Vector3 posOnScreen = body->PosOnScreen(matCamera, false);
+
+		float pos[] = { posOnScreen.x, posOnScreen.y, posOnScreen.z };
+
+		bodyMarker->setPos(pos);
+		DrawLight::draw(*bodyMarker);
+	}
 }

@@ -65,6 +65,8 @@ void SystemMy::init() {
 		cameraPtr->Enable(true);
 	}
 
+	_camearScreen = std::make_shared<Camera>(Camera::Type::ORTHO);
+
 	//...
 	initCallback();
 
@@ -113,7 +115,7 @@ void SystemMy::update() {
 }
 
 void SystemMy::draw() {
-	// Camera::Set<Camera>(_camearSide);
+	Camera::Set<Camera>(_camearSide);
 
 	DRAW::viewport();
 	DRAW::clearColor();
@@ -121,10 +123,14 @@ void SystemMy::draw() {
 	// Grid
 	Drawline();
 
-	// Draw SystemMap
-	//Camera::Set<Camera>(_camearSide);
+	// Draw
 	DRAW::prepare();
 	DRAW::DrawMap(*_systemMap);
+
+	//...
+	Camera::Set<Camera>(_camearScreen);
+	DRAW::prepare();
+	MainUI::DrawOnSpace();
 }
 
 void SystemMy::Drawline() {

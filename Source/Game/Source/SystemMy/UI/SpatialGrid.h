@@ -12,6 +12,7 @@ private:
 
 public:
 	SpatialGrid();
+	void Make();
 
 	const float* const Data() const {
 		return reinterpret_cast<const float*>(_points.data());
@@ -34,6 +35,7 @@ public:
 	}
 
 private:
+public:
 	std::vector<Point> _points;
 	float _widthLine = 1.f;
 	float _color[4] = { 0.125f, 0.125f, 0.5f, 0.125f };

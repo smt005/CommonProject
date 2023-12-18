@@ -8,6 +8,13 @@ class SystemMy;
 using FunAction = std::pair<std::string, std::function<void(void)>>;
 using FunActions = std::vector< FunAction>;
 
+enum class AddBodyType {
+	ORBIT,
+	DIRECT,
+	ORBIT_CENTER_MASS,
+	NONE
+};
+
 class AddObjectUI final : public UI::Window {
 public:
 	AddObjectUI() : UI::Window(this) { Close(); }
@@ -59,6 +66,7 @@ private:
 	void GenerateFunViewUI();
 
 private:
+public:
 	float _x = 0.f;
 	float _y = 0.f;
 	float _width = 0.f;
@@ -67,6 +75,7 @@ private:
 	int timeSpeed = 1;
 	SystemMy* _systemMy = nullptr;
 
+	AddBodyType _addBodyType = AddBodyType::NONE;
 	bool _lockAddObject = false;
 	FunAction _funAddObject;
 

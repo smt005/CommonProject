@@ -8,7 +8,7 @@
 #include "Callback/Callback.h"
 #include "Callback/CallbackEvent.h"
 #include "Draw/DrawLight.h"
-
+#include "../Objects/SpaceManager.h"
 #include "SystemMy/SystemMy.h"
 #include "SystemMy/Objects/SystemMapMyShared.h"
 #include "Object/Object.h"
@@ -75,9 +75,21 @@ void MainUI::InitCallback() {
 		}
 
 		if (Engine::TapCallbackEvent* tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
-			if (tapCallbackEvent->_id == Engine::VirtualTap::LEFT) {
+			if (tapCallbackEvent->_id == Engine::VirtualTap::MIDDLE) {
 				const glm::mat4x4& matCamera = systemMy->_camearCurrent->ProjectView();
 				spacePtr->_focusBody = spacePtr->HitObject(matCamera);
+				spacePtr->_selectBody = spacePtr->_focusBody;
+			}
+
+			if (tapCallbackEvent->_id == Engine::VirtualTap::LEFT) {
+				if (BottomUI* bottomUI = dynamic_cast<BottomUI*>(UI::GetWindow<BottomUI>().get())) {
+					if (bottomUI->_addBodyType == AddBodyType::ORBIT) {
+						auto cursorPosGlm = systemMy->_camearCurrent->corsorCoord();
+						Math::Vector3d cursorPos(cursorPosGlm.x, cursorPosGlm.y, cursorPosGlm.z);
+						SpaceManager::AddObjectOnOrbit(spacePtr.get(), cursorPos);
+						bottomUI->_addBodyType = AddBodyType::NONE;
+					}
+				}
 			}
 		}
 	});

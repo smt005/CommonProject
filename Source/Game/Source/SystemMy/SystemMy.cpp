@@ -16,10 +16,9 @@
 #include "SaveManager.h"
 #include "Math/Vector.h"
 
-//#include "Objects/SystemClass.h"
-//#include "Objects/SystemMapEasyMerger.h"
-//#include "Objects/SystemMapShared.h"
+#include "Objects/SystemClass.h"
 #include "Objects/SystemMapMyShared.h"
+#include "Objects/SpaceManager.h"
 
 #define DRAW DrawLight
 std::string SystemMy::_resourcesDir;
@@ -219,44 +218,11 @@ void SystemMy::initCallback() {
 	});
 
 	_callbackPtr->add(Engine::CallbackType::RELEASE_TAP, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
-		bool _orbite = true;
-		/*if (_points.size() == 2 || (_orbite == 0 && _points.size() == 1)) {
-			if (Engine::TapCallbackEvent* tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
-				if (tapCallbackEvent->_id == Engine::VirtualTap::LEFT) {
-					float mass = 100;
-
-					if (!_orbite) {
-#if SYSTEM_MAP < 7
-						auto* starPtr = _systemMap->GetHeaviestBody(true);
-#else
-						auto starPtr = _systemMap->GetHeaviestBody(true);
-#endif
-						if (starPtr) {
-							auto starPosT = starPtr->GetPos();
-							glm::vec3 gravityVector = _points[0] - glm::vec3(starPosT.x, starPosT.y, starPosT.z);
-							glm::vec3 normalizeGravityVector = glm::normalize(gravityVector);
-
-							float g90 = glm::pi<float>() / 2.0;
-							glm::vec3 velocity(normalizeGravityVector.x* std::cos(g90) - normalizeGravityVector.y * std::sin(g90),
-								normalizeGravityVector.x* std::sin(g90) + normalizeGravityVector.y * std::cos(g90),
-								0.f);
-
-							velocity *= std::sqrtf(_systemMap->_constGravity * starPtr->_mass / glm::length(gravityVector));
-							_systemMap->Add("BrownStone", _points[0], velocity, mass, "");
-						}
-					} else {
-						glm::vec3 velocity = _points[0] - _points[1];
-						velocity /= 1000.f;
-						_systemMap->Add("BrownStone", _points[0], velocity, mass, "");
-					}
-
-					_points.clear();
-				}
-
-				if (tapCallbackEvent->_id == Engine::VirtualTap::RIGHT) {
-					//...
-					_points.clear();
-				}
+		/*if (Engine::TapCallbackEvent* tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
+			if (!MainUI::IsLockAction() && tapCallbackEvent->_id == Engine::VirtualTap::LEFT) {
+				auto cursorPosGlm = _camearCurrent->corsorCoord();
+				Math::Vector3d cursorPos(cursorPosGlm.x, cursorPosGlm.y, cursorPosGlm.z);
+				SpaceManager::AddObjectOnOrbit(_systemMap.get(), cursorPos);
 			}
 		}*/
 	});

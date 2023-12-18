@@ -8,6 +8,7 @@
 #include "Screen.h"
 #include "Common/Help.h"
 #include "CommonData.h"
+#include "../Objects/SpaceManager.h"
 #include "../SystemMy.h"
 #include "Draw/DrawLight.h"
 #include "Draw/Camera/CameraControlOutside.h"
@@ -103,9 +104,12 @@ void BottomUI::OnOpen() {
 
     _funAddObject.first = "...";
     _funAddObject.second = nullptr;
+    _addBodyType = AddBodyType::NONE;
 
-    _funSetView.first = "...";
-    _funSetView.second = nullptr;
+    _funSetView.first = "A##right_a";
+    _funSetView.second = [this]() {
+        SpaceManager::SetView(_systemMy);
+    };
 }
 
 void BottomUI::OnClose() {
@@ -128,7 +132,7 @@ void BottomUI::Draw() {
     style.GrabMinSize = 100;
     style.GrabRounding = 5;
     style.FrameRounding = 5;
-    style.WindowPadding = { 0.f, 0.f };
+    style.WindowPadding = { 1.f, 1.f };
 
     // LEFT
     ImGui::SameLine(8.f);
@@ -205,20 +209,20 @@ void BottomUI::GenerateFunAddObjectUI() {
 
     FunActions funActions;
 
-    funActions.emplace_back("0##left_1", []() {
-        help::log("0");
+    funActions.emplace_back("0##left_1", [this]() {
+        _addBodyType = AddBodyType::ORBIT;
     });
     
-    funActions.emplace_back("1##left_1", []() {
-        help::log("1");
+    funActions.emplace_back("1##left_1", [this]() {
+        _addBodyType = AddBodyType::NONE;
     });
     
-    funActions.emplace_back("2##left_2", []() {
-        help::log("2");
+    funActions.emplace_back("2##left_2", [this]() {
+        _addBodyType = AddBodyType::NONE;
     });
     
-    funActions.emplace_back("3##left_3", []() {
-        help::log("3");
+    funActions.emplace_back("3##left_3", [this]() {
+        _addBodyType = AddBodyType::NONE;
     });
 
     UI::ShowWindow<AddObjectUI>(funActions);
@@ -231,19 +235,19 @@ void BottomUI::GenerateFunViewUI() {
 
     FunActions funActions;
 
-    funActions.emplace_back("A##left_a", []() {
-        help::log("a");
+    funActions.emplace_back("A##right_a", [this]() {
+        SpaceManager::SetView(_systemMy);
     });
 
-    funActions.emplace_back("B##left_b", []() {
+    funActions.emplace_back("B##right_b", []() {
         help::log("B");
     });
 
-    funActions.emplace_back("C##left_c", []() {
+    funActions.emplace_back("C##right_c", []() {
         help::log("C");
     });
 
-    funActions.emplace_back("D##left_d", []() {
+    funActions.emplace_back("D##right_d", []() {
         help::log("D");
     });
 

@@ -2,8 +2,11 @@
 #include "BottomUI.h"
 #include "imgui.h"
 #include <string>
+#include <functional>
+#include "MainUI.h"
 #include "Core.h"
 #include "Screen.h"
+#include "Common/Help.h"
 #include "CommonData.h"
 #include "../SystemMy.h"
 #include "Draw/DrawLight.h"
@@ -13,9 +16,82 @@
 #include "../Objects/SystemMapShared.h"
 #include "../Objects/SystemMapMyShared.h"
 
-BottomUI::BottomUI() : UI::Window(this) {
-    Close();
+// AddObjectUI
+
+AddObjectUI::AddObjectUI(const FunActions& funActionsArg)
+    : UI::Window(this)
+    , _funActions(funActionsArg)
+{}
+
+void AddObjectUI::OnOpen() {
+    SetFlag(ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBackground);
+
+    _y = Engine::Screen::height() - _y - _height;
+
+    ImGui::SetWindowPos(Id().c_str(), { _x, _y });
+    ImGui::SetWindowSize(Id().c_str(), { _width, _height });
 }
+
+void AddObjectUI::Update() {
+    //...
+}
+
+void AddObjectUI::Draw() {
+    for (auto& pairAction :_funActions) {
+        ImGui::Dummy(ImVec2(0.f, 0.f));
+        ImGui::SameLine(8.f);
+
+        if (ImGui::Button(pairAction.first.c_str(), { 50.f, 50.f })) {
+            pairAction.second();
+
+            if (BottomUI* bottomUI = dynamic_cast<BottomUI*>(UI::GetWindow<BottomUI>().get())) {
+                bottomUI->_funAddObject = pairAction;
+            }
+
+            Close();
+        }
+    }
+}
+
+// SetViewUI
+
+SetViewUI::SetViewUI(const FunActions& funActionsArg)
+    : UI::Window(this)
+    , _funActions(funActionsArg)
+{}
+
+void SetViewUI::OnOpen() {
+    SetFlag(ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBackground);
+
+    _x = Engine::Screen::width() - _width;
+    _y = Engine::Screen::height() - _y - _height;
+
+    ImGui::SetWindowPos(Id().c_str(), { _x, _y });
+    ImGui::SetWindowSize(Id().c_str(), { _width, _height });
+}
+
+void SetViewUI::Update() {
+    //...
+}
+
+void SetViewUI::Draw() {
+    for (auto& pairAction : _funActions) {
+        ImGui::Dummy(ImVec2(0.f, 0.f));
+        ImGui::SameLine(8.f);
+
+        if (ImGui::Button(pairAction.first.c_str(), { 50.f, 50.f })) {
+            pairAction.second();
+
+            if (BottomUI* bottomUI = dynamic_cast<BottomUI*>(UI::GetWindow<BottomUI>().get())) {
+                bottomUI->_funSetView = pairAction;
+            }
+
+            Close();
+        }
+    }
+}
+
+// BottomUI
 
 BottomUI::BottomUI(SystemMy* systemMy)
     : UI::Window(this)
@@ -23,8 +99,13 @@ BottomUI::BottomUI(SystemMy* systemMy)
 {}
 
 void BottomUI::OnOpen() {
-    SetFlag(ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
-    SetAlpha(0.f);
+    SetFlag(ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBackground);
+
+    _funAddObject.first = "...";
+    _funAddObject.second = nullptr;
+
+    _funSetView.first = "...";
+    _funSetView.second = nullptr;
 }
 
 void BottomUI::OnClose() {
@@ -45,35 +126,31 @@ void BottomUI::Draw() {
     ImGuiStyle& style = ImGui::GetStyle();
     style.FramePadding.y = 18.f;
     style.GrabMinSize = 100;
-    style.FrameRounding = 3;
+    style.GrabRounding = 5;
+    style.FrameRounding = 5;
+    style.WindowPadding = { 0.f, 0.f };
 
-    // Bottom
-    ImGui::Dummy(ImVec2(0.f, (_height - offsetBottom)));
+    // LEFT
+    ImGui::SameLine(8.f);
 
-    bool orbite = false;
+    if (ImGui::Button(_funAddObject.first.c_str(), { 50.f, 50.f }) && _funAddObject.second) {
+        _funAddObject.second();
+        _lockAddObject = true;
 
-    if (orbite == 0) {
-        if (ImGui::Button("[O]", { 50.f, 50.f })) {
-            //...
-        }
-    }
-    else {
-        if (ImGui::Button("[S]", { 50.f, 50.f })) {
-            //...
-        }
+        UI::CloseWindowT<AddObjectUI>();
     }
 
-    //...
+    if (ImGui::IsItemHovered()) {
+        if (!_lockAddObject) {
+            GenerateFunAddObjectUI();
+        }
+    } else {
+        _lockAddObject = false;
+    }
+
+    // CENTER
     ImGui::SameLine();
 
-#if  SYSTEM_MAP < 8
-    volatile static float widthSlider = 190.f;
-
-    ImGui::PushItemWidth((Engine::Screen::width() - widthSlider));
-    ImGui::SliderInt("##time_speed_slider", &timeSpeed, 0, 110);
-    _systemMy->_timeSpeed = timeSpeed;
-    ImGui::PopItemWidth();
-#else
     volatile static float widthSpaceSlider = 140.f;
     float widthSlider = Engine::Screen::width() - widthSpaceSlider;
     widthSlider /= 2;
@@ -88,52 +165,87 @@ void BottomUI::Draw() {
     }
 
     ImGui::SameLine();
-    if (ImGui::SliderInt("##time_speed_slider", &countOfIteration, 0, 1000, "speed = %d")) {
+
+    static float _countOfIteration = 0.f;
+    std::string text = "speed: " + std::to_string(countOfIteration);
+
+    if (ImGui::SliderFloat("##time_speed_slider", &_countOfIteration, 0.8f, 8, text.c_str())) {
+        countOfIteration = (int)std::expf(_countOfIteration - 1);
         _systemMy->_systemMap->countOfIteration = countOfIteration;
     }
 
     ImGui::PopItemWidth();
-#endif //  SYSTEM_MAP < 8
 
-    //...
+    // RIGHT
     ImGui::SameLine();
-    /*if (_systemMy->ViewByObject()) {
-        if (ImGui::Button("[X]", { 50.f, 50.f })) {
-            _systemMy->SetViewByObject(false);
+   
+    if (ImGui::Button(_funSetView.first.c_str(), { 50.f, 50.f }) && _funSetView.second) {
+        _funSetView.second();
+        _lockSetView = true;
+        UI::CloseWindowT<SetViewUI>();
+    }
+
+    if (ImGui::IsItemHovered()) {
+        if (!_lockSetView) {
+            GenerateFunViewUI();
         }
     }
     else {
-        if (ImGui::Button("[V]", { 50.f, 50.f })) {
-            _systemMy->SetViewByObject(true);
-        }
-    }*/
-
-    //...
-    ImGui::SameLine();
-    /*if (_systemMy->PerspectiveView()) {
-        if (ImGui::Button("[*]", { 50.f, 50.f })) {
-            _systemMy->SetPerspectiveView(false);
-        }
-    }
-    else {
-        if (ImGui::Button("[#]", { 50.f, 50.f })) {
-            _systemMy->SetPerspectiveView(true);
-        }
-    }*/
-
-
-    if (ImGui::Button((_systemMy->_systemMap->threadEnable ? "[V]" : "[#]"), { 50.f, 50.f })) {
-         if (_systemMy->_camearCurrent == _systemMy->_camearSide) {
-             _systemMy->_camearCurrent = _systemMy->_camearTop;
-             DrawLight::setClearColor(0.7f, 0.8f, 0.9f, 1.0f); 
-             
-         }
-         else if (_systemMy->_camearCurrent == _systemMy->_camearTop) {
-             _systemMy->_camearCurrent = _systemMy->_camearSide;
-             DrawLight::setClearColor(0.1f, 0.2f, 0.3f, 1.0f);
-         }
+        _lockSetView = false;
     }
 
     //...
     style.FramePadding.y = 3.f;
+}
+
+void BottomUI::GenerateFunAddObjectUI() {
+    if (UI::ShowingWindow<AddObjectUI>()) {
+        return;
+    }
+
+    FunActions funActions;
+
+    funActions.emplace_back("0##left_1", []() {
+        help::log("0");
+    });
+    
+    funActions.emplace_back("1##left_1", []() {
+        help::log("1");
+    });
+    
+    funActions.emplace_back("2##left_2", []() {
+        help::log("2");
+    });
+    
+    funActions.emplace_back("3##left_3", []() {
+        help::log("3");
+    });
+
+    UI::ShowWindow<AddObjectUI>(funActions);
+}
+
+void BottomUI::GenerateFunViewUI() {
+    if (UI::ShowingWindow<SetViewUI>()) {
+        return;
+    }
+
+    FunActions funActions;
+
+    funActions.emplace_back("A##left_a", []() {
+        help::log("a");
+    });
+
+    funActions.emplace_back("B##left_b", []() {
+        help::log("B");
+    });
+
+    funActions.emplace_back("C##left_c", []() {
+        help::log("C");
+    });
+
+    funActions.emplace_back("D##left_d", []() {
+        help::log("D");
+    });
+
+    UI::ShowWindow<SetViewUI>(funActions);
 }

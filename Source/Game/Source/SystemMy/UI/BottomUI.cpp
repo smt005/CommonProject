@@ -108,7 +108,7 @@ void BottomUI::OnOpen() {
 
     _funSetView.first = "A##right_a";
     _funSetView.second = [this]() {
-        SpaceManager::SetView(_systemMy);
+        _viewType = (ViewType)SpaceManager::SetView(_systemMy);
     };
 }
 
@@ -236,7 +236,7 @@ void BottomUI::GenerateFunViewUI() {
     FunActions funActions;
 
     funActions.emplace_back("A##right_a", [this]() {
-        SpaceManager::SetView(_systemMy);
+        _viewType = (ViewType)SpaceManager::SetView(_systemMy);
     });
 
     funActions.emplace_back("B##right_b", []() {

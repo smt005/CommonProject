@@ -6,8 +6,10 @@ class MainUI {
 public:
 	static void Open(SystemMy* systemMyArg);
 	static void Hide();
-	static bool IsLockAction();
+	
 	static void DrawOnSpace();
+	static bool IsLockAction();
+	static unsigned int GetViewType();
 
 private:
 	static void InitCallback();

@@ -15,6 +15,12 @@ enum class AddBodyType {
 	NONE
 };
 
+enum class ViewType {
+	PERSPECTIVE,
+	TOP,
+	NONE
+};
+
 class AddObjectUI final : public UI::Window {
 public:
 	AddObjectUI() : UI::Window(this) { Close(); }
@@ -79,6 +85,7 @@ public:
 	bool _lockAddObject = false;
 	FunAction _funAddObject;
 
+	ViewType _viewType = ViewType::PERSPECTIVE;
 	bool _lockSetView = false;
 	FunAction _funSetView;
 	

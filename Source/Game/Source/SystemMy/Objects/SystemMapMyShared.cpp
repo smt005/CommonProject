@@ -522,6 +522,10 @@ bool SystemMap::Load() {
 
 	DataAssociation();
 
+	//...
+	//_skyboxModel = Model::getByName("SkyBox");
+	_skyboxObject = std::make_shared<Object>("SkyBox", "SkyBox");
+
 	return true;
 }
 

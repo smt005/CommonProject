@@ -116,6 +116,11 @@ void SystemMy::draw() {
 
 	// Draw
 	DRAW::prepare();
+	if (MainUI::GetViewType() == 0 && _systemMap->_skyboxObject) {
+		auto camPos = Camera::_currentCameraPtr->Pos();
+		_systemMap->_skyboxObject->setPos(camPos);
+		DRAW::draw(*_systemMap->_skyboxObject);
+	}
 	DRAW::DrawMap(*_systemMap);
 
 	//...
@@ -144,6 +149,10 @@ void SystemMy::Drawline() {
 	}
 
 	if (_systemMap) {
+		/*if (_systemMap->_skyboxModel) {
+			DRAW::draw(*_systemMap->_skyboxModel);
+		}*/
+
 #if SYSTEM_MAP < 7
 		auto* starPtr = _systemMap->GetHeaviestBody(true);
 #else

@@ -41,10 +41,6 @@ void MainUI::Hide() {
 	UI::CloseWindowT<ListHeaviestUI>();
 }
 
-bool MainUI::IsLockAction() {
-	return ImGui::GetIO().WantCaptureMouse;
-}
-
 void MainUI::InitCallback() {
 	callback.add(Engine::CallbackType::PRESS_KEY, [](const Engine::CallbackEventPtr& callbackEventPtr) {
 		Engine::KeyCallbackEvent* releaseKeyEvent = (Engine::KeyCallbackEvent*)callbackEventPtr->get();
@@ -108,5 +104,15 @@ void MainUI::DrawOnSpace() {
 
 		bodyMarker->setPos(pos);
 		DrawLight::draw(*bodyMarker);
+	}
+}
+
+bool MainUI::IsLockAction() {
+	return ImGui::GetIO().WantCaptureMouse;
+}
+
+unsigned int MainUI::GetViewType() {
+	if (BottomUI* bottomUI = dynamic_cast<BottomUI*>(UI::GetWindow<BottomUI>().get())) {
+		return (unsigned int)bottomUI->_viewType;
 	}
 }

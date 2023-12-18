@@ -36,5 +36,10 @@
     "_texture": "Textures/Interface/dotted_circle.png",
 	"texture": "Textures/Interface/dotted_circle_target.png",
 	"scale": 0.025
+  },
+  "SkyBox": {
+    "shape": "Models/Convex/Sphere_10.obj",
+    "texture": "Textures/planet/ice_blue.jpg",
+    "scale": 50000
   }
 }

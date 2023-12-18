@@ -11,7 +11,9 @@
 #include "Math/Vector.h"
 #include "MyStl/shared.h"
 #include "../UI/SpatialGrid.h"
+
 #include "../../Engine/Source/Object/Model.h"
+#include "../../Engine/Source/Object/Object.h"
 
 class SystemMap;
 
@@ -174,6 +176,9 @@ public:
 	Body::Ptr _focusBody;
 	Body::Ptr _selectBody;
 	std::vector<std::pair<Body::Ptr, std::string>> _heaviestInfo;
+
+	//std::shared_ptr<Model> _skyboxModel;
+	std::shared_ptr<Object> _skyboxObject;
 
 private:
 public:

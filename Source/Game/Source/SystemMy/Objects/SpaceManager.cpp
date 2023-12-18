@@ -31,14 +31,16 @@ void SpaceManager::AddObjectDirect(Space* space, Math::Vector3d& pos, Math::Vect
 	//...
 }
 
-void SpaceManager::SetView(SystemMy* systemMy) {
+unsigned int SpaceManager::SetView(SystemMy* systemMy) {
 	if (systemMy->_camearCurrent == systemMy->_camearSide) {
 		systemMy->_camearCurrent = systemMy->_camearTop;
 		DrawLight::setClearColor(0.7f, 0.8f, 0.9f, 1.0f);
+		return 1;
 
 	}
 	else if (systemMy->_camearCurrent == systemMy->_camearTop) {
 		systemMy->_camearCurrent = systemMy->_camearSide;
 		DrawLight::setClearColor(0.1f, 0.2f, 0.3f, 1.0f);
+		return 0;
 	}
 }

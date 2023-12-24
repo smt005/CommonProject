@@ -1,70 +1,28 @@
 {
    "OrangeStar": {
-    "_shape": "Models/Convex/Sphere_5.obj",
-	"shape": "Models/Convex/Sphere_10.obj",
-    "_texture": "Textures/star/orange_star.jpg",
+    "shape": "Models/GeoSphere/GeoSphere_1_5_planar.obj",
 	"texture": "Textures/planet/brown_stone.jpg",
     "scale": 1
   },
   "BrownStone": {
-    "_shape": "Models/Convex/Sphere_5.obj",
-	"shape": "Models/Convex/Sphere_10.obj",
+	"shape": "Models/GeoSphere/GeoSphere_1_4_planar.obj",
     "texture": "Textures/planet/brown_stone.jpg",
     "scale": 1
-  },"OrangeStar3": {
-    "shape": "Models/Interface/Plane_1_1_z.obj",
-    "texture": "Textures/planet/oblaka.png",
-    "scale": 5000
-  },
-  "BrownStone3": {
-    "shape": "Models/Interface/Plane_1_1_z.obj",
-    "texture": "Textures/planet/oblaka.png",
-    "scale": 3000
-  },
-  "OrangeStar2": {
-    "shape": "Models/Convex/Sphere_10.obj",
-    "texture": "Textures/star/orange_star.jpg",
-    "_texture": "Textures/planet/oblaka.png",
-    "scale": 30
-  },
-  "BrownStone2": {
-    "shape": "Models/Convex/Sphere_5.obj",
-    "texture": "Textures/planet/brown_stone.jpg",
-    "scale": 33
-  },
-  "GrayStone": {
-    "shape": "Models/Convex/Sphere_5.obj",
-    "texture": "Textures/planet/gray_stone.jpg"
-  },
-  "IceBlue": {
-    "shape": "Models/Convex/Sphere_5.obj",
-    "texture": "Textures/planet/ice_blue.jpg"
-  },
-  "IceLight": {
-    "shape": "Models/Convex/Sphere_5.obj",
-    "texture": "Textures/planet/ice_light.jpg"
-  },
-  "DottedCircleTarget": {
-    "shape": "Models/Interface/Plane_1_1_z.obj",
-    "texture": "Textures/Interface/dotted_circle_target.png",
-    "scale": 200
-  },
-  "Target": {
-    "shape": "Models/Interface/Plane_1_1_z.obj",
-    "texture": "Textures/Interface/Target.png",
-    "scale": 0.1
   },
   "Marker": {
     "shape": "Models/Interface/Plane_1_1_z.obj",
-    "_texture": "Textures/Interface/object_white_alpha.png",
-    "texture": "Textures/Interface/object_white.png",
+    "texture": "Textures/Interface/object_white_alpha.png",
+    "_texture": "Textures/Interface/object_white.png",
     "scale": 0.0125
   },
   "SkyBox": {
-    "_shape": "Models/SkyBox/SkyBox_1000.obj",
 	"shape": "Models/SkyBox/SkyCylinder.obj",
-    "_texture": "Textures/SkyBox/SkyBox_orange_line.png",
 	"texture": "Textures/SkyBox/CylinderSky32.jpg",
+    "scale": 1000
+  },
+  "SkyBox2": {
+    "shape": "Models/SkyBox/SkyBox_1000.obj",
+    "texture": "Textures/SkyBox/SkyBox_orange_line.png",
     "scale": 1000
   }
 }

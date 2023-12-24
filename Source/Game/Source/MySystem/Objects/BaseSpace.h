@@ -15,4 +15,9 @@ public:
 	BaseSpace(Json::Value& valueData)
 		: Space(valueData) {
 	}
+
+private:
+	std::string GetNameClass() override {
+		return Engine::GetClassName(this);
+	}
 };

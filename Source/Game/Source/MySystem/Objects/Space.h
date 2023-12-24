@@ -69,6 +69,9 @@ public:
 
 	virtual Body::Ptr HitObject(const glm::mat4x4& matCamera);
 
+private:
+	virtual std::string GetNameClass();
+
 public:
 	double deltaTime = 1;
 	size_t countOfIteration = 1;
@@ -92,3 +95,30 @@ public:
 	std::vector<Body::Ptr> _bodies;
 	std::vector<Body::Data> _datas;
 };
+
+// ״פבכמם
+/*
+#pragma once
+
+#include "Space.h"
+#include <memory>
+#include "json/json.h"
+
+class SpaceXXX final : public Space {
+public:
+	using Ptr = std::shared_ptr<SpaceXXX>;
+
+	SpaceXXX() = default;
+	SpaceXXX(const std::string& name)
+		: Space(name) {
+	}
+	SpaceXXX(Json::Value& valueData)
+		: Space(valueData) {
+	}
+
+private:
+	std::string GetNameClass() override {
+		return Engine::GetClassName(this);
+	}
+};
+*/

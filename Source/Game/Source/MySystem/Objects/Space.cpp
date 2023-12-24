@@ -277,7 +277,15 @@ void Space::Save() {
 	Json::Value jsonMap;
 	jsonMap["name"] = _name;
 	jsonMap["const_gravity"] = _constGravity;
-	jsonMap["class"] = Engine::GetClassName<Space>();
+	// TODO: 
+	//jsonMap["class"] = Engine::GetClassName(this);
+
+	std::string sc = GetNameClass();
+	jsonMap["class"] = sc;
+
+	if (_skyboxObject) {		
+		jsonMap["sky_box"] = _skyboxObject->getModel().getName();
+	}
 
 	for (Body::Ptr& body : Objects()) {
 		Json::Value jsonObject;
@@ -324,9 +332,18 @@ bool Space::Load(Json::Value& valueData) {
 		return false;
 	}
 
-	_name = valueData[0]["name"].isString() ? valueData[0]["name"].asString() : "EMPTY_NAME";
+	_name = valueData[0]["name"].isString() ? valueData[0]["name"].asString() : std::string();
 	_constGravity = valueData[0]["const_gravity"].isDouble() ? valueData[0]["const_gravity"].asDouble() : 0.01f;
 
+	std::string skyBoxModel = valueData[0]["sky_box"].isString() ? valueData[0]["sky_box"].asString() : std::string();
+	if (!skyBoxModel.empty()) {
+		_skyboxObject = std::make_shared<Object>("SkyBox", skyBoxModel);
+		if (!_skyboxObject->ValidModel()) {
+			_skyboxObject.reset();
+		}
+	}
+	
+	// Загрузка тел
 	_bodies.clear();
 
 	for (Json::Value& jsonObject : jsonObjects) {
@@ -499,4 +516,8 @@ Body::Ptr Space::HitObject(const glm::mat4x4& matCamera) {
 	}
 
 	return Body::Ptr();
+}
+
+std::string Space::GetNameClass() {
+	return Engine::GetClassName(this);
 }

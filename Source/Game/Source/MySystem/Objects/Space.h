@@ -9,12 +9,15 @@
 #include "../UI/SpatialGrid.h"
 #include "Body.h"
 #include "Object/Object.h"
+#include "json/json.h"
 
 class Space {
 public:
 	using Ptr = std::shared_ptr<Space>;
 
+	Space() = default;
 	Space(const std::string& name);
+	Space(Json::Value& valueData);
 	virtual ~Space();
 
 	virtual void Update() {
@@ -23,6 +26,7 @@ public:
 	virtual void Update(double dt, int countForceTime);
 	virtual void Update(double dt);
 	virtual void Save();
+	virtual bool Load(Json::Value& valueData);
 	virtual bool Load();
 
 	virtual Math::Vector3d CenterMass();

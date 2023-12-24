@@ -2,6 +2,11 @@
 #include "MySystem/MySystem.h"
 #include "Draw/DrawLight.h"
 #include "Draw/Camera/Camera.h"
+#include "json/json.h"
+#include "Common/Help.h"
+#include "Common/Common.h"
+#include "Space.h"
+#include "BaseSpace.h"
 
 void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3d& pos) {
 	std::string model = "BrownStone";
@@ -43,4 +48,27 @@ unsigned int SpaceManager::SetView(MySystem* systemMy) {
 		DrawLight::setClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 		return 0;
 	}
+}
+
+void SpaceManager::Save(Space::Ptr space) {
+	space->Save();
+}
+
+Space::Ptr SpaceManager::Load(const std::string& name) {
+	std::string filePath = "Spaces/" + name + ".json";
+	Json::Value valueData;
+
+	if (!help::loadJson(filePath, valueData) || !valueData.isArray() || valueData.empty()) {
+		return Space::Ptr(new Space());
+	}
+
+	std::string classStr = valueData[0]["class"].isString() ? valueData[0]["class"].asString() : std::string();
+
+	if (classStr == Engine::GetClassName<BaseSpace>()) {
+		return Space::Ptr(new BaseSpace(valueData));
+	} else {
+		return Space::Ptr(new Space(valueData));
+	}
+
+	return Space::Ptr(new Space());
 }

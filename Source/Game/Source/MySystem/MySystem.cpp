@@ -37,7 +37,7 @@ void MySystem::init() {
 	//DRAW::setClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 
 	//...
-	_space = BaseSpace::Ptr(new BaseSpace("MAIN"));
+	_space = SpaceManager::Load("MAIN");
 	_space->Load();
 
 	//...

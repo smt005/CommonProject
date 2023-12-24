@@ -12,4 +12,7 @@ public:
 	static void AddObjectDirect(Space* space, Math::Vector3d& pos, Math::Vector3d& vel);
 
 	static unsigned int SetView(MySystem* systemMy);
+
+	static void Save(Space::Ptr space);
+	static Space::Ptr Load(const std::string& name);
 };

@@ -3,11 +3,16 @@
 #include <thread>
 #include <list>
 #include <unordered_map>
-#include "../../Engine/Source/Common/Help.h"
+#include "Common/Common.h"
+#include "Common/Help.h"
 
 Space::Space(const std::string& name)
 	: _name(name)
 {}
+
+Space::Space(Json::Value& valueData) {
+	Load(valueData);
+}
 
 Space::~Space() {
 }
@@ -271,6 +276,8 @@ void Space::Update(double dt) {
 void Space::Save() {
 	Json::Value jsonMap;
 	jsonMap["name"] = _name;
+	jsonMap["const_gravity"] = _constGravity;
+	jsonMap["class"] = Engine::GetClassName<Space>();
 
 	for (Body::Ptr& body : Objects()) {
 		Json::Value jsonObject;
@@ -302,15 +309,12 @@ void Space::Save() {
 	Json::Value valueData;
 	valueData.append(jsonMap);
 
-	std::string filePath = "SystemMaps/" + _name + ".json";
+	std::string filePath = "Spaces/" + _name + ".json";
 	help::saveJson(filePath, valueData);
 }
 
-bool Space::Load() {
-	std::string filePath = "SystemMaps/" + _name + ".json";
-	Json::Value valueData;
-
-	if (!help::loadJson(filePath, valueData) || !valueData.isArray() || valueData.empty()) {
+bool Space::Load(Json::Value& valueData) {
+	if (!valueData.isArray() || valueData.empty()) {
 		return false;
 	}
 
@@ -320,7 +324,9 @@ bool Space::Load() {
 		return false;
 	}
 
-	std::string nameMap = valueData[0]["name"].isString() ? valueData[0]["name"].asString() : "EMPTY_NAME";
+	_name = valueData[0]["name"].isString() ? valueData[0]["name"].asString() : "EMPTY_NAME";
+	_constGravity = valueData[0]["const_gravity"].isDouble() ? valueData[0]["const_gravity"].asDouble() : 0.01f;
+
 	_bodies.clear();
 
 	for (Json::Value& jsonObject : jsonObjects) {
@@ -362,6 +368,17 @@ bool Space::Load() {
 	DataAssociation();
 
 	return true;
+}
+
+bool Space::Load() {
+	std::string filePath = "Spaces/" + _name + ".json";
+	Json::Value valueData;
+
+	if (!help::loadJson(filePath, valueData)) {
+		return false;
+	}
+
+	return Load(valueData);
 }
 
 void Space::DataAssociation() {

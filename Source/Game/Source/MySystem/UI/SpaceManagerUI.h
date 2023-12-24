@@ -2,7 +2,7 @@
 
 #include "ImGuiManager/UI.h"
 #include "Common/Help.h"
-#include "ImGuiManager/Editor/Common/Common.h"
+#include "ImGuiManager/Editor/Common/CommonUI.h"
 #include <vector>
 
 class MySystem;

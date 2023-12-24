@@ -15,7 +15,7 @@
 #include "UI/MainUI.h"
 #include "Math/Vector.h"
 
-#include "Objects/Space.h"
+#include "Objects/BaseSpace.h"
 #include "Objects/SpaceManager.h"
 
 #define DRAW DrawLight
@@ -37,7 +37,7 @@ void MySystem::init() {
 	//DRAW::setClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 
 	//...
-	_space = std::shared_ptr<Space>(new Space("MAIN"));
+	_space = BaseSpace::Ptr(new BaseSpace("MAIN"));
 	_space->Load();
 
 	//...

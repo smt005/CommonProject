@@ -24,8 +24,6 @@ void Space::Update(double dt) {
 		return;
 	}
 
-	//CHECK();
-
 	double mergeDist = 100.f;
 	using Indices = std::list<int>;
 	std::unordered_map<int, Indices> mergeList;
@@ -262,8 +260,6 @@ void Space::Update(double dt) {
 		DataAssociation();
 	}
 
-	//CHECK();
-
 	//...
 	if (dt > 0) {
 		++time;
@@ -423,28 +419,6 @@ Body::Ptr Space::GetHeaviestBody(bool setAsStar) {
 	return heaviestBody;
 }
 
-bool Space::CHECK() {
-	size_t bodies_size = _bodies.size();
-	size_t datas_size = _datas.size();
-
-	if (bodies_size != datas_size) {
-		return false;
-	}
-
-	for (size_t i = 0; i < bodies_size; ++i) {
-		if (!(_bodies[i] && _datas[i].mass > 0)) {
-			return false;
-		}
-		if (!_bodies[i]) {
-			return false;
-		}
-		if (_datas[i].mass == 0) {
-			return false;
-		}
-	}
-
-	return true;
-}
 
 Math::Vector3d Space::CenterMass() {
 	double sumMass = 0;

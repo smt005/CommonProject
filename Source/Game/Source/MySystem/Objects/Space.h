@@ -10,24 +10,23 @@
 #include "Body.h"
 #include "Object/Object.h"
 
-class Space final {
+class Space {
 public:
 	using Ptr = std::shared_ptr<Space>;
 
 	Space(const std::string& name);
-	~Space();
+	virtual ~Space();
 
-
-	void Update() {
+	virtual void Update() {
 		Update(deltaTime, countOfIteration);
 	}
-	void Update(double dt, int countForceTime);
-	void Update(double dt);
-	void Save();
-	bool Load();
+	virtual void Update(double dt, int countForceTime);
+	virtual void Update(double dt);
+	virtual void Save();
+	virtual bool Load();
 
-	Math::Vector3d CenterMass();
-	Body::Ptr GetBody(const char* chName);
+	virtual Math::Vector3d CenterMass();
+	virtual Body::Ptr GetBody(const char* chName);
 
 	template<typename ... Args>
 	Body& Add(Args&& ... args) {
@@ -37,24 +36,24 @@ public:
 		return *body;
 	}
 
-	Body& Add(Body* body) {
+	virtual Body& Add(Body* body) {
 		_bodies.emplace_back(body);
 		DataAssociation(); // TODO:
 		return *body;
 	}
 
-	void RemoveBody(Body::Ptr& body);
+	virtual void RemoveBody(Body::Ptr& body);
 
-	std::vector<Body::Ptr>& Objects() {
+	virtual std::vector<Body::Ptr>& Objects() {
 		return _bodies;
 	}
 
-	void DataAssociation();
+	virtual void DataAssociation();
 
-	Body::Ptr GetHeaviestBody(bool setAsStar = true);
-	void RemoveVelocity(bool toCenter = false);
+	virtual Body::Ptr GetHeaviestBody(bool setAsStar = true);
+	virtual void RemoveVelocity(bool toCenter = false);
 
-	Body& RefFocusBody() {
+	virtual Body& RefFocusBody() {
 		auto it = std::find(_bodies.begin(), _bodies.end(), _focusBody);
 		if (it != _bodies.end()) {
 			return **it;
@@ -64,9 +63,7 @@ public:
 		return defaultBody;
 	}
 
-	Body::Ptr HitObject(const glm::mat4x4& matCamera);
-
-	bool CHECK();
+	virtual Body::Ptr HitObject(const glm::mat4x4& matCamera);
 
 public:
 	double deltaTime = 1;

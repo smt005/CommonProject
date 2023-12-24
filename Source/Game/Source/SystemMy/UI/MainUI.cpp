@@ -98,10 +98,13 @@ void MainUI::DrawOnSpace() {
 
 	const glm::mat4x4& matCamera = systemMy->_camearCurrent->ProjectView();
 
+	Camera::Set(systemMy->_camearScreen);
+	DrawLight::prepare();
+
 	for (Body::Ptr& body : spacePtr->_bodies) {	
 		Math::Vector3 posOnScreen = body->PosOnScreen(matCamera, false);
 		float pos[] = { posOnScreen.x, posOnScreen.y, posOnScreen.z };
-
+		
 		bodyMarker->setPos(pos);
 		DrawLight::draw(*bodyMarker);
 	}

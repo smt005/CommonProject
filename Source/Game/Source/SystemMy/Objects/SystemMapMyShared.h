@@ -95,11 +95,17 @@ public:
 	Math::Vector3 PosOnScreen(const glm::mat4x4& matCamera, bool applySizeScreen);
 	bool hit(const glm::mat4x4& matCamera);
 
+	void Rotate();
+	void Scale();
+
 private:
 public:
 	char* _name = nullptr;
 	double _mass = 0;
 	Math::Vector3d _velocity;
+	float _angular = 0.f;
+	float _angularVelocity = -0.0005f;
+	float _scale = 1.f;
 
 	glm::mat4x4 _matrix = glm::mat4x4(1);
 	std::shared_ptr<Model> _model;

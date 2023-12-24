@@ -1,5 +1,7 @@
 
 #include "SystemManager.h"
+#include "../Objects/SpaceManager.h"
+
 #include <cmath>
 #include "imgui.h"
 #include <glm/ext/scalar_constants.hpp>
@@ -115,6 +117,8 @@ void SystemManager::Draw() {
                         }
 
                         glm::vec3 pos(iX * dist, iY * dist, 0);
+                        //pos.z += help::random(-1000.f, 1000.f);
+
                         float mass = 100.f;
 
                         glm::vec3 gravityVector = pos - starPos;
@@ -136,114 +140,48 @@ void SystemManager::Draw() {
     ImGui::Dummy(ImVec2(0.f, 0.f));
     if (ImGui::Button("Generate 2", { 128.f, 32.f })) {
         if (_systemMy && _systemMy->_systemMap) {
-            SystemMap& systemMap = *_systemMy->_systemMap;
+            if (_systemMy && _systemMy->_systemMap) {
+                SystemMap& systemMap = *_systemMy->_systemMap;
 
-            Body* star = &systemMap.RefFocusBody();
-            if (star) {
-                auto starPosT = star->GetPos();
-                glm::vec3 starPos = glm::vec3(starPosT.x, starPosT.y, starPosT.z);
-                float starMass = star->_mass;
+                int count = 333;
+                double spaceRange = 10000;
+                Math::Vector3d pos;
 
-                size_t count = 999;
-                float dDist = 25.f;
-                float dist = 5000.f;
-                float angle = 0.f;
-                float dAngle = glm::pi<float>() / 10.f;
+                for (int i = 0; i < count; ++i) {                    
+                    pos.x = help::random(-spaceRange, spaceRange);
+                    pos.y = help::random(-spaceRange, spaceRange);
+                    pos.z = 0;// help::random(-10, 10);
+                    
+                    float mass = help::random(50, 150);
 
-                for (size_t i = 0; i < count; ++i) {
-                    float iX = dist * std::cos(angle) - dist * std::sin(angle);
-                    float iY = dist * std::sin(angle) + dist * std::cos(angle);
-
-                    glm::vec3 pos(iX, iY, 0);
-                    float mass = 100.f;
-
-                    glm::vec3 gravityVector = pos - starPos;
-                    glm::vec3 normalizeGravityVector = glm::normalize(gravityVector);
-
-                    float g90 = glm::pi<float>() / 2.0;
-                    glm::vec3 velocity(normalizeGravityVector.x * std::cos(g90) - normalizeGravityVector.y * std::sin(g90),
-                        normalizeGravityVector.x * std::sin(g90) + normalizeGravityVector.y * std::cos(g90),
-                        0.f);
-
-                    velocity *= std::sqrtf(systemMap._constGravity * starMass / glm::length(gravityVector));
-                    systemMap.Add("BrownStone", pos, velocity, mass, "");
-
-                    dist += dDist;
-                    angle += dAngle;
+                    SpaceManager::AddObjectOnOrbit(_systemMy->_systemMap.get(), pos);
                 }
             }
         }
     }
 
-
     ImGui::Dummy(ImVec2(0.f, 0.f));
     if (ImGui::Button("Generate 3", { 128.f, 32.f })) {
         if (_systemMy && _systemMy->_systemMap) {
             SystemMap& systemMap = *_systemMy->_systemMap;
+            bool hasStar = systemMap._selectBody;
 
+            float dist = 1000.0f;
+            int countX = 10; // 15;
+            int countY = 10; // 15;
 
-            Body* star = &systemMap.RefFocusBody();
-            if (star) {
-                auto starPosT = star->GetPos();
-                glm::vec3 starPos = glm::vec3(starPosT.x, starPosT.y, starPosT.z);
-                double starMass = star->_mass;
-
-                unsigned int countLevel = 3;
-                double dR = 1000;
-                double offA = 0;
-                double dA = glm::pi<double>() / 6;
-                double halfA = glm::pi<double>() / 12;
-
-                struct Point {
-                    double x, y, z;
-                    Point() : x(0), y(0), z(0) {}
-                    Point(double _x, double _y, double _z) : x(_x), y(_y), z(_z) {}
-                    bool hit(const Point& point, double error = 10) {
-                        //return (std::abs(x - point.x) < error && std::abs(y - point.y) < error);
-
-                        if (std::abs(x - point.x) < error && std::abs(y - point.y) < error) {
-                            return true;
-                        } else {
-                            return false;
-                        }
+            for (int iX = -countX; iX < countX; ++iX) {
+                for (int iY = -countY; iY < countY; ++iY) {
+                    if (hasStar && (iX == 0 && iY == 0)) {
+                        continue;
                     }
-                };
+                    double iZ = help::random(-100.f, 100.f);
 
-                Point lastPoint(starPosT.x, starPosT.y, starPosT.z);
-                double radius = 0;
-                double offsetAngle = 0;
-                double angle = 0;
+                    Math::Vector3d pos((double)iX * dist, (double)iY * dist, (double)iZ);
 
-                bool needSavePoint = false;
+                    float mass = 100.f;
 
-                while (countLevel > 0) {
-                    Point point;
-                    float a = offsetAngle + angle;
-                    point.x = radius * std::cos(a) - radius * std::sin(a);
-                    point.y = radius * std::sin(a) + radius * std::cos(a);
-                    point.z = 0;
-
-                    if ((int)point.x == 707 || (int)point.y == 1224 || (int)point.y == 1225) {
-                        std::cout << "..." << std::endl;
-                    }
-
-                    if (needSavePoint) {
-                        lastPoint = point;
-                        needSavePoint = false;
-                    } else {
-                        if (!lastPoint.hit(point)) {
-                            std::cout << "[" << point.x << ' ' << point.y << ' ' << point.z << "] a: " << a  << " off: " << offsetAngle << " AAA: " << angle  << " r: " << radius << " CREATE" << std::endl;
-                            CreateOrbitBody(point.x, point.y, point.z);
-                            lastPoint = point;
-                            angle += dA;
-                        } else {
-                            radius += dR;
-                            offsetAngle = angle + halfA;
-                            needSavePoint = true;
-                            --countLevel;
-                            angle = 0;
-                        }
-                    }
+                    SpaceManager::AddObjectOnOrbit(_systemMy->_systemMap.get(), pos);
                 }
             }
         }

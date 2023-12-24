@@ -157,6 +157,19 @@ bool Body::hit(const glm::mat4x4& matCamera) {
 	return false;
 }
 
+void Body::Rotate() {
+	_angular += _angularVelocity;
+	_matrix = glm::rotate(_matrix, _angular, {0.f, 0.f, 1.f});
+}
+
+void Body::Scale() {
+	constexpr float val3div4 = (3.f / 4.f) / PI;
+
+	//  std::pow(n, 1/3.) (or std::cbrtf(v);
+	_scale = std::cbrtf(val3div4 * _mass);
+	_matrix = glm::scale(_matrix, glm::vec3(_scale));
+}
+
 // SystemMap . . .
 
 SystemMap::SystemMap(const std::string& name)
@@ -421,6 +434,12 @@ void SystemMap::Update(double dt) {
 		std::swap(bodies, _bodies);
 
 		DataAssociation();
+	}
+
+	//...
+	for (const auto& body : _bodies) {
+		body->Rotate();
+		body->Scale();
 	}
 
 	//CHECK();

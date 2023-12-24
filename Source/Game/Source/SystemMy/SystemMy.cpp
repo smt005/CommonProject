@@ -82,7 +82,7 @@ void SystemMy::close() {
 }
 
 void SystemMy::update() {
-	if ((Engine::Core::currentTime() - _time) < _systemMap->deltaTime) {
+	if ((Engine::Core::currentTime() - _time) < (_systemMap->deltaTime > 33 ? 33 : _systemMap->deltaTime)) {
 		return;
 	} else {
 		_time = Engine::Core::currentTime();
@@ -110,22 +110,23 @@ void SystemMy::draw() {
 
 	DRAW::viewport();
 	DRAW::clearColor();
+	DRAW::prepare();
+
+	// SkyBox	
+	if (MainUI::GetViewType() == 0 && _systemMap->_skyboxObject) {
+		auto camPos = Camera::_currentCameraPtr->Pos();
+		_systemMap->_skyboxObject->setPos(camPos);
+		DRAW::draw(*_systemMap->_skyboxObject);
+		DRAW::clearDepth();
+	}
 
 	// Grid
 	Drawline();
 
 	// Draw
 	DRAW::prepare();
-	if (MainUI::GetViewType() == 0 && _systemMap->_skyboxObject) {
-		auto camPos = Camera::_currentCameraPtr->Pos();
-		_systemMap->_skyboxObject->setPos(camPos);
-		DRAW::draw(*_systemMap->_skyboxObject);
-	}
 	DRAW::DrawMap(*_systemMap);
-
-	//...
-	Camera::Set<Camera>(_camearScreen);
-	DRAW::prepare();
+	DRAW::clearDepth();
 	MainUI::DrawOnSpace();
 }
 
@@ -153,18 +154,12 @@ void SystemMy::Drawline() {
 			DRAW::draw(*_systemMap->_skyboxModel);
 		}*/
 
-#if SYSTEM_MAP < 7
-		auto* starPtr = _systemMap->GetHeaviestBody(true);
-#else
-		auto starPtr = _systemMap->GetHeaviestBody(true);
-#endif
-		if (starPtr) {
-			auto centerMassT = starPtr->GetPos();
-			glm::vec3 centerMass = glm::vec3(centerMassT.x, centerMassT.y, centerMassT.z);
-			float cm[3] = { centerMass.x, centerMass.y, centerMass.z };
-			DrawLine::SetIdentityMatrixByPos(cm);
-			DrawLine::Draw(_systemMap->spatialGrid);
-		}
+		auto& star = _systemMap->RefFocusBody();
+		auto centerMassT = star.GetPos();
+		glm::vec3 centerMass = glm::vec3(centerMassT.x, centerMassT.y, centerMassT.z);
+		float cm[3] = { centerMass.x, centerMass.y, centerMass.z };
+		DrawLine::SetIdentityMatrixByPos(cm);
+		DrawLine::Draw(_systemMap->spatialGrid);
 	}
 }
 

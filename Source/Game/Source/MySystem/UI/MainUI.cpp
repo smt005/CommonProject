@@ -2,42 +2,43 @@
 #include "imgui.h"
 #include "TopUI.h"
 #include "BottomUI.h"
-#include "SystemManager.h"
+#include "SpaceManagerUI.h"
 #include "ListHeaviestUI.h"
 #include "Draw/Camera/CameraControlOutside.h"
 #include "Callback/Callback.h"
 #include "Callback/CallbackEvent.h"
 #include "Draw/DrawLight.h"
+#include "MySystem/MySystem.h"
 #include "../Objects/SpaceManager.h"
-#include "SystemMy/SystemMy.h"
-#include "SystemMy/Objects/SystemMapMyShared.h"
+#include "../Objects/Body.h"
+#include "../Objects/Space.h"
 #include "Object/Object.h"
 #include "Object/Model.h"
 
 namespace {
 	Engine::Callback callback;
-	std::shared_ptr<SystemMap> spacePtr;
+	std::shared_ptr<Space> spacePtr;
 	Object::Ptr bodyMarker;
 }
 
-SystemMy* MainUI::systemMy = nullptr;
+MySystem* MainUI::_mySystem = nullptr;
 
-void MainUI::Open(SystemMy* systemMyArg) {
-	systemMy = systemMyArg;
-	if (!systemMy || !systemMy->_systemMap) {
+void MainUI::Open(MySystem* mySystem) {
+	_mySystem = mySystem;
+	if (!_mySystem || !_mySystem->_space) {
 		return;
 	}
 
-	spacePtr = systemMy->_systemMap;
+	spacePtr = _mySystem->_space;
 
 	InitCallback();
 
-	UI::ShowWindow<TopUI>(systemMy);
-	UI::ShowWindow<BottomUI>(systemMy);
+	UI::ShowWindow<TopUI>(_mySystem);
+	UI::ShowWindow<BottomUI>(_mySystem);
 }
 
 void MainUI::Hide() {
-	UI::CloseWindowT<SystemManager>();
+	UI::CloseWindowT<SpaceManagerUI>();
 	UI::CloseWindowT<ListHeaviestUI>();
 }
 
@@ -47,11 +48,11 @@ void MainUI::InitCallback() {
 		Engine::VirtualKey key = releaseKeyEvent->getId();
 
 		if (key == Engine::VirtualKey::W) {
-			if (UI::ShowingWindow<SystemManager>()) {
-				UI::CloseWindowT<SystemManager>();
+			if (UI::ShowingWindow<SpaceManagerUI>()) {
+				UI::CloseWindowT<SpaceManagerUI>();
 			}
 			else {
-				UI::ShowWindow<SystemManager>(MainUI::systemMy);
+				UI::ShowWindow<SpaceManagerUI>(MainUI::_mySystem);
 			}
 		}
 
@@ -60,7 +61,7 @@ void MainUI::InitCallback() {
 				UI::CloseWindowT<ListHeaviestUI>();
 			}
 			else {
-				UI::ShowWindow<ListHeaviestUI>(MainUI::systemMy);
+				UI::ShowWindow<ListHeaviestUI>(MainUI::_mySystem);
 			}
 		}
 	});
@@ -72,7 +73,7 @@ void MainUI::InitCallback() {
 
 		if (Engine::TapCallbackEvent* tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
 			if (tapCallbackEvent->_id == Engine::VirtualTap::MIDDLE) {
-				const glm::mat4x4& matCamera = systemMy->_camearCurrent->ProjectView();
+				const glm::mat4x4& matCamera = _mySystem->_camearCurrent->ProjectView();
 				spacePtr->_focusBody = spacePtr->HitObject(matCamera);
 				spacePtr->_selectBody = spacePtr->_focusBody;
 			}
@@ -80,7 +81,7 @@ void MainUI::InitCallback() {
 			if (tapCallbackEvent->_id == Engine::VirtualTap::LEFT) {
 				if (BottomUI* bottomUI = dynamic_cast<BottomUI*>(UI::GetWindow<BottomUI>().get())) {
 					if (bottomUI->_addBodyType == AddBodyType::ORBIT) {
-						auto cursorPosGlm = systemMy->_camearCurrent->corsorCoord();
+						auto cursorPosGlm = _mySystem->_camearCurrent->corsorCoord();
 						Math::Vector3d cursorPos(cursorPosGlm.x, cursorPosGlm.y, cursorPosGlm.z);
 						SpaceManager::AddObjectOnOrbit(spacePtr.get(), cursorPos);
 						bottomUI->_addBodyType = AddBodyType::NONE;
@@ -96,9 +97,9 @@ void MainUI::DrawOnSpace() {
 		bodyMarker = std::make_shared<Object>("Marker", "Marker");
 	}
 
-	const glm::mat4x4& matCamera = systemMy->_camearCurrent->ProjectView();
+	const glm::mat4x4& matCamera = _mySystem->_camearCurrent->ProjectView();
 
-	Camera::Set(systemMy->_camearScreen);
+	Camera::Set(_mySystem->_camearScreen);
 	DrawLight::prepare();
 
 	for (Body::Ptr& body : spacePtr->_bodies) {	

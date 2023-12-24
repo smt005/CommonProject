@@ -2,12 +2,12 @@
 
 #include "ImGuiManager/UI.h"
 
-class SystemMy;
+class MySystem;
 
 class TopUI final : public UI::Window {
 public:
 	TopUI();
-	TopUI(SystemMy* systemMy);
+	TopUI(MySystem* mySystem);
 	void OnOpen() override;
 	void OnClose() override;
 	void Update() override;
@@ -19,7 +19,7 @@ private:
 	float _width = 0.f;
 	float _height = 65.f;
 
-	SystemMy* _systemMy = nullptr;
+	MySystem* _mySystem = nullptr;
 
 	int minFPS = -1;
 	int FPS = 0;

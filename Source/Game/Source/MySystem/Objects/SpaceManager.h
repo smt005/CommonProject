@@ -1,17 +1,15 @@
 #pragma once
 
-#include "SystemClass.h"
-#include "SystemMapMyShared.h"
+#include "Space.h"
 #include "Math/Vector.h"
 
-using Space = SystemMap;
-
-class SystemMy;
+class MySystem;
+class Space;
 
 class SpaceManager {
 public:
 	static void AddObjectOnOrbit(Space* space, Math::Vector3d& pos);
 	static void AddObjectDirect(Space* space, Math::Vector3d& pos, Math::Vector3d& vel);
 
-	static unsigned int  SetView(SystemMy* systemMy);
+	static unsigned int SetView(MySystem* systemMy);
 };

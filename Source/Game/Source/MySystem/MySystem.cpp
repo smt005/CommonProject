@@ -1,5 +1,5 @@
 
-#include "SystemMy.h"
+#include "MySystem.h"
 #include "Core.h"
 #include "Callback/Callback.h"
 #include "Callback/CallbackEvent.h"
@@ -13,34 +13,32 @@
 #include "Object/Line.h"
 #include "ImGuiManager/UI.h"
 #include "UI/MainUI.h"
-#include "SaveManager.h"
 #include "Math/Vector.h"
 
-#include "Objects/SystemClass.h"
-#include "Objects/SystemMapMyShared.h"
+#include "Objects/Space.h"
 #include "Objects/SpaceManager.h"
 
 #define DRAW DrawLight
-std::string SystemMy::_resourcesDir;
+std::string MySystem::_resourcesDir;
 const std::string saveFileName("../../../Executable/Save.json");
 
 double minDt = std::numeric_limits<double>::max();
 double maxDt = std::numeric_limits<double>::min();
 
-SystemMy::SystemMy() {
+MySystem::MySystem() {
 }
 
-SystemMy::~SystemMy() {;
+MySystem::~MySystem() {;
 }
 
-void SystemMy::init() {
+void MySystem::init() {
 	//DRAW::setClearColor(0.3f, 0.6f, 0.9f, 1.0f);
 	DRAW::setClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 	//DRAW::setClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 
 	//...
-	_systemMap = std::shared_ptr<SystemMap>(new SystemMap("MAIN"));
-	_systemMap->Load();
+	_space = std::shared_ptr<Space>(new Space("MAIN"));
+	_space->Load();
 
 	//...
 	_camearSide = std::make_shared<CameraControlOutside>();
@@ -76,25 +74,21 @@ void SystemMy::init() {
 	MainUI::Open(this);
 }
 
-void SystemMy::close() {
+void MySystem::close() {
 	save();
 	MainUI::Hide();
 }
 
-void SystemMy::update() {
-	if ((Engine::Core::currentTime() - _time) < (_systemMap->deltaTime > 33 ? 33 : _systemMap->deltaTime)) {
+void MySystem::update() {
+	if ((Engine::Core::currentTime() - _time) < (_space->deltaTime > 33 ? 33 : _space->deltaTime)) {
 		return;
 	} else {
 		_time = Engine::Core::currentTime();
 	}
 
-#if SYSTEM_MAP < 8
-	_systemMap->Update(dt);
-#else
-	_systemMap->Update();
-#endif
-	
-	Body& body = _systemMap->RefFocusBody();
+	_space->Update();
+
+	Body& body = _space->RefFocusBody();
 	auto centerMassT = body.GetPos();
 	glm::vec3 centerMass = glm::vec3(centerMassT.x, centerMassT.y, centerMassT.z);
 	if (auto camera = dynamic_cast<CameraControlOutside*>(_camearCurrent.get())) {
@@ -105,7 +99,7 @@ void SystemMy::update() {
 	}
 }
 
-void SystemMy::draw() {
+void MySystem::draw() {
 	Camera::Set<Camera>(_camearCurrent);
 
 	DRAW::viewport();
@@ -113,10 +107,10 @@ void SystemMy::draw() {
 	DRAW::prepare();
 
 	// SkyBox	
-	if (MainUI::GetViewType() == 0 && _systemMap->_skyboxObject) {
+	if (MainUI::GetViewType() == 0 && _space->_skyboxObject) {
 		auto camPos = Camera::_currentCameraPtr->Pos();
-		_systemMap->_skyboxObject->setPos(camPos);
-		DRAW::draw(*_systemMap->_skyboxObject);
+		_space->_skyboxObject->setPos(camPos);
+		DRAW::draw(*_space->_skyboxObject);
 		DRAW::clearDepth();
 	}
 
@@ -125,12 +119,12 @@ void SystemMy::draw() {
 
 	// Draw
 	DRAW::prepare();
-	DRAW::DrawMap(*_systemMap);
+	DRAW::DrawMap(*_space);
 	DRAW::clearDepth();
 	MainUI::DrawOnSpace();
 }
 
-void SystemMy::Drawline() {
+void MySystem::Drawline() {
 	DrawLine::prepare();
 
 	if (_greed) {
@@ -149,25 +143,25 @@ void SystemMy::Drawline() {
 		_greedBig->setPos({ 0.0f, 0.0f, 0.1f });
 	}
 
-	if (_systemMap) {
-		/*if (_systemMap->_skyboxModel) {
-			DRAW::draw(*_systemMap->_skyboxModel);
+	if (_space) {
+		/*if (_space->_skyboxModel) {
+			DRAW::draw(*_space->_skyboxModel);
 		}*/
 
-		auto& star = _systemMap->RefFocusBody();
+		auto& star = _space->RefFocusBody();
 		auto centerMassT = star.GetPos();
 		glm::vec3 centerMass = glm::vec3(centerMassT.x, centerMassT.y, centerMassT.z);
 		float cm[3] = { centerMass.x, centerMass.y, centerMass.z };
 		DrawLine::SetIdentityMatrixByPos(cm);
-		DrawLine::Draw(_systemMap->spatialGrid);
+		DrawLine::Draw(_space->spatialGrid);
 	}
 }
 
-void SystemMy::resize() {
+void MySystem::resize() {
 	Camera::GetLink().Resize();
 }
 
-bool SystemMy::load() {
+bool MySystem::load() {
 	Json::Value loadData;
 	if (!help::loadJson(saveFileName, loadData) || loadData.empty()) {
 		return false;
@@ -178,7 +172,7 @@ bool SystemMy::load() {
 #endif // _DEBUG
 }
 
-void SystemMy::save() {
+void MySystem::save() {
 	Json::Value saveData;
 
 	//...
@@ -189,7 +183,7 @@ void SystemMy::save() {
 #endif // _DEBUG
 }
 
-void SystemMy::initCallback() {
+void MySystem::initCallback() {
 	_callbackPtr = std::make_shared<Engine::Callback>(Engine::CallbackType::PRESS_TAP, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
 		_lockMouse.lockPinch = Engine::Callback::mousePos().y > (Engine::Screen::height() - _lockMouse.bottomHeight);
 		if (_lockMouse.IsLock()) {
@@ -226,7 +220,7 @@ void SystemMy::initCallback() {
 			if (!MainUI::IsLockAction() && tapCallbackEvent->_id == Engine::VirtualTap::LEFT) {
 				auto cursorPosGlm = _camearCurrent->corsorCoord();
 				Math::Vector3d cursorPos(cursorPosGlm.x, cursorPosGlm.y, cursorPosGlm.z);
-				SpaceManager::AddObjectOnOrbit(_systemMap.get(), cursorPos);
+				SpaceManager::AddObjectOnOrbit(_space.get(), cursorPos);
 			}
 		}*/
 	});

@@ -1,33 +1,28 @@
 
-#include "SystemManager.h"
+#include "SpaceManagerUI.h"
+#include "MySystem/MySystem.h"
 #include "../Objects/SpaceManager.h"
 
 #include <cmath>
 #include "imgui.h"
 #include <glm/ext/scalar_constants.hpp>
 #include "CommonData.h"
-#include "../SystemMy.h"
 #include "Math/Vector.h"
-#include "../Objects/SystemClass.h"
-#include "../Objects/SystemMapEasyMerger.h"
-#include "../Objects/SystemMapShared.h"
-#include "../Objects/SystemMapMyShared.h"
-#include "../SaveManager.h"
+#include "../Objects/Body.h"
+#include "../Objects/Space.h"
 #include "Math/Vector.h"
 
-SystemManager::SystemManager() : UI::Window(this) {
-    SetId("SystemManager");
+SpaceManagerUI::SpaceManagerUI() : UI::Window(this) {
+    SetId("SpaceManager");
     Close();
 }
 
-SystemManager::SystemManager(SystemMy* systemMy)
+SpaceManagerUI::SpaceManagerUI(MySystem* mySystem)
     : UI::Window(this)
-    , _systemMy(systemMy)
-{
-    SetId("SystemManager");
-}
+    , _mySystem(mySystem)
+{}
 
-void SystemManager::OnOpen() {
+void SpaceManagerUI::OnOpen() {
     SetFlag(ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize);
 
     _y = 100.f;
@@ -38,69 +33,55 @@ void SystemManager::OnOpen() {
     ++CommonData::lockAction;
 }
 
-void SystemManager::OnClose() {
+void SpaceManagerUI::OnClose() {
     --CommonData::lockAction;
 }
 
-void SystemManager::Update() {
+void SpaceManagerUI::Update() {
 
 }
 
-void SystemManager::Draw() {
+void SpaceManagerUI::Draw() {
     //ImGuiStyle& style = ImGui::GetStyle();
     //style.FramePadding.y = 3.f;
 
     if (ImGui::Button("Save", { 128.f, 32.f })) {
-        if (_systemMy && _systemMy->_systemMap) {
-            _systemMy->_systemMap->Save();
+        if (_mySystem && _mySystem->_space) {
+            _mySystem->_space->Save();
         }
     }
     
     ImGui::Dummy(ImVec2(0.f, 0.f));
     if (ImGui::Button("Reload", { 128.f, 32.f })) {
-        if (_systemMy && _systemMy->_systemMap) {
-            _systemMy->_systemMap->Load();
+        if (_mySystem && _mySystem->_space) {
+            _mySystem->_space->Load();
         }
     }
 
     ImGui::Dummy(ImVec2(0.f, 0.f));
     if (ImGui::Button("Correct system", { 128.f, 32.f })) {
-        _systemMy->_systemMap->RemoveVelocity(true);
+        _mySystem->_space->RemoveVelocity(true);
     }
 
     ImGui::Dummy(ImVec2(0.f, 0.f));
     if (ImGui::Button("Clear", { 128.f, 32.f })) {
-        if (_systemMy && _systemMy->_systemMap) {
-            SystemMap& systemMap = *_systemMy->_systemMap;
+        if (_mySystem && _mySystem->_space) {
+            Space& space = *_mySystem->_space;
 
-#if SYSTEM_MAP < 7
-            Body* heaviestBody = &systemMap.RefFocusBody();
-            std::vector<Body*> bodies;
-            bodies.emplace_back(heaviestBody);
+            Body::Ptr heaviestBody = space.GetHeaviestBody();
+            space._bodies.clear();
+            space._bodies.emplace_back(heaviestBody);
+            space.DataAssociation();
 
-            for (auto* bodyPtr : systemMap._bodies) {
-                if (bodyPtr != heaviestBody) {
-                    delete bodyPtr;
-                }
-            }
-
-            std::swap(systemMap._bodies, bodies);
-            _systemMy->_systemMap->DataAssociation();
-#else
-            Body::Ptr heaviestBody = systemMap.GetHeaviestBody();
-            systemMap._bodies.clear();
-            systemMap._bodies.emplace_back(heaviestBody);
-            _systemMy->_systemMap->DataAssociation();
-#endif
         }
     }
 
     ImGui::Dummy(ImVec2(0.f, 0.f));
     if (ImGui::Button("Generate 1", { 128.f, 32.f })) {
-        if (_systemMy && _systemMy->_systemMap) {
-            SystemMap& systemMap = *_systemMy->_systemMap;
+        if (_mySystem && _mySystem->_space) {
+            Space& space = *_mySystem->_space;
 
-            Body* star = &systemMap.RefFocusBody();
+            Body* star = &space.RefFocusBody();
             if (star) {
                 auto starPosT = star->GetPos();
                 glm::vec3 starPos = glm::vec3(starPosT.x, starPosT.y, starPosT.z);
@@ -129,8 +110,8 @@ void SystemManager::Draw() {
                             normalizeGravityVector.x * std::sin(g90) + normalizeGravityVector.y * std::cos(g90),
                             0.f);
 
-                        velocity *= std::sqrtf(systemMap._constGravity * starMass / glm::length(gravityVector));
-                        systemMap.Add("BrownStone", pos, velocity, mass, "");
+                        velocity *= std::sqrtf(space._constGravity * starMass / glm::length(gravityVector));
+                        space.Add("BrownStone", pos, velocity, mass, "");
                     }
                 }
             }
@@ -139,10 +120,8 @@ void SystemManager::Draw() {
 
     ImGui::Dummy(ImVec2(0.f, 0.f));
     if (ImGui::Button("Generate 2", { 128.f, 32.f })) {
-        if (_systemMy && _systemMy->_systemMap) {
-            if (_systemMy && _systemMy->_systemMap) {
-                SystemMap& systemMap = *_systemMy->_systemMap;
-
+        if (_mySystem && _mySystem->_space) {
+            if (_mySystem && _mySystem->_space) {
                 int count = 333;
                 double spaceRange = 10000;
                 Math::Vector3d pos;
@@ -154,7 +133,7 @@ void SystemManager::Draw() {
                     
                     float mass = help::random(50, 150);
 
-                    SpaceManager::AddObjectOnOrbit(_systemMy->_systemMap.get(), pos);
+                    SpaceManager::AddObjectOnOrbit(_mySystem->_space.get(), pos);
                 }
             }
         }
@@ -162,9 +141,9 @@ void SystemManager::Draw() {
 
     ImGui::Dummy(ImVec2(0.f, 0.f));
     if (ImGui::Button("Generate 3", { 128.f, 32.f })) {
-        if (_systemMy && _systemMy->_systemMap) {
-            SystemMap& systemMap = *_systemMy->_systemMap;
-            bool hasStar = systemMap._selectBody;
+        if (_mySystem && _mySystem->_space) {
+            Space& space = *_mySystem->_space;
+            bool hasStar = space._selectBody;
 
             float dist = 1000.0f;
             int countX = 10; // 15;
@@ -181,29 +160,29 @@ void SystemManager::Draw() {
 
                     float mass = 100.f;
 
-                    SpaceManager::AddObjectOnOrbit(_systemMy->_systemMap.get(), pos);
+                    SpaceManager::AddObjectOnOrbit(_mySystem->_space.get(), pos);
                 }
             }
         }
     }
 }
 
-void SystemManager::CreateOrbitBody(double x, double y, double z) {
-    if (!_systemMy || !_systemMy->_systemMap) {
+void SpaceManagerUI::CreateOrbitBody(double x, double y, double z) {
+    if (!_mySystem || !_mySystem->_space) {
         return;
     }
 
-    SystemMap& systemMap = *_systemMy->_systemMap;
+    Space& space = *_mySystem->_space;
 
-    systemMap.Add("BrownStone", Math::Vector3d(x, y, z), Math::Vector3d(), 100, "");
+    space.Add("BrownStone", Math::Vector3d(x, y, z), Math::Vector3d(), 100, "");
 }
 
-void SystemManager::CreateOrbitBody(double x, double y, double z, double starMass, double startX, double startY, double startZ) {
-    if (!_systemMy || !_systemMy->_systemMap) {
+void SpaceManagerUI::CreateOrbitBody(double x, double y, double z, double starMass, double startX, double startY, double startZ) {
+    if (!_mySystem || !_mySystem->_space) {
         return;
     }
        
-    SystemMap& systemMap = *_systemMy->_systemMap;
+    Space& space = *_mySystem->_space;
 
     glm::vec3 pos(x, y, z);
     glm::vec3 starPos(startX, startY, startZ);
@@ -217,6 +196,6 @@ void SystemManager::CreateOrbitBody(double x, double y, double z, double starMas
         normalizeGravityVector.x * std::sin(g90) + normalizeGravityVector.y * std::cos(g90),
         0.f);
 
-    velocity *= std::sqrtf(systemMap._constGravity * starMass / glm::length(gravityVector));
-    systemMap.Add("BrownStone", pos, velocity, mass, "");
+    velocity *= std::sqrtf(space._constGravity * starMass / glm::length(gravityVector));
+    space.Add("BrownStone", pos, velocity, mass, "");
 }

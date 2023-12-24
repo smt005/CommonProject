@@ -9,16 +9,16 @@
 class Greed;
 class Line;
 class Camera;
-class SystemMap;
+class Space;
 
 namespace Engine {
 	class Callback;
 }
 
-class SystemMy final : public Engine::Game {
+class MySystem final : public Engine::Game {
 public:
-	SystemMy();
-	~SystemMy();
+	MySystem();
+	~MySystem();
 	std::filesystem::path getSourcesDir() override { return "..\\..\\Source\\Resources\\Files\\System"; }
 
 	void init() override;
@@ -34,7 +34,7 @@ public:
 	void save();
 
 public:
-	std::shared_ptr<SystemMap> _systemMap;
+	std::shared_ptr<Space> _space;
 
 	std::shared_ptr<Engine::Callback> _callbackPtr;
 	std::shared_ptr<Camera> _camearCurrent;

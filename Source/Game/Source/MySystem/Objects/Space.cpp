@@ -1,44 +1,24 @@
-#include "SystemMapShared.h"
-#if SYSTEM_MAP == 7
+#include "Space.h"
 
 #include <thread>
 #include <list>
 #include <unordered_map>
-#include "../Objects/SystemClass.h"
-#include "../../Engine/Source/Object/Model.h"
 #include "../../Engine/Source/Common/Help.h"
 
-Body::Body(const std::string& nameModel)
-	: _model(Model::getByName(nameModel))
-{}
-
-Body::Body(const std::string& nameModel, const Math::Vector3d& pos, const Math::Vector3d& velocity, double mass, const std::string& name)
-	: _mass(mass)
-	, _velocity(velocity)
-	, _model(Model::getByName(nameModel))
-{
-	SetPos(pos);
-}
-
-Body::~Body() {
-	delete _name;
-}
-
-//... 
-SystemMap::SystemMap(const std::string& name)
+Space::Space(const std::string& name)
 	: _name(name)
 {}
 
-SystemMap::~SystemMap() {
+Space::~Space() {
 }
 
-void SystemMap::Update(double dt, int countForceTime) {
+void Space::Update(double dt, int countForceTime) {
 	for (int index = 0; index < countForceTime; ++index) {
 		Update(dt);
 	}
 }
 
-void SystemMap::Update(double dt) {
+void Space::Update(double dt) {
 	size_t sizeData = _datas.size();
 	if (sizeData <= 1) {
 		return;
@@ -292,7 +272,7 @@ void SystemMap::Update(double dt) {
 	}
 }
 
-void SystemMap::Save() {
+void Space::Save() {
 	Json::Value jsonMap;
 	jsonMap["name"] = _name;
 
@@ -330,7 +310,7 @@ void SystemMap::Save() {
 	help::saveJson(filePath, valueData);
 }
 
-bool SystemMap::Load() {
+bool Space::Load() {
 	std::string filePath = "SystemMaps/" + _name + ".json";
 	Json::Value valueData;
 
@@ -388,7 +368,7 @@ bool SystemMap::Load() {
 	return true;
 }
 
-void SystemMap::DataAssociation() {
+void Space::DataAssociation() {
 	_datas.clear();
 	_datas.reserve(_bodies.size());
 
@@ -419,7 +399,7 @@ void SystemMap::DataAssociation() {
 	}
 }
 
-Body::Ptr SystemMap::GetHeaviestBody(bool setAsStar) {
+Body::Ptr Space::GetHeaviestBody(bool setAsStar) {
 	if (_bodies.empty()) {
 		return nullptr;
 	}
@@ -443,7 +423,7 @@ Body::Ptr SystemMap::GetHeaviestBody(bool setAsStar) {
 	return heaviestBody;
 }
 
-bool SystemMap::CHECK() {
+bool Space::CHECK() {
 	size_t bodies_size = _bodies.size();
 	size_t datas_size = _datas.size();
 
@@ -466,7 +446,7 @@ bool SystemMap::CHECK() {
 	return true;
 }
 
-Math::Vector3d SystemMap::CenterMass() {
+Math::Vector3d Space::CenterMass() {
 	double sumMass = 0;
 	Math::Vector3d sunPosMass(0, 0, 0);
 
@@ -478,11 +458,54 @@ Math::Vector3d SystemMap::CenterMass() {
 	return sunPosMass / sumMass;
 }
 
-Body::Ptr SystemMap::GetBody(const char* chName) {
+void Space::RemoveBody(Body::Ptr& body) {
+	auto itRemove = std::find_if(_bodies.begin(), _bodies.end(), [&body](const Body::Ptr& itBody) { return itBody == body; });
+	if (itRemove != _bodies.end()) {
+		_bodies.erase(itRemove);
+		DataAssociation();
+	}
+}
+
+void Space::RemoveVelocity(bool toCenter) {
+	if (_bodies.empty()) {
+		return;
+	}
+
+	Math::Vector3d velocity;
+
+	for (Body::Ptr& body : _bodies) {
+		velocity += body->_velocity;
+	}
+
+	velocity /= static_cast<double>(_bodies.size());
+
+	toCenter = toCenter && _focusBody;
+	Math::Vector3d focusPos = toCenter ? _focusBody->GetPos() : Math::Vector3d();
+
+	for (Body::Ptr& body : _bodies) {
+		body->_velocity -= velocity;
+
+		if (toCenter) {
+			Math::Vector3d pos = _focusBody->GetPos();
+			pos -= toCenter;
+			_focusBody->SetPos(pos);
+		}
+	}
+}
+
+Body::Ptr Space::GetBody(const char* chName) {
 	auto itBody = std::find_if(_bodies.begin(), _bodies.end(), [chName](const Body::Ptr& body) {
 		return body ? (body->_name && chName && strcmp(body->_name, chName) == 0) : false;
 	});
 	return itBody != _bodies.end() ? *itBody : nullptr;
 }
 
-#endif
+Body::Ptr Space::HitObject(const glm::mat4x4& matCamera) {
+	for (Body::Ptr& body : _bodies) {
+		if (body->hit(matCamera)) {
+			return body;
+		}
+	}
+
+	return Body::Ptr();
+}

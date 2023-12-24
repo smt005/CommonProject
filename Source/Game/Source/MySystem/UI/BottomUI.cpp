@@ -8,14 +8,11 @@
 #include "Screen.h"
 #include "Common/Help.h"
 #include "CommonData.h"
+#include "MySystem/MySystem.h"
 #include "../Objects/SpaceManager.h"
-#include "../SystemMy.h"
 #include "Draw/DrawLight.h"
 #include "Draw/Camera/CameraControlOutside.h"
-#include "../Objects/SystemClass.h"
-#include "../Objects/SystemMapEasyMerger.h"
-#include "../Objects/SystemMapShared.h"
-#include "../Objects/SystemMapMyShared.h"
+#include "../Objects/Space.h"
 
 // AddObjectUI
 
@@ -94,9 +91,9 @@ void SetViewUI::Draw() {
 
 // BottomUI
 
-BottomUI::BottomUI(SystemMy* systemMy)
+BottomUI::BottomUI(MySystem* mySystem)
     : UI::Window(this)
-    , _systemMy(systemMy)
+    , _mySystem(mySystem)
 {}
 
 void BottomUI::OnOpen() {
@@ -108,7 +105,7 @@ void BottomUI::OnOpen() {
 
     _funSetView.first = "A##right_a";
     _funSetView.second = [this]() {
-        _viewType = (ViewType)SpaceManager::SetView(_systemMy);
+        _viewType = (ViewType)SpaceManager::SetView(_mySystem);
     };
 }
 
@@ -159,13 +156,13 @@ void BottomUI::Draw() {
     float widthSlider = Engine::Screen::width() - widthSpaceSlider;
     widthSlider /= 2;
 
-    int deltaTime = (int)_systemMy->_systemMap->deltaTime;
-    int countOfIteration = (int)_systemMy->_systemMap->countOfIteration;
+    int deltaTime = (int)_mySystem->_space->deltaTime;
+    int countOfIteration = (int)_mySystem->_space->countOfIteration;
 
     ImGui::PushItemWidth(widthSlider);
 
     if (ImGui::SliderInt("##deltaTime_slider", &deltaTime, 1, 100, "error = %d")) {
-        _systemMy->_systemMap->deltaTime = (double)deltaTime;
+        _mySystem->_space->deltaTime = (double)deltaTime;
     }
 
     ImGui::SameLine();
@@ -175,7 +172,7 @@ void BottomUI::Draw() {
 
     if (ImGui::SliderFloat("##time_speed_slider", &_countOfIteration, 0.8f, 8, text.c_str())) {
         countOfIteration = (int)std::expf(_countOfIteration - 1);
-        _systemMy->_systemMap->countOfIteration = countOfIteration;
+        _mySystem->_space->countOfIteration = countOfIteration;
     }
 
     ImGui::PopItemWidth();
@@ -236,7 +233,7 @@ void BottomUI::GenerateFunViewUI() {
     FunActions funActions;
 
     funActions.emplace_back("A##right_a", [this]() {
-        _viewType = (ViewType)SpaceManager::SetView(_systemMy);
+        _viewType = (ViewType)SpaceManager::SetView(_mySystem);
     });
 
     funActions.emplace_back("B##right_b", []() {

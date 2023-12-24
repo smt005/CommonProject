@@ -3,7 +3,7 @@
 #include "ImGuiManager/UI.h"
 #include <functional>
 
-class SystemMy;
+class MySystem;
 
 using FunAction = std::pair<std::string, std::function<void(void)>>;
 using FunActions = std::vector< FunAction>;
@@ -61,7 +61,7 @@ class BottomUI final : public UI::Window {
 
 public:
 	BottomUI() : UI::Window(this) { Close(); }
-	BottomUI(SystemMy* systemMy);
+	BottomUI(MySystem* _mySystem);
 	void OnOpen() override;
 	void OnClose() override;
 	void Update() override;
@@ -79,7 +79,7 @@ public:
 	float _height = 60.f;
 
 	int timeSpeed = 1;
-	SystemMy* _systemMy = nullptr;
+	MySystem* _mySystem = nullptr;
 
 	AddBodyType _addBodyType = AddBodyType::NONE;
 	bool _lockAddObject = false;

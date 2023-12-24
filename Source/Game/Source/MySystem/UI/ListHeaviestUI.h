@@ -5,12 +5,12 @@
 #include "ImGuiManager/Editor/Common/Common.h"
 #include <vector>
 
-class SystemMy;
+class MySystem;
 
 class ListHeaviestUI final : public UI::Window {
 public:
 	ListHeaviestUI();
-	ListHeaviestUI(SystemMy* systemMy);
+	ListHeaviestUI(MySystem* mySystem);
 	void OnOpen() override;
 	void OnClose() override;
 	void Update() override;
@@ -24,5 +24,5 @@ private:
 
 	double _time = 0;
 	std::vector<std::string> _textBodies;
-	SystemMy* _systemMy = nullptr;
+	MySystem* _mySystem = nullptr;
 };

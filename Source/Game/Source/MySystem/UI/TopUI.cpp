@@ -5,13 +5,8 @@
 #include "Core.h"
 #include "Screen.h"
 #include "CommonData.h"
-#include "../SystemMy.h"
-
-#include "../Objects/SystemClass.h"
-#include "../Objects/SystemMapEasyMerger.h"
-#include "../Objects/SystemMapShared.h"
-#include "../Objects/SystemMapMyShared.h"
-
+#include "../Objects/Space.h"
+#include "MySystem/MySystem.h"
 #include <cmath>
 #include <glm/ext/scalar_constants.hpp>
 
@@ -20,9 +15,9 @@ TopUI::TopUI() : UI::Window(this) {
     Close();
 }
 
-TopUI::TopUI(SystemMy* systemMy)
+TopUI::TopUI(MySystem* mySystem)
     : UI::Window(this)
-    , _systemMy(systemMy)
+    , _mySystem(mySystem)
 {
     SetId("TopUI");
 }
@@ -43,14 +38,9 @@ void TopUI::Update() {
 }
 
 void TopUI::Draw() {
-    if (_systemMy && _systemMy->_systemMap) {
+    if (_mySystem && _mySystem->_space) {
         int time = 0;
-
-#if SYSTEM_MAP < 8
-        time = _systemMy->_systemMap->time;
-#else
-        time = (int)_systemMy->_systemMap->timePassed / 1000;
-#endif
+        time = (int)_mySystem->_space->timePassed / 1000;
 
         if (time == 10) {
             minFPS = FPS;
@@ -62,7 +52,7 @@ void TopUI::Draw() {
         }
 
         FPS = static_cast<int>(1 / Engine::Core::deltaTime());
-        int countBody = _systemMy->_systemMap->Objects().size();
+        int countBody = _mySystem->_space->Objects().size();
 
         ImGui::Text("Time: %d Count: %d FPS: %d - %d - %d", time, countBody, minFPS, FPS, maxFPS);
 

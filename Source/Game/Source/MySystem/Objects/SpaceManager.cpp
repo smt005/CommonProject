@@ -1,9 +1,9 @@
 #include "SpaceManager.h"
-#include "SystemMy/SystemMy.h"
+#include "MySystem/MySystem.h"
 #include "Draw/DrawLight.h"
 #include "Draw/Camera/Camera.h"
 
-void SpaceManager::AddObjectOnOrbit(SystemMap* space, Math::Vector3d& pos) {
+void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3d& pos) {
 	std::string model = "BrownStone";
 	float mass = 10.f;
 
@@ -31,7 +31,7 @@ void SpaceManager::AddObjectDirect(Space* space, Math::Vector3d& pos, Math::Vect
 	//...
 }
 
-unsigned int SpaceManager::SetView(SystemMy* systemMy) {
+unsigned int SpaceManager::SetView(MySystem* systemMy) {
 	if (systemMy->_camearCurrent == systemMy->_camearSide) {
 		systemMy->_camearCurrent = systemMy->_camearTop;
 		DrawLight::setClearColor(0.7f, 0.8f, 0.9f, 1.0f);

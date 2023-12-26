@@ -16,6 +16,9 @@ public:
 		: Space(valueData) {
 	}
 
+	/*void Update() override {
+	}*/
+
 private:
 	std::string GetNameClass() override {
 		return Engine::GetClassName(this);

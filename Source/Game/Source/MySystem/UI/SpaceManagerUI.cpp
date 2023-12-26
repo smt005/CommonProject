@@ -122,80 +122,105 @@ void SpaceManagerUI::Draw() {
     if (ImGui::Button("Generate 2", { 128.f, 32.f })) {
         if (_mySystem && _mySystem->_space) {
             if (_mySystem && _mySystem->_space) {
+                if (_mySystem && _mySystem->_space->_selectBody == nullptr && _mySystem && _mySystem->_space->_bodies.size() == 1) {
+                    _mySystem->_space->_selectBody = _mySystem->_space->_bodies.front();
+                }
+
                 int count = 333;
+                //int count = 10000; // 100 x 100
+                //int count = 100000; // 316 x 316
+                _mySystem->_space->_bodies.reserve(count);
+
                 double spaceRange = 10000;
                 Math::Vector3d pos;
 
                 for (int i = 0; i < count; ++i) {                    
                     pos.x = help::random(-spaceRange, spaceRange);
                     pos.y = help::random(-spaceRange, spaceRange);
-                    pos.z = 0;// help::random(-10, 10);
+                    //pos.z = 0;
+                    pos.z = help::random(-spaceRange, spaceRange);
                     
                     float mass = help::random(50, 150);
 
-                    SpaceManager::AddObjectOnOrbit(_mySystem->_space.get(), pos);
+                    SpaceManager::AddObjectOnOrbit(_mySystem->_space.get(), pos, false);
                 }
+
+                _mySystem->_space->DataAssociation();
             }
         }
     }
 
     ImGui::Dummy(ImVec2(0.f, 0.f));
-    if (ImGui::Button("Generate 3", { 128.f, 32.f })) {
+    if (ImGui::Button("Generate round", { 128.f, 32.f })) {
         if (_mySystem && _mySystem->_space) {
-            Space& space = *_mySystem->_space;
-            bool hasStar = space._selectBody;
+            if (_mySystem && _mySystem->_space) {
+                if (_mySystem && _mySystem->_space->_selectBody == nullptr && _mySystem && _mySystem->_space->_bodies.size() == 1) {
+                    _mySystem->_space->_selectBody = _mySystem->_space->_bodies.front();
+                }
+                int count = 333;
+                //int count = 10000; // 100 x 100
+                //int count = 100000; // 316 x 316
+                _mySystem->_space->_bodies.reserve(count);
 
-            float dist = 1000.0f;
-            int countX = 10; // 15;
-            int countY = 10; // 15;
+                double spaceRange = 10000;
+                Math::Vector3d pos;
 
-            for (int iX = -countX; iX < countX; ++iX) {
-                for (int iY = -countY; iY < countY; ++iY) {
-                    if (hasStar && (iX == 0 && iY == 0)) {
+                int i = 0;
+                while (i < count) {
+                    pos.x = help::random(-spaceRange, spaceRange);
+                    pos.y = help::random(-spaceRange, spaceRange);
+                    pos.z = 0;// help::random(-spaceRange, spaceRange);
+
+                    if (pos.length() > spaceRange) {
                         continue;
                     }
-                    double iZ = help::random(-100.f, 100.f);
 
-                    Math::Vector3d pos((double)iX * dist, (double)iY * dist, (double)iZ);
+                    ++i;
 
-                    float mass = 100.f;
+                    float mass = help::random(50, 150);
 
-                    SpaceManager::AddObjectOnOrbit(_mySystem->_space.get(), pos);
+                    SpaceManager::AddObjectOnOrbit(_mySystem->_space.get(), pos, false);
                 }
+
+                _mySystem->_space->DataAssociation();
             }
         }
     }
-}
 
-void SpaceManagerUI::CreateOrbitBody(double x, double y, double z) {
-    if (!_mySystem || !_mySystem->_space) {
-        return;
+    ImGui::Dummy(ImVec2(0.f, 0.f));
+    if (ImGui::Button("Generate sphere", { 128.f, 32.f })) {
+        if (_mySystem && _mySystem->_space) {
+            if (_mySystem && _mySystem->_space) {
+                if (_mySystem && _mySystem->_space->_selectBody == nullptr && _mySystem && _mySystem->_space->_bodies.size() == 1) {
+                    _mySystem->_space->_selectBody = _mySystem->_space->_bodies.front();
+                }
+                int count = 333;
+                //int count = 10000; // 100 x 100
+                //int count = 100000; // 316 x 316
+                _mySystem->_space->_bodies.reserve(count);
+
+                double spaceRange = 10000;
+                Math::Vector3d pos;
+
+                int i = 0;
+                while (i < count) {
+                    pos.x = help::random(-spaceRange, spaceRange);
+                    pos.y = help::random(-spaceRange, spaceRange);
+                    pos.z = help::random(-spaceRange, spaceRange);
+
+                    if (pos.length() > spaceRange) {
+                        continue;
+                    }
+
+                    ++i;
+
+                    float mass = help::random(50, 150);
+
+                    SpaceManager::AddObjectOnOrbit(_mySystem->_space.get(), pos, false);
+                }
+
+                _mySystem->_space->DataAssociation();
+            }
+        }
     }
-
-    Space& space = *_mySystem->_space;
-
-    space.Add("BrownStone", Math::Vector3d(x, y, z), Math::Vector3d(), 100, "");
-}
-
-void SpaceManagerUI::CreateOrbitBody(double x, double y, double z, double starMass, double startX, double startY, double startZ) {
-    if (!_mySystem || !_mySystem->_space) {
-        return;
-    }
-       
-    Space& space = *_mySystem->_space;
-
-    glm::vec3 pos(x, y, z);
-    glm::vec3 starPos(startX, startY, startZ);
-    float mass = 100.f;
-
-    glm::vec3 gravityVector = pos - starPos;
-    glm::vec3 normalizeGravityVector = glm::normalize(gravityVector);
-
-    float g90 = glm::pi<float>() / 2.0;
-    glm::vec3 velocity(normalizeGravityVector.x * std::cos(g90) - normalizeGravityVector.y * std::sin(g90),
-        normalizeGravityVector.x * std::sin(g90) + normalizeGravityVector.y * std::cos(g90),
-        0.f);
-
-    velocity *= std::sqrtf(space._constGravity * starMass / glm::length(gravityVector));
-    space.Add("BrownStone", pos, velocity, mass, "");
 }

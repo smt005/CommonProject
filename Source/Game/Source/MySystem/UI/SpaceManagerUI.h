@@ -17,14 +17,10 @@ public:
 	void Draw() override;
 
 private:
-	void CreateOrbitBody(double x, double y, double z);
-	void CreateOrbitBody(double x, double y, double z, double mass, double startX, double startY, double startZ);
-
-private:
 	float _x = 10.f;
 	float _y = 10.f;
 	float _width = 145.f;
-	float _height = 400.f;
+	float _height = 600.f;
 
 	MySystem* _mySystem = nullptr;
 };

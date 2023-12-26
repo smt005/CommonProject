@@ -40,6 +40,13 @@ public:
 		return *body;
 	}
 
+	template<typename ... Args>
+	Body& AddWithoutAssociation(Args&& ... args) {
+		Body* body = new Body(std::forward<Args>(args)...);
+		_bodies.emplace_back(body);
+		return *body;
+	}
+
 	virtual Body& Add(Body* body) {
 		_bodies.emplace_back(body);
 		DataAssociation(); // TODO:

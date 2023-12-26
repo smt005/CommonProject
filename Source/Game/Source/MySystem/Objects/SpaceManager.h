@@ -8,7 +8,7 @@ class Space;
 
 class SpaceManager {
 public:
-	static void AddObjectOnOrbit(Space* space, Math::Vector3d& pos);
+	static void AddObjectOnOrbit(Space* space, Math::Vector3d& pos, bool withAssotiation = true);
 	static void AddObjectDirect(Space* space, Math::Vector3d& pos, Math::Vector3d& vel);
 
 	static unsigned int SetView(MySystem* systemMy);

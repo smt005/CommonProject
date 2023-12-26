@@ -8,7 +8,7 @@
 #include "Space.h"
 #include "BaseSpace.h"
 
-void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3d& pos) {
+void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3d& pos, bool withAssotiation) {
 	std::string model = "BrownStone";
 	float mass = 10.f;
 
@@ -29,7 +29,12 @@ void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3d& pos) {
 
 	velocity *= std::sqrtf(space->_constGravity * mainBody._mass / Math::length(gravityVector));
 	velocity += mainBody._velocity;
-	space->Add("BrownStone", pos, velocity, mass, "");
+
+	if (withAssotiation) {
+		space->Add("BrownStone", pos, velocity, mass, "");
+	} else {
+		space->AddWithoutAssociation("BrownStone", pos, velocity, mass, "");
+	}
 }
 
 void SpaceManager::AddObjectDirect(Space* space, Math::Vector3d& pos, Math::Vector3d& vel) {

@@ -60,8 +60,14 @@ Math::Vector3 Body::PosOnScreen(const glm::mat4x4& matCamera, bool applySizeScre
 		transformSizeToScreen(point.x, point.y, xInt, yInt);
 	}
 
-	posOnScreen.x = xInt;
-	posOnScreen.y = yInt;
+	float aspectCScreen = Engine::Screen::aspect();
+	if (aspectCScreen > 1.f) {
+		posOnScreen.x = xInt * aspectCScreen;
+		posOnScreen.y = yInt;
+	} else {
+		posOnScreen.x = xInt;
+		posOnScreen.y = yInt / aspectCScreen;
+	}
 	posOnScreen.z = 0;
 
 	return posOnScreen;

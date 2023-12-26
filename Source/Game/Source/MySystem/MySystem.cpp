@@ -158,7 +158,9 @@ void MySystem::Drawline() {
 }
 
 void MySystem::resize() {
-	Camera::GetLink().Resize();
+	if (_camearSide) _camearSide->Resize();
+	if (_camearTop) _camearTop->Resize();
+	if (_camearScreen) _camearScreen->Resize();
 }
 
 bool MySystem::load() {

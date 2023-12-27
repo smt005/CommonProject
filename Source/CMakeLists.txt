@@ -77,7 +77,7 @@ set(GLEW_LIB "${PROJECT_DIR}/../lib")
 # FreeImage
 set(FREEIMAGE_NAME FreeImage)
 set(FREEIMAGE_DIR "${ENGINE_DIR}/ThirdParty/FreeImage")
-set(FREEIMAGE_LIB "${FREEIMAGE_DIR}/build/Win32/Release")
+set(FREEIMAGE_LIB "${FREEIMAGE_DIR}/build/${CMAKE_PLATFORM}/Release")
 set(FREEIMAGE_INCLUDES "${FREEIMAGE_DIR}/Source")
 
 # PhysX 4.1

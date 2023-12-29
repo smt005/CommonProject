@@ -17,6 +17,7 @@
 
 #include "Objects/BaseSpace.h"
 #include "Objects/SpaceManager.h"
+#include "Quests/Quest.h"
 
 #define DRAW DrawLight
 std::string MySystem::_resourcesDir;
@@ -28,7 +29,7 @@ double maxDt = std::numeric_limits<double>::min();
 MySystem::MySystem() {
 }
 
-MySystem::~MySystem() {;
+MySystem::~MySystem() {
 }
 
 void MySystem::init() {
@@ -72,6 +73,8 @@ void MySystem::init() {
 	initCallback();
 
 	MainUI::Open(this);
+
+	Quest::Load();
 }
 
 void MySystem::close() {

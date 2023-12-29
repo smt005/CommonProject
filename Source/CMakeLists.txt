@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.15) # Проверка версии CMake.
 
+message("Begin generate.........................................................................................")
+
 # Проект
 set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(PROJECT_NAME Windows)
@@ -12,7 +14,15 @@ FILE(GLOB_RECURSE PROJECT_SOURCE ${PROJECT_DIR_FILES}/*.cpp)
 source_group(TREE ${PROJECT_DIR_FILES} TREE PREFIX "" FILES ${PROJECT_INCLUDE} ${PROJECT_SOURCE})
 
 # defines
-add_definitions(-DWIN_PLATFORM)
+message("CMAKE_PLATFORM: ${CMAKE_PLATFORM}")
+
+if(ENABLE_PHYSIC)
+	add_definitions(-DENABLE_PHYSIC)
+	message("PHYSIC: ${ENABLE_PHYSIC}: ON")
+else()
+	message("PHYSIC: ${ENABLE_PHYSIC}: OFF")
+endif()
+
 #
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -81,14 +91,16 @@ set(FREEIMAGE_LIB "${FREEIMAGE_DIR}/build/${CMAKE_PLATFORM}/Release")
 set(FREEIMAGE_INCLUDES "${FREEIMAGE_DIR}/Source")
 
 # PhysX 4.1
-set(PHYSX_NAME PhysX)
-set(PHYSX_COOKING PhysXCooking)
-set(PHYSX_EXTENTIONS PhysXExtensions)
-set(PHYSX_DIR "${ENGINE_DIR}/ThirdParty/PhysX")
-set(PHYSX_INCLUDES "${PHYSX_DIR}/physx/include")
-set(PHYSX_INCLUDES_PXSHARED "${PHYSX_DIR}/pxshared/include")
-set(PHYSX_CMAKE_DIR "${PHYSX_DIR}/physx/compiler/public")
-set(PHYSX_LIB "${PHYSX_DIR}/physx/bin")
+if(ENABLE_PHYSIC)
+	set(PHYSX_NAME PhysX)
+	set(PHYSX_COOKING PhysXCooking)
+	set(PHYSX_EXTENTIONS PhysXExtensions)
+	set(PHYSX_DIR "${ENGINE_DIR}/ThirdParty/PhysX")
+	set(PHYSX_INCLUDES "${PHYSX_DIR}/physx/include")
+	set(PHYSX_INCLUDES_PXSHARED "${PHYSX_DIR}/pxshared/include")
+	set(PHYSX_CMAKE_DIR "${PHYSX_DIR}/physx/compiler/public")
+	set(PHYSX_LIB "${PHYSX_DIR}/physx/bin")
+endif()
 
 # FreeType2
 set(FREETYPE2_NAME freetype)
@@ -158,35 +170,40 @@ add_subdirectory(${IMGUI_DIR})
 target_link_libraries(${PROJECT_NAME} ${IMGUI_NAME})
 link_directories(${IMGUI_DIR})
 
-# PhysX 4.1
-## I want to use the C++17 standard, forsooth!
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(TARGET_BUILD_PLATFORM "windows")
-set(PX_GENERATE_STATIC_LIBRARIES true)
-
-# PhysX-specific CMake project setup
-set(NV_USE_DEBUG_WINCRT ON CACHE BOOL "Use the debug version of the CRT")
-set(PHYSX_ROOT_DIR "${PHYSX_DIR}/physx")
-
-set(PXSHARED_PATH ${PHYSX_ROOT_DIR}/../pxshared)
-set(PXSHARED_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
-
-set(CMAKEMODULES_VERSION "1.27")
-set(CMAKEMODULES_PATH ${PHYSX_ROOT_DIR}/../externals/cmakemodules)
-set(PX_OUTPUT_LIB_DIR ${PHYSX_ROOT_DIR}/externals/physx)
-set(PX_OUTPUT_BIN_DIR ${PHYSX_ROOT_DIR}/externals/physx)
-
-include_directories(${PHYSX_INCLUDES})
-include_directories(${PHYSX_INCLUDES_PXSHARED})
-link_directories(${PHYSX_LIB})
-add_subdirectory(${PHYSX_ROOT_DIR}/compiler/public externals/physx)
-target_link_libraries(${PROJECT_NAME} ${PHYSX_NAME})
-target_link_libraries(${PROJECT_NAME} ${PHYSX_COOKING})
-target_link_libraries(${PROJECT_NAME} ${PHYSX_EXTENTIONS})
-
 # FreeType2
 include_directories(${FREETYPE2_INCLUDES})
 link_directories("D:/CMake/CMakeProject/build/Win/Engine/ThirdParty/freetype2/debug")
 add_subdirectory(${FREETYPE2_DIR})
 target_link_libraries(${PROJECT_NAME} ${FREETYPE2_NAME})
+
+# PhysX 4.1
+if(ENABLE_PHYSIC)
+	## I want to use the C++17 standard, forsooth!
+	set(CMAKE_CXX_STANDARD 17)
+	set(CMAKE_CXX_STANDARD_REQUIRED ON)
+	set(TARGET_BUILD_PLATFORM "windows")
+	set(PX_GENERATE_STATIC_LIBRARIES true)
+
+	# PhysX-specific CMake project setup
+	set(NV_USE_DEBUG_WINCRT ON CACHE BOOL "Use the debug version of the CRT")
+	set(PHYSX_ROOT_DIR "${PHYSX_DIR}/physx")
+
+	set(PXSHARED_PATH ${PHYSX_ROOT_DIR}/../pxshared)
+	set(PXSHARED_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
+
+	set(CMAKEMODULES_VERSION "1.27")
+	set(CMAKEMODULES_PATH ${PHYSX_ROOT_DIR}/../externals/cmakemodules)
+	set(PX_OUTPUT_LIB_DIR ${PHYSX_ROOT_DIR}/externals/physx)
+	set(PX_OUTPUT_BIN_DIR ${PHYSX_ROOT_DIR}/externals/physx)
+
+	include_directories(${PHYSX_INCLUDES})
+	include_directories(${PHYSX_INCLUDES_PXSHARED})
+	link_directories(${PHYSX_LIB})
+	add_subdirectory(${PHYSX_ROOT_DIR}/compiler/public externals/physx)
+	target_link_libraries(${PROJECT_NAME} ${PHYSX_NAME})
+	target_link_libraries(${PROJECT_NAME} ${PHYSX_COOKING})
+	target_link_libraries(${PROJECT_NAME} ${PHYSX_EXTENTIONS})
+endif()
+
+message("End generate..........................................................................................")
+#return()

@@ -17,10 +17,13 @@ include_directories(${GLM_INCLUDES})
 include_directories(${JSONCPP_INCLUDES})
 include_directories(${GLFW_INCLUDES})
 include_directories(${FREEIMAGE_INCLUDES})
-include_directories(${PHYSX_INCLUDES})
-include_directories(${PHYSX_INCLUDES_PXSHARED})
-include_directories(${FREETYPE2_INCLUDES})
 include_directories(${IMGUI_INCLUDES})
+include_directories(${FREETYPE2_INCLUDES})
+
+if(ENABLE_PHYSIC)
+	include_directories(${PHYSX_INCLUDES})
+	include_directories(${PHYSX_INCLUDES_PXSHARED})
+endif()
 
 # Создание статической библиотеки
 add_library(${GAME_NAME} STATIC ${INCLUDES} ${SOURCES})

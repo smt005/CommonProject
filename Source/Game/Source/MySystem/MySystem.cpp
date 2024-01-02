@@ -104,9 +104,22 @@ void MySystem::update() {
 }
 
 void MySystem::draw() {
-	DrawLight::Test();
+	static Shader2 shader("Default.vert", "Default.frag");
 
-	/*Camera::Set<Camera>(_camearCurrent);
+	Draw2::ClearColor();
+	Draw2::Viewport();
+
+	shader.Bind();
+
+	//Shape& shape = _space->_skyboxObject->getModel().getShape();
+	Shape& shape = _space->_bodies.front()->_model->getShape();
+	Draw2::Draw(shape);
+
+	MainUI::DrawOnSpace();
+}
+
+/*void MySystem::draw() {
+	Camera::Set<Camera>(_camearCurrent);
 
 	DRAW::viewport();
 	DRAW::clearColor();
@@ -127,8 +140,8 @@ void MySystem::draw() {
 	DRAW::prepare();
 	DRAW::DrawMap(*_space);
 	DRAW::clearDepth();
-	MainUI::DrawOnSpace();*/
-}
+	MainUI::DrawOnSpace();
+}*/
 
 void MySystem::Drawline() {
 	DrawLine::prepare();

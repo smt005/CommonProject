@@ -103,7 +103,9 @@ void MySystem::update() {
 }
 
 void MySystem::draw() {
-	Camera::Set<Camera>(_camearCurrent);
+	DrawLight::Test();
+
+	/*Camera::Set<Camera>(_camearCurrent);
 
 	DRAW::viewport();
 	DRAW::clearColor();
@@ -124,7 +126,7 @@ void MySystem::draw() {
 	DRAW::prepare();
 	DRAW::DrawMap(*_space);
 	DRAW::clearDepth();
-	MainUI::DrawOnSpace();
+	MainUI::DrawOnSpace();*/
 }
 
 void MySystem::Drawline() {

@@ -19,6 +19,9 @@
 #include "Objects/SpaceManager.h"
 #include "Quests/Quest.h"
 
+#include <Draw2/Draw2.h>
+#include <Draw2/Shader2.h>
+
 #define DRAW DrawLight
 std::string MySystem::_resourcesDir;
 const std::string saveFileName("../../../Executable/Save.json");
@@ -33,9 +36,7 @@ MySystem::~MySystem() {
 }
 
 void MySystem::init() {
-	//DRAW::setClearColor(0.3f, 0.6f, 0.9f, 1.0f);
-	DRAW::setClearColor(0.1f, 0.2f, 0.3f, 1.0f);
-	//DRAW::setClearColor(0.7f, 0.8f, 0.9f, 1.0f);
+	Draw2::SetClearColor(0.333f, 0.666f, 0.999f, 1.0f);
 
 	//...
 	_space = SpaceManager::Load("MAIN");

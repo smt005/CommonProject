@@ -107,4 +107,7 @@ public:
 	glm::mat4x4 _matrix = glm::mat4x4(1);
 	std::shared_ptr<Model> _model;
 	Data* _dataPtr = nullptr;
+
+public:
+	double force = 0.0;
 };

@@ -81,11 +81,11 @@ void SpaceManagerUI::Draw() {
         if (_mySystem && _mySystem->_space) {
             Space& space = *_mySystem->_space;
 
-            Body* star = &space.RefFocusBody();
-            if (star) {
-                auto starPosT = star->GetPos();
+            auto [hasBody, star] = space.RefFocusBody();
+            if (hasBody) {
+                auto starPosT = star.GetPos();
                 glm::vec3 starPos = glm::vec3(starPosT.x, starPosT.y, starPosT.z);
-                float starMass = star->_mass;
+                float starMass = star._mass;
 
                 float dist = 1000.0f;
                 int countX = 10; // 15;

@@ -19,8 +19,8 @@ public:
 private:
 	float _x = 10.f;
 	float _y = 100.f;
-	float _width = 145.f;
-	float _height = 390.f;
+	float _width = 245.f;
+	float _height = 500.f;
 
 	double _time = 0;
 	std::vector<std::string> _textBodies;

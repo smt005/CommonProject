@@ -29,7 +29,7 @@ void Space::Update(double dt) {
 		return;
 	}
 
-	double mergeDist = 100.f;
+	double mergeDist = 50.f; // 100.f;
 	using Indices = std::list<int>;
 	std::unordered_map<int, Indices> mergeList;
 
@@ -212,6 +212,8 @@ void Space::Update(double dt) {
 
 		body->_dataPtr->pos += body->_velocity * static_cast<double>(dt);
 		body->SetPos(body->_dataPtr->pos);
+
+		body->force = body->_dataPtr->force.length();
 	}
 
 	if (needDataAssociation > 0) {
@@ -243,6 +245,8 @@ void Space::Update(double dt) {
 
 			body->_dataPtr->pos += body->_velocity * static_cast<double>(dt);
 			body->SetPos(body->_dataPtr->pos);
+
+			body->force = body->_dataPtr->force.length();
 		}
 
 		std::vector<Body::Ptr> bodies;

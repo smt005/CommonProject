@@ -92,14 +92,16 @@ void MySystem::update() {
 
 	_space->Update();
 
-	Body& body = _space->RefFocusBody();
-	auto centerMassT = body.GetPos();
-	glm::vec3 centerMass = glm::vec3(centerMassT.x, centerMassT.y, centerMassT.z);
-	if (auto camera = dynamic_cast<CameraControlOutside*>(_camearCurrent.get())) {
-		camera->SetPosOutside(centerMass);
-	} else if (auto camera = dynamic_cast<Camera*>(_camearCurrent.get())) {
-		centerMass.z = 100000.f;
-		camera->SetPos(centerMass);
+	auto[hasBody, body] = _space->RefFocusBody();
+	if (hasBody) {
+		auto centerMassT = body.GetPos();
+		glm::vec3 centerMass = glm::vec3(centerMassT.x, centerMassT.y, centerMassT.z);
+		if (auto camera = dynamic_cast<CameraControlOutside*>(_camearCurrent.get())) {
+			camera->SetPosOutside(centerMass);
+		} else if (auto camera = dynamic_cast<Camera*>(_camearCurrent.get())) {
+			centerMass.z = 100000.f;
+			camera->SetPos(centerMass);
+		}
 	}
 }
 
@@ -184,12 +186,14 @@ void MySystem::Drawline() {
 			DRAW::draw(*_space->_skyboxModel);
 		}*/
 
-		auto& star = _space->RefFocusBody();
-		auto centerMassT = star.GetPos();
-		glm::vec3 centerMass = glm::vec3(centerMassT.x, centerMassT.y, centerMassT.z);
-		float cm[3] = { centerMass.x, centerMass.y, centerMass.z };
-		DrawLine::SetIdentityMatrixByPos(cm);
-		DrawLine::Draw(_space->spatialGrid);
+		auto [hasBody, star] = _space->RefFocusBody();
+		if (hasBody) {
+			auto centerMassT = star.GetPos();
+			glm::vec3 centerMass = glm::vec3(centerMassT.x, centerMassT.y, centerMassT.z);
+			float cm[3] = { centerMass.x, centerMass.y, centerMass.z };
+			DrawLine::SetIdentityMatrixByPos(cm);
+			DrawLine::Draw(_space->spatialGrid);
+		}
 	}
 }
 
@@ -279,10 +283,10 @@ void MySystem::initCallback() {
 			float dist = cameraPtr->GetDistanceOutside();
 
 			if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_UP) {
-				dist -= Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 5000.f : 2000.f;
+				dist -= Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 5000.f : 1000.f;
 			}
 			else if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_BOTTOM) {
-				dist += Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 5000.f : 2000.f;
+				dist += Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 5000.f : 1000.f;
 			}
 
 			if (dist < 1.f) {

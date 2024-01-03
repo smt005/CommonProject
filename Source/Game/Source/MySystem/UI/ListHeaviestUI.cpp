@@ -49,15 +49,18 @@ void ListHeaviestUI::Draw() {
     }
 
     int _guiId = 0;
-    
+
     auto& heaviestInfo = _mySystem->_space->_heaviestInfo;
 
     for (auto& pair : heaviestInfo) {
         ImGui::PushID(++_guiId);
+        ImGui::PushStyleColor(ImGuiCol_Button, pair.first == _mySystem->_space->_focusBody ? Editor::greenColor : Editor::defaultColor);
+
         if (ImGui::Button(pair.second.c_str(), { 90.f, 32.f })) {            
             _mySystem->_space->_focusBody = pair.first;
         }
         ImGui::PopID();
+        ImGui::PopStyleColor();
 
         ImGui::SameLine();
 
@@ -66,5 +69,38 @@ void ListHeaviestUI::Draw() {
             _mySystem->_space->RemoveBody(pair.first);
         }
         ImGui::PopID();
+    }
+
+    ImGui::Separator();
+    ImGui::PushID(++_guiId);
+    if (ImGui::Button("Detuch", { 130.f, 32.f })) {
+        _mySystem->_space->_focusBody.reset();
+    }
+    ImGui::PopID();
+
+    if (_mySystem->_space->_focusBody) {
+        // Speed
+        double speed = _mySystem->_space->_focusBody->_velocity.length();
+        std::string speedStr = std::to_string(speed);
+
+        if (speed != 0.0 && speedStr == "0.000000") {
+            ImGui::Text("Speed: > 0.0");
+        } else {
+            ImGui::Text("Speed: %s", std::to_string(speed).c_str());
+        }
+
+        // Force
+        double force = _mySystem->_space->_focusBody->force;
+        std::string forceStr = std::to_string(force);
+
+        if (force != 0.0 && forceStr == "0.000000") {
+            ImGui::Text("Forcr: > 0.0");
+        } else {
+            ImGui::Text("Forcr: %s", std::to_string(force).c_str());
+        }
+
+        // Position
+        auto pos = _mySystem->_space->_focusBody->GetPos();
+        ImGui::Text("Pos: %s, %s, %s", std::to_string((int)round(pos.x)).c_str(), std::to_string((int)round(pos.y)).c_str(), std::to_string((int)round(pos.z)).c_str());
     }
 }

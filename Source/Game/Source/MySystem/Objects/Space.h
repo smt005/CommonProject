@@ -64,14 +64,15 @@ public:
 	virtual Body::Ptr GetHeaviestBody(bool setAsStar = true);
 	virtual void RemoveVelocity(bool toCenter = false);
 
-	virtual Body& RefFocusBody() {
+	virtual std::pair<bool, Body&> RefFocusBody() {
 		auto it = std::find(_bodies.begin(), _bodies.end(), _focusBody);
 		if (it != _bodies.end()) {
-			return **it;
+			Body& body = **it;
+			return {true, body};
 		}
 
 		static Body defaultBody;
-		return defaultBody;
+		return {false, defaultBody};
 	}
 
 	virtual Body::Ptr HitObject(const glm::mat4x4& matCamera);

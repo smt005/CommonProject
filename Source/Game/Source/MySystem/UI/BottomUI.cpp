@@ -197,6 +197,8 @@ void BottomUI::Draw() {
 
     //...
     style.FramePadding.y = 3.f;
+
+    style.WindowPadding = { 8.f, 8.f };
 }
 
 void BottomUI::GenerateFunAddObjectUI() {

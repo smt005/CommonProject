@@ -19,7 +19,7 @@ public:
 private:
 	float _x = 10.f;
 	float _y = 100.f;
-	float _width = 245.f;
+	float _width = 165.f;
 	float _height = 500.f;
 
 	double _time = 0;

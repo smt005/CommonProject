@@ -57,7 +57,6 @@ public:
 
 	template<typename T>
 	void SetPos(T&& pos) {
-		_matrix = glm::mat4x4(1);
 		_matrix[3][0] = pos[0];
 		_matrix[3][1] = pos[1];
 		_matrix[3][2] = pos[2];

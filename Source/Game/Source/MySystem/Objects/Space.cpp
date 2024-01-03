@@ -29,7 +29,7 @@ void Space::Update(double dt) {
 		return;
 	}
 
-	double mergeDist = 50.f; // 100.f;
+	double mergeDistFactor = 10.f;
 	using Indices = std::list<int>;
 	std::unordered_map<int, Indices> mergeList;
 
@@ -38,6 +38,8 @@ void Space::Update(double dt) {
 
 		for (size_t index = statIndex; index <= endIndex; ++index) {
 			Body::Data& data = _datas[index];
+
+			float radius = _bodies[index]->_scale;
 
 			double mass = data.mass;
 			Math::Vector3d& pos = data.pos;
@@ -48,6 +50,8 @@ void Space::Update(double dt) {
 
 			for (size_t otherIndex = 0; otherIndex < sizeData; ++otherIndex) {
 				Body::Data& otherBody = _datas[otherIndex];
+
+				float otherRadius = _bodies[otherIndex]->_scale;
 
 				if (&data == &otherBody) {
 					continue;
@@ -62,6 +66,7 @@ void Space::Update(double dt) {
 				forceVec += gravityVec;
 
 				//...
+				float mergeDist = (radius + otherRadius) * mergeDistFactor;
 				if (dist < mergeDist) {
 					if (!mergePair) {
 						mergePair = new std::pair<int, Indices>(index, Indices());
@@ -134,8 +139,7 @@ void Space::Update(double dt) {
 			double sumMass = 0;
 			Math::Vector3d sumPulse;
 			Math::Vector3d sumForce;
-			Math::Vector3d sumPos;
-			double countPos = 0;
+			Math::Vector3d sumMassPos;
 
 			Body::Ptr newBody;
 
@@ -150,7 +154,7 @@ void Space::Update(double dt) {
 				}
 
 				sumForce += data.force;
-				sumPos += data.pos;
+				sumMassPos += (data.pos * data.mass);
 				sumMass += data.mass;
 				sumPulse += _bodies[index]->_velocity * data.mass;
 			
@@ -161,24 +165,20 @@ void Space::Update(double dt) {
 					std::string nameMode = _bodies[index]->HetModel() ? _bodies[index]->getModel().getName() : "BrownStone";
 
 					newBody = newBodies.emplace_back(new Body(nameMode));
-					//newBody = std::make_shared<Body>(new Body(nameMode));
-					//newBodies.emplace_back(newBody);
-					newBody->_dataPtr = &newDatas.emplace_back(sumMass, sumPos, sumForce);
+					newBody->_dataPtr = &newDatas.emplace_back(sumMass, Math::Vector3d(0, 0, 0), sumForce);
 				}
 
 				_bodies[index].reset();
 
 				data.mass = 0;
-				countPos += 1;
 			}
-
-			sumPos /= countPos;
 
 			newBody->_dataPtr->force = sumForce;
 			newBody->_mass = sumMass;
 			newBody->_dataPtr->mass = sumMass;
 			
 			newBody->_velocity = sumPulse / sumMass;
+			newBody->SetPos(sumMassPos / sumMass);
 		}
 	}
 
@@ -419,6 +419,7 @@ void Space::DataAssociation() {
 		}
 
 		body->_dataPtr = &(_datas.emplace_back(body->_mass, body->GetPos()));
+		body->Scale();
 	}
 
 	size_t sizeInfo = 10;

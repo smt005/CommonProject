@@ -3,9 +3,9 @@
 	{
 		"fullscreen" : false,
 		"height" : 1000.0,
-		"left" : 5.0,
+		"left" : 25.0,
 		"title" : "System",
-		"top" : 38.0,
+		"top" : 44.0,
 		"width" : 1589.0
 	}
 }

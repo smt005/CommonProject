@@ -164,5 +164,14 @@ void Body::Scale() {
 
 	//  std::pow(n, 1/3.) (or std::cbrtf(v);
 	_scale = std::cbrtf(val3div4 * _mass);
-	_matrix = glm::scale(_matrix, glm::vec3(_scale));
+
+	float x = _matrix[3][0];
+	float y = _matrix[3][1];
+	float z = _matrix[3][2];
+
+	_matrix = glm::scale(glm::mat4x4(1.f), glm::vec3(_scale));
+
+	_matrix[3][0] = x;
+	_matrix[3][1] = y;
+	_matrix[3][2] = z;
 }

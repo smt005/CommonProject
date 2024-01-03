@@ -2,12 +2,12 @@
    "OrangeStar": {
     "shape": "Models/GeoSphere/GeoSphere_1_5_planar.obj",
 	"texture": "Textures/planet/brown_stone.jpg",
-    "scale": 100
+    "scale": 10
   },
   "BrownStone": {
 	"shape": "Models/GeoSphere/GeoSphere_1_4_planar.obj",
     "texture": "Textures/planet/brown_stone.jpg",
-    "scale": 100
+    "scale": 10
   },
   "Marker": {
     "shape": "Models/Interface/Plane_1_1_z.obj",

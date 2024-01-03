@@ -36,7 +36,7 @@ MySystem::~MySystem() {
 }
 
 void MySystem::init() {
-	Draw2::SetClearColor(0.333f, 0.666f, 0.999f, 1.0f);
+	Draw2::SetClearColor(0.0333f, 0.0666f, 0.0999f, 1.0f);
 
 	//...
 	_space = SpaceManager::Load("MAIN");
@@ -104,21 +104,38 @@ void MySystem::update() {
 }
 
 void MySystem::draw() {
-	static Shader2 shader("Default.vert", "Default.frag");
+	static Shader2::Ptr shaderPtr(new Shader2("Default.vert", "Default.frag"));
+	Shader2::current = shaderPtr;
 
-	Draw2::ClearColor();
+	Camera::Set<Camera>(_camearCurrent);
+
 	Draw2::Viewport();
+	Draw2::ClearColor();
 
-	shader.Bind();
+	shaderPtr->Use();
 
-	//Shape& shape = _space->_skyboxObject->getModel().getShape();
-	Shape& shape = _space->_bodies.front()->_model->getShape();
-	Draw2::Draw(shape);
+	// SkyBox	
+	/*if (MainUI::GetViewType() == 0 && _space->_skyboxObject) {
+		auto camPos = Camera::_currentCameraPtr->Pos();
+		_space->_skyboxObject->setPos(camPos);
+		Draw2::SetModelMatrix(glm::mat4x4(1.f));
 
-	MainUI::DrawOnSpace();
+		Shape& shape = _space->_skyboxObject->getModel().getShape();
+		Draw2::Draw(shape);
+	}*/
+
+	//...
+	for (Body::Ptr& bodyPtr : _space->_bodies) {
+		Draw2::SetModelMatrix(bodyPtr->getMatrix());
+
+		Shape& shape = bodyPtr->_model->getShape();
+		Draw2::Draw(shape);
+	}
+
+	//MainUI::DrawOnSpace();
 }
 
-/*void MySystem::draw() {
+void MySystem::draw2() {
 	Camera::Set<Camera>(_camearCurrent);
 
 	DRAW::viewport();
@@ -141,7 +158,7 @@ void MySystem::draw() {
 	DRAW::DrawMap(*_space);
 	DRAW::clearDepth();
 	MainUI::DrawOnSpace();
-}*/
+}
 
 void MySystem::Drawline() {
 	DrawLine::prepare();
@@ -268,8 +285,8 @@ void MySystem::initCallback() {
 				dist += Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 5000.f : 2000.f;
 			}
 
-			if (dist < 10.f) {
-				dist = 10.f;
+			if (dist < 1.f) {
+				dist = 1.f;
 			}
 			cameraPtr->SetDistanceOutside(dist);
 		}

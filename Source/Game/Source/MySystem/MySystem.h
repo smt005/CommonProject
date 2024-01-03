@@ -33,6 +33,8 @@ public:
 	bool load();
 	void save();
 
+	void draw2(); // TEMP_
+
 public:
 	std::shared_ptr<Space> _space;
 

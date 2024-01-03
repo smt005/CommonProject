@@ -19,6 +19,9 @@
 #include "Objects/SpaceManager.h"
 #include "Quests/Quest.h"
 
+#include <Draw2/Draw2.h>
+#include <Draw2/Shader2.h>
+
 #define DRAW DrawLight
 std::string MySystem::_resourcesDir;
 const std::string saveFileName("../../../Executable/Save.json");
@@ -33,9 +36,7 @@ MySystem::~MySystem() {
 }
 
 void MySystem::init() {
-	//DRAW::setClearColor(0.3f, 0.6f, 0.9f, 1.0f);
-	DRAW::setClearColor(0.1f, 0.2f, 0.3f, 1.0f);
-	//DRAW::setClearColor(0.7f, 0.8f, 0.9f, 1.0f);
+	Draw2::SetClearColor(0.0333f, 0.0666f, 0.0999f, 1.0f);
 
 	//...
 	_space = SpaceManager::Load("MAIN");
@@ -103,6 +104,38 @@ void MySystem::update() {
 }
 
 void MySystem::draw() {
+	static Shader2::Ptr shaderPtr(new Shader2("Default.vert", "Default.frag"));
+	Shader2::current = shaderPtr;
+
+	Camera::Set<Camera>(_camearCurrent);
+
+	Draw2::Viewport();
+	Draw2::ClearColor();
+
+	shaderPtr->Use();
+
+	// SkyBox	
+	/*if (MainUI::GetViewType() == 0 && _space->_skyboxObject) {
+		auto camPos = Camera::_currentCameraPtr->Pos();
+		_space->_skyboxObject->setPos(camPos);
+		Draw2::SetModelMatrix(glm::mat4x4(1.f));
+
+		Shape& shape = _space->_skyboxObject->getModel().getShape();
+		Draw2::Draw(shape);
+	}*/
+
+	//...
+	for (Body::Ptr& bodyPtr : _space->_bodies) {
+		Draw2::SetModelMatrix(bodyPtr->getMatrix());
+
+		Shape& shape = bodyPtr->_model->getShape();
+		Draw2::Draw(shape);
+	}
+
+	//MainUI::DrawOnSpace();
+}
+
+void MySystem::draw2() {
 	Camera::Set<Camera>(_camearCurrent);
 
 	DRAW::viewport();
@@ -252,8 +285,8 @@ void MySystem::initCallback() {
 				dist += Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 5000.f : 2000.f;
 			}
 
-			if (dist < 10.f) {
-				dist = 10.f;
+			if (dist < 1.f) {
+				dist = 1.f;
 			}
 			cameraPtr->SetDistanceOutside(dist);
 		}

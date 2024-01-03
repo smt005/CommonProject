@@ -161,6 +161,7 @@ include_directories(${FREEIMAGE_INCLUDES})
 link_directories(${FREEIMAGE_LIB})
 target_link_libraries(${PROJECT_NAME} "${FREEIMAGE_LIB}/${FREEIMAGE_NAME}.lib")
 file(COPY "${FREEIMAGE_LIB}/${FREEIMAGE_NAME}.dll" DESTINATION ${PROJECT_DIR}/../Executable/debug)
+file(COPY "${FREEIMAGE_LIB}/${FREEIMAGE_NAME}.dll" DESTINATION ${PROJECT_DIR}/../Executable/release)
 
 # ImGui
 include_directories(${IMGUI_INCLUDES})

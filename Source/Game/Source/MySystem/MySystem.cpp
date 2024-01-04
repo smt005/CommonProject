@@ -36,7 +36,7 @@ MySystem::~MySystem() {
 }
 
 void MySystem::init() {
-	Draw2::SetClearColor(0.0333f, 0.0666f, 0.0999f, 1.0f);
+	Draw2::SetClearColor(0.333f, 0.666f, 0.999f, 1.0f);
 
 	//...
 	_space = SpaceManager::Load("MAIN");
@@ -49,7 +49,7 @@ void MySystem::init() {
 		cameraPtr->SetPos({ 0, 0, 0 });
 		cameraPtr->SetDirect({ -0.440075815f, -0.717726171f, -0.539631844f });
 		cameraPtr->SetSpeed(1.0);
-		cameraPtr->SetDistanceOutside(5000.f);
+		cameraPtr->SetDistanceOutside(500.f);
 		cameraPtr->Enable(true);
 	}
 
@@ -132,7 +132,7 @@ void MySystem::draw() {
 		Draw2::Draw(*bodyPtr->_model);
 	}
 
-	//MainUI::DrawOnSpace();
+	MainUI::DrawOnSpace();
 }
 
 void MySystem::draw2() {

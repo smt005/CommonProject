@@ -15,6 +15,9 @@
 #include "Object/Object.h"
 #include "Object/Model.h"
 
+#include <Draw2/Draw2.h>
+#include <Draw2/Shader2.h>
+
 namespace {
 	Engine::Callback callback;
 	std::shared_ptr<Space> spacePtr;
@@ -100,14 +103,16 @@ void MainUI::DrawOnSpace() {
 	const glm::mat4x4& matCamera = _mySystem->_camearCurrent->ProjectView();
 
 	Camera::Set(_mySystem->_camearScreen);
-	DrawLight::prepare();
+	Shader2::current->Use();
 
 	for (Body::Ptr& body : spacePtr->_bodies) {	
 		Math::Vector3 posOnScreen = body->PosOnScreen(matCamera, false);
 		float pos[] = { posOnScreen.x, posOnScreen.y, posOnScreen.z };
 		
 		bodyMarker->setPos(pos);
-		DrawLight::draw(*bodyMarker);
+
+		Draw2::SetModelMatrix(bodyMarker->getMatrix());
+		Draw2::Draw(bodyMarker->getModel());
 	}
 }
 

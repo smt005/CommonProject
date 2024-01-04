@@ -49,7 +49,7 @@ void MySystem::init() {
 		cameraPtr->SetPos({ 0, 0, 0 });
 		cameraPtr->SetDirect({ -0.440075815f, -0.717726171f, -0.539631844f });
 		cameraPtr->SetSpeed(1.0);
-		cameraPtr->SetDistanceOutside(50000.f);
+		cameraPtr->SetDistanceOutside(5000.f);
 		cameraPtr->Enable(true);
 	}
 
@@ -117,21 +117,19 @@ void MySystem::draw() {
 	shaderPtr->Use();
 
 	// SkyBox	
-	/*if (MainUI::GetViewType() == 0 && _space->_skyboxObject) {
+	if (MainUI::GetViewType() == 0 && _space->_skyboxObject) {
 		auto camPos = Camera::_currentCameraPtr->Pos();
 		_space->_skyboxObject->setPos(camPos);
 		Draw2::SetModelMatrix(glm::mat4x4(1.f));
 
-		Shape& shape = _space->_skyboxObject->getModel().getShape();
-		Draw2::Draw(shape);
-	}*/
+		Draw2::Draw(_space->_skyboxObject->getModel());
+	}
 
 	//...
 	for (Body::Ptr& bodyPtr : _space->_bodies) {
 		Draw2::SetModelMatrix(bodyPtr->getMatrix());
 
-		Shape& shape = bodyPtr->_model->getShape();
-		Draw2::Draw(shape);
+		Draw2::Draw(*bodyPtr->_model);
 	}
 
 	//MainUI::DrawOnSpace();
@@ -283,14 +281,14 @@ void MySystem::initCallback() {
 			float dist = cameraPtr->GetDistanceOutside();
 
 			if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_UP) {
-				dist -= Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 5000.f : 1000.f;
+				dist -= Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 5000.f : 100.f;
 			}
 			else if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_BOTTOM) {
-				dist += Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 5000.f : 1000.f;
+				dist += Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 5000.f : 100.f;
 			}
 
-			if (dist < 1.f) {
-				dist = 1.f;
+			if (dist < 10.f) {
+				dist = 10.f;
 			}
 			cameraPtr->SetDistanceOutside(dist);
 		}

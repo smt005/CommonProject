@@ -1,10 +1,10 @@
-cmake_minimum_required(VERSION 3.15) # Проверка версии CMake.
+cmake_minimum_required(VERSION 3.8)
 
 message("Begin generate.........................................................................................")
 
 # Проект
 set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-set(PROJECT_NAME Windows)
+set(PROJECT_NAME System)
 #set(PROJECT_INCLUDE "${PROJECT_DIR}/Engine/Platform/Win/main.h")
 #set(PROJECT_SOURCE "${PROJECT_DIR}/Engine/Platform/Win/main.cpp")
 
@@ -12,6 +12,8 @@ set(PROJECT_DIR_FILES "${PROJECT_DIR}/Engine/Platform/Win")
 FILE(GLOB_RECURSE PROJECT_INCLUDE ${PROJECT_DIR_FILES}/*.h)
 FILE(GLOB_RECURSE PROJECT_SOURCE ${PROJECT_DIR_FILES}/*.cpp)
 source_group(TREE ${PROJECT_DIR_FILES} TREE PREFIX "" FILES ${PROJECT_INCLUDE} ${PROJECT_SOURCE})
+
+project(${PROJECT_NAME})
 
 # defines
 message("PLATFORM: ${PLATFORM}")
@@ -107,13 +109,27 @@ set(FREETYPE2_DIR "${ENGINE_DIR}/ThirdParty/freetype2")
 set(FREETYPE2_INCLUDES "${FREETYPE2_DIR}/include")
 set(GLFW_LIB "${PROJECT_DIR}/../build/Win/Engine/ThirdParty/freetype2")
 
+# CUDA
+find_package(CUDA)
+if (CUDA_FOUND)
+	set(CUDA_NAME CUDA_lib)
+	set(CUDA_DIR "${ENGINE_DIR}/CUDA")
+
+	add_definitions(-DENABLE_CUDA)
+	add_subdirectory(${CUDA_DIR})
+	#target_link_libraries(${PROJECT_NAME} ${CUDA_NAME})
+	message("CUDA founded.")
+else()
+	message("CUDA not founded.")
+endif()
+
 # Создание
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_DIR}/../Executable)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_DIR}/../Executable)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_DIR}/../Executable)
 
-project(${PROJECT_NAME})
+
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCE})
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
 
@@ -202,6 +218,14 @@ if(ENABLE_PHYSIC)
 	target_link_libraries(${PROJECT_NAME} ${PHYSX_NAME})
 	target_link_libraries(${PROJECT_NAME} ${PHYSX_COOKING})
 	target_link_libraries(${PROJECT_NAME} ${PHYSX_EXTENTIONS})
+endif()
+
+# CUDA
+if (CUDA_FOUND)
+	target_link_libraries(${PROJECT_NAME} ${CUDA_NAME})
+	message("CUDA linked.")
+else()
+	message("CUDA not linked.")
 endif()
 
 message("End generate..........................................................................................")

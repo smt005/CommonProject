@@ -13,6 +13,7 @@
 #include "Draw/DrawLight.h"
 #include "Draw/Camera/CameraControlOutside.h"
 #include "../Objects/Space.h"
+#include "../CUDA/Vrapper.h"
 
 // AddObjectUI
 
@@ -222,6 +223,8 @@ void BottomUI::GenerateFunAddObjectUI() {
     
     funActions.emplace_back("3##left_3", [this]() {
         _addBodyType = AddBodyType::NONE;
+        mainCUDA();
+        help::log("CUDA");
     });
 
     UI::ShowWindow<AddObjectUI>(funActions);

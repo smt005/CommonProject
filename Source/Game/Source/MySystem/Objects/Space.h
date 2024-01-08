@@ -100,6 +100,7 @@ private:
 public:
 	double _constGravity = 0.01f;
 	std::string _name;
+	std::map<std::string, std::string> _params;
 	std::vector<Body::Ptr> _bodies;
 	std::vector<Body::Data> _datas;
 };

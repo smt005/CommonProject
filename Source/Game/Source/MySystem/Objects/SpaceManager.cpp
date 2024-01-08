@@ -16,7 +16,7 @@ void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3d& pos, bool with
 	}
 
 	std::string model = "BrownStone";
-	float mass = 10.f;
+	float mass = 100.f;
 
 	Body& mainBody = *space->_selectBody;
 

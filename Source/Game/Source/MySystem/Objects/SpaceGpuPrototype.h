@@ -15,6 +15,9 @@ public:
 	}
 	SpaceGpuPrototype(Json::Value& valueData)
 		: Space(valueData) {
+		if (_params["PROCESS"] == "GPU") {
+			processGPU = true;
+		}
 	}
 
 	void Update(double dt) override;
@@ -23,4 +26,7 @@ private:
 	std::string GetNameClass() override {
 		return Engine::GetClassName(this);
 	}
+
+private:
+	bool processGPU = false;
 };

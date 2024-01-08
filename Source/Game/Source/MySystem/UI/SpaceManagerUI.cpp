@@ -157,12 +157,13 @@ void SpaceManagerUI::Draw() {
                 if (_mySystem && _mySystem->_space->_selectBody == nullptr && _mySystem && _mySystem->_space->_bodies.size() == 1) {
                     _mySystem->_space->_selectBody = _mySystem->_space->_bodies.front();
                 }
-                int count = 333;
+                int count = 1000;
                 //int count = 10000; // 100 x 100
                 //int count = 100000; // 316 x 316
                 _mySystem->_space->_bodies.reserve(count);
 
-                double spaceRange = 10000;
+                double minSpaceRange = 10000;
+                double spaceRange = 50000;
                 Math::Vector3d pos;
 
                 int i = 0;
@@ -171,13 +172,19 @@ void SpaceManagerUI::Draw() {
                     pos.y = help::random(-spaceRange, spaceRange);
                     pos.z = 0;// help::random(-spaceRange, spaceRange);
 
-                    if (pos.length() > spaceRange) {
+                    double radius = pos.length();
+
+                    if (radius > spaceRange) {
+                        continue;
+                    }
+
+                    if (radius < minSpaceRange) {
                         continue;
                     }
 
                     ++i;
 
-                    float mass = help::random(50, 150);
+                    //float mass = help::random(250, 1000);
 
                     SpaceManager::AddObjectOnOrbit(_mySystem->_space.get(), pos, false);
                 }

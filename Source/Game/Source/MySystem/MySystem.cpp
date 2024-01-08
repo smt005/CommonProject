@@ -42,7 +42,6 @@ void MySystem::init() {
 
 	//...
 	_space = SpaceManager::Load("MAIN");
-	_space->Load();
 
 	//...
 	_camearSide = std::make_shared<CameraControlOutside>();
@@ -128,6 +127,7 @@ void MySystem::draw() {
 		Draw2::SetModelMatrix(glm::mat4x4(1.f));
 
 		Draw2::Draw(_space->_skyboxObject->getModel());
+		Draw2::ClearDepth();
 	}
 
 	//...
@@ -137,7 +137,7 @@ void MySystem::draw() {
 		Draw2::Draw(*bodyPtr->_model);
 	}
 
-	MainUI::DrawOnSpace();
+	//MainUI::DrawOnSpace();
 }
 
 void MySystem::draw2() {

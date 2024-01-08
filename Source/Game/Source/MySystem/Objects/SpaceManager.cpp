@@ -7,6 +7,7 @@
 #include "Common/Common.h"
 #include "Space.h"
 #include "BaseSpace.h"
+#include "SpaceCpuPrototype.h"
 
 void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3d& pos, bool withAssotiation) {
 	if (!space->_selectBody) {
@@ -148,7 +149,11 @@ Space::Ptr SpaceManager::Load(const std::string& name) {
 
 	if (classStr == Engine::GetClassName<BaseSpace>()) {
 		return Space::Ptr(new BaseSpace(valueData));
-	} else {
+	} else 
+	if (classStr == Engine::GetClassName<SpaceCpuPrototype>()) {
+		return Space::Ptr(new SpaceCpuPrototype(valueData));
+	}
+	else {
 		return Space::Ptr(new Space(valueData));
 	}
 

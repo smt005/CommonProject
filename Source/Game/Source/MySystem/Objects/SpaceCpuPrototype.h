@@ -5,20 +5,19 @@
 #include <json/json.h>
 #include <Common/Common.h>
 
-class BaseSpace final : public Space {
+class SpaceCpuPrototype final : public Space {
 public:
-	using Ptr = std::shared_ptr<BaseSpace>;
+	using Ptr = std::shared_ptr<SpaceCpuPrototype>;
 
-	BaseSpace() = default;
-	BaseSpace(const std::string& name)
+	SpaceCpuPrototype() = default;
+	SpaceCpuPrototype(const std::string& name)
 		: Space(name) {
 	}
-	BaseSpace(Json::Value& valueData)
+	SpaceCpuPrototype(Json::Value& valueData)
 		: Space(valueData) {
 	}
 
-	/*void Update() override {
-	}*/
+	void Update(double dt) override;
 
 private:
 	std::string GetNameClass() override {

@@ -10,7 +10,6 @@ source_group(TREE ${GAME_SOURCE} TREE PREFIX "" FILES ${INCLUDES} ${SOURCES})
 
 # Расположение заголовочных файлов
 include_directories(${ENGINE_SOURCE})
-include_directories(${BRAIN_SOURCE})
 
 # ThirdPathy
 include_directories(${GLM_INCLUDES})

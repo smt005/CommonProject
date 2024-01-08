@@ -22,6 +22,8 @@
 #include <Draw2/Draw2.h>
 #include <Draw2/Shader2.h>
 
+#include "../CUDA/Vrapper.h"
+
 #define DRAW DrawLight
 std::string MySystem::_resourcesDir;
 const std::string saveFileName("../../../Executable/Save.json");
@@ -76,6 +78,8 @@ void MySystem::init() {
 	MainUI::Open(this);
 
 	Quest::Load();
+
+	CUDA::PrintInfo();
 }
 
 void MySystem::close() {

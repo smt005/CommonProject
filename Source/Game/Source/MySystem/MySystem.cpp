@@ -79,6 +79,7 @@ void MySystem::init() {
 
 	Quest::Load();
 
+	CUDA::GetProperty();
 	CUDA::PrintInfo();
 }
 

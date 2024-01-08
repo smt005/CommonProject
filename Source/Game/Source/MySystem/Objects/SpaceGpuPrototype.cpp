@@ -31,7 +31,7 @@ void SpaceGpuPrototype::Update(double dt) {
 		forcesY[index] = 0.f;
 	}
 
-	CUDA::GetForcesStaticTest(count, masses, positionsX, positionsY, forcesX, forcesY);
+	CUDA::GetForcesStatic(count, masses, positionsX, positionsY, forcesX, forcesY);
 
 #else
 

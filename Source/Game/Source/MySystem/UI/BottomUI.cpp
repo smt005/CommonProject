@@ -218,7 +218,13 @@ void BottomUI::GenerateFunAddObjectUI() {
     });
     
     funActions.emplace_back("2##left_2", [this]() {
-        _addBodyType = AddBodyType::NONE;
+#ifdef _DEBUG
+        int countBody = 1000;
+#else
+        int countBody = 3000;
+#endif
+    SpaceManager::AddObjects(_mySystem->_space.get(), countBody, 10000, -20);
+
     });
     
     funActions.emplace_back("3##left_3", [this]() {

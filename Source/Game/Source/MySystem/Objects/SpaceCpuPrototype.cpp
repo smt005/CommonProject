@@ -1,13 +1,16 @@
 #include "SpaceCpuPrototype.h"
 #include <thread>
 
-#define NEW_FUN_TAG 0;
+#define NEW_FUN_TAG 1;
 
 namespace  {
-	void GetForce(int count, float* masses, float* positionsX, float* positionsY, float* forcesX, float* forcesY) {
+	void GetForce(int count, int offset, float* masses, float* positionsX, float* positionsY, float* forcesX, float* forcesY, int threadId) {
 		double _constGravity = 0.01f;
-		int statIndex = 0;
-		int endIndex = count;
+		int statIndex = threadId * offset;
+		int endIndex = statIndex + offset;
+		if (endIndex > count) {
+			endIndex = count;
+		}
 		int sizeData = count;
 
 		for (int index = statIndex; index < endIndex; ++index) {
@@ -61,7 +64,33 @@ void SpaceCpuPrototype::Update(double dt) {
 		forcesY[index] = 0.f;
 	}
 
-	GetForce(count, masses, positionsX, positionsY, forcesX, forcesY);
+	//..
+	unsigned int counThread = static_cast<double>(thread::hardware_concurrency());
+	unsigned int sizeB = (float)_bodies.size();
+
+	if (threadEnable && ((sizeB * 2) > counThread)) {
+		int offst = sizeB / counThread;
+		if ((sizeB % counThread) > 0) {
+			++offst;
+		}
+
+		vector<std::thread> threads;
+		threads.reserve(counThread);
+
+		for (unsigned int threadId = 0; threadId < counThread; ++threadId) {
+			threads.emplace_back([&]() {
+				GetForce(count, offst, masses, positionsX, positionsY, forcesX, forcesY, threadId);
+			});
+		}
+
+		for (thread& th : threads) {
+			th.join();
+		}
+	}
+	else
+	{
+		GetForce(count, count, masses, positionsX, positionsY, forcesX, forcesY, 0);
+	}
 
 #else
 
@@ -81,9 +110,7 @@ void SpaceCpuPrototype::Update(double dt) {
 			for (size_t otherIndex = 0; otherIndex < sizeData; ++otherIndex) {
 				Body::Data& otherBody = _datas[otherIndex];
 
-				float otherRadius = _bodies[otherIndex]->_scale;
-
-				if (&data == &otherBody) {
+				if (index == otherIndex) {
 					continue;
 				}
 
@@ -98,7 +125,7 @@ void SpaceCpuPrototype::Update(double dt) {
 		}
 	};
 
-	/*unsigned int counThread = static_cast<double>(thread::hardware_concurrency());
+	unsigned int counThread = static_cast<double>(thread::hardware_concurrency());
 	int lastIndex = _bodies.size() - 1;
 
 	if (threadEnable && ((lastIndex * 2) > counThread)) {
@@ -129,7 +156,8 @@ void SpaceCpuPrototype::Update(double dt) {
 		for (thread& th : threads) {
 			th.join();
 		}
-	} else*/
+	}
+	else
 	{
 		getForce(0, _bodies.size() - 1);
 	}

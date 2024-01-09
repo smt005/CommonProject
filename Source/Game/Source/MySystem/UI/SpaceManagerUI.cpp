@@ -158,6 +158,11 @@ void SpaceManagerUI::Draw() {
                     _mySystem->_space->_selectBody = _mySystem->_space->_bodies.front();
                 }
                 int count = 1000;
+                std::string countStr = _mySystem->_space->_params["COUNT"];
+                if (!countStr.empty()) {
+                    count = std::stoi(countStr);
+                }
+
                 //int count = 10000; // 100 x 100
                 //int count = 100000; // 316 x 316
                 _mySystem->_space->_bodies.reserve(count);

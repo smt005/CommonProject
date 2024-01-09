@@ -28,5 +28,6 @@ private:
 	}
 
 private:
+public:
 	bool processGPU = false;
 };

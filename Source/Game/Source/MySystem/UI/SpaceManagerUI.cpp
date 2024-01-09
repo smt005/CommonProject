@@ -10,6 +10,7 @@
 #include "Math/Vector.h"
 #include "../Objects/Body.h"
 #include "../Objects/Space.h"
+#include "../Objects/SpaceGpuPrototype.h"
 #include "Math/Vector.h"
 
 SpaceManagerUI::SpaceManagerUI() : UI::Window(this) {
@@ -233,6 +234,17 @@ void SpaceManagerUI::Draw() {
 
                 _mySystem->_space->DataAssociation();
             }
+        }
+    }
+
+    SpaceGpuPrototype* spaceGPU = dynamic_cast<SpaceGpuPrototype*>(_mySystem->_space.get());
+    if (spaceGPU) {
+        ImGui::Dummy(ImVec2(0.f, 0.f));
+        
+        std::string btnText = "PROCESS: ";
+        btnText += spaceGPU->processGPU ? "GPU" : "CPU";
+        if (ImGui::Button(btnText.c_str(), { 128.f, 32.f })) {
+            spaceGPU->processGPU = !spaceGPU->processGPU;
         }
     }
 }

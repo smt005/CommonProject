@@ -34,29 +34,13 @@ void SpaceGpuPrototype::Update(double dt) {
 	}
 
 	// ...
-	float longÂistanceFromStar = 150000.f;
-	size_t needDataAssociation = std::numeric_limits<double>::min();
-	std::vector<size_t> indRem;
-
-	size_t size = _bodies.size();
-
-	Body::Ptr star = GetHeaviestBody();
-	Math::Vector3d posStar = star ? star->GetPos() : Math::Vector3d();
-
-	for (size_t index = 0; index < size; ++index) {
+	for (size_t index = 0; index < sizeData; ++index) {
 		Body::Ptr& body = _bodies[index];
 		if (!body) {
 			continue;
 		}
 
-		static double minForce = std::numeric_limits<double>::min();
-		if ((body->_dataPtr->force.length() < minForce) && (star && (posStar - body->GetPos()).length() > longÂistanceFromStar)) {
-			indRem.emplace_back(index);
-			++needDataAssociation;
-			continue;
-		}
-
-		Math::Vector3d acceleration = body->_dataPtr->force / body->_mass;
+		Math::Vector3d acceleration(forcesX[index] / body->_mass, forcesY[index] / body->_mass, 0.0);
 		Math::Vector3d newVelocity = acceleration * static_cast<double>(dt);
 
 		body->_velocity += newVelocity;
@@ -64,6 +48,7 @@ void SpaceGpuPrototype::Update(double dt) {
 		body->_dataPtr->pos += body->_velocity * static_cast<double>(dt);
 		body->SetPos(body->_dataPtr->pos);
 
+		// Info
 		body->force = body->_dataPtr->force.length();
 	}
 

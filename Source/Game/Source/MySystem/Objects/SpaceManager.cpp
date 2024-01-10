@@ -15,8 +15,11 @@ void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3d& pos, bool with
 		return;
 	}
 
-	std::string model = "BrownStone";
-	float mass = 100.f;
+	static std::vector<std::string> models = { "PointWhite", "PointTurquoise", "PointViolet", "PointYellow" };
+	int modelIndex = help::random_i(0, (models.size() - 1));
+	std::string model = models[modelIndex];
+
+	float mass = help::random(10.f, 1000.f);
 
 	Body& mainBody = *space->_selectBody;
 
@@ -33,9 +36,9 @@ void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3d& pos, bool with
 	velocity += mainBody._velocity;
 
 	if (withAssotiation) {
-		space->Add("BrownStone", pos, velocity, mass, "");
+		space->Add(model, pos, velocity, mass, "");
 	} else {
-		space->AddWithoutAssociation("BrownStone", pos, velocity, mass, "");
+		space->AddWithoutAssociation(model, pos, velocity, mass, "");
 	}
 }
 

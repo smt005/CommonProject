@@ -1,13 +1,33 @@
 {
    "OrangeStar": {
     "shape": "Models/GeoSphere/GeoSphere_1_5_planar.obj",
-	"texture": "Textures/planet/brown_stone.jpg",
+	"texture": "Textures/star/orange_star.jpg",
     "scale": 10
   },
   "BrownStone": {
 	"shape": "Models/GeoSphere/GeoSphere_1_4_planar.obj",
     "texture": "Textures/planet/brown_stone.jpg",
     "scale": 10
+  },
+   "PointWhite": {
+	"shape": "Models/Interface/Plane_1_1_z.obj",
+	"texture": "Textures/star/Light128.png",
+    "scale": 100
+  },
+    "PointTurquoise": {
+	"shape": "Models/Interface/Plane_1_1_z.obj",
+	"texture": "Textures/star/LightTurquoise128.png",
+    "scale": 100
+  },
+    "PointViolet": {
+	"shape": "Models/Interface/Plane_1_1_z.obj",
+	"texture": "Textures/star/LightViolet128.png",
+    "scale": 100
+  },
+    "PointYellow": {
+	"shape": "Models/Interface/Plane_1_1_z.obj",
+	"texture": "Textures/star/LightYellow128.png",
+    "scale": 100
   },
   "Marker": {
     "shape": "Models/Interface/Plane_1_1_z.obj",

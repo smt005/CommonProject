@@ -18,6 +18,7 @@ public:
 		if (_params["PROCESS"] == "GPU") {
 			processGPU = true;
 		}
+		tag = atoi(_params["TAG"].c_str());
 	}
 
 	void Update(double dt) override;
@@ -30,4 +31,5 @@ private:
 private:
 public:
 	bool processGPU = false;
+	int tag = 0;
 };

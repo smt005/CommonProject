@@ -119,6 +119,7 @@ void MySystem::draw() {
 	Draw2::ClearColor();
 
 	shaderPtr->Use();
+	Draw2::DepthTest(false);
 
 	// SkyBox	
 	if (MainUI::GetViewType() == 0 && _space->_skyboxObject) {
@@ -137,6 +138,7 @@ void MySystem::draw() {
 		Draw2::Draw(*bodyPtr->_model);
 	}
 
+	Draw2::DepthTest(true);
 	//MainUI::DrawOnSpace();
 }
 
@@ -161,7 +163,7 @@ void MySystem::draw2() {
 	// Draw
 	DRAW::prepare();
 	DRAW::DrawMap(*_space);
-	DRAW::clearDepth();
+	
 	MainUI::DrawOnSpace();
 }
 

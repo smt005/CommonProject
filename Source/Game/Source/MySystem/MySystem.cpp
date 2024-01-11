@@ -22,7 +22,7 @@
 #include <Draw2/Draw2.h>
 #include <Draw2/Shader2.h>
 
-#include "../CUDA/Wrapper.h"
+#include <../../CUDA/Wrapper.h>
 
 #define DRAW DrawLight
 std::string MySystem::_resourcesDir;

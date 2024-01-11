@@ -12,7 +12,7 @@
 #include "../Objects/Space.h"
 #include "../Objects/SpaceGpuPrototype.h"
 #include "Math/Vector.h"
-#include "../CUDA/WrapperPrototype.h"
+#include "../../CUDA/WrapperPrototype.h"
 
 SpaceManagerUI::SpaceManagerUI() : UI::Window(this) {
     SetId("SpaceManager");

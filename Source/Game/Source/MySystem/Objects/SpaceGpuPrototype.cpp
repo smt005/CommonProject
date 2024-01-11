@@ -1,6 +1,6 @@
 #include "SpaceGpuPrototype.h"
 #include <thread>
-#include <../CUDA/WrapperPrototype.h>
+#include <../../CUDA/WrapperPrototype.h>
 
 void SpaceGpuPrototype::Update(double dt) {
 	size_t sizeData = _datas.size();

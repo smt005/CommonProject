@@ -10,9 +10,12 @@
 #include "Math/Vector.h"
 #include "../Objects/Body.h"
 #include "../Objects/Space.h"
+
 #include "../Objects/SpaceGpuPrototype.h"
-#include "Math/Vector.h"
 #include "../../CUDA/WrapperPrototype.h"
+
+#include "../Objects/SpaceGpuPrototypeV3.h"
+#include "../../CUDA/WrapperPrototypeV3.h"
 
 SpaceManagerUI::SpaceManagerUI() : UI::Window(this) {
     SetId("SpaceManager");
@@ -163,7 +166,7 @@ void SpaceManagerUI::Draw() {
 
     ImGui::Separator();
 
-    SpaceGpuPrototype* spaceGPU = dynamic_cast<SpaceGpuPrototype*>(_mySystem->_space.get());
+    SpaceGpuPrototypeV3* spaceGPU = dynamic_cast<SpaceGpuPrototypeV3*>(_mySystem->_space.get());
     if (spaceGPU) {
         ImGui::Dummy(ImVec2(0.f, 0.f));
         
@@ -181,7 +184,7 @@ void SpaceManagerUI::Draw() {
             static int tagInt = 0;
             if (ImGui::InputInt("tag: ", &tagInt)) {
                 spaceGPU->tag = tagInt;
-                    CUDA_Prototype::tag = spaceGPU->tag;
+                    CUDA_PrototypeV3::tag = spaceGPU->tag;
             }
         }
     }

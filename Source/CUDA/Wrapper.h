@@ -4,6 +4,19 @@
 
 class CUDA final {
 public:
+	struct Vector3 {
+		float x, y, z;
+	};
+
+	struct Body {
+		Body(const Vector3& _pos, float _mass);
+		Vector3 pos;
+		float mass;
+		Vector3 force;
+		Vector3 vel;
+	};
+
+public:
 	static void GetProperty();
 	static void PrintInfo();
 

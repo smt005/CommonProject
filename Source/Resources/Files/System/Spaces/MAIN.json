@@ -1,6 +1,7 @@
 [
   {
-    "class": "SpaceGpuPrototype",
+    "class": "SpaceGpuPrototypeV3",
+	"_class": "SpaceGpuPrototype",
 	"_class": "SpaceCpuPrototype",
 	"_class": "BaseSpace",
     "const_gravity": 0.01,
@@ -9,7 +10,7 @@
       "PROCESS": "CPU",
       "_PROCESS": "GPU",
 	  "tag": "0",
-	  "COUNT": "1000"
+	  "COUNT": "10000"
     },
     "objects": [
       {

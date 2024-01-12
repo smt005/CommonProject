@@ -378,21 +378,44 @@ __global__ void TestIndexGpu(int* count, int* indexes, int* result) {
 	}
 }
 
-void TestIndexForCpu(int* count, int* indexes, int* result) {
-	for (int index = 0; index < *count; ++index) {
+// FOR
+void TestIndexForCpu(int* count, int* offset, int* indexes, int* result) {
+	int indexT = _threadIdx.x + _blockIdx.x * _blockDim.x;
+	printf("\nTestIndexForCpu APPEND index: %i (%i, %i, %i)\n", indexT, _threadIdx.x, _blockIdx.x, _blockDim.x);
+
+	int startIndex = indexT * *offset;
+	int sizeIndex = startIndex + *offset;
+	if (sizeIndex >= *count) {
+		sizeIndex = *count;
+		printf("TestIndexForCpu CORRECT [%i, %i]\n", sizeIndex, *count);
+	}
+
+	for (int index = startIndex; index < sizeIndex; ++index) {
 		indexes[index] = index;
 		*result += index;
 
-		printf("TestIndexCpu APPEND index: %i (%i, %i, %i)\n", index, _threadIdx.x, _blockIdx.x, _blockDim.x);
+		printf("TestIndexForCpu [%i] APPEND index: %i\n", indexT, index);
 	}
 }
 
-__global__ void TestIndexForGpu(int* count, int* indexes, int* result) {
-	for (int index = 0; index < *count; ++index) {
+__global__ void TestIndexForGpu(int* count, int* offset, int* indexes, int* result) {
+	int indexT = threadIdx.x + blockIdx.x * blockDim.x;
+	printf("\nTestIndexForGpu APPEND index: %i (%i, %i, %i)\n", indexT, threadIdx.x, blockIdx.x, blockDim.x);
+
+	int startIndex = indexT * *offset;
+	int sizeIndex = startIndex + *offset;
+	if (sizeIndex >= *count) {
+		sizeIndex = *count;
+		printf("TestIndexForGpu CORRECT [%i, %i]\n", sizeIndex, *count);
+	}
+
+	for (int index = startIndex; index < sizeIndex; ++index) {
 		indexes[index] = index;
+
+		//__syncthreads();
 		*result += index;
 
-		printf("TestIndexGpu APPEND index: %i (%i, %i, %i)\n", index, threadIdx.x, blockIdx.x, blockDim.x);
+		printf("TestIndexForGpu [%i] APPEND index: %i\n", indexT, index);
 	}
 }
 
@@ -401,10 +424,16 @@ __global__ void TestIndexForGpu(int* count, int* indexes, int* result) {
 void CUDA_Test::RunTestIndex() {
 	printf("\nTest::RunTestIndex BEGIN.\n");
 
-	int count = 10;
-	int reserveCount = count * 2;
-	constexpr int countBlock = 1;
-	constexpr int countThread = 1;
+	constexpr int count = 33;
+	int reserveCount = count;
+	constexpr int maxCountBlock = 2;
+	constexpr int maxCountThread = 2;
+
+	constexpr int countThread = maxCountThread;
+	constexpr int countBlock = ((count + countThread - 1) / countThread) > maxCountBlock ? maxCountBlock : ((count + countThread - 1) / countThread);
+	constexpr int offset = (count + (countBlock * countThread) - 1) / (countBlock * countThread);
+
+	bool _for_ = true;
 
 	// CPU
 	int resultCpu = 0;
@@ -414,8 +443,21 @@ void CUDA_Test::RunTestIndex() {
 
 		indexesCpu.resize(reserveCount, std::numeric_limits<int>::max());
 
-		//CUDA_TEST::UmulateCuda<countBlock, countThread>([devCount = &reserveCount, devResult = &resultCpu, devIndexes = indexesCpu.data()]() { CUDA_TEST::TestIndexCpu(devCount, devIndexes, devResult); });
-		CUDA_TEST::UmulateCuda<countBlock, countThread>([devCount = &reserveCount, devResult = &resultCpu, devIndexes = indexesCpu.data()]() { CUDA_TEST::TestIndexForCpu(devCount, devIndexes, devResult); });
+		int* devCount = new int(count);
+		int* devOffset = new int(offset);
+
+		if (_for_) {
+			CUDA_TEST::UmulateCuda<countBlock, countThread>([devCount, devOffset, devResult = &resultCpu, devIndexes = indexesCpu.data()]() {
+				CUDA_TEST::TestIndexForCpu(devCount, devOffset, devIndexes, devResult);
+			});
+		} else {
+			CUDA_TEST::UmulateCuda<countBlock, countThread>([devCount, devResult = &resultCpu, devIndexes = indexesCpu.data()]() {
+				CUDA_TEST::TestIndexCpu(devCount, devIndexes, devResult);
+			});
+		}
+
+		delete devCount;
+		delete devOffset;
 	}
 
 	// GPU
@@ -427,24 +469,31 @@ void CUDA_Test::RunTestIndex() {
 		indexesGpu.resize(reserveCount, std::numeric_limits<int>::max());
 
 		int* devCount;
+		int* devOffset;
 		int* devResult;
 		int* devIndexes;
 
 		cudaMalloc(&devCount, sizeof(int));
+		cudaMalloc(&devOffset, sizeof(int));
 		cudaMalloc(&devResult, sizeof(int));
 		cudaMalloc(&devIndexes, reserveCount * sizeof(int));
 
-		cudaMemcpy(devCount, &reserveCount, sizeof(int), cudaMemcpyHostToDevice);
+		cudaMemcpy(devCount, &count, sizeof(int), cudaMemcpyHostToDevice);
+		cudaMemcpy(devOffset, &offset, sizeof(int), cudaMemcpyHostToDevice);
 		cudaMemcpy(devResult, &resultGpu, sizeof(int), cudaMemcpyHostToDevice);
 		cudaMemcpy(devIndexes, indexesGpu.data(), reserveCount * sizeof(int), cudaMemcpyHostToDevice);
 
-		//CUDA_TEST::TestIndexGpu<<<countBlock, countThread >>>(devCount, devIndexes, devResult);
-		CUDA_TEST::TestIndexForGpu << <countBlock, countThread >> > (devCount, devIndexes, devResult);
+		if (_for_) {
+			CUDA_TEST::TestIndexForGpu << <countBlock, countThread >> > (devCount, devOffset, devIndexes, devResult);
+		} else {
+			CUDA_TEST::TestIndexGpu << <countBlock, countThread >> > (devCount, devIndexes, devResult);
+		}
 
 		cudaMemcpy(&resultGpu, devResult, sizeof(int), cudaMemcpyDeviceToHost);
 		cudaMemcpy(indexesGpu.data(), devIndexes, reserveCount * sizeof(int), cudaMemcpyDeviceToHost);
 
 		cudaFree(devCount);
+		cudaFree(devOffset);
 		cudaFree(devResult);
 		cudaFree(devIndexes);
 	}

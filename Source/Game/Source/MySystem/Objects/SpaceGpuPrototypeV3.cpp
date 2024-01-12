@@ -1,5 +1,6 @@
 #include "SpaceGpuPrototypeV3.h"
 #include <thread>
+#include <../../CUDA/Wrapper.h>
 #include <../../CUDA/WrapperPrototypeV3.h>
 
 void SpaceGpuPrototypeV3::Update(double dt) {
@@ -8,29 +9,22 @@ void SpaceGpuPrototypeV3::Update(double dt) {
 		return;
 	}
 
-	int count = _datas.size();
-	float* masses = new float[count];
-	float* positionsX = new float[count];
-	float* positionsY = new float[count];
-	float* forcesX = new float[count];
-	float* forcesY = new float[count];
+	int count = _bodies.size();
+	std::vector<CUDA::Body> bodies;
+	bodies.reserve(count);
 
-	for (size_t index = 0; index < count; ++index) {
-		Body::Data& data = _datas[index];
-
-		masses[index] = data.mass;
-
-		positionsX[index] = data.pos.x;
-		positionsY[index] = data.pos.y;
-
-		forcesX[index] = 0.f;
-		forcesY[index] = 0.f;
+	for (Body::Ptr& bodyPtr : _bodies) {
+		auto pos = bodyPtr->GetPos();
+		auto& vel = bodyPtr->_velocity;
+		bodies.emplace_back(pos.x, pos.y, pos.z, bodyPtr->_mass, (float)vel.x, (float)vel.y, (float)vel.z);
 	}
 
+	std::vector<CUDA::Vector3> forces;
+
 	if (processGPU) {
-		CUDA_PrototypeV3::GetForcesGPUStatic(count, masses, positionsX, positionsY, forcesX, forcesY);
+		CUDA_PrototypeV3::GetForcesGPUStatic(bodies, forces);
 	} else {		
-		CUDA_PrototypeV3::GetForcesCPUStatic(count, masses, positionsX, positionsY, forcesX, forcesY);
+		CUDA_PrototypeV3::GetForcesCPUStatic(bodies, forces);
 	}
 
 	// ...
@@ -40,7 +34,7 @@ void SpaceGpuPrototypeV3::Update(double dt) {
 			continue;
 		}
 
-		Math::Vector3d acceleration(forcesX[index] / body->_mass, forcesY[index] / body->_mass, 0.0);
+		Math::Vector3d acceleration(forces[index].x / body->_mass, forces[index].y / body->_mass, forces[index].z / body->_mass);
 		Math::Vector3d newVelocity = acceleration * static_cast<double>(dt);
 
 		body->_velocity += newVelocity;
@@ -51,12 +45,6 @@ void SpaceGpuPrototypeV3::Update(double dt) {
 		// Info
 		body->force = body->_dataPtr->force.length();
 	}
-
-	delete[] masses;
-	delete[] positionsX;
-	delete[] positionsY;
-	delete[] forcesX;
-	delete[] forcesY;
 
 	//...
 	if (dt > 0) {

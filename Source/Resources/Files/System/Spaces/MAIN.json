@@ -10,7 +10,7 @@
       "PROCESS": "CPU",
       "_PROCESS": "GPU",
 	  "tag": "0",
-	  "COUNT": "10000"
+	  "COUNT": "1000"
     },
     "objects": [
       {

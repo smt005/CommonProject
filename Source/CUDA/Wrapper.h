@@ -5,15 +5,15 @@
 class CUDA final {
 public:
 	struct Vector3 {
+		Vector3();
+		Vector3(float _x, float _y, float _z);
 		float x, y, z;
 	};
 
 	struct Body {
-		Body(const Vector3& _pos, float _mass);
+		Body(float _posX, float _posY, float _posZ, float _mass, float _velX, float _velY, float _velZ);
 		Vector3 pos;
 		float mass;
-		Vector3 force;
-		Vector3 vel;
 	};
 
 public:

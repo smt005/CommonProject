@@ -12,6 +12,23 @@ int         CUDA::maxGridSize[3];
 int         CUDA::maxThreadsPerMultiProcessor = 0;
 int         CUDA::maxBlocksPerMultiProcessor = 0;
 
+CUDA::Vector3::Vector3()
+    : x(0.0)
+    , y(0.0)
+    , z(0.0)
+{}
+
+CUDA::Vector3::Vector3(float _x, float _y, float _z)
+    : x(_x)
+    , y(_y)
+    , z(_z)
+{}
+
+CUDA::Body::Body(float _posX, float _posY, float _posZ, float _mass, float _velX, float _velY, float _velZ)
+    : pos(_posX, _posY, _posZ)
+    , mass(_mass)
+{}
+
 #if ENABLE_CUDA
 
 #include <cuda_runtime.h>

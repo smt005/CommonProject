@@ -16,9 +16,11 @@ void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3d& pos, bool with
 		return;
 	}
 
-	static std::vector<std::string> models = { "PointWhite", "PointTurquoise", "PointViolet", "PointYellow" };
-	int modelIndex = help::random_i(0, (models.size() - 1));
-	std::string model = models[modelIndex];
+	//static std::vector<std::string> models = { "PointWhite", "PointTurquoise", "PointViolet", "PointYellow" };
+	//int modelIndex = help::random_i(0, (models.size() - 1));
+	//std::string model = models[modelIndex];
+	
+	std::string model = "BrownStone";
 
 	float mass = help::random(10.f, 1000.f);
 

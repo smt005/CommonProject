@@ -127,19 +127,23 @@ void SpaceManagerUI::Draw() {
         }
     }
 
-    /*ImGui::Dummy(ImVec2(0.f, 0.f));
+    ImGui::Dummy(ImVec2(0.f, 0.f));
     if (ImGui::Button("Generate sphere", { 128.f, 32.f })) {
         if (_mySystem && _mySystem->_space) {
             if (_mySystem && _mySystem->_space) {
                 if (_mySystem && _mySystem->_space->_selectBody == nullptr && _mySystem && _mySystem->_space->_bodies.size() == 1) {
                     _mySystem->_space->_selectBody = _mySystem->_space->_bodies.front();
                 }
-                int count = 333;
-                //int count = 10000; // 100 x 100
-                //int count = 100000; // 316 x 316
+                int count = 1000;
+                std::string countStr = _mySystem->_space->_params["COUNT"];
+                if (!countStr.empty()) {
+                    count = std::stoi(countStr);
+                }
+
                 _mySystem->_space->_bodies.reserve(count);
 
-                double spaceRange = 10000;
+                double minSpaceRange = 10000;
+                double spaceRange = 50000;
                 Math::Vector3d pos;
 
                 int i = 0;
@@ -148,13 +152,16 @@ void SpaceManagerUI::Draw() {
                     pos.y = help::random(-spaceRange, spaceRange);
                     pos.z = help::random(-spaceRange, spaceRange);
 
-                    if (pos.length() > spaceRange) {
+                    double radius = pos.length();
+
+                    if (radius > spaceRange) {
                         continue;
                     }
 
+                    if (radius < minSpaceRange) {
+                        continue;
+                    }
                     ++i;
-
-                    float mass = help::random(50, 150);
 
                     SpaceManager::AddObjectOnOrbit(_mySystem->_space.get(), pos, false);
                 }
@@ -162,29 +169,56 @@ void SpaceManagerUI::Draw() {
                 _mySystem->_space->DataAssociation();
             }
         }
-    }*/
+    }
 
     ImGui::Separator();
 
-    SpaceGpuPrototypeV3* spaceGPU = dynamic_cast<SpaceGpuPrototypeV3*>(_mySystem->_space.get());
-    if (spaceGPU) {
-        ImGui::Dummy(ImVec2(0.f, 0.f));
+    {
+        SpaceGpuPrototype* spaceGPU = dynamic_cast<SpaceGpuPrototype*>(_mySystem->_space.get());
+        if (spaceGPU) {
+            ImGui::Dummy(ImVec2(0.f, 0.f));
         
-        {
-            std::string btnText = "PROCESS: ";
-            btnText += spaceGPU->processGPU ? "GPU" : "CPU";
-            if (ImGui::Button(btnText.c_str(), { 128.f, 32.f })) {
-                spaceGPU->processGPU = !spaceGPU->processGPU;
+            {
+                std::string btnText = "PROCESS: ";
+                btnText += spaceGPU->processGPU ? "GPU" : "CPU";
+                if (ImGui::Button(btnText.c_str(), { 128.f, 32.f })) {
+                    spaceGPU->processGPU = !spaceGPU->processGPU;
+                }
+            }
+
+            if (spaceGPU->processGPU) {
+                ImGui::Dummy(ImVec2(0.f, 0.f));
+
+                static int tagInt = 0;
+                if (ImGui::InputInt("tag: ", &tagInt)) {
+                    spaceGPU->tag = tagInt;
+                        CUDA_PrototypeV3::tag = spaceGPU->tag;
+                }
             }
         }
+    }
 
-        if (spaceGPU->processGPU) {
+    {
+        SpaceGpuPrototypeV3* spaceGPU = dynamic_cast<SpaceGpuPrototypeV3*>(_mySystem->_space.get());
+        if (spaceGPU) {
             ImGui::Dummy(ImVec2(0.f, 0.f));
 
-            static int tagInt = 0;
-            if (ImGui::InputInt("tag: ", &tagInt)) {
-                spaceGPU->tag = tagInt;
+            {
+                std::string btnText = "PROCESS: ";
+                btnText += spaceGPU->processGPU ? "GPU" : "CPU";
+                if (ImGui::Button(btnText.c_str(), { 128.f, 32.f })) {
+                    spaceGPU->processGPU = !spaceGPU->processGPU;
+                }
+            }
+
+            if (spaceGPU->processGPU) {
+                ImGui::Dummy(ImVec2(0.f, 0.f));
+
+                static int tagInt = 0;
+                if (ImGui::InputInt("tag: ", &tagInt)) {
+                    spaceGPU->tag = tagInt;
                     CUDA_PrototypeV3::tag = spaceGPU->tag;
+                }
             }
         }
     }

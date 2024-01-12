@@ -7,12 +7,44 @@
 
 #include <vector>
 #include <string>
+#include <functional>
 #include <thread>
 #include <stdio.h>
 
 #include "Wrapper.h"
 
 namespace {
+	// threadIdx.x
+	struct ThreadIdx {
+		unsigned int x = 0;
+	} threadIdx;
+
+	// blockIdx.x
+	struct BlockIdx {
+		unsigned int x = 0;
+	} blockIdx;
+
+	// blockDim.x
+	struct BlockDim {
+		unsigned int x = 0;
+	} blockDim;
+
+	void CalcForcesCpu(int* count, CUDA::Vector3* positions, float* masses, CUDA::Vector3* forces);
+	void UpdatePositionsCpu(int* count, CUDA::Vector3* positions, CUDA::Vector3* velocities, float* masses, CUDA::Vector3* forces, float* dt);
+
+	template<unsigned int countBlock, unsigned int countThread>
+	void UmulateCuda(std::function<void(void)> fun) {
+		for (unsigned int iBlock = 0; iBlock < countBlock; ++iBlock) {
+			threadIdx.x = iBlock;
+
+			for (unsigned int iThread = 0; iThread < countThread; ++iThread) {
+				threadIdx.x = iThread;
+
+				fun();
+			}
+		}			
+	}
+
 	void CalcForcesCpu(int* count, CUDA::Vector3* positions, float* masses, CUDA::Vector3* forces) {
 		float constGravity = 0.01;
 		int statIndex = 0;
@@ -117,7 +149,6 @@ namespace {
 		float dist = 0;
 		float force = 0;
 
-		// INFO
 		// INFO
 		printf("CalcForcesGpu statIndex: %i countIndex: %i\n", statIndex, countIndex);
 		for (int index = statIndex; index < countIndex; ++index) {
@@ -233,8 +264,11 @@ void CUDA_Test::Run() {
 		std::vector<CUDA::Vector3> forces;
 		forces.resize(count, CUDA::Vector3());
 
-		CalcForcesCpu(&count, cpuPositions.data(), masses.data(), forces.data());
-		UpdatePositionsCpu(&count, cpuPositions.data(), cpuVelocities.data(), masses.data(), forces.data(), &dt);
+		//CalcForcesCpu(&count, cpuPositions.data(), masses.data(), forces.data());
+		//UpdatePositionsCpu(&count, cpuPositions.data(), cpuVelocities.data(), masses.data(), forces.data(), &dt);
+		
+		UmulateCuda<1, 1>([&count, &cpuPositions, &masses, &forces]() { CalcForcesCpu(&count, cpuPositions.data(), masses.data(), forces.data()); });
+		UmulateCuda<1, 1>([&count, &cpuPositions, &cpuVelocities, &masses, &forces, &dt]() { UpdatePositionsCpu(&count, cpuPositions.data(), cpuVelocities.data(), masses.data(), forces.data(), &dt); });
 
 		printf("Test::Run CPU end\n\n");
 	}

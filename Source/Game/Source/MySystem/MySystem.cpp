@@ -39,6 +39,9 @@ MySystem::~MySystem() {
 }
 
 void MySystem::init() {
+	CUDA::GetProperty();
+	//CUDA::PrintInfo();
+
 	//CUDA_Test::Run();
 	CUDA_Test::RunTestIndex();
 
@@ -82,9 +85,6 @@ void MySystem::init() {
 	MainUI::Open(this);
 
 	Quest::Load();
-
-	CUDA::GetProperty();
-	CUDA::PrintInfo();
 }
 
 void MySystem::close() {

@@ -378,15 +378,33 @@ __global__ void TestIndexGpu(int* count, int* indexes, int* result) {
 	}
 }
 
+void TestIndexForCpu(int* count, int* indexes, int* result) {
+	for (int index = 0; index < *count; ++index) {
+		indexes[index] = index;
+		*result += index;
+
+		printf("TestIndexCpu APPEND index: %i (%i, %i, %i)\n", index, _threadIdx.x, _blockIdx.x, _blockDim.x);
+	}
+}
+
+__global__ void TestIndexForGpu(int* count, int* indexes, int* result) {
+	for (int index = 0; index < *count; ++index) {
+		indexes[index] = index;
+		*result += index;
+
+		printf("TestIndexGpu APPEND index: %i (%i, %i, %i)\n", index, threadIdx.x, blockIdx.x, blockDim.x);
+	}
+}
+
 }
 
 void CUDA_Test::RunTestIndex() {
 	printf("\nTest::RunTestIndex BEGIN.\n");
 
 	int count = 10;
-	int reserveCount = 20;
-	constexpr int countBlock = 5;
-	constexpr int countThread = 6;
+	int reserveCount = count * 2;
+	constexpr int countBlock = 1;
+	constexpr int countThread = 1;
 
 	// CPU
 	int resultCpu = 0;
@@ -396,7 +414,8 @@ void CUDA_Test::RunTestIndex() {
 
 		indexesCpu.resize(reserveCount, std::numeric_limits<int>::max());
 
-		CUDA_TEST::UmulateCuda<countBlock, countThread>([devCount = &reserveCount, devResult = &resultCpu, devIndexes = indexesCpu.data()]() { CUDA_TEST::TestIndexCpu(devCount, devIndexes, devResult); });
+		//CUDA_TEST::UmulateCuda<countBlock, countThread>([devCount = &reserveCount, devResult = &resultCpu, devIndexes = indexesCpu.data()]() { CUDA_TEST::TestIndexCpu(devCount, devIndexes, devResult); });
+		CUDA_TEST::UmulateCuda<countBlock, countThread>([devCount = &reserveCount, devResult = &resultCpu, devIndexes = indexesCpu.data()]() { CUDA_TEST::TestIndexForCpu(devCount, devIndexes, devResult); });
 	}
 
 	// GPU
@@ -419,7 +438,8 @@ void CUDA_Test::RunTestIndex() {
 		cudaMemcpy(devResult, &resultGpu, sizeof(int), cudaMemcpyHostToDevice);
 		cudaMemcpy(devIndexes, indexesGpu.data(), reserveCount * sizeof(int), cudaMemcpyHostToDevice);
 
-		CUDA_TEST::TestIndexGpu<<<countBlock, countThread >>>(devCount, devIndexes, devResult);
+		//CUDA_TEST::TestIndexGpu<<<countBlock, countThread >>>(devCount, devIndexes, devResult);
+		CUDA_TEST::TestIndexForGpu << <countBlock, countThread >> > (devCount, devIndexes, devResult);
 
 		cudaMemcpy(&resultGpu, devResult, sizeof(int), cudaMemcpyDeviceToHost);
 		cudaMemcpy(indexesGpu.data(), devIndexes, reserveCount * sizeof(int), cudaMemcpyDeviceToHost);

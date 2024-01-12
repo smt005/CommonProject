@@ -39,7 +39,8 @@ MySystem::~MySystem() {
 }
 
 void MySystem::init() {
-	CUDA_Test::Run();
+	//CUDA_Test::Run();
+	CUDA_Test::RunTestIndex();
 
 	//...
 	Draw2::SetClearColor(0.333f, 0.666f, 0.999f, 1.0f);

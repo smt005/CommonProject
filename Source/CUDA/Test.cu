@@ -10,35 +10,35 @@
 #include <functional>
 #include <thread>
 #include <stdio.h>
+#include <algorithm>
 
 #include "Wrapper.h"
 
-namespace {
+namespace CUDA_TEST {
 	// threadIdx.x
 	struct ThreadIdx {
 		unsigned int x = 0;
-	} threadIdx;
+	} _threadIdx;
 
 	// blockIdx.x
 	struct BlockIdx {
 		unsigned int x = 0;
-	} blockIdx;
+	} _blockIdx;
 
 	// blockDim.x
 	struct BlockDim {
 		unsigned int x = 0;
-	} blockDim;
-
-	void CalcForcesCpu(int* count, CUDA::Vector3* positions, float* masses, CUDA::Vector3* forces);
-	void UpdatePositionsCpu(int* count, CUDA::Vector3* positions, CUDA::Vector3* velocities, float* masses, CUDA::Vector3* forces, float* dt);
+	} _blockDim;
 
 	template<unsigned int countBlock, unsigned int countThread>
 	void UmulateCuda(std::function<void(void)> fun) {
+		_blockDim.x = countThread;
+
 		for (unsigned int iBlock = 0; iBlock < countBlock; ++iBlock) {
-			threadIdx.x = iBlock;
+			_blockIdx.x = iBlock;
 
 			for (unsigned int iThread = 0; iThread < countThread; ++iThread) {
-				threadIdx.x = iThread;
+				_threadIdx.x = iThread;
 
 				fun();
 			}
@@ -232,6 +232,10 @@ namespace {
 	}
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// CUDA_Test::Run //////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void CUDA_Test::Run() {
 	int count = 10;
 
@@ -267,8 +271,8 @@ void CUDA_Test::Run() {
 		//CalcForcesCpu(&count, cpuPositions.data(), masses.data(), forces.data());
 		//UpdatePositionsCpu(&count, cpuPositions.data(), cpuVelocities.data(), masses.data(), forces.data(), &dt);
 		
-		UmulateCuda<1, 1>([&count, &cpuPositions, &masses, &forces]() { CalcForcesCpu(&count, cpuPositions.data(), masses.data(), forces.data()); });
-		UmulateCuda<1, 1>([&count, &cpuPositions, &cpuVelocities, &masses, &forces, &dt]() { UpdatePositionsCpu(&count, cpuPositions.data(), cpuVelocities.data(), masses.data(), forces.data(), &dt); });
+		CUDA_TEST::UmulateCuda<1, 1>([&count, &cpuPositions, &masses, &forces]() { CUDA_TEST::CalcForcesCpu(&count, cpuPositions.data(), masses.data(), forces.data()); });
+		CUDA_TEST::UmulateCuda<1, 1>([&count, &cpuPositions, &cpuVelocities, &masses, &forces, &dt]() { CUDA_TEST::UpdatePositionsCpu(&count, cpuPositions.data(), cpuVelocities.data(), masses.data(), forces.data(), &dt); });
 
 		printf("Test::Run CPU end\n\n");
 	}
@@ -301,8 +305,8 @@ void CUDA_Test::Run() {
 		cudaMemcpy(devMasses, masses.data(), count * sizeof(float), cudaMemcpyHostToDevice);
 		cudaMemcpy(devVelocities, gpuVelocities.data(), count * sizeof(CUDA::Vector3), cudaMemcpyHostToDevice);
 
-		CalcForcesGpu << <1, 1 >> > (devCount, devPositions, devMasses, devForces);
-		UpdatePositionsGpu << <1, 1 >> > (devCount, devPositions, devVelocities, devMasses, devForces, devDt);
+		CUDA_TEST::CalcForcesGpu << <1, 1 >> > (devCount, devPositions, devMasses, devForces);
+		CUDA_TEST::UpdatePositionsGpu << <1, 1 >> > (devCount, devPositions, devVelocities, devMasses, devForces, devDt);
 
 		cudaMemcpy(gpuPositions.data(), devPositions, count * sizeof(CUDA::Vector3), cudaMemcpyDeviceToHost);
 		cudaMemcpy(gpuVelocities.data(), devVelocities, count * sizeof(CUDA::Vector3), cudaMemcpyDeviceToHost);
@@ -340,8 +344,111 @@ void CUDA_Test::Run() {
 	}
 }
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// RunTestIndex ////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+namespace CUDA_TEST {
+
+void TestIndexCpu(int* count, int* indexes, int* result) {
+	int index = _threadIdx.x + _blockIdx.x * _blockDim.x;
+
+	if (index < *count) {
+		indexes[index] = index;
+		*result += index;
+
+		printf("TestIndexCpu APPEND index: %i = %i + (%i * %i)\n", index, _threadIdx.x, _blockIdx.x, _blockDim.x);
+	}
+	else {
+		printf("TestIndexCpu  skip  index: %i = %i + (%i * %i)\n", index, _threadIdx.x, _blockIdx.x, _blockDim.x);
+	}
+}
+
+__global__ void TestIndexGpu(int* count, int* indexes, int* result) {
+	int index = threadIdx.x + blockIdx.x * blockDim.x;
+	
+	if (index < *count) {
+		indexes[index] = index;
+		*result += index;
+
+		printf("TestIndexGpu APPEND index: %i = %i + (%i * %i)\n", index, threadIdx.x, blockIdx.x, blockDim.x);
+	} else {
+		printf("TestIndexGpu  skip  index: %i = %i + (%i * %i)\n", index, threadIdx.x, blockIdx.x, blockDim.x);
+	}
+}
+
+}
+
+void CUDA_Test::RunTestIndex() {
+	printf("\nTest::RunTestIndex BEGIN.\n");
+
+	int count = 10;
+	int reserveCount = 20;
+	constexpr int countBlock = 5;
+	constexpr int countThread = 6;
+
+	// CPU
+	int resultCpu = 0;
+	std::vector<int> indexesCpu;
+	{
+		printf("\nCPU .   .   .\n");
+
+		indexesCpu.resize(reserveCount, std::numeric_limits<int>::max());
+
+		CUDA_TEST::UmulateCuda<countBlock, countThread>([devCount = &reserveCount, devResult = &resultCpu, devIndexes = indexesCpu.data()]() { CUDA_TEST::TestIndexCpu(devCount, devIndexes, devResult); });
+	}
+
+	// GPU
+	int resultGpu = 0;
+	std::vector<int> indexesGpu;
+	{
+		printf("\nGPU .   .   .\n");
+		
+		indexesGpu.resize(reserveCount, std::numeric_limits<int>::max());
+
+		int* devCount;
+		int* devResult;
+		int* devIndexes;
+
+		cudaMalloc(&devCount, sizeof(int));
+		cudaMalloc(&devResult, sizeof(int));
+		cudaMalloc(&devIndexes, reserveCount * sizeof(int));
+
+		cudaMemcpy(devCount, &reserveCount, sizeof(int), cudaMemcpyHostToDevice);
+		cudaMemcpy(devResult, &resultGpu, sizeof(int), cudaMemcpyHostToDevice);
+		cudaMemcpy(devIndexes, indexesGpu.data(), reserveCount * sizeof(int), cudaMemcpyHostToDevice);
+
+		CUDA_TEST::TestIndexGpu<<<countBlock, countThread >>>(devCount, devIndexes, devResult);
+
+		cudaMemcpy(&resultGpu, devResult, sizeof(int), cudaMemcpyDeviceToHost);
+		cudaMemcpy(indexesGpu.data(), devIndexes, reserveCount * sizeof(int), cudaMemcpyDeviceToHost);
+
+		cudaFree(devCount);
+		cudaFree(devResult);
+		cudaFree(devIndexes);
+	}
+
+	printf("\nTest::RunTestIndex END.\n");
+
+	if (resultCpu == resultGpu) {
+		printf("Test::RunTestIndex result [%i, %i] OK.\n", resultCpu, resultGpu);
+	}
+	else {
+		printf("Test::RunTestIndex result [%i, %i] FAIL.\n", resultCpu, resultGpu);
+	}
+
+	std::sort(indexesCpu.begin(), indexesCpu.end());
+	std::sort(indexesGpu.begin(), indexesGpu.end());
+
+	for (size_t i = 0; i < reserveCount; ++i) {
+		printf("\tindex: %i: [%i, %i]\n", i, indexesCpu[i], indexesGpu[i]);
+	}
+}
+
 #else
 
 	void CUDA_Test::Run() { }
+	void CUDA_Test::RunTestIndex() { }
 
 #endif

@@ -23,6 +23,7 @@
 #include <Draw2/Shader2.h>
 
 #include <../../CUDA/Wrapper.h>
+#include <../../CUDA/Test.h>
 
 #define DRAW DrawLight
 std::string MySystem::_resourcesDir;
@@ -38,6 +39,9 @@ MySystem::~MySystem() {
 }
 
 void MySystem::init() {
+	CUDA_Test::Run();
+
+	//...
 	Draw2::SetClearColor(0.333f, 0.666f, 0.999f, 1.0f);
 
 	//...

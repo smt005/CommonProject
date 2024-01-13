@@ -45,8 +45,13 @@ namespace CUDA_TEST {
 		}			
 	}
 
-	//...
+	double Time() {
+		std::chrono::milliseconds ms;
+		ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
+		return static_cast<double>(ms.count());
+	}
 
+	// Functions
 	void CalcForcesCpu(int* count, int* offset, CUDA::Vector3* positions, float* masses, CUDA::Vector3* forces) {
 		int indexT = _threadIdx.x + _blockIdx.x * _blockDim.x;
 		int startIndex = indexT * *offset;
@@ -64,14 +69,14 @@ namespace CUDA_TEST {
 		float force = 0;
 
 		// INFO
-		printf("CalcForcesCpu statIndex: %i sizeIndex: %i\n", startIndex, sizeIndex);
+		/*printf("CalcForcesCpu statIndex: %i sizeIndex: %i\n", startIndex, sizeIndex);
 		for (int index = startIndex; index < sizeIndex; ++index) {
 			printf("CalcForcesCpu positions: [%i] [%f, %f, %f], masses: %f, forces: [%f, %f, %f]\n",
 				index,
 				positions[index].x, positions[index].y, positions[index].z,
 				masses[index],
 				forces[index].x, forces[index].y, forces[index].z);
-		}
+		}*/
 
 		for (int index = startIndex; index < sizeIndex; ++index) {
 			CUDA::Vector3* pos = &positions[index];
@@ -122,7 +127,7 @@ namespace CUDA_TEST {
 		float appendVelocityZ;
 
 		// INFO
-		printf("UpdatePositionsCpu statIndex: %i countIndex: %i, dt: %f\n", startIndex, sizeIndex, *dt);
+		/*printf("UpdatePositionsCpu statIndex: %i countIndex: %i, dt: %f\n", startIndex, sizeIndex, *dt);
 		for (int index = startIndex; index < sizeIndex; ++index) {
 			printf("UpdatePositionsCpu positions: [%i] [%f, %f, %f], velocities: [%f, %f, %f], masses: %f, forces: [%f, %f, %f]\n",
 				index,
@@ -130,7 +135,7 @@ namespace CUDA_TEST {
 				velocities[index].x, velocities[index].y, velocities[index].z,
 				masses[index],
 				forces[index].x, forces[index].y, forces[index].z);
-		}
+		}*/
 
 		for (int index = startIndex; index < sizeIndex; ++index) {
 			accelerationX = forces[index].x / masses[index];
@@ -168,14 +173,14 @@ namespace CUDA_TEST {
 		float force = 0;
 
 		// INFO
-		printf("CalcForcesGpu statIndex: %i sizeIndex: %i\n", startIndex, sizeIndex);
+		/*printf("CalcForcesGpu statIndex: %i sizeIndex: %i\n", startIndex, sizeIndex);
 		for (int index = startIndex; index < sizeIndex; ++index) {
 			printf("CalcForcesGpu positions: [%i] [%f, %f, %f], masses: %f, forces: [%f, %f, %f]\n",
 				index,
 				positions[index].x, positions[index].y, positions[index].z,
 				masses[index],
 				forces[index].x, forces[index].y, forces[index].z);
-		}
+		}*/
 
 		for (int index = startIndex; index < sizeIndex; ++index) {
 			CUDA::Vector3* pos = &positions[index];
@@ -226,7 +231,7 @@ namespace CUDA_TEST {
 		float appendVelocityZ;
 
 		// INFO
-		printf("UpdatePositionsGpu statIndex: %i countIndex: %i, dt: %f\n", startIndex, sizeIndex, *dt);
+		/*printf("UpdatePositionsGpu statIndex: %i countIndex: %i, dt: %f\n", startIndex, sizeIndex, *dt);
 		for (int index = startIndex; index < sizeIndex; ++index) {
 			printf("UpdatePositionsGpu positions: [%i] [%f, %f, %f], velocities: [%f, %f, %f], masses: %f, forces: [%f, %f, %f]\n",
 				index,
@@ -234,7 +239,7 @@ namespace CUDA_TEST {
 				velocities[index].x, velocities[index].y, velocities[index].z,
 				masses[index],
 				forces[index].x, forces[index].y, forces[index].z);
-		}
+		}*/
 
 		for (int index = startIndex; index < sizeIndex; ++index) {
 			accelerationX = forces[index].x / masses[index];
@@ -261,22 +266,15 @@ namespace CUDA_TEST {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void CUDA_Test::Run() {
-	constexpr int count = 333;
-
-	printf("Test::Run begin count: %i.\n", count);
+	constexpr int count = 1024;
 	
-	static std::vector<CUDA::Vector3> positions;
+	std::vector<CUDA::Vector3> positions;
 	std::vector<float> masses;
 	std::vector<CUDA::Vector3> velocities;
 	float dt = 1.f;
-
 	int reserveCount = count;
-	constexpr int maxCountBlock = 11;
-	constexpr int maxCountThread = 9;
 
-	constexpr int countThread = maxCountThread;
-	constexpr int countBlock = ((count + countThread - 1) / countThread) > maxCountBlock ? maxCountBlock : ((count + countThread - 1) / countThread);
-	constexpr int offset = (count + (countBlock * countThread) - 1) / (countBlock * countThread);
+	printf("Test::Run begin count: %i.\n", count);
 
 	if (positions.empty()) {
 		positions.reserve(count);
@@ -293,41 +291,64 @@ void CUDA_Test::Run() {
 	// CPU
 	std::vector<CUDA::Vector3> cpuPositions;
 	{
-		printf("Test::Run CPU begin\n");
+		constexpr int maxCountBlock = 11;
+		constexpr int maxCountThread = 16;
+
+		constexpr int countThread = maxCountThread;
+		constexpr int countBlock = ((count + countThread - 1) / countThread) > maxCountBlock ? maxCountBlock : ((count + countThread - 1) / countThread);
+		constexpr int offset = (count + (countBlock * countThread) - 1) / (countBlock * countThread);
+
 		cpuPositions = positions;
 		std::vector<CUDA::Vector3> cpuVelocities = velocities;
 
+		printf("Test::Run CPU begin count: %i, offset: %i, blocks: %i, threads: %i.\n", count, offset, countBlock, countThread);
+		auto timeAll = CUDA_TEST::Time();
+
+		auto timeCpy = CUDA_TEST::Time();
 		std::vector<CUDA::Vector3> forces;
 		forces.resize(count, CUDA::Vector3());
 
-		//CalcForcesCpu(&count, cpuPositions.data(), masses.data(), forces.data());
-		//UpdatePositionsCpu(&count, cpuPositions.data(), cpuVelocities.data(), masses.data(), forces.data(), &dt);
-		
 		int* devCount = new int(count);
 		int* devOffset = new int(offset);
+		timeCpy = CUDA_TEST::Time() - timeCpy;
 
+		auto time = CUDA_TEST::Time();
+		auto time0 = time;
 		CUDA_TEST::UmulateCuda<countBlock, countThread>([devCount, devOffset, devPositions = cpuPositions.data(), devMasses = masses.data(), devForces = forces.data()]() {
 			CUDA_TEST::CalcForcesCpu(devCount, devOffset, devPositions, devMasses, devForces);
 		});
+		time0 = CUDA_TEST::Time() - time0;
 
+		auto time1 = CUDA_TEST::Time();
 		CUDA_TEST::UmulateCuda<countBlock, countThread>([devCount, devOffset, devPositions = cpuPositions.data(), devVelocities = cpuVelocities.data(), devMasses = masses.data(), devForces = forces.data(), &dt]() {
 			CUDA_TEST::UpdatePositionsCpu(devCount, devOffset, devPositions, devVelocities, devMasses, devForces, &dt);
 		});
-
+		time1 = CUDA_TEST::Time() - time1;
+		time = CUDA_TEST::Time() - time;
 
 		delete devCount;
 		delete devOffset;
 
-		printf("Test::Run CPU end\n\n");
+		timeAll = CUDA_TEST::Time() - timeAll;
+		printf("Test::Run CPU: [[%f, %f, %f, %f], %f ms] end\n\n", time0, time1, time, timeAll,
+			timeCpy);
 	}
 
 	// GPU
 	std::vector<CUDA::Vector3> gpuPositions;
 	{
-		printf("Test::Run GPU begin\n");
+		int maxCountBlock = CUDA::maxGridSize[1];
+		int maxCountThread = CUDA::maxThreadsPerBlock;
+
+		int countThread = maxCountThread;
+		int countBlock = ((count + countThread - 1) / countThread) > maxCountBlock ? maxCountBlock : ((count + countThread - 1) / countThread);
+		int offset = (count + (countBlock * countThread) - 1) / (countBlock * countThread);
 
 		gpuPositions.resize(count);
 		std::vector<CUDA::Vector3> gpuVelocities = velocities;
+
+		printf("Test::Run GPU begin count: %i, offset: %i, blocks: %i, threads: %i.\n", count, offset, countBlock, countThread);
+		auto timeAll = CUDA_TEST::Time();
 
 		int* devCount;
 		int* devOffset;
@@ -337,6 +358,7 @@ void CUDA_Test::Run() {
 		CUDA::Vector3* devVelocities;
 		CUDA::Vector3* devForces;
 
+		auto timeMem = CUDA_TEST::Time();
 		cudaMalloc(&devCount,	sizeof(int));
 		cudaMalloc(&devOffset, sizeof(int));
 		cudaMalloc(&devDt,	sizeof(float));
@@ -344,31 +366,48 @@ void CUDA_Test::Run() {
 		cudaMalloc(&devMasses,	count * sizeof(float));
 		cudaMalloc(&devVelocities,	count * sizeof(CUDA::Vector3));
 		cudaMalloc(&devForces, count * sizeof(CUDA::Vector3));
+		timeMem = CUDA_TEST::Time() - timeMem;
 
+		auto timeCpyToDev = CUDA_TEST::Time();
 		cudaMemcpy(devCount,	&count, sizeof(int), cudaMemcpyHostToDevice);
 		cudaMemcpy(devOffset, &offset, sizeof(int), cudaMemcpyHostToDevice);
 		cudaMemcpy(devDt,	&dt, sizeof(float), cudaMemcpyHostToDevice);
 		cudaMemcpy(devPositions, positions.data(), count * sizeof(CUDA::Vector3), cudaMemcpyHostToDevice);
 		cudaMemcpy(devMasses, masses.data(), count * sizeof(float), cudaMemcpyHostToDevice);
 		cudaMemcpy(devVelocities, gpuVelocities.data(), count * sizeof(CUDA::Vector3), cudaMemcpyHostToDevice);
+		timeCpyToDev = CUDA_TEST::Time() - timeCpyToDev;
 
+		auto time = CUDA_TEST::Time();
+		auto time0 = time;
 		CUDA_TEST::CalcForcesGpu << <countBlock, countThread >> > (devCount, devOffset, devPositions, devMasses, devForces);
-		CUDA_TEST::UpdatePositionsGpu << <countBlock, countThread >> > (devCount, devOffset, devPositions, devVelocities, devMasses, devForces, devDt);
+		time0 = CUDA_TEST::Time() - time0;
 
+		auto time1 = CUDA_TEST::Time();
+		CUDA_TEST::UpdatePositionsGpu << <countBlock, countThread >> > (devCount, devOffset, devPositions, devVelocities, devMasses, devForces, devDt);
+		time1 = CUDA_TEST::Time() - time1;
+		time = CUDA_TEST::Time() - time;
+
+		auto timeCpyToHost = CUDA_TEST::Time();
 		cudaMemcpy(gpuPositions.data(), devPositions, count * sizeof(CUDA::Vector3), cudaMemcpyDeviceToHost);
 		cudaMemcpy(gpuVelocities.data(), devVelocities, count * sizeof(CUDA::Vector3), cudaMemcpyDeviceToHost);
+		timeCpyToHost = CUDA_TEST::Time() - timeCpyToHost;
 
+		auto timeFree = CUDA_TEST::Time();
 		cudaFree(devCount);
 		cudaFree(devDt);
 		cudaFree(devPositions);
 		cudaFree(devMasses);
 		cudaFree(devForces);
 		cudaFree(devVelocities);
+		timeFree = CUDA_TEST::Time() - timeFree;
 
-		printf("Test::Run GPU end\n\n");
+		timeAll = CUDA_TEST::Time() - timeAll;
+		printf("Test::Run GPU: [[%f, %f], %f, %f], [%f, %f, %f, %f] ms] end\n\n",
+			time0, time1, time, timeAll,
+			timeMem, timeCpyToDev, timeCpyToHost, timeFree);
 	}
 
-	printf("\nTest::Run end.\n\n");
+	printf("\nTest::Run end.\n");
 
 	auto compare = [](auto left, auto right) {
 		auto val = left - right;
@@ -385,19 +424,19 @@ void CUDA_Test::Run() {
 	}
 	
 	if (equal) {
-		printf("Test::Run result OK.\n");
+		printf("Test::Run result OK.\n\n\n");
 	}
 	else {
-		printf("Test::Run result FAIL.\n\n");
+		printf("Test::Run result FAIL.\n\n\n");
 	}
 
 	for (size_t i = 0; i < count; ++i) {
-		if (!(compare(cpuPositions[i].x, gpuPositions[i].x) && compare(cpuPositions[i].y, gpuPositions[i].y) && compare(cpuPositions[i].z, gpuPositions[i].z))) {
+		/*if (!(compare(cpuPositions[i].x, gpuPositions[i].x) && compare(cpuPositions[i].y, gpuPositions[i].y) && compare(cpuPositions[i].z, gpuPositions[i].z))) {
 			printf("\tpos: [%f, %f, %f] != [%f, %f, %f] FAIL\n", cpuPositions[i].x, cpuPositions[i].y, cpuPositions[i].z, gpuPositions[i].x, gpuPositions[i].y, gpuPositions[i].z);
 		}
 		else {
 			printf("\tpos: [%f, %f, %f] != [%f, %f, %f]\n", cpuPositions[i].x, cpuPositions[i].y, cpuPositions[i].z, gpuPositions[i].x, gpuPositions[i].y, gpuPositions[i].z);
-		}
+		}*/
 	}
 }
 

@@ -42,8 +42,8 @@ void MySystem::init() {
 	CUDA::GetProperty();
 	//CUDA::PrintInfo();
 
-	//CUDA_Test::Run();
-	CUDA_Test::RunTestIndex();
+	CUDA_Test::Run();
+	//CUDA_Test::RunTestIndex();
 
 	//...
 	Draw2::SetClearColor(0.333f, 0.666f, 0.999f, 1.0f);

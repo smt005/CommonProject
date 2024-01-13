@@ -410,12 +410,16 @@ __global__ void TestIndexForGpu(int* count, int* offset, int* indexes, int* resu
 	}
 
 	for (int index = startIndex; index < sizeIndex; ++index) {
-		indexes[index] = index;
+		int indexTemp = 0;
 
-		//__syncthreads();
-		*result += index;
+		if (index < *count) {
+			indexes[index] = index;
+			indexTemp = index;
+			printf("TestIndexForGpu [%i] APPEND index: %i\n", indexT, index);
+		}
 
-		printf("TestIndexForGpu [%i] APPEND index: %i\n", indexT, index);
+		//*result = *result + indexTemp; // Потоконебезопасно
+		atomicAdd(result, indexTemp);
 	}
 }
 
@@ -424,9 +428,9 @@ __global__ void TestIndexForGpu(int* count, int* offset, int* indexes, int* resu
 void CUDA_Test::RunTestIndex() {
 	printf("\nTest::RunTestIndex BEGIN.\n");
 
-	constexpr int count = 33;
-	int reserveCount = count;
-	constexpr int maxCountBlock = 2;
+	constexpr int count = 55;
+	int reserveCount = count + 10;
+	constexpr int maxCountBlock = 3;
 	constexpr int maxCountThread = 2;
 
 	constexpr int countThread = maxCountThread;

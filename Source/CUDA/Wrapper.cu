@@ -236,10 +236,29 @@ void CUDA::GetForcesStatic(int count, float* masses, float* positionsX, float* p
     cudaFree(devForcesY);
 }
 
+void CUDA::GetOffsets(const unsigned int count, const unsigned int maxCountBlocks, const unsigned int maxCountThreads,
+    unsigned int& countBlock, unsigned int& countThread, unsigned int& offset) {
+    if (count <= maxCountThreads) {
+        countBlock = 1;
+        countThread = count;
+        offset = 1;
+        return;
+    }
+    
+    countThread = maxCountThreads;
+
+    countBlock = (count + countThread - 1) / countThread;
+    countBlock = countBlock > countThread ? countThread : countBlock;
+    offset = (count + (countBlock * countThread) - 1) / (countBlock * countThread);
+}
+
 //...
 #else
     void testCUDA(void) {}
 
     void CUDA::GetProperty() {}
     void CUDA::PrintInfo() {}
+
+    void CUDA::GetOffsets(const unsigned int count, const unsigned int maxBlocks, const unsigned int maxThreads,
+        unsigned int& countBlock, unsigned int& countThread, unsigned int& offset) { }
 #endif

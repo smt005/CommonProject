@@ -24,6 +24,7 @@
 
 #include <../../CUDA/Wrapper.h>
 #include <../../CUDA/Test.h>
+#include <../../CUDA/Emulate.h>
 
 #define DRAW DrawLight
 std::string MySystem::_resourcesDir;
@@ -44,6 +45,8 @@ void MySystem::init() {
 
 	//CUDA_Test::Run();
 	//CUDA_Test::RunTestIndex();
+
+	CUDA_TEST::Test();
 
 	//...
 	Draw2::SetClearColor(0.333f, 0.666f, 0.999f, 1.0f);

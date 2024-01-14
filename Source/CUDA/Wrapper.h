@@ -23,6 +23,8 @@ public:
 	static void GetForcesStaticTest(int count, float* masses, float* positionsX, float* positionsY, float* forcesX, float* forcesY);
 	static void GetForcesStatic(int count, float* masses, float* positionsX, float* positionsY, float* forcesX, float* forcesY);
 
+	static void GetOffsets(const unsigned int count, const unsigned int maxBlocks, const unsigned int maxThreads, unsigned int& countBlock, unsigned int& countThread, unsigned int& offset);
+
 public:
 	static std::string	nameGPU;
 	static int			deviceCount;

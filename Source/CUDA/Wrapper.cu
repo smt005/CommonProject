@@ -248,7 +248,7 @@ void CUDA::GetOffsets(const unsigned int count, const unsigned int maxCountBlock
     countThread = maxCountThreads;
 
     countBlock = (count + countThread - 1) / countThread;
-    countBlock = countBlock > countThread ? countThread : countBlock;
+    countBlock = countBlock > maxCountBlocks ? maxCountBlocks : countBlock;
     offset = (count + (countBlock * countThread) - 1) / (countBlock * countThread);
 }
 

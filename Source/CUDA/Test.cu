@@ -208,13 +208,13 @@ namespace CUDA_TEST {
 				gravityY *= force;
 				gravityZ *= force;
 
-				//forces[index].x += gravityX;
-				//forces[index].y += gravityY;
-				//forces[index].z += gravityZ;
+				forces[index].x += gravityX;
+				forces[index].y += gravityY;
+				forces[index].z += gravityZ;
 
-				atomicAdd(&forces[index].x, gravityX);
-				atomicAdd(&forces[index].y, gravityY);
-				atomicAdd(&forces[index].z, gravityZ);
+				//atomicAdd(&forces[index].x, gravityX);
+				//atomicAdd(&forces[index].y, gravityY);
+				//atomicAdd(&forces[index].z, gravityZ);
 			}
 		}
 	}
@@ -270,7 +270,7 @@ namespace CUDA_TEST {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void CUDA_Test::Run() {
-	constexpr int count = 10000;// 1048576; // 512 1024 1048576
+	constexpr int count = 100000;// 1048576; // 512 1024 1048576
 	
 	std::vector<CUDA::Vector3> positions;
 	std::vector<float> masses;
@@ -334,7 +334,7 @@ void CUDA_Test::Run() {
 		delete devOffset;
 
 		timeAll = CUDA_TEST::Time() - timeAll;
-		printf("Test::Run CPU: [[%f(%f), %f(%f)], %f(%f), !%f(%f)!], %f ms] end\n\n", time0, (time0/16), time1, (time1 / 16), time, (time / 16), timeAll, (timeAll / 16),
+		printf("Test::Run CPU: [[%f(%f), %f(%f)], >%f(%f)<, !%f(%f)!], %f ms] end\n\n", time0, (time0/16), time1, (time1 / 16), time, (time / 16), timeAll, (timeAll / 16),
 			timeCpy);
 	}
 
@@ -391,12 +391,14 @@ void CUDA_Test::Run() {
 		auto time1 = CUDA_TEST::Time();
 		CUDA_TEST::UpdatePositionsGpu << <countBlock, countThread >> > (devCount, devOffset, devPositions, devVelocities, devMasses, devForces, devDt);
 		time1 = CUDA_TEST::Time() - time1;
-		time = CUDA_TEST::Time() - time;
+		
 		//printf("CUDA fun: %f ms\n", time);
 
 		auto timeCpyToHost = CUDA_TEST::Time();
 		cudaMemcpy(gpuPositions.data(), devPositions, count * sizeof(CUDA::Vector3), cudaMemcpyDeviceToHost);
 		cudaMemcpy(gpuVelocities.data(), devVelocities, count * sizeof(CUDA::Vector3), cudaMemcpyDeviceToHost);
+
+		time = CUDA_TEST::Time() - time;
 		timeCpyToHost = CUDA_TEST::Time() - timeCpyToHost;
 		//printf("CUDA to host cudaMemcpy: %f ms\n", timeCpyToHost);
 
@@ -411,7 +413,7 @@ void CUDA_Test::Run() {
 		//printf("CUDA cudaFree: %f ms\n", timeFree);
 
 		timeAll = CUDA_TEST::Time() - timeAll;
-		printf("Test::Run GPU: [[%f, %f], %f, !%f!], [%f, %f, %f, %f] ms] end\n\n",
+		printf("Test::Run GPU: [[%f, %f], >%f<, !%f!], [%f, %f, %f, %f] ms] end\n\n",
 			time0, time1, time, timeAll,
 			timeMem, timeCpyToDev, timeCpyToHost, timeFree);
 	}
@@ -440,14 +442,15 @@ void CUDA_Test::Run() {
 		printf("Test::Run result FAIL.\n\n\n");
 	}
 
-	/*for (size_t i = 0; i < count; ++i) {
-		if (!(compare(cpuPositions[i].x, gpuPositions[i].x) && compare(cpuPositions[i].y, gpuPositions[i].y) && compare(cpuPositions[i].z, gpuPositions[i].z))) {
+	for (size_t i = 0; i < count; ++i) {
+		//if (!(compare(cpuPositions[i].x, gpuPositions[i].x) && compare(cpuPositions[i].y, gpuPositions[i].y) && compare(cpuPositions[i].z, gpuPositions[i].z))) {
+		if (i < 10 || i >(count - 10)) {
 			printf("\tpos[%i]:\n[%f, %f, %f] !=\n[%f, %f, %f] FAIL\n", i,
 				cpuPositions[i].x, cpuPositions[i].y, cpuPositions[i].z,
 				gpuPositions[i].x, gpuPositions[i].y, gpuPositions[i].z);
 		}
-		
-	}*/
+		//}		
+	}
 }
 
 

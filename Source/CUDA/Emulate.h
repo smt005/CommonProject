@@ -62,6 +62,8 @@ public:
 		ptrPtr = nullptr;
 	}
 
+	static double Time();
+
 public:
 	static unsigned int cudaMemcpyHostToDevice;
 	static unsigned int cudaMemcpyDeviceToHost;

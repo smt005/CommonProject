@@ -208,9 +208,13 @@ namespace CUDA_TEST {
 				gravityY *= force;
 				gravityZ *= force;
 
-				forces[index].x += gravityX;
-				forces[index].y += gravityY;
-				forces[index].z += gravityZ;
+				//forces[index].x += gravityX;
+				//forces[index].y += gravityY;
+				//forces[index].z += gravityZ;
+
+				atomicAdd(&forces[index].x, gravityX);
+				atomicAdd(&forces[index].y, gravityY);
+				atomicAdd(&forces[index].z, gravityZ);
 			}
 		}
 	}
@@ -266,7 +270,7 @@ namespace CUDA_TEST {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void CUDA_Test::Run() {
-	constexpr int count = 1024;
+	constexpr int count = 10000;// 1048576; // 512 1024 1048576
 	
 	std::vector<CUDA::Vector3> positions;
 	std::vector<float> masses;
@@ -330,7 +334,7 @@ void CUDA_Test::Run() {
 		delete devOffset;
 
 		timeAll = CUDA_TEST::Time() - timeAll;
-		printf("Test::Run CPU: [[%f, %f, %f, %f], %f ms] end\n\n", time0, time1, time, timeAll,
+		printf("Test::Run CPU: [[%f(%f), %f(%f)], %f(%f), !%f(%f)!], %f ms] end\n\n", time0, (time0/16), time1, (time1 / 16), time, (time / 16), timeAll, (timeAll / 16),
 			timeCpy);
 	}
 
@@ -367,6 +371,7 @@ void CUDA_Test::Run() {
 		cudaMalloc(&devVelocities,	count * sizeof(CUDA::Vector3));
 		cudaMalloc(&devForces, count * sizeof(CUDA::Vector3));
 		timeMem = CUDA_TEST::Time() - timeMem;
+		//printf("CUDA cudaMalloc: %f ms\n", timeMem);
 
 		auto timeCpyToDev = CUDA_TEST::Time();
 		cudaMemcpy(devCount,	&count, sizeof(int), cudaMemcpyHostToDevice);
@@ -376,6 +381,7 @@ void CUDA_Test::Run() {
 		cudaMemcpy(devMasses, masses.data(), count * sizeof(float), cudaMemcpyHostToDevice);
 		cudaMemcpy(devVelocities, gpuVelocities.data(), count * sizeof(CUDA::Vector3), cudaMemcpyHostToDevice);
 		timeCpyToDev = CUDA_TEST::Time() - timeCpyToDev;
+		//printf("CUDA to dev  cudaMemcpy: %f ms\n", timeCpyToDev);
 
 		auto time = CUDA_TEST::Time();
 		auto time0 = time;
@@ -386,11 +392,13 @@ void CUDA_Test::Run() {
 		CUDA_TEST::UpdatePositionsGpu << <countBlock, countThread >> > (devCount, devOffset, devPositions, devVelocities, devMasses, devForces, devDt);
 		time1 = CUDA_TEST::Time() - time1;
 		time = CUDA_TEST::Time() - time;
+		//printf("CUDA fun: %f ms\n", time);
 
 		auto timeCpyToHost = CUDA_TEST::Time();
 		cudaMemcpy(gpuPositions.data(), devPositions, count * sizeof(CUDA::Vector3), cudaMemcpyDeviceToHost);
 		cudaMemcpy(gpuVelocities.data(), devVelocities, count * sizeof(CUDA::Vector3), cudaMemcpyDeviceToHost);
 		timeCpyToHost = CUDA_TEST::Time() - timeCpyToHost;
+		//printf("CUDA to host cudaMemcpy: %f ms\n", timeCpyToHost);
 
 		auto timeFree = CUDA_TEST::Time();
 		cudaFree(devCount);
@@ -400,9 +408,10 @@ void CUDA_Test::Run() {
 		cudaFree(devForces);
 		cudaFree(devVelocities);
 		timeFree = CUDA_TEST::Time() - timeFree;
+		//printf("CUDA cudaFree: %f ms\n", timeFree);
 
 		timeAll = CUDA_TEST::Time() - timeAll;
-		printf("Test::Run GPU: [[%f, %f], %f, %f], [%f, %f, %f, %f] ms] end\n\n",
+		printf("Test::Run GPU: [[%f, %f], %f, !%f!], [%f, %f, %f, %f] ms] end\n\n",
 			time0, time1, time, timeAll,
 			timeMem, timeCpyToDev, timeCpyToHost, timeFree);
 	}
@@ -410,8 +419,9 @@ void CUDA_Test::Run() {
 	printf("\nTest::Run end.\n");
 
 	auto compare = [](auto left, auto right) {
-		auto val = left - right;
-		return val < 0.000001f;
+		auto val = std::abs(left - right);
+		//return val < 0.000001f;
+		return val == 0.0;// 0000001f;
 	};
 
 	//...
@@ -430,14 +440,14 @@ void CUDA_Test::Run() {
 		printf("Test::Run result FAIL.\n\n\n");
 	}
 
-	for (size_t i = 0; i < count; ++i) {
-		/*if (!(compare(cpuPositions[i].x, gpuPositions[i].x) && compare(cpuPositions[i].y, gpuPositions[i].y) && compare(cpuPositions[i].z, gpuPositions[i].z))) {
-			printf("\tpos: [%f, %f, %f] != [%f, %f, %f] FAIL\n", cpuPositions[i].x, cpuPositions[i].y, cpuPositions[i].z, gpuPositions[i].x, gpuPositions[i].y, gpuPositions[i].z);
+	/*for (size_t i = 0; i < count; ++i) {
+		if (!(compare(cpuPositions[i].x, gpuPositions[i].x) && compare(cpuPositions[i].y, gpuPositions[i].y) && compare(cpuPositions[i].z, gpuPositions[i].z))) {
+			printf("\tpos[%i]:\n[%f, %f, %f] !=\n[%f, %f, %f] FAIL\n", i,
+				cpuPositions[i].x, cpuPositions[i].y, cpuPositions[i].z,
+				gpuPositions[i].x, gpuPositions[i].y, gpuPositions[i].z);
 		}
-		else {
-			printf("\tpos: [%f, %f, %f] != [%f, %f, %f]\n", cpuPositions[i].x, cpuPositions[i].y, cpuPositions[i].z, gpuPositions[i].x, gpuPositions[i].y, gpuPositions[i].z);
-		}*/
-	}
+		
+	}*/
 }
 
 

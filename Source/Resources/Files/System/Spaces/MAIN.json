@@ -1,6 +1,7 @@
 [
   {
-    "class": "SpaceGpuPrototypeV3",
+    "class": "SpaceV0x1",
+	"_class": "SpaceGpuPrototypeV3",
 	"_class": "SpaceGpuPrototype",
 	"_class": "SpaceCpuPrototype",
 	"_class": "BaseSpace",

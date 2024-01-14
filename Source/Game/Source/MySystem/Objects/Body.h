@@ -98,6 +98,7 @@ public:
 	std::string className;
 	char* _name = nullptr;
 	double _mass = 0;
+	Math::Vector3d _force;
 	Math::Vector3d _velocity;
 	float _angular = 0.f;
 	float _angularVelocity = -0.0005f;

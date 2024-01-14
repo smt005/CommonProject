@@ -42,7 +42,7 @@ void MySystem::init() {
 	CUDA::GetProperty();
 	//CUDA::PrintInfo();
 
-	CUDA_Test::Run();
+	//CUDA_Test::Run();
 	//CUDA_Test::RunTestIndex();
 
 	//...

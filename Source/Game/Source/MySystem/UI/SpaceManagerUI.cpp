@@ -17,6 +17,8 @@
 #include "../Objects/SpaceGpuPrototypeV3.h"
 #include "../../CUDA/WrapperPrototypeV3.h"
 
+#include <../../CUDA/Emulate.h>
+
 SpaceManagerUI::SpaceManagerUI() : UI::Window(this) {
     SetId("SpaceManager");
     Close();
@@ -220,6 +222,21 @@ void SpaceManagerUI::Draw() {
                     CUDA_PrototypeV3::tag = spaceGPU->tag;
                 }
             }
+        }
+    }
+
+    {
+        ImGui::Dummy(ImVec2(0.f, 0.f));
+
+        if (ImGui::Button("Test CUDA##test_cuda", { 128.f, 32.f })) {
+            CUDA_TEST::Test(100);
+
+            CUDA_TEST::Test(100000);
+            CUDA_TEST::Test(10000, true);
+            CUDA_TEST::Test(10000, false);
+            CUDA_TEST::Test(1024);
+            CUDA_TEST::Test(1000);
+            CUDA_TEST::Test(100);
         }
     }
 }

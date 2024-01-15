@@ -69,6 +69,6 @@ public:
 	static unsigned int cudaMemcpyDeviceToHost;
 };
 
-void Test();
+void Test(unsigned int count, bool sync = false);
 
 }

@@ -176,10 +176,54 @@ namespace {
 				forces[index].x += gravityX;
 				forces[index].y += gravityY;
 				forces[index].z += gravityZ;
+			}
+		}
+	}
 
-				/*atomicAdd(&forces[index].x, gravityX);
+	__global__ void CalcForcesGpuSync(unsigned int* count, unsigned int* offset, CUDA::Vector3* positions, float* masses, CUDA::Vector3* forces) {
+		int indexT = threadIdx.x + blockIdx.x * blockDim.x;
+		int startIndex = indexT * *offset;
+		int countIndex = startIndex + *offset;
+		if (countIndex >= *count) {
+			countIndex = *count;
+		}
+
+		float constGravity = 0.01;
+		float gravityX = 0.0;
+		float gravityY = 0.0;
+		float gravityZ = 0.0;
+		float dist = 0.0;
+		float force = 0.0;
+
+		for (int index = startIndex; index < countIndex; ++index) {
+			CUDA::Vector3* pos = &positions[index];
+			float mass = masses[index];
+			forces[index].x = 0.f;
+			forces[index].y = 0.f;
+			forces[index].z = 0.f;
+
+			for (size_t otherIndex = 0; otherIndex < *count; ++otherIndex) {
+				if (index == otherIndex) {
+					continue;
+				}
+
+				gravityX = positions[otherIndex].x - positions[index].x;
+				gravityY = positions[otherIndex].y - positions[index].y;
+				gravityZ = positions[otherIndex].z - positions[index].z;
+
+				dist = sqrt(gravityX * gravityX + gravityY * gravityY + gravityZ * gravityZ);
+				gravityX /= dist;
+				gravityY /= dist;
+				gravityZ /= dist;
+
+				force = constGravity * (mass * masses[otherIndex]) / (dist * dist);
+				gravityX *= force;
+				gravityY *= force;
+				gravityZ *= force;
+
+				atomicAdd(&forces[index].x, gravityX);
 				atomicAdd(&forces[index].y, gravityY);
-				atomicAdd(&forces[index].z, gravityZ);*/
+				atomicAdd(&forces[index].z, gravityZ);
 			}
 		}
 	}
@@ -221,13 +265,12 @@ namespace {
 
 /////////////////////////////////////////////////////////////////////////////////
 
-void CUDA_TEST::Test() {
+void CUDA_TEST::Test(unsigned int count, bool sync) {
+	printf("\nCUDA_TEST::Test count: %i, sync: %i .....................................................................\n", count, (int)sync);
 	bool sameThread = false;
 	unsigned int bbb = 1;
 	unsigned int ttt = 16;
 
-	unsigned int count = 100000;
-	
 	std::vector<float> masses;
 	masses.reserve(count);
 	std::vector<CUDA::Vector3> positionsCpu;
@@ -254,8 +297,8 @@ void CUDA_TEST::Test() {
 		forces.resize(count);
 		std::vector<CUDA::Vector3> velocities = velocitiesBoth;
 
-		const unsigned int maxCountBlock = sameThread ? bbb : 1;
-		const unsigned int maxCountThread = sameThread ? ttt : 16;
+		const unsigned int maxCountBlock = 1;// sameThread ? bbb : 1;
+		const unsigned int maxCountThread = 16;// sameThread ? ttt : 16;
 
 		unsigned int countBlock;
 		unsigned int countThread;
@@ -363,7 +406,11 @@ void CUDA_TEST::Test() {
 
 		double time = CUDA_TEST::CUDA_Emulate::Time();
 
-		CalcForcesGpu << <countBlock, countThread >> > (devCount, devOffset, devPositions, devMasses, devForces);
+		if (sync) {
+			CalcForcesGpuSync << <countBlock, countThread >> > (devCount, devOffset, devPositions, devMasses, devForces);
+		} else {
+			CalcForcesGpu << <countBlock, countThread >> > (devCount, devOffset, devPositions, devMasses, devForces);
+		}
 
 		cudaMemcpy(forces.data(), devForces, count * sizeof(CUDA::Vector3), cudaMemcpyDeviceToHost);
 
@@ -387,7 +434,7 @@ void CUDA_TEST::Test() {
 	}
 
 	bool equal = true;
-	bool printData = true;
+	bool printData = false;
 	{
 		for (size_t i = 0; i < count; ++i) {
 			if (i < 10 || i > (count - 10)) {

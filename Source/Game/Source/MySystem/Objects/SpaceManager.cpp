@@ -7,10 +7,7 @@
 #include "Common/Common.h"
 #include "Space.h"
 #include "BaseSpace.h"
-#include "SpaceCpuPrototype.h"
-#include "SpaceGpuPrototype.h"
-#include "SpaceGpuPrototypeV3.h"
-#include "SpaceV0x1.h"
+#include "SpaceGpuX0.h"
 
 void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3d& pos, bool withAssotiation) {
 	if (!space->_selectBody) {
@@ -39,11 +36,8 @@ void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3d& pos, bool with
 	velocity *= std::sqrtf(space->_constGravity * mainBody._mass / Math::length(gravityVector));
 	velocity += mainBody._velocity;
 
-	if (withAssotiation) {
-		space->Add(model, pos, velocity, mass, "");
-	} else {
-		space->AddWithoutAssociation(model, pos, velocity, mass, "");
-	}
+	space->Add(model, pos, velocity, mass, "");
+	space->Preparation();
 }
 
 void SpaceManager::AddObjectDirect(Space* space, Math::Vector3d& pos, Math::Vector3d& vel) {
@@ -79,8 +73,10 @@ void SpaceManager::AddObjects(Space* space, int count, double spaceRange, double
 			++i;
 
 			//float mass = help::random(50, 150);
-			space->AddWithoutAssociation(model, pos, velocity, mass, "");
+			space->Add(model, pos, velocity, mass, "");
 		}
+
+		space->Preparation();
 	}
 
 	// Расчёт центра масс
@@ -124,7 +120,7 @@ void SpaceManager::AddObjects(Space* space, int count, double spaceRange, double
 	}
 
 	//...
-	space->DataAssociation();
+	space->Preparation();
 }
 
 unsigned int SpaceManager::SetView(MySystem* systemMy) {
@@ -157,21 +153,9 @@ Space::Ptr SpaceManager::Load(const std::string& name) {
 
 	if (classStr == Engine::GetClassName<BaseSpace>()) {
 		return Space::Ptr(new BaseSpace(valueData));
-	} else 
-	if (classStr == Engine::GetClassName<SpaceCpuPrototype>()) {
-		return Space::Ptr(new SpaceCpuPrototype(valueData));
-	}
-	else
-	if (classStr == Engine::GetClassName<SpaceGpuPrototype>()) {
-		return Space::Ptr(new SpaceGpuPrototype(valueData));
-	}
-	else
-	if (classStr == Engine::GetClassName<SpaceGpuPrototypeV3>()) {
-		return Space::Ptr(new SpaceGpuPrototypeV3(valueData));
-	}
-	else
-	if (classStr == Engine::GetClassName<SpaceV0x1>()) {
-		return Space::Ptr(new SpaceV0x1(valueData));
+	} else
+	if (classStr == Engine::GetClassName<SpaceGpuX0>()) {
+		return Space::Ptr(new SpaceGpuX0(valueData));
 	}
 	else {
 		return Space::Ptr(new Space(valueData));

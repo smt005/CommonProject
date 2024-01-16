@@ -43,7 +43,7 @@ void MySystem::init() {
 	CUDA::GetProperty();
 
 	//...
-	Draw2::SetClearColor(0.333f, 0.666f, 0.999f, 1.0f);
+	Draw2::SetClearColor(0.0333f, 0.0666f, 0.0999f, 1.0f);
 
 	//...
 	_space = SpaceManager::Load("MAIN");
@@ -96,7 +96,7 @@ void MySystem::update() {
 		_time = Engine::Core::currentTime();
 	}
 
-	_space->Update();
+	_space->Update(1);
 
 	auto[hasBody, body] = _space->RefFocusBody();
 	if (hasBody) {
@@ -121,26 +121,25 @@ void MySystem::draw() {
 	Draw2::ClearColor();
 
 	shaderPtr->Use();
-	Draw2::DepthTest(false);
+	//Draw2::DepthTest(false);
 
 	// SkyBox	
-	if (MainUI::GetViewType() == 0 && _space->_skyboxObject) {
+	/*if (MainUI::GetViewType() == 0 && _space->_skyboxObject) {
 		auto camPos = Camera::_currentCameraPtr->Pos();
 		_space->_skyboxObject->setPos(camPos);
 		Draw2::SetModelMatrix(glm::mat4x4(1.f));
 
 		Draw2::Draw(_space->_skyboxObject->getModel());
 		Draw2::ClearDepth();
-	}
+	}*/
 
 	//...
 	for (Body::Ptr& bodyPtr : _space->_bodies) {
 		Draw2::SetModelMatrix(bodyPtr->getMatrix());
-
 		Draw2::Draw(*bodyPtr->_model);
 	}
 
-	Draw2::DepthTest(true);
+	//Draw2::DepthTest(true);
 	//MainUI::DrawOnSpace();
 }
 

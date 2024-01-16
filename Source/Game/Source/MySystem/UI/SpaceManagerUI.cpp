@@ -11,11 +11,11 @@
 #include "../Objects/Body.h"
 #include "../Objects/Space.h"
 
-#include "../Objects/SpaceGpuPrototype.h"
-#include "../../CUDA/WrapperPrototype.h"
+//#include "../Objects/SpaceGpuPrototype.h"
+//#include "../../CUDA/WrapperPrototype.h"
 
-#include "../Objects/SpaceGpuPrototypeV3.h"
-#include "../../CUDA/WrapperPrototypeV3.h"
+//#include "../Objects/SpaceGpuPrototypeV3.h"
+//#include "../../CUDA/WrapperPrototypeV3.h"
 
 #include <../../CUDA/Emulate.h>
 
@@ -78,7 +78,7 @@ void SpaceManagerUI::Draw() {
             Body::Ptr heaviestBody = space.GetHeaviestBody();
             space._bodies.clear();
             space._bodies.emplace_back(heaviestBody);
-            space.DataAssociation();
+            space.Preparation();
 
         }
     }
@@ -124,7 +124,7 @@ void SpaceManagerUI::Draw() {
                     SpaceManager::AddObjectOnOrbit(_mySystem->_space.get(), pos, false);
                 }
 
-                _mySystem->_space->DataAssociation();
+                _mySystem->_space->Preparation();
             }
         }
     }
@@ -168,63 +168,28 @@ void SpaceManagerUI::Draw() {
                     SpaceManager::AddObjectOnOrbit(_mySystem->_space.get(), pos, false);
                 }
 
-                _mySystem->_space->DataAssociation();
+                _mySystem->_space->Preparation();
             }
         }
     }
 
     ImGui::Separator();
-
     {
-        SpaceGpuPrototype* spaceGPU = dynamic_cast<SpaceGpuPrototype*>(_mySystem->_space.get());
-        if (spaceGPU) {
-            ImGui::Dummy(ImVec2(0.f, 0.f));
-        
-            {
-                std::string btnText = "PROCESS: ";
-                btnText += spaceGPU->processGPU ? "GPU" : "CPU";
-                if (ImGui::Button(btnText.c_str(), { 128.f, 32.f })) {
-                    spaceGPU->processGPU = !spaceGPU->processGPU;
-                }
+            std::string btnText = "PROCESS: ";
+            btnText += _mySystem->_space->processGPU ? "GPU" : "CPU";
+            if (ImGui::Button(btnText.c_str(), { 128.f, 32.f })) {
+                _mySystem->_space->processGPU = !_mySystem->_space->processGPU;
             }
 
-            if (spaceGPU->processGPU) {
-                ImGui::Dummy(ImVec2(0.f, 0.f));
-
-                static int tagInt = 0;
-                if (ImGui::InputInt("tag: ", &tagInt)) {
-                    spaceGPU->tag = tagInt;
-                        CUDA_PrototypeV3::tag = spaceGPU->tag;
-                }
-            }
-        }
-    }
-
-    {
-        SpaceGpuPrototypeV3* spaceGPU = dynamic_cast<SpaceGpuPrototypeV3*>(_mySystem->_space.get());
-        if (spaceGPU) {
             ImGui::Dummy(ImVec2(0.f, 0.f));
 
-            {
-                std::string btnText = "PROCESS: ";
-                btnText += spaceGPU->processGPU ? "GPU" : "CPU";
-                if (ImGui::Button(btnText.c_str(), { 128.f, 32.f })) {
-                    spaceGPU->processGPU = !spaceGPU->processGPU;
-                }
+            static int tagInt = 0;
+            if (ImGui::InputInt("tag: ", &tagInt)) {
+                _mySystem->_space->tag = tagInt;
             }
-
-            if (spaceGPU->processGPU) {
-                ImGui::Dummy(ImVec2(0.f, 0.f));
-
-                static int tagInt = 0;
-                if (ImGui::InputInt("tag: ", &tagInt)) {
-                    spaceGPU->tag = tagInt;
-                    CUDA_PrototypeV3::tag = spaceGPU->tag;
-                }
-            }
-        }
     }
 
+    ImGui::Separator();
     {
         ImGui::Dummy(ImVec2(0.f, 0.f));
 
@@ -232,6 +197,8 @@ void SpaceManagerUI::Draw() {
             CUDA_TEST::Test(100);
 
             CUDA_TEST::Test(100000);
+            CUDA_TEST::Test(50000, true);
+            CUDA_TEST::Test(50000, false);
             CUDA_TEST::Test(10000, true);
             CUDA_TEST::Test(10000, false);
             CUDA_TEST::Test(1024);

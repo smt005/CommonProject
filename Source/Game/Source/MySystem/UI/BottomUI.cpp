@@ -13,6 +13,8 @@
 #include "Draw/DrawLight.h"
 #include "Draw/Camera/CameraControlOutside.h"
 #include "../Objects/Space.h"
+#include "../Objects/BaseSpace.h"
+#include "../Objects/SpaceGpuX0.h"
 
 // AddObjectUI
 
@@ -162,7 +164,13 @@ void BottomUI::Draw() {
     ImGui::PushItemWidth(widthSlider);
 
     if (ImGui::SliderInt("##deltaTime_slider", &deltaTime, 1, 100, "error = %d")) {
-        _mySystem->_space->deltaTime = (double)deltaTime;
+        if (BaseSpace* space = dynamic_cast<BaseSpace*>(_mySystem->_space.get())) {
+            _mySystem->_space->deltaTime = (float)deltaTime;
+        } else
+        if (SpaceGpuX0* space = dynamic_cast<SpaceGpuX0*>(_mySystem->_space.get())) {
+            _mySystem->_space->deltaTime = (float)deltaTime;
+        }
+        //_mySystem->_space->deltaTime = (double)deltaTime;
     }
 
     ImGui::SameLine();

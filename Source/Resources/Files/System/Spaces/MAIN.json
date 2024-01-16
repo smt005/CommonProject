@@ -1,34 +1,34 @@
 [
-  {
-    "class": "SpaceV0x1",
-	"_class": "SpaceGpuPrototypeV3",
-	"_class": "SpaceGpuPrototype",
-	"_class": "SpaceCpuPrototype",
-	"_class": "BaseSpace",
-    "const_gravity": 0.01,
-    "name": "MAIN",
-    "params": {
-      "PROCESS": "CPU",
-      "_PROCESS": "GPU",
-	  "tag": "0",
-	  "COUNT": "1000"
-    },
-    "objects": [
-      {
-        "mass": 100000.0,
-        "model": "OrangeStar",
-        "pos": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "vel": [
-          0.0,
-          0.0,
-          0.0
-        ]
-      }
-    ],
-    "sky_box": "SkyBox"
-  }
+	{
+		"class" : "SpaceGpuX0",
+		"_class" : "BaseSpace",
+		"const_gravity" : 0.01,
+		"name" : "MAIN",
+		"params":
+		{
+			"_PROCESS": "GPU",
+			"tag": "0",
+			"COUNT": 1000
+		},
+		"objects" : 
+		[
+			{
+				"mass" : 100.0,
+				"model" : "BrownStone",
+				"pos" : 
+				[
+					0.0,
+					0.0,
+					0.0
+				],
+				"vel" : 
+				[
+					0.0,
+					0.0,
+					-0.0
+				]
+			}
+		],
+		"sky_box" : "SkyBox"
+	}
 ]

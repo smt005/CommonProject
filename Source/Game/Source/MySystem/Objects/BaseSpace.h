@@ -1,11 +1,8 @@
 #pragma once
 
 #include "Space.h"
-#include <memory>
-#include <json/json.h>
-#include <Common/Common.h>
 
-class BaseSpace final : public Space {
+class BaseSpace : public Space {
 public:
 	using Ptr = std::shared_ptr<BaseSpace>;
 
@@ -16,12 +13,15 @@ public:
 	BaseSpace(Json::Value& valueData)
 		: Space(valueData) {
 	}
+	virtual ~BaseSpace() = default;
 
-	/*void Update() override {
-	}*/
+	void Update(double dt) override;
+	void Preparation() override;
 
 private:
-	std::string GetNameClass() override {
-		return Engine::GetClassName(this);
-	}
+	std::string GetNameClass() override;
+	void Update();
+
+private:
+	std::vector<Body::Data> _datas;
 };

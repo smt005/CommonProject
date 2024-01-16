@@ -2,14 +2,14 @@
 
 #include <string>
 #include <vector>
-#include <glm/mat4x4.hpp>
-#include "Math/Vector.h"
 #include <memory>
+#include <glm/mat4x4.hpp>
+#include "json/json.h"
+#include "Math/Vector.h"
 #include "MyStl/shared.h"
 #include "../UI/SpatialGrid.h"
 #include "Body.h"
 #include "Object/Object.h"
-#include "json/json.h"
 
 class Space {
 public:
@@ -18,116 +18,56 @@ public:
 	Space() = default;
 	Space(const std::string& name);
 	Space(Json::Value& valueData);
-	virtual ~Space();
-
-	virtual void Update() {
-		Update(deltaTime, countOfIteration);
-	}
-	virtual void Update(double dt, int countForceTime);
-	virtual void Update(double dt);
+	virtual ~Space() = default;
+	
+	virtual void Update(double dt) {}
 	virtual void Save();
 	virtual bool Load(Json::Value& valueData);
 	virtual bool Load();
 
-	virtual Math::Vector3d CenterMass();
-	virtual Body::Ptr GetBody(const char* chName);
-
+	virtual Body::Ptr& Add(Body* body);
+	virtual Body::Ptr& Add(Body::Ptr& body);
+	virtual void RemoveBody(Body::Ptr& body);
+	
 	template<typename ... Args>
 	Body& Add(Args&& ... args) {
 		Body* body = new Body(std::forward<Args>(args)...);
 		_bodies.emplace_back(body);
-		DataAssociation(); // TODO:
 		return *body;
 	}
+	
+	virtual void Preparation() {}
 
-	template<typename ... Args>
-	Body& AddWithoutAssociation(Args&& ... args) {
-		Body* body = new Body(std::forward<Args>(args)...);
-		_bodies.emplace_back(body);
-		return *body;
-	}
-
-	virtual Body& Add(Body* body) {
-		_bodies.emplace_back(body);
-		DataAssociation(); // TODO:
-		return *body;
-	}
-
-	virtual void RemoveBody(Body::Ptr& body);
-
-	virtual std::vector<Body::Ptr>& Objects() {
+	std::vector<Body::Ptr>& Objects() {
 		return _bodies;
 	}
-
-	virtual void DataAssociation();
-
-	virtual Body::Ptr GetHeaviestBody(bool setAsStar = true);
+	
+	std::pair<bool, Body&> RefFocusBody();
+	Math::Vector3d CenterMass();
+	Body::Ptr GetHeaviestBody();
+	Body::Ptr GetBody(const char* chName);
 	virtual void RemoveVelocity(bool toCenter = false);
-
-	virtual std::pair<bool, Body&> RefFocusBody() {
-		auto it = std::find(_bodies.begin(), _bodies.end(), _focusBody);
-		if (it != _bodies.end()) {
-			Body& body = **it;
-			return {true, body};
-		}
-
-		static Body defaultBody;
-		return {false, defaultBody};
-	}
-
-	virtual Body::Ptr HitObject(const glm::mat4x4& matCamera);
-
+	Body::Ptr HitObject(const glm::mat4x4& matCamera);
+	
 private:
 	virtual std::string GetNameClass();
-
+	
 public:
-	double deltaTime = 1;
+	std::string _name;
+	double _constGravity = 0.01f;
+
+	float deltaTime = 1.f;
 	size_t countOfIteration = 1;
 	double timePassed = 0;
+	bool processGPU = false;
+	int tag = 0;
+
+	std::map<std::string, std::string> _params;
+	std::vector<Body::Ptr> _bodies;
 
 	SpatialGrid spatialGrid;
-	int time = 0;
-	bool threadEnable = true;
-
+	std::shared_ptr<Object> _skyboxObject;
 	Body::Ptr _focusBody;
 	Body::Ptr _selectBody;
 	std::vector<std::pair<Body::Ptr, std::string>> _heaviestInfo;
-
-	//std::shared_ptr<Model> _skyboxModel;
-	std::shared_ptr<Object> _skyboxObject;
-
-private:
-public:
-	double _constGravity = 0.01f;
-	std::string _name;
-	std::map<std::string, std::string> _params;
-	std::vector<Body::Ptr> _bodies;
-	std::vector<Body::Data> _datas;
 };
-
-// ÿÙ·ÎÓÌ
-/*
-#pragma once
-
-#include "Space.h"
-#include <memory>
-#include "json/json.h"
-
-class SpaceXXX final : public Space {
-public:
-	using Ptr = std::shared_ptr<SpaceXXX>;
-
-	SpaceXXX() = default;
-	SpaceXXX(const std::string& name)
-		: Space(name) {
-	}
-	SpaceXXX(Json::Value& valueData)
-		: Space(valueData) {
-	}
-
-private:
-	std::string GetNameClass() override {
-		return Engine::GetClassName(this);
-	}
-};
-*/

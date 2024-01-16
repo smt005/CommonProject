@@ -75,7 +75,7 @@ public:
 		_velocity = velocity;
 	}
 
-	bool HetModel() const {
+	bool GetModel() const {
 		return _model ? true : false;
 	}
 

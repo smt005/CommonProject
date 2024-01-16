@@ -37,7 +37,10 @@ void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3d& pos, bool with
 	velocity += mainBody._velocity;
 
 	space->Add(model, pos, velocity, mass, "");
-	space->Preparation();
+
+	if (withAssotiation) {
+		space->Preparation();
+	}
 }
 
 void SpaceManager::AddObjectDirect(Space* space, Math::Vector3d& pos, Math::Vector3d& vel) {

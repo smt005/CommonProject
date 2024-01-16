@@ -1,5 +1,7 @@
 #include "SpaceGpuX0.h"
 #include <algorithm>
+#include <stdio.h>
+#include <Core.h>
 #include <../../CUDA/Wrapper.h>
 #include <../../CUDA/WrapperX0.h>
 
@@ -26,6 +28,8 @@ void SpaceGpuX0::Update(double dt) {
 }
 
 void SpaceGpuX0::Preparation() {
+	double lastTime = Engine::Core::currentTime();
+
 	_positions.clear();
 	_masses.clear();
 	_forces.clear();
@@ -68,6 +72,9 @@ void SpaceGpuX0::Preparation() {
 			_heaviestInfo.emplace_back(body, std::to_string(body->_mass));
 		}
 	}
+
+	lastTime = Engine::Core::currentTime() - lastTime;
+	printf("SpaceGpuX0::Preparation: %f size: %i\n", lastTime, _bodies.size());
 }
 
 std::string SpaceGpuX0::GetNameClass() {

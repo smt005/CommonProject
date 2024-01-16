@@ -1,7 +1,9 @@
 #include "BaseSpace.h"
+#include <stdio.h>
 #include <unordered_map>
 #include <algorithm>
 #include "Common/Common.h"
+#include <Core.h>
 
 void BaseSpace::Update(double dt) {
 	for (size_t i = 0; i < countOfIteration; ++i) {
@@ -225,6 +227,8 @@ void BaseSpace::Update() {
 }
 
 void BaseSpace::Preparation() {
+	double lastTime = Engine::Core::currentTime();
+
 	_datas.clear();
 	_datas.reserve(_bodies.size());
 
@@ -254,6 +258,9 @@ void BaseSpace::Preparation() {
 			_heaviestInfo.emplace_back(body, std::to_string(body->_mass));
 		}
 	}
+
+	lastTime = Engine::Core::currentTime() - lastTime;
+	printf("BaseSpace::Preparation: %f size: %i\n", lastTime, _bodies.size());
 }
 
 std::string BaseSpace::GetNameClass() {

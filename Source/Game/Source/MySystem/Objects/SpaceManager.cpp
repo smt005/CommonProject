@@ -166,3 +166,43 @@ Space::Ptr SpaceManager::Load(const std::string& name) {
 	
 	return Space::Ptr(new Space());
 }
+
+const std::vector<std::string>& SpaceManager::GetListClasses() {
+	static const std::vector<std::string> listClasses = { "BaseSpace", "SpaceGpuX0" };
+	return listClasses;
+}
+
+std::shared_ptr<Space> SpaceManager::CopySpace(const std::string& className, Space* space) {
+	if (!space) {
+		return Space::Ptr(new Space("DEFAULT"));
+	}
+
+	std::shared_ptr<Space> copySpacePtr;
+
+	if (className == Engine::GetClassName<BaseSpace>()) {
+		copySpacePtr = std::make_shared<BaseSpace>();
+	}
+	else
+	if (className == Engine::GetClassName<SpaceGpuX0>()) {
+		copySpacePtr = std::make_shared<SpaceGpuX0>();
+	}
+
+	auto* copySpace = copySpacePtr.get();
+
+	copySpace->_name = space->_name;
+	copySpace->_constGravity = space->_constGravity;
+
+	copySpace->deltaTime = space->deltaTime;
+	copySpace->countOfIteration = space->countOfIteration;
+	copySpace->timePassed = space->timePassed;
+	copySpace->processGPU = space->processGPU;
+	copySpace->tag = space->tag;
+
+	copySpace->_params = space->_params;
+	copySpace->_bodies = space->_bodies;
+
+	//SpatialGrid spatialGrid;
+	copySpace->_skyboxObject = space->_skyboxObject;
+
+	return copySpacePtr;
+}

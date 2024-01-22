@@ -312,7 +312,7 @@ void WrapperX0::UpdatePositionGPU(unsigned int count, CUDA::Vector3* positions, 
 
 void WrapperX0::UpdatePositionCPU(unsigned int count, CUDA::Vector3* positions, float* masses, CUDA::Vector3* forces, CUDA::Vector3* velocities, float dt, unsigned int countOfIteration) {
 	const unsigned int maxCountBlock = 1;
-	const unsigned int maxCountThread = 16;
+	const unsigned int maxCountThread = std::thread::hardware_concurrency();
 
 	unsigned int countBlock;
 	unsigned int countThread;

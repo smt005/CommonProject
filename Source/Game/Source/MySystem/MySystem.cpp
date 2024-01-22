@@ -90,6 +90,10 @@ void MySystem::close() {
 }
 
 void MySystem::update() {
+	if (!_space) {
+		return;
+	}
+
 	if ((Engine::Core::currentTime() - _time) < (_space->deltaTime > 33 ? 33 : _space->deltaTime)) {
 		return;
 	} else {
@@ -112,6 +116,10 @@ void MySystem::update() {
 }
 
 void MySystem::draw() {
+	if (!_space) {
+		return;
+	}
+
 	static Shader2::Ptr shaderPtr(new Shader2("Default.vert", "Default.frag"));
 	Shader2::current = shaderPtr;
 

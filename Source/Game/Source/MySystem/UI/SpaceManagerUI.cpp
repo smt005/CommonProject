@@ -10,14 +10,12 @@
 #include "Math/Vector.h"
 #include "../Objects/Body.h"
 #include "../Objects/Space.h"
-
-//#include "../Objects/SpaceGpuPrototype.h"
-//#include "../../CUDA/WrapperPrototype.h"
-
-//#include "../Objects/SpaceGpuPrototypeV3.h"
-//#include "../../CUDA/WrapperPrototypeV3.h"
-
+#include "../Objects/Space.h"
 #include <../../CUDA/Emulate.h>
+
+namespace {
+    Space::Ptr spaceTemp;
+}
 
 SpaceManagerUI::SpaceManagerUI() : UI::Window(this) {
     SetId("SpaceManager");
@@ -49,9 +47,20 @@ void SpaceManagerUI::Update() {
 }
 
 void SpaceManagerUI::Draw() {
+    //spaceTemp.reset();
+
     //ImGuiStyle& style = ImGui::GetStyle();
     //style.FramePadding.y = 3.f;
 
+    if (!_mySystem || !_mySystem->_space) {
+        return;
+    }
+
+    Space* currentSpacePtr = _mySystem->_space.get();
+    std::string currentClass = currentSpacePtr->GetNameClass();
+    ImGui::Text(currentClass.c_str());
+
+    ImGui::Separator();
     if (ImGui::Button("Save", { 128.f, 32.f })) {
         if (_mySystem && _mySystem->_space) {
             _mySystem->_space->Save();
@@ -206,4 +215,24 @@ void SpaceManagerUI::Draw() {
             CUDA_TEST::Test(100);
         }
     }
+
+    ImGui::Separator();
+    ImGui::BeginChild("Classes", { 140.f, 100.f }, false);
+
+    for (const std::string& className : SpaceManager::GetListClasses()) {
+        ImGui::PushStyleColor(ImGuiCol_Button, currentClass == className ? Editor::greenColor : Editor::defaultColor);
+    
+        if (ImGui::Button(className.c_str(), { 128.f, 32.f }) && currentClass != className) {
+            std::shared_ptr<Space> space = SpaceManager::CopySpace(className, currentSpacePtr);
+            spaceTemp = _mySystem->_space;
+            space->Preparation();
+            _mySystem->_space = space;
+        }
+
+        ImGui::PopStyleColor();
+    }
+
+    ImGui::EndChild();
+
+    ImGui::Separator();
 }

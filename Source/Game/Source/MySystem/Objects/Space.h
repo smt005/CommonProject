@@ -49,7 +49,7 @@ public:
 	virtual void RemoveVelocity(bool toCenter = false);
 	Body::Ptr HitObject(const glm::mat4x4& matCamera);
 	
-private:
+public:
 	virtual std::string GetNameClass();
 	
 public:

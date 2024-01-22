@@ -126,6 +126,10 @@ void BottomUI::Draw() {
     volatile static float framePadding = 18.f;
     volatile static float offsetBottom = 90.f;
 
+    if (!_mySystem || !_mySystem->_space) {
+        return;
+    }
+
     ImGuiStyle& style = ImGui::GetStyle();
     style.FramePadding.y = 18.f;
     style.GrabMinSize = 100;

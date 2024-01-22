@@ -16,4 +16,8 @@ public:
 
 	static void Save(Space::Ptr space);
 	static Space::Ptr Load(const std::string& name);
+	
+	static const std::vector<std::string>& GetListClasses();
+	static std::shared_ptr<Space> CopySpace(const std::string& className, Space* space);
+
 };

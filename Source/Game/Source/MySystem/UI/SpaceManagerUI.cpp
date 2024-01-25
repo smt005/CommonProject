@@ -11,7 +11,7 @@
 #include "../Objects/Body.h"
 #include "../Objects/Space.h"
 #include "../Objects/Space.h"
-#include <../../CUDA/Emulate.h>
+#include <../../CUDA/Source/Emulate.h>
 
 namespace {
     Space::Ptr spaceTemp;

@@ -5,12 +5,10 @@ message("Begin generate.........................................................
 # Проект
 set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(PROJECT_NAME System)
-#set(PROJECT_INCLUDE "${PROJECT_DIR}/Engine/Platform/Win/main.h")
-#set(PROJECT_SOURCE "${PROJECT_DIR}/Engine/Platform/Win/main.cpp")
 
 set(PROJECT_DIR_FILES "${PROJECT_DIR}/Engine/Platform/Win")
-FILE(GLOB_RECURSE PROJECT_INCLUDE ${PROJECT_DIR_FILES}/*.h)
-FILE(GLOB_RECURSE PROJECT_SOURCE ${PROJECT_DIR_FILES}/*.cpp)
+file(GLOB_RECURSE PROJECT_INCLUDE ${PROJECT_DIR_FILES}/*.h)
+file(GLOB_RECURSE PROJECT_SOURCE ${PROJECT_DIR_FILES}/*.cpp)
 source_group(TREE ${PROJECT_DIR_FILES} TREE PREFIX "" FILES ${PROJECT_INCLUDE} ${PROJECT_SOURCE})
 
 project(${PROJECT_NAME})
@@ -26,7 +24,7 @@ else()
 endif()
 
 #
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Библиотеки
@@ -58,14 +56,10 @@ set(IMGUI_INCLUDES "${IMGUI_DIR}")
 set(IMGUI_SOURCE "${IMGUI_DIR}")
 
 # jsoncpp
-set(JSONCPP_NAME jsoncpp)
-set(JSONCPP_DIR "${ENGINE_DIR}/ThirdParty/jsoncpp")
+set(JSONCPP_NAME json)
+set(JSONCPP_DIR "${ENGINE_DIR}/ThirdParty/json")
 set(JSONCPP_INCLUDES "${JSONCPP_DIR}/include")
 set(JSONCPP_SOURCE "${JSONCPP_DIR}/src")
-set(JSONCPP_LIB "${PROJECT_DIR}/../build/Win/Engine/ThirdParty/jsoncpp/src/lib_json")
-
-FILE(GLOB_RECURSE JSONCPP_ALL_INCLUDES ${JSONCPP_INCLUDES}/*.h)
-FILE(GLOB_RECURSE JSONCPP_ALL_SOURCES ${JSONCPP_SOURCE}/*.cpp)
 
 # GLFW
 set(GLFW_NAME glfw)
@@ -74,8 +68,8 @@ set(GLFW_INCLUDES "${GLFW_DIR}/include")
 set(GLFW_SOURCE "${GLFW_DIR}/src")
 set(GLFW_LIB "${PROJECT_DIR}/../build/Win/Engine/ThirdParty/glfw/src")
 
-FILE(GLOB_RECURSE GLFW_ALL_INCLUDES ${GLFW_INCLUDES}/*.h)
-FILE(GLOB_RECURSE GLFW_ALL_SOURCES ${GLFW_SOURCE}/*.cpp)
+file(GLOB_RECURSE GLFW_ALL_INCLUDES ${GLFW_INCLUDES}/*.h)
+file(GLOB_RECURSE GLFW_ALL_SOURCES ${GLFW_SOURCE}/*.cpp)
 
 # GLAD
 set(GLAD_NAME glad)
@@ -112,22 +106,21 @@ set(GLFW_LIB "${PROJECT_DIR}/../build/Win/Engine/ThirdParty/freetype2")
 # CUDA
 find_package(CUDA)
 if (CUDA_FOUND)
-	set(CUDA_NAME CUDA_lib)
-	set(CUDA_DIR "${PROJECT_DIR}/CUDA")
-
-	add_definitions(-DENABLE_CUDA)
-	add_subdirectory(${CUDA_DIR})
+add_definitions(-DENABLE_CUDA)
 	message("CUDA founded.")
 else()
 	message("CUDA not founded.")
 endif()
+
+set(CUDA_NAME CUDA_lib)
+set(CUDA_DIR "${PROJECT_DIR}/CUDA")
+add_subdirectory(${CUDA_DIR})
 
 # Создание
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_DIR}/../Executable)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_DIR}/../Executable)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_DIR}/../Executable)
-
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCE})
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
@@ -154,10 +147,9 @@ include_directories(${GLM_INCLUDES})
 
 # jsoncpp
 include_directories(${JSONCPP_INCLUDES})
-link_directories(${JSONCPP_LIB})
-add_library(${JSONCPP_NAME} STATIC ${JSONCPP_ALL_SOURCES})
-add_subdirectory(${JSONCPP_SOURCE})
+add_subdirectory(${JSONCPP_DIR})
 target_link_libraries(${PROJECT_NAME} ${JSONCPP_NAME})
+link_directories(${JSONCPP_DIR})
 
 # glFw
 include_directories(${GLFW_INCLUDES})
@@ -220,12 +212,6 @@ if(ENABLE_PHYSIC)
 endif()
 
 # CUDA
-if (CUDA_FOUND)
-	target_link_libraries(${PROJECT_NAME} ${CUDA_NAME})
-	message("CUDA linked.")
-else()
-	message("CUDA not linked.")
-endif()
+target_link_libraries(${PROJECT_NAME} ${CUDA_NAME})
 
 message("End generate..........................................................................................")
-#return()

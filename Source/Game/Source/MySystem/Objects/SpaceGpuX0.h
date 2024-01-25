@@ -5,7 +5,7 @@
 #include <vector>
 #include <json/json.h>
 #include <Common/Common.h>
-#include "../../CUDA/Wrapper.h"
+#include "../../CUDA/Source/Wrapper.h"
 
 class SpaceGpuX0 final : public Space {
 public:

@@ -67,7 +67,7 @@ bool Space::Load(Json::Value& valueData) {
 		return false;
 	}
 
-	Json::Value& jsonParams = valueData[0]["params"].isObject() ? valueData[0]["params"] : Json::Value();
+	Json::Value jsonParams = valueData[0]["params"].isObject() ? valueData[0]["params"] : Json::Value();
 	if (!jsonParams.empty()) {
 		for (auto const& key : jsonParams.getMemberNames()) {
 			std::cout << key << std::endl;
@@ -78,7 +78,7 @@ bool Space::Load(Json::Value& valueData) {
 		}
 	}
 
-	Json::Value& jsonObjects = valueData[0]["objects"].isArray() ? valueData[0]["objects"] : Json::Value();
+	Json::Value jsonObjects = valueData[0]["objects"].isArray() ? valueData[0]["objects"] : Json::Value();
 	if (jsonObjects.empty()) {
 		return false;
 	}

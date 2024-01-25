@@ -2,8 +2,8 @@
 #include <algorithm>
 #include <stdio.h>
 #include <Core.h>
-#include <../../CUDA/Wrapper.h>
-#include <../../CUDA/WrapperX0.h>
+#include "../../CUDA/Source/Wrapper.h"
+#include <../../CUDA/Source/WrapperX0.h>
 
 void SpaceGpuX0::Update(double dt) {
 	if (countOfIteration == 0) {

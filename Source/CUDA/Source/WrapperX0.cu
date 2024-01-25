@@ -1,6 +1,9 @@
 
 #include "WrapperX0.h"
 
+bool WrapperX0::sync = false;
+int WrapperX0::tag = 0;
+int WrapperX0::tagCurrent = -1;
 
 #if ENABLE_CUDA
 
@@ -13,10 +16,6 @@
 #include <thread>
 
 #include "Emulate.h"
-
-bool WrapperX0::sync = false;
-int WrapperX0::tag = 0;
-int WrapperX0::tagCurrent = -1;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // GPU ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -348,7 +347,7 @@ void WrapperX0::UpdatePositionCPU(unsigned int count, CUDA::Vector3* positions, 
 //...
 #else
 
-void WrapperV0x1::UpdatePositionGPU(unsigned int count, CUDA::Vector3* positions, float* masses, CUDA::Vector3* forces, CUDA::Vector3* velocities, float dt, unsigned int countOfIteration) { }
-void WrapperV0x1::UpdatePositionCPU(unsigned int count, CUDA::Vector3* positions, float* masses, CUDA::Vector3* forces, CUDA::Vector3* velocities, float dt, unsigned int countOfIteration) { }
+void WrapperX0::UpdatePositionGPU(unsigned int count, CUDA::Vector3* positions, float* masses, CUDA::Vector3* forces, CUDA::Vector3* velocities, float dt, unsigned int countOfIteration) { }
+void WrapperX0::UpdatePositionCPU(unsigned int count, CUDA::Vector3* positions, float* masses, CUDA::Vector3* forces, CUDA::Vector3* velocities, float dt, unsigned int countOfIteration) { }
 
 #endif

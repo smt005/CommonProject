@@ -254,11 +254,12 @@ void CUDA::GetOffsets(const unsigned int count, const unsigned int maxCountBlock
 
 //...
 #else
-    void testCUDA(void) {}
-
     void CUDA::GetProperty() {}
     void CUDA::PrintInfo() {}
 
-    void CUDA::GetOffsets(const unsigned int count, const unsigned int maxBlocks, const unsigned int maxThreads,
-        unsigned int& countBlock, unsigned int& countThread, unsigned int& offset) { }
+    void CUDA::GetForcesStaticTest(int count, float* masses, float* positionsX, float* positionsY, float* forcesX, float* forcesY) {}
+    void CUDA::GetForcesStatic(int count, float* masses, float* positionsX, float* positionsY, float* forcesX, float* forcesY) {}
+
+    void CUDA::GetOffsets(const unsigned int count, const unsigned int maxBlocks, const unsigned int maxThreads, unsigned int& countBlock, unsigned int& countThread, unsigned int& offset) {}
+
 #endif

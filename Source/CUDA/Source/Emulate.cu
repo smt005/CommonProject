@@ -221,9 +221,9 @@ namespace {
 				gravityY *= force;
 				gravityZ *= force;
 
-				atomicAdd(&forces[index].x, gravityX);
-				atomicAdd(&forces[index].y, gravityY);
-				atomicAdd(&forces[index].z, gravityZ);
+				//atomicAdd(&forces[index].x, gravityX);
+				//atomicAdd(&forces[index].y, gravityY);
+				//atomicAdd(&forces[index].z, gravityZ);
 			}
 		}
 	}
@@ -468,6 +468,6 @@ void CUDA_TEST::Test(unsigned int count, bool sync) {
 
 #else
 
-void CUDA_TEST::Test() { }
+void CUDA_TEST::Test(unsigned int count, bool sync) { }
 
 #endif

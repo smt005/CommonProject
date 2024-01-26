@@ -1,6 +1,7 @@
 [
 	{
-		"class" : "SpaceGpuX0",
+		"class" : "SpaceGpuX1",
+		"_class" : "SpaceGpuX0",
 		"_class" : "BaseSpace",
 		"const_gravity" : 0.01,
 		"name" : "MAIN",

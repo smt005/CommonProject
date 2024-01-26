@@ -251,7 +251,7 @@ namespace {
 
 void WrapperX0::UpdatePositionGPU(unsigned int count, CUDA::Vector3* positions, float* masses, CUDA::Vector3* forces, CUDA::Vector3* velocities, float dt, unsigned int countOfIteration) {
 	const unsigned int maxCountBlock = 65535;
-	const unsigned int maxCountThread = 1024;
+	const unsigned int maxCountThread = CUDA::multithread ? CUDA::maxThreadsPerBlock : 1;
 
 	unsigned int countBlock;
 	unsigned int countThread;
@@ -283,10 +283,13 @@ void WrapperX0::UpdatePositionGPU(unsigned int count, CUDA::Vector3* positions, 
 	cudaMemcpy(devVelocities, velocities, count * sizeof(CUDA::Vector3), cudaMemcpyHostToDevice);
 	cudaMemcpy(devDt, &dt, sizeof(float), cudaMemcpyHostToDevice);
 
-	if (sync) {
-		CalcForcesGpuSync << <countBlock, countThread >> > (devCount, devOffset, devPositions, devMasses, devForces);
-	} else {
-		CalcForcesGpu << <countBlock, countThread >> > (devCount, devOffset, devPositions, devMasses, devForces);
+	for (unsigned int index = 0; index < countOfIteration; ++index) {
+		if (sync) {
+			CalcForcesGpuSync << <countBlock, countThread >> > (devCount, devOffset, devPositions, devMasses, devForces);
+		}
+		else {
+			CalcForcesGpu << <countBlock, countThread >> > (devCount, devOffset, devPositions, devMasses, devForces);
+		}
 	}
 
 	cudaMemcpy(forces, devForces, count * sizeof(CUDA::Vector3), cudaMemcpyDeviceToHost);
@@ -311,7 +314,7 @@ void WrapperX0::UpdatePositionGPU(unsigned int count, CUDA::Vector3* positions, 
 
 void WrapperX0::UpdatePositionCPU(unsigned int count, CUDA::Vector3* positions, float* masses, CUDA::Vector3* forces, CUDA::Vector3* velocities, float dt, unsigned int countOfIteration) {
 	const unsigned int maxCountBlock = 1;
-	const unsigned int maxCountThread = std::thread::hardware_concurrency();
+	const unsigned int maxCountThread = CUDA::multithread ? std::thread::hardware_concurrency() : 1;
 
 	unsigned int countBlock;
 	unsigned int countThread;

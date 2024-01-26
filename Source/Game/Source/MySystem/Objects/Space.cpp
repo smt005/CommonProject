@@ -95,6 +95,7 @@ bool Space::Load(Json::Value& valueData) {
 	}
 	
 	processGPU = _params["PROCESS"] == "GPU" ? true : false;
+	multithread = _params["MULTITHREAD"] == "true" ? true : false;
 	tag = atoi(_params["TAG"].c_str());
 
 	// Загрузка тел

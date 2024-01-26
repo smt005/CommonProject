@@ -26,6 +26,9 @@ public:
 	static void GetOffsets(const unsigned int count, const unsigned int maxBlocks, const unsigned int maxThreads, unsigned int& countBlock, unsigned int& countThread, unsigned int& offset);
 
 public:
+	static bool processGPU;
+	static bool multithread;
+
 	static std::string	nameGPU;
 	static int			deviceCount;
 	static int          warpSize;                   /**< Warp size in threads */

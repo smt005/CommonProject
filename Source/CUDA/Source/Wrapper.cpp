@@ -3,6 +3,9 @@
 #include <thread>
 #include <vector>
 
+bool CUDA::processGPU = false;
+bool CUDA::multithread = false;
+
 std::string CUDA::nameGPU;
 int         CUDA::deviceCount = -1;
 int         CUDA::warpSize = 0;

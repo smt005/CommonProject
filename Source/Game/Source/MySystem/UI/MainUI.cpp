@@ -4,6 +4,7 @@
 #include "BottomUI.h"
 #include "SpaceManagerUI.h"
 #include "ListHeaviestUI.h"
+#include "ComputationsUI.h"
 #include "Draw/Camera/CameraControlOutside.h"
 #include "Callback/Callback.h"
 #include "Callback/CallbackEvent.h"
@@ -49,6 +50,15 @@ void MainUI::InitCallback() {
 	callback.add(Engine::CallbackType::PRESS_KEY, [](const Engine::CallbackEventPtr& callbackEventPtr) {
 		Engine::KeyCallbackEvent* releaseKeyEvent = (Engine::KeyCallbackEvent*)callbackEventPtr->get();
 		Engine::VirtualKey key = releaseKeyEvent->getId();
+
+		if (key == Engine::VirtualKey::Q) {
+			if (UI::ShowingWindow<ComputationsUI>()) {
+				UI::CloseWindowT<ComputationsUI>();
+			}
+			else {
+				UI::ShowWindow<ComputationsUI>(MainUI::_mySystem);
+			}
+		}
 
 		if (key == Engine::VirtualKey::W) {
 			if (UI::ShowingWindow<SpaceManagerUI>()) {

@@ -30,8 +30,6 @@ SpaceManagerUI::SpaceManagerUI(MySystem* mySystem)
 void SpaceManagerUI::OnOpen() {
     SetFlag(ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize);
 
-    _y = 100.f;
-
     ImGui::SetWindowPos(Id().c_str(), { _x, _y });
     ImGui::SetWindowSize(Id().c_str(), { _width, _height });
 
@@ -181,58 +179,6 @@ void SpaceManagerUI::Draw() {
             }
         }
     }
-
-    ImGui::Separator();
-    {
-            std::string btnText = "PROCESS: ";
-            btnText += _mySystem->_space->processGPU ? "GPU" : "CPU";
-            if (ImGui::Button(btnText.c_str(), { 128.f, 32.f })) {
-                _mySystem->_space->processGPU = !_mySystem->_space->processGPU;
-            }
-
-            ImGui::Dummy(ImVec2(0.f, 0.f));
-
-            static int tagInt = 0;
-            if (ImGui::InputInt("tag: ", &tagInt)) {
-                _mySystem->_space->tag = tagInt;
-            }
-    }
-
-    ImGui::Separator();
-    {
-        ImGui::Dummy(ImVec2(0.f, 0.f));
-
-        if (ImGui::Button("Test CUDA##test_cuda", { 128.f, 32.f })) {
-            CUDA_TEST::Test(100);
-
-            CUDA_TEST::Test(100000);
-            CUDA_TEST::Test(50000, true);
-            CUDA_TEST::Test(50000, false);
-            CUDA_TEST::Test(10000, true);
-            CUDA_TEST::Test(10000, false);
-            CUDA_TEST::Test(1024);
-            CUDA_TEST::Test(1000);
-            CUDA_TEST::Test(100);
-        }
-    }
-
-    ImGui::Separator();
-    ImGui::BeginChild("Classes", { 140.f, 100.f }, false);
-
-    for (const std::string& className : SpaceManager::GetListClasses()) {
-        ImGui::PushStyleColor(ImGuiCol_Button, currentClass == className ? Editor::greenColor : Editor::defaultColor);
-    
-        if (ImGui::Button(className.c_str(), { 128.f, 32.f }) && currentClass != className) {
-            std::shared_ptr<Space> space = SpaceManager::CopySpace(className, currentSpacePtr);
-            spaceTemp = _mySystem->_space;
-            space->Preparation();
-            _mySystem->_space = space;
-        }
-
-        ImGui::PopStyleColor();
-    }
-
-    ImGui::EndChild();
 
     ImGui::Separator();
 }

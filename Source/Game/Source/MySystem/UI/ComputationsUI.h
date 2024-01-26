@@ -7,17 +7,17 @@
 
 class MySystem;
 
-class SpaceManagerUI final : public UI::Window {
+class ComputationsUI final : public UI::Window {
 public:
-	SpaceManagerUI();
-	SpaceManagerUI(MySystem* mySystem);
+	ComputationsUI();
+	ComputationsUI(MySystem* mySystem);
 	void OnOpen() override;
 	void OnClose() override;
 	void Update() override;
 	void Draw() override;
 
 private:
-	float _x = 10.f;
+	float _x = 160.f;
 	float _y = 30.f;
 	float _width = 145.f;
 	float _height = 600.f;

@@ -60,6 +60,7 @@ public:
 	size_t countOfIteration = 1;
 	double timePassed = 0;
 	bool processGPU = false;
+	bool multithread = false;
 	int tag = 0;
 
 	std::map<std::string, std::string> _params;

@@ -196,6 +196,7 @@ std::shared_ptr<Space> SpaceManager::CopySpace(const std::string& className, Spa
 	copySpace->countOfIteration = space->countOfIteration;
 	copySpace->timePassed = space->timePassed;
 	copySpace->processGPU = space->processGPU;
+	copySpace->multithread = space->multithread;
 	copySpace->tag = space->tag;
 
 	copySpace->_params = space->_params;

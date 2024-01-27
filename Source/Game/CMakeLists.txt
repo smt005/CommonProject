@@ -18,6 +18,7 @@ include_directories(${GLFW_INCLUDES})
 include_directories(${FREEIMAGE_INCLUDES})
 include_directories(${IMGUI_INCLUDES})
 include_directories(${FREETYPE2_INCLUDES})
+include_directories(${CUDA_SOURCE})
 
 if(ENABLE_PHYSIC)
 	include_directories(${PHYSX_INCLUDES})

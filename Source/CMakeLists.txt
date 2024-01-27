@@ -114,6 +114,7 @@ endif()
 
 set(CUDA_NAME CUDA_lib)
 set(CUDA_DIR "${PROJECT_DIR}/CUDA")
+set(CUDA_SOURCE "${CUDA_DIR}/Source")
 add_subdirectory(${CUDA_DIR})
 
 # Создание

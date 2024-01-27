@@ -12,6 +12,11 @@ Endif()
 
 source_group(TREE ${CUDA_DIR} TREE PREFIX "" FILES ${INCLUDES} ${SOURCES})
 
+# ThirdPathy
+include_directories(${GAME_SOURCE})
+include_directories(${ENGINE_SOURCE})
+include_directories(${GLM_INCLUDES})
+include_directories(${JSONCPP_INCLUDES})
 
 if (CUDA_FOUND)
 	CUDA_ADD_LIBRARY(${CUDA_NAME} STATIC ${INCLUDES} ${SOURCES})

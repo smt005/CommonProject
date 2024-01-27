@@ -168,13 +168,7 @@ void BottomUI::Draw() {
     ImGui::PushItemWidth(widthSlider);
 
     if (ImGui::SliderInt("##deltaTime_slider", &deltaTime, 1, 100, "error = %d")) {
-        if (BaseSpace* space = dynamic_cast<BaseSpace*>(_mySystem->_space.get())) {
-            _mySystem->_space->deltaTime = (float)deltaTime;
-        } else
-        if (SpaceGpuX0* space = dynamic_cast<SpaceGpuX0*>(_mySystem->_space.get())) {
-            _mySystem->_space->deltaTime = (float)deltaTime;
-        }
-        //_mySystem->_space->deltaTime = (double)deltaTime;
+        _mySystem->_space->deltaTime = (float)deltaTime;
     }
 
     ImGui::SameLine();

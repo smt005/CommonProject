@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <Core.h>
 #include "../../CUDA/Source/Wrapper.h"
-#include <../../CUDA/Source/WrapperX0.h>
+#include <../../CUDA/Source/WrapperX1.h>
 
 void SpaceGpuX1::Update(double dt) {
 	if (countOfIteration == 0) {
@@ -17,9 +17,9 @@ void SpaceGpuX1::Update(double dt) {
 	unsigned int count = _bodies.size();
 
 	if (processGPU) {
-		WrapperX0::UpdatePositionGPU(count, _positions.data(), _masses.data(), _forces.data(), _velocities.data(), deltaTime, countOfIteration);
+		WrapperX1::UpdatePositionGPU(count, _positions.data(), _masses.data(), _forces.data(), _velocities.data(), deltaTime, countOfIteration);
 	} else {
-		WrapperX0::UpdatePositionCPU(count, _positions.data(), _masses.data(), _forces.data(), _velocities.data(), deltaTime, countOfIteration);
+		WrapperX1::UpdatePositionCPU(count, _positions.data(), _masses.data(), _forces.data(), _velocities.data(), deltaTime, countOfIteration);
 	}
 
 	for (size_t index = 0; index < count; ++index) {

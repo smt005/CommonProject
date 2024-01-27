@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <Core.h>
 #include "../../CUDA/Source/Wrapper.h"
+#include <../../CUDA/Source/WrapperX0.h>
 #include <../../CUDA/Source/WrapperX1.h>
 
 void SpaceGpuX1::Update(double dt) {
@@ -16,14 +17,31 @@ void SpaceGpuX1::Update(double dt) {
 
 	unsigned int count = _bodies.size();
 
-	if (processGPU) {
-		WrapperX1::UpdatePositionGPU(count, _positions.data(), _masses.data(), _forces.data(), _velocities.data(), deltaTime, countOfIteration);
-	} else {
-		WrapperX1::UpdatePositionCPU(count, _positions.data(), _masses.data(), _forces.data(), _velocities.data(), deltaTime, countOfIteration);
-	}
+	if (tag == 0) {
+		if (processGPU) {
+			WrapperX1::CalculateForceGPU(buffer);
+			WrapperX1::UpdatePositionGPU(buffer, deltaTime);
+		}
+		else {
+			WrapperX1::CalculateForceCPU(buffer);
+			WrapperX1::UpdatePositionCPU(buffer, deltaTime);
+		}
 
-	for (size_t index = 0; index < count; ++index) {
-		_bodies[index]->SetPos(Math::Vector3d(_positions[index].x, _positions[index].y, _positions[index].z));
+		for (size_t index = 0; index < count; ++index) {
+			_bodies[index]->SetPos(Math::Vector3d(buffer.positions[index].x, buffer.positions[index].y, buffer.positions[index].z));
+		}
+	}
+	else {
+		if (processGPU) {
+			WrapperX0::UpdatePositionGPU(count, _positions.data(), _masses.data(), _forces.data(), _velocities.data(), deltaTime, countOfIteration);
+		}
+		else {
+			WrapperX0::UpdatePositionCPU(count, _positions.data(), _masses.data(), _forces.data(), _velocities.data(), deltaTime, countOfIteration);
+		}
+
+		for (size_t index = 0; index < count; ++index) {
+			_bodies[index]->SetPos(Math::Vector3d(_positions[index].x, _positions[index].y, _positions[index].z));
+		}
 	}
 }
 
@@ -61,6 +79,8 @@ void SpaceGpuX1::Preparation() {
 		_masses.emplace_back(body->_mass);
 		_velocities.emplace_back(body->_velocity.x, body->_velocity.y, body->_velocity.z);
 	}
+
+	buffer.Load<Body::Ptr>(_bodies);
 
 	size_t sizeInfo = 10;
 	sizeInfo = sizeInfo > _bodies.size() ? _bodies.size() : 10;

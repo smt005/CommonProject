@@ -1,11 +1,15 @@
 #pragma once
 #include <vector>
 #include "Wrapper.h"
+#include "Classes.h"
 
 class WrapperX1 final {
 public:
-	static void UpdatePositionGPU(unsigned int count, CUDA::Vector3* positions, float* masses, CUDA::Vector3* forces, CUDA::Vector3* velocities, float dt, unsigned int countOfIteration);
-	static void UpdatePositionCPU(unsigned int count, CUDA::Vector3* positions, float* masses, CUDA::Vector3* forces, CUDA::Vector3* velocities, float dt, unsigned int countOfIteration);
+	static void CalculateForceCPU(cuda::Buffer& buffer);
+	static void UpdatePositionCPU(cuda::Buffer& buffer, float dt);
+
+	static void CalculateForceGPU(cuda::Buffer& buffer);
+	static void UpdatePositionGPU(cuda::Buffer& buffer, float dt);
 
 public:
 	static bool sync;

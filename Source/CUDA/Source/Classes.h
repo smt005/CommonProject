@@ -20,17 +20,13 @@ namespace cuda {
 		std::vector<Vector3> velocities;
 
 		template <typename T>
-		void Load(std::vector<T>* bodiesPtr) {
+		void Load(std::vector<T>& bodies) {
 			positions.clear();
 			masses.clear();
 			forces.clear();
 			velocities.clear();
 
-			if (!bodiesPtr) {
-				return;
-			}
-
-			count = (uint)bodiesPtr->size();
+			count = (uint)bodies.size();
 			if (count == 0) {
 				return;
 			}
@@ -41,7 +37,7 @@ namespace cuda {
 
 			velocities.resize(count);
 
-			for (auto& bodyT : *bodiesPtr) {
+			for (auto& bodyT : bodies) {
 				auto pos = bodyT->GetPos();
 				positions.emplace_back(Vector3(pos.x, pos.y, pos.z));
 

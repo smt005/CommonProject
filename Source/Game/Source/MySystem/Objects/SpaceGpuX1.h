@@ -6,7 +6,7 @@
 #include <json/json.h>
 #include <Common/Common.h>
 #include <Wrapper.h>
-#include <WrapperX1.h>
+#include <Classes.h>
 
 class SpaceGpuX1 final : public Space {
 public:
@@ -27,6 +27,7 @@ public:
 	std::string GetNameClass() override;
 
 private:
+	cuda::Buffer buffer;
 	std::vector<CUDA::Vector3> _positions;
 	std::vector<float> _masses;
 	std::vector<CUDA::Vector3> _forces;

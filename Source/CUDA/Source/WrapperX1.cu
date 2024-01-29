@@ -36,15 +36,14 @@ namespace {
 		float force = 0.0;
 		
 		for (int index = startIndex; index < countIndex; ++index) {
+			cuda::Vector3* pos = &positions[index];
+
 			float mass = masses[index];
 			if (mass <= 0.0) {
 				continue;
 			}
 
 			float radius = radiuses[index];
-			forces[index].x = 0.f;
-			forces[index].y = 0.f;
-			forces[index].z = 0.f;
 
 			for (size_t otherIndex = 0; otherIndex < *count; ++otherIndex) {
 				if (index == otherIndex) {
@@ -54,17 +53,19 @@ namespace {
 					continue;
 				}
 
-				gravityX = positions[otherIndex].x - positions[index].x;
-				gravityY = positions[otherIndex].y - positions[index].y;
-				gravityZ = positions[otherIndex].z - positions[index].z;
+				gravityX = positions[otherIndex].x - pos->x;
+				gravityY = positions[otherIndex].y - pos->y;
+				gravityZ = positions[otherIndex].z - pos->z;
 
 				dist = sqrt(gravityX * gravityX + gravityY * gravityY + gravityZ * gravityZ);
 				static float mergeDistFactor = 10.f;
 
 				if (dist < ((radius + radiuses[otherIndex]) * mergeDistFactor)) {
 					unsigned int indexCollision = (*countCollisions)++;
-					collisions[indexCollision].first = index;
-					collisions[indexCollision].second = otherIndex;
+					if (indexCollision < *count) {
+						collisions[indexCollision].first = index;
+						collisions[indexCollision].second = otherIndex;
+					}
 				}
 
 				gravityX /= dist;
@@ -191,7 +192,7 @@ void WrapperX1::UpdatePositionCPU(cuda::Buffer& buffer, float dt) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace {
-	__global__ void CalcForcesGpu(unsigned int* count, unsigned int* offset, cuda::Vector3* positions, float* masses, cuda::Vector3* forces) {
+	__global__ void CalcForcesGpu(unsigned int* count, unsigned int* offset, cuda::Vector3* positions, float* masses, cuda::Vector3* forces, float* radiuses, cuda::Buffer::Pair* collisions, unsigned int* countCollisions) {
 		int indexT = threadIdx.x + blockIdx.x * blockDim.x;
 		int startIndex = indexT * *offset;
 		int countIndex = startIndex + *offset;
@@ -208,21 +209,37 @@ namespace {
 
 		for (int index = startIndex; index < countIndex; ++index) {
 			cuda::Vector3* pos = &positions[index];
+
 			float mass = masses[index];
-			forces[index].x = 0.f;
-			forces[index].y = 0.f;
-			forces[index].z = 0.f;
+			if (mass <= 0.0) {
+				continue;
+			}
+
+			float radius = radiuses[index];
 
 			for (size_t otherIndex = 0; otherIndex < *count; ++otherIndex) {
 				if (index == otherIndex) {
 					continue;
 				}
+				if (masses[otherIndex] <= 0) {
+					continue;
+				}
 
-				gravityX = positions[otherIndex].x - positions[index].x;
-				gravityY = positions[otherIndex].y - positions[index].y;
-				gravityZ = positions[otherIndex].z - positions[index].z;
+				gravityX = positions[otherIndex].x - pos->x;
+				gravityY = positions[otherIndex].y - pos->y;
+				gravityZ = positions[otherIndex].z - pos->z;
 
 				dist = sqrt(gravityX * gravityX + gravityY * gravityY + gravityZ * gravityZ);
+				static float mergeDistFactor = 10.f;
+
+				if (dist < ((radius + radiuses[otherIndex]) * mergeDistFactor)) {
+					unsigned int indexCollision = (*countCollisions)++;
+					if (indexCollision < *count) {
+						collisions[indexCollision].first = index;
+						collisions[indexCollision].second = otherIndex;
+					}
+				}
+
 				gravityX /= dist;
 				gravityY /= dist;
 				gravityZ /= dist;
@@ -235,15 +252,11 @@ namespace {
 				forces[index].x += gravityX;
 				forces[index].y += gravityY;
 				forces[index].z += gravityZ;
-
-				forces[index].x = gravityX;
-				forces[index].y = gravityY;
-				forces[index].z = gravityZ;
 			}
 		}
 	}
 
-	__global__ void CalcForcesGpuSync(unsigned int* count, unsigned int* offset, cuda::Vector3* positions, float* masses, cuda::Vector3* forces) {
+	__global__ void CalcForcesGpuSync(unsigned int* count, unsigned int* offset, cuda::Vector3* positions, float* masses, cuda::Vector3* forces, float* radiuses, cuda::Buffer::Pair* collisions, unsigned int* countCollisions) {
 		int indexT = threadIdx.x + blockIdx.x * blockDim.x;
 		int startIndex = indexT * *offset;
 		int countIndex = startIndex + *offset;
@@ -260,21 +273,37 @@ namespace {
 
 		for (int index = startIndex; index < countIndex; ++index) {
 			cuda::Vector3* pos = &positions[index];
+
 			float mass = masses[index];
-			forces[index].x = 0.f;
-			forces[index].y = 0.f;
-			forces[index].z = 0.f;
+			if (mass <= 0.0) {
+				continue;
+			}
+
+			float radius = radiuses[index];
 
 			for (size_t otherIndex = 0; otherIndex < *count; ++otherIndex) {
 				if (index == otherIndex) {
 					continue;
 				}
+				if (masses[otherIndex] <= 0) {
+					continue;
+				}
 
-				gravityX = positions[otherIndex].x - positions[index].x;
-				gravityY = positions[otherIndex].y - positions[index].y;
-				gravityZ = positions[otherIndex].z - positions[index].z;
+				gravityX = positions[otherIndex].x - pos->x;
+				gravityY = positions[otherIndex].y - pos->y;
+				gravityZ = positions[otherIndex].z - pos->z;
 
 				dist = sqrt(gravityX * gravityX + gravityY * gravityY + gravityZ * gravityZ);
+				static float mergeDistFactor = 10.f;
+
+				if (dist < ((radius + radiuses[otherIndex]) * mergeDistFactor)) {
+					unsigned int indexCollision = (*countCollisions)++;
+					if (indexCollision < *count) {
+						collisions[indexCollision].first = index;
+						collisions[indexCollision].second = otherIndex;
+					}
+				}
+
 				gravityX /= dist;
 				gravityY /= dist;
 				gravityZ /= dist;
@@ -344,31 +373,38 @@ void WrapperX1::CalculateForceGPU(cuda::Buffer& buffer) {
 	cuda::Vector3* devPositions;
 	float* devMasses;
 	cuda::Vector3* devForces;
-	cuda::Vector3* devCollisions;
+	float* devRadiuses;
+	cuda::Buffer::Pair* devCollisions;
+	unsigned int* devCountCollisions;
 
 	cudaMalloc(&devCount, sizeof(unsigned int));
 	cudaMalloc(&devOffset, sizeof(unsigned int));
 	cudaMalloc(&devPositions, count * sizeof(cuda::Vector3));
 	cudaMalloc(&devMasses, count * sizeof(float));
 	cudaMalloc(&devForces, count * sizeof(cuda::Vector3));
+	cudaMalloc(&devRadiuses, count * sizeof(float));
 	cudaMalloc(&devCollisions, count * sizeof(cuda::Buffer::Pair));
+	cudaMalloc(&devCountCollisions, sizeof(unsigned int));
 
 	cudaMemcpy(devCount, &count, sizeof(unsigned int), cudaMemcpyHostToDevice);
 	cudaMemcpy(devOffset, &offset, sizeof(unsigned int), cudaMemcpyHostToDevice);
 	cudaMemcpy(devPositions, buffer.positions.data(), count * sizeof(cuda::Vector3), cudaMemcpyHostToDevice);
 	cudaMemcpy(devMasses, buffer.masses.data(), count * sizeof(float), cudaMemcpyHostToDevice);
 	cudaMemcpy(devForces, buffer.forces.data(), count * sizeof(cuda::Vector3), cudaMemcpyHostToDevice);
+	cudaMemcpy(devRadiuses, buffer.radiuses.data(), count * sizeof(float), cudaMemcpyHostToDevice);
 	cudaMemcpy(devCollisions, buffer.collisions.data(), count * sizeof(cuda::Buffer::Pair), cudaMemcpyHostToDevice);
+	cudaMemcpy(devCountCollisions, &buffer.countCollisions, sizeof(unsigned int), cudaMemcpyHostToDevice);
 
 	if (sync) {
-		CalcForcesGpuSync << <countBlock, countThread >> > (devCount, devOffset, devPositions, devMasses, devForces);
+		CalcForcesGpuSync << <countBlock, countThread >> > (devCount, devOffset, devPositions, devMasses, devForces, devRadiuses, devCollisions, devCountCollisions);
 	}
 	else {
-		CalcForcesGpu << <countBlock, countThread >> > (devCount, devOffset, devPositions, devMasses, devForces);
+		CalcForcesGpu << <countBlock, countThread >> > (devCount, devOffset, devPositions, devMasses, devForces, devRadiuses, devCollisions, devCountCollisions);
 	}
 
 	cudaMemcpy(buffer.forces.data(), devForces, count * sizeof(cuda::Vector3), cudaMemcpyDeviceToHost);
 	cudaMemcpy(buffer.collisions.data(), devCollisions, count * sizeof(cuda::Buffer::Pair), cudaMemcpyDeviceToHost);
+	cudaMemcpy(&buffer.countCollisions, devCountCollisions,  sizeof(unsigned int), cudaMemcpyDeviceToHost);
 
 	cudaFree(devCount);
 	cudaFree(devOffset);

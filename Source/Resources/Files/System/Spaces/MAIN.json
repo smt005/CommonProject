@@ -10,9 +10,9 @@
 			"_PROCESS": "GPU",
 			"tag": "0",
 			"COUNT": 1000,
-			"MIN_RADIUS": 5000,
+			"MIN_RADIUS": 15000,
 			"MAX_RADIUS": 25000,
-			"SPEED_FACTOR": 10.0
+			"SPEED_FACTOR": 00.1
 		},
 		"objects" : 
 		[

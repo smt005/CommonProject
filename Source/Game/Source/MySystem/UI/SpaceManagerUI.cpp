@@ -99,16 +99,28 @@ void SpaceManagerUI::Draw() {
                 if (_mySystem && _mySystem->_space->_selectBody == nullptr && _mySystem && _mySystem->_space->_bodies.size() == 1) {
                     _mySystem->_space->_selectBody = _mySystem->_space->_bodies.front();
                 }
+
                 int count = 1000;
+                float minSpaceRange = 1000;
+                float spaceRange = 5000;
+
                 std::string countStr = _mySystem->_space->_params["COUNT"];
                 if (!countStr.empty()) {
                     count = std::stoi(countStr);
                 }
 
+                std::string minSpaceRangeStr = _mySystem->_space->_params["MIN_RADIUS"];
+                if (!minSpaceRangeStr.empty()) {
+                    minSpaceRange = std::stoi(minSpaceRangeStr);
+                }
+
+                std::string spaceRangeStr = _mySystem->_space->_params["MAX_RADIUS"];
+                if (!spaceRangeStr.empty()) {
+                    spaceRange = std::stoi(spaceRangeStr);
+                }
+
                 _mySystem->_space->_bodies.reserve(count);
 
-                double minSpaceRange = 1000;
-                double spaceRange = 5000;
                 Math::Vector3d pos;
 
                 int i = 0;

@@ -37,8 +37,15 @@ void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3d& pos, bool with
 	velocity *= std::sqrtf(space->_constGravity * mainBody._mass / Math::length(gravityVector));
 	velocity += mainBody._velocity;
 
-	space->Add(model, pos, velocity, mass, "");
+	float speedFactor = 1.f;
+	std::string speedFactorStr = space->_params["SPEED_FACTOR"];
+	if (!speedFactorStr.empty()) {
+		speedFactor = std::stoi(speedFactorStr);
+		velocity *= speedFactor;
+	}
 
+	space->Add(model, pos, velocity, mass, "");
+	
 	if (withAssotiation) {
 		space->Preparation();
 	}

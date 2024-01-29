@@ -15,6 +15,8 @@ Body::Body(const std::string& nameModel, const Math::Vector3d& pos, const Math::
 	, _model(Model::getByName(nameModel))
 {
 	SetPos(pos);
+
+	//printf("Body: pos: [%f, %f, %f] vel: [%f, %f, %f] m: %f\n", pos.x, pos.y, pos.z, _velocity.x, _velocity.y, _velocity.z, mass);
 }
 
 Body::~Body() {

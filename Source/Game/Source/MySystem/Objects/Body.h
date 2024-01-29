@@ -97,6 +97,7 @@ private:
 public:
 	std::string className;
 	char* _name = nullptr;
+	bool visible = true;
 	double _mass = 0;
 	Math::Vector3d _force;
 	Math::Vector3d _velocity;

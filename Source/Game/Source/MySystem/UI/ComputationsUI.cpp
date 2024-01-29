@@ -82,6 +82,7 @@ void ComputationsUI::Draw() {
         static int tagInt = 0;
         if (ImGui::InputInt("tag: ", &tagInt)) {
             currentSpacePtr->tag = tagInt;
+            currentSpacePtr->Preparation();
         }   
     }
 

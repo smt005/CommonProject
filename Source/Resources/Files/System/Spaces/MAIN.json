@@ -9,12 +9,15 @@
 		{
 			"_PROCESS": "GPU",
 			"tag": "0",
-			"COUNT": 1000
+			"COUNT": 1000,
+			"MIN_RADIUS": 5000,
+			"MAX_RADIUS": 25000,
+			"SPEED_FACTOR": 10.0
 		},
 		"objects" : 
 		[
 			{
-				"mass" : 100.0,
+				"mass" : 100000.0,
 				"model" : "BrownStone",
 				"pos" : 
 				[

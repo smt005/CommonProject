@@ -143,6 +143,10 @@ void MySystem::draw() {
 
 	//...
 	for (Body::Ptr& bodyPtr : _space->_bodies) {
+		if (!bodyPtr->visible) {
+			continue;
+		}
+
 		Draw2::SetModelMatrix(bodyPtr->getMatrix());
 		Draw2::Draw(*bodyPtr->_model);
 	}

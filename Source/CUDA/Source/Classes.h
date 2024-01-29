@@ -13,18 +13,29 @@ namespace cuda {
 	struct Buffer {
 		using uint = unsigned int;
 
+		struct Pair {
+			unsigned int first = 0;
+			unsigned int second = 0;
+		};
+
 		uint count = 0;
 		std::vector<Vector3> positions;
+		std::vector<float> radiuses;
 		std::vector<float> masses;
 		std::vector<Vector3> forces;
 		std::vector<Vector3> velocities;
 
+		unsigned int countCollisions = 0;
+		std::vector<Pair> collisions;
+
 		template <typename T>
 		void Load(std::vector<T>& bodies) {
 			positions.clear();
+			radiuses.clear();
 			masses.clear();
 			forces.clear();
 			velocities.clear();
+			collisions.clear();
 
 			count = (uint)bodies.size();
 			if (count == 0) {
@@ -33,17 +44,32 @@ namespace cuda {
 
 			positions.reserve(count);
 			masses.reserve(count);
-			forces.reserve(count);
+			velocities.reserve(count);
 
-			velocities.resize(count);
+			forces.resize(count);
+			
+			countCollisions = 0;
+			collisions.resize(count);
 
 			for (auto& bodyT : bodies) {
 				auto pos = bodyT->GetPos();
 				positions.emplace_back(Vector3(pos.x, pos.y, pos.z));
 
+				radiuses.emplace_back(bodyT->_scale);
 				masses.emplace_back(bodyT->_mass);
-				velocities.emplace_back(Vector3(bodyT->_velocity.x, bodyT->_velocity.y, bodyT->_velocity.z));
+
+				float vx = bodyT->_velocity.x;
+				float vy = bodyT->_velocity.y;
+				float vz = bodyT->_velocity.z;
+				velocities.emplace_back(vx, vy, vz);
 			}
+		}
+
+		void Reset() {
+			forces.clear();
+			forces.resize(count);
+
+			countCollisions = 0;
 		}
 	};
 }

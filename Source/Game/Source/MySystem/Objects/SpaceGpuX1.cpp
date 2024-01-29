@@ -1,34 +1,168 @@
 #include "SpaceGpuX1.h"
 #include <algorithm>
 #include <stdio.h>
+#include <unordered_map>>
+#include <set>
 #include <Core.h>
 #include "../../CUDA/Source/Wrapper.h"
 #include <../../CUDA/Source/WrapperX0.h>
 #include <../../CUDA/Source/WrapperX1.h>
 
 void SpaceGpuX1::Update(double dt) {
-	if (countOfIteration == 0) {
-		return;
-	}
-	size_t sizeData = _bodies.size();
-	if (sizeData <= 1) {
+	if (countOfIteration == 0 || _bodies.size() <= 1) {
 		return;
 	}
 
+	for (size_t i = 0; i < countOfIteration; ++i) {
+		Update();
+	}
+}
+
+void SpaceGpuX1::Update() {
 	unsigned int count = _bodies.size();
 
 	if (tag == 0) {
+		size_t countRemove = 0;
+
+		auto collapsBodies = [&]() {
+			if (buffer.countCollisions > 0) {
+				std::unordered_map<int, std::set<int>*> collisionMap;
+				std::vector<std::set<int>*> collisionVector;
+				std::vector<cuda::Buffer::Pair>& collisions = buffer.collisions;
+
+				for (unsigned int i = 0; i < buffer.countCollisions; ++i) {
+					unsigned int firstIndex = collisions[i].first;
+					unsigned int secondIndex = collisions[i].second;
+
+					auto itFirst = collisionMap.find(firstIndex);
+					std::set<int>* associateSet = nullptr;
+
+					if (itFirst != collisionMap.end()) {
+						associateSet = itFirst->second;
+					}
+					else {
+						associateSet = new std::set<int>();
+						associateSet->emplace(firstIndex);
+
+						collisionVector.emplace_back(associateSet);
+						collisionMap.emplace(firstIndex, associateSet);
+					}
+
+					collisionMap.emplace(secondIndex, associateSet);
+					associateSet->emplace(secondIndex);
+				}
+
+				for (std::set<int>* setPtr : collisionVector) {
+					auto& bodyIndexes = *setPtr;
+
+					Body* bodyPtr = nullptr;
+
+					float sumMass = 0;
+					cuda::Vector3 sumForce;
+					Math::Vector3d sumPulse;
+					Math::Vector3d sumMassPos;
+					Math::Vector3d velocity;
+					unsigned int firstIndex = 0;
+
+					for (unsigned int index : bodyIndexes) {
+						sumMass += buffer.masses[index];
+
+						sumMassPos.x += buffer.positions[index].x * buffer.masses[index];
+						sumMassPos.y += buffer.positions[index].y * buffer.masses[index];
+						sumMassPos.z += buffer.positions[index].z * buffer.masses[index];
+
+						sumPulse.x += buffer.velocities[index].x * buffer.masses[index];
+						sumPulse.y += buffer.velocities[index].y * buffer.masses[index];
+						sumPulse.z += buffer.velocities[index].z * buffer.masses[index];
+
+						sumForce.x += buffer.forces[index].x;
+						sumForce.y += buffer.forces[index].y;
+						sumForce.z += buffer.forces[index].z;
+
+						if (!bodyPtr) {
+							bodyPtr = _bodies[index].get();
+							firstIndex = index;
+						}
+						else {
+							_bodies[index]->visible = false;
+							//_bodies[index].reset();
+
+							buffer.masses[index] = -1.0;
+							++countRemove;
+						}
+					}
+
+					Math::Vector3 pos = sumMassPos / sumMass;
+					sumPulse /= sumMass;
+
+					bodyPtr->SetPos(pos);
+					bodyPtr->_velocity = sumPulse;
+					bodyPtr->_mass = sumMass;
+					bodyPtr->Scale();
+
+					buffer.masses[firstIndex] = sumMass;
+
+					buffer.positions[firstIndex].x = pos.x;
+					buffer.positions[firstIndex].y = pos.y;
+					buffer.positions[firstIndex].z = pos.z;
+
+					buffer.velocities[firstIndex].x = sumPulse.x;
+					buffer.velocities[firstIndex].y = sumPulse.y;
+					buffer.velocities[firstIndex].z = sumPulse.z;
+
+					buffer.forces[firstIndex].x = sumForce.x;
+					buffer.forces[firstIndex].y = sumForce.y;
+					buffer.forces[firstIndex].z = sumForce.z;
+
+					delete setPtr;
+				}
+			}
+		};
+
 		if (processGPU) {
 			WrapperX1::CalculateForceGPU(buffer);
+			collapsBodies();
 			WrapperX1::UpdatePositionGPU(buffer, deltaTime);
 		}
 		else {
 			WrapperX1::CalculateForceCPU(buffer);
+			collapsBodies();
 			WrapperX1::UpdatePositionCPU(buffer, deltaTime);
 		}
 
-		for (size_t index = 0; index < count; ++index) {
-			_bodies[index]->SetPos(Math::Vector3d(buffer.positions[index].x, buffer.positions[index].y, buffer.positions[index].z));
+		if (buffer.countCollisions == 0) {
+			count = _bodies.size();
+			for (size_t index = 0; index < count; ++index) {
+				_bodies[index]->SetPos(Math::Vector3d(buffer.positions[index].x, buffer.positions[index].y, buffer.positions[index].z));
+			}
+
+			buffer.Reset();
+		}
+		else {
+			count = _bodies.size();
+			std::vector<Body::Ptr> newBodies;
+			newBodies.reserve(_bodies.size() - countRemove);
+			size_t index = 0;
+
+			for (auto bodyPtr : _bodies) {
+				if (bodyPtr->visible) {
+					bodyPtr->SetPos(Math::Vector3d(buffer.positions[index].x, buffer.positions[index].y, buffer.positions[index].z));
+
+					bodyPtr->_velocity.x = buffer.velocities[index].x;
+					bodyPtr->_velocity.y = buffer.velocities[index].y;
+					bodyPtr->_velocity.z = buffer.velocities[index].z;
+
+					bodyPtr->_mass = buffer.masses[index];
+
+					newBodies.emplace_back(bodyPtr);
+					//newBodies.emplace_back(std::move(bodyPtr));
+				}
+
+				++index;
+			}
+
+			std::swap(_bodies, newBodies);
+			buffer.Load<Body::Ptr>(_bodies);
 		}
 	}
 	else {
@@ -55,9 +189,16 @@ void SpaceGpuX1::Preparation() {
 
 	size_t count = _bodies.size();
 	if (count == 0) {
-
 		return;
 	}
+
+	/*printf("\nPREPARE\n");
+	for (Body::Ptr& body : _bodies) {
+		{
+			auto pos = body->GetPos();
+			printf("PREPARE: pos: [%f, %f, %f] vel: [%f, %f, %f] m: %f\n", pos.x, pos.y, pos.z, body->_velocity.x, body->_velocity.y, body->_velocity.z, body->_mass);
+		}
+	}*/
 
 	std::sort(_bodies.begin(), _bodies.end(), [](const Body::Ptr& left, const Body::Ptr& right) {
 		if (left && right) {
@@ -71,7 +212,13 @@ void SpaceGpuX1::Preparation() {
 	_velocities.reserve(count);
 	_forces.resize(count);
 
+	//printf("\nPREPARE SORT\n");
 	for (Body::Ptr& body : _bodies) {
+		 /* {
+			auto pos = body->GetPos();
+			printf("PREPARE: pos: [%f, %f, %f] vel: [%f, %f, %f] m: %f\n", pos.x, pos.y, pos.z, body->_velocity.x, body->_velocity.y, body->_velocity.z, body->_mass);
+		}*/
+
 		body->Scale();
 
 		auto pos = body->GetPos();
@@ -81,6 +228,13 @@ void SpaceGpuX1::Preparation() {
 	}
 
 	buffer.Load<Body::Ptr>(_bodies);
+
+	/*printf("\nBUFFER\n");
+	for (unsigned int i2 = 0; i2 < buffer.count; ++i2) {
+		printf("nBUFFER: pos: [%f, %f, %f] vel: [%f, %f, %f] m: %f\n", buffer.positions[i2].x, buffer.positions[i2].y, buffer.positions[i2].z,
+			buffer.velocities[i2].x, buffer.velocities[i2].y, buffer.velocities[i2].z,
+			buffer.masses[i2]);
+	}*/
 
 	size_t sizeInfo = 10;
 	sizeInfo = sizeInfo > _bodies.size() ? _bodies.size() : 10;

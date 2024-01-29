@@ -23,6 +23,9 @@ public:
 	void Update(double dt) override;
 	void Preparation() override;
 
+private:
+	void Update();
+
 public:
 	std::string GetNameClass() override;
 

@@ -21,7 +21,19 @@ void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3d& pos, bool with
 	
 	std::string model = "BrownStone";
 
-	float mass = help::random(10.f, 1000.f);
+	float minMass = 100.f;
+	std::string minMassStr = space->_params["MIN_MASS"];
+	if (!minMassStr.empty()) {
+		minMassStr = std::stoi(minMassStr);
+	}
+
+	float maxMass = 1000.f;
+	std::string maxMassStr = space->_params["MAX_MASS"];
+	if (!maxMassStr.empty()) {
+		maxMass = std::stoi(maxMassStr);
+	}
+
+	float mass = help::random(minMass, maxMass);
 
 	Body& mainBody = *space->_selectBody;
 

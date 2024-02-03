@@ -9,7 +9,7 @@ BodyData::BodyData(const std::string& nameModel)
 	: _model(Model::getByName(nameModel))
 {}
 
-BodyData::BodyData(const std::string& nameModel, const Math::Vector3d& pos, const Math::Vector3d& velocity, double mass, const std::string& name)
+BodyData::BodyData(const std::string& nameModel, const Math::Vector3& pos, const Math::Vector3& velocity, double mass, const std::string& name)
 	: _mass(mass)
 	, _velocity(velocity)
 	, _model(Model::getByName(nameModel))
@@ -19,7 +19,7 @@ BodyData::BodyData(const std::string& nameModel, const Math::Vector3d& pos, cons
 
 // TODO:
 Math::Vector3 BodyData::PosOnScreen(const glm::mat4x4& matCamera, bool applySizeScreen) {
-	Math::Vector3d posOnScreen;
+	Math::Vector3 posOnScreen;
 
 	auto transformToScreen = [](Math::Vector3& point, const glm::mat4x4& mat) {
 		glm::vec4 p(point.x, point.y, point.z, 1.0f);
@@ -156,7 +156,7 @@ void BodyData::Rotate() {
 	_matrix = glm::rotate(_matrix, _angular, { 0.f, 0.f, 1.f });
 }
 
-void BodyData::Scale() {
+void BodyData::CalcScale() {
 	constexpr float val3div4 = (3.f / 4.f) / PI;
 
 	//  std::pow(n, 1/3.) (or std::cbrtf(v);

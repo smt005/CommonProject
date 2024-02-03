@@ -18,19 +18,20 @@ class BodyData final : public Body {
 
 public:
 	using Ptr = mystd::shared<BodyData>;
+	//using Ptr = std::shared_ptr<BodyData>;
 
 	struct Data {
 		double mass;
-		Math::Vector3d pos;
-		Math::Vector3d force;
+		Math::Vector3 pos;
+		Math::Vector3 force;
 
 		Data() = default;
-		Data(const double _mass, Math::Vector3d&& _pos)
+		Data(const double _mass, Math::Vector3&& _pos)
 			: mass(_mass)
 			, pos(_pos)
 			, force(0, 0, 0)
 		{}
-		Data(const double _mass, const Math::Vector3d& _pos, const Math::Vector3d& _force)
+		Data(const double _mass, const Math::Vector3& _pos, const Math::Vector3& _force)
 			: mass(_mass)
 			, pos(_pos)
 			, force(_force)
@@ -40,13 +41,13 @@ public:
 	BodyData() = default;
 	BodyData(std::shared_ptr<Model>& model) : _model(model) {}
 	BodyData(const std::string& nameModel);
-	BodyData(const std::string& nameModel, const Math::Vector3d& pos, const Math::Vector3d& velocity, double mass, const std::string& name);
+	BodyData(const std::string& nameModel, const Math::Vector3& pos, const Math::Vector3& velocity, double mass, const std::string& name);
 
-	Math::Vector3d GetPos() const {
-		return Math::Vector3d(_matrix[3][0], _matrix[3][1], _matrix[3][2]);
+	Math::Vector3 GetPos() const {
+		return Math::Vector3(_matrix[3][0], _matrix[3][1], _matrix[3][2]);
 	}
 
-	void SetPos(const Math::Vector3d& pos) {
+	void SetPos(const Math::Vector3& pos) {
 		_matrix[3][0] = pos[0];
 		_matrix[3][1] = pos[1];
 		_matrix[3][2] = pos[2];
@@ -56,15 +57,15 @@ public:
 		}
 	}
 
-	void SetVelocity(const Math::Vector3d& velocity) {
+	void SetVelocity(const Math::Vector3& velocity) {
 		_velocity = velocity;
 	}
 
-	bool GetModel() const {
+	bool HasModel() const {
 		return _model ? true : false;
 	}
 
-	Model& getModel() {
+	Model& getModel() override {
 		return *_model;
 	}
 	
@@ -76,14 +77,19 @@ public:
 	bool hit(const glm::mat4x4& matCamera);
 
 	void Rotate();
-	void Scale();
+	void CalcScale() override ;
+
+	Math::Vector3& Velocity() override { return _velocity; }
+	Math::Vector3& Force() override { return _force; }
+	float& Mass() override { return _mass; }
+	float& Scale() override { return _scale; }
 
 private:
 public:
 	std::string className;
-	double _mass = 0;
-	Math::Vector3d _force;
-	Math::Vector3d _velocity;
+	float _mass = 0;
+	Math::Vector3 _force;
+	Math::Vector3 _velocity;
 	float _angular = 0.f;
 	float _angularVelocity = -0.0005f;
 	float _scale = 1.f;

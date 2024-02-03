@@ -7,6 +7,7 @@
 #include "../../CUDA/Source/Wrapper.h"
 #include <../../CUDA/Source/WrapperX0.h>
 #include <../../CUDA/Source/WrapperX1.h>
+#include "BodyData.h"
 
 void SpaceGpuX1::Update(double dt) {
 	if (countOfIteration == 0 || _bodies.size() <= 1) {
@@ -59,9 +60,9 @@ void SpaceGpuX1::Update() {
 
 					float sumMass = 0;
 					cuda::Vector3 sumForce;
-					Math::Vector3d sumPulse;
-					Math::Vector3d sumMassPos;
-					Math::Vector3d velocity;
+					Math::Vector3 sumPulse;
+					Math::Vector3 sumMassPos;
+					Math::Vector3 velocity;
 					unsigned int firstIndex = 0;
 
 					for (unsigned int index : bodyIndexes) {
@@ -80,7 +81,7 @@ void SpaceGpuX1::Update() {
 						sumForce.z += buffer.forces[index].z;
 
 						if (!bodyPtr) {
-							bodyPtr = _bodies[index].get();
+							bodyPtr = static_cast<BodyData*>(_bodies[index].get());
 							firstIndex = index;
 						}
 						else {
@@ -98,7 +99,7 @@ void SpaceGpuX1::Update() {
 					bodyPtr->SetPos(pos);
 					bodyPtr->_velocity = sumPulse;
 					bodyPtr->_mass = sumMass;
-					bodyPtr->Scale();
+					bodyPtr->CalcScale();
 
 					buffer.masses[firstIndex] = sumMass;
 
@@ -133,36 +134,35 @@ void SpaceGpuX1::Update() {
 		if (buffer.countCollisions == 0) {
 			count = _bodies.size();
 			for (size_t index = 0; index < count; ++index) {
-				_bodies[index]->SetPos(Math::Vector3d(buffer.positions[index].x, buffer.positions[index].y, buffer.positions[index].z));
+				_bodies[index]->SetPos(Math::Vector3(buffer.positions[index].x, buffer.positions[index].y, buffer.positions[index].z));
 			}
 
 			buffer.Reset();
 		}
 		else {
 			count = _bodies.size();
-			std::vector<BodyData::Ptr> newBodies;
+			std::vector<Body::Ptr> newBodies;
 			newBodies.reserve(_bodies.size() - countRemove);
 			size_t index = 0;
 
 			for (auto bodyPtr : _bodies) {
 				if (bodyPtr->visible) {
-					bodyPtr->SetPos(Math::Vector3d(buffer.positions[index].x, buffer.positions[index].y, buffer.positions[index].z));
+					bodyPtr->SetPos(Math::Vector3(buffer.positions[index].x, buffer.positions[index].y, buffer.positions[index].z));
 
-					bodyPtr->_velocity.x = buffer.velocities[index].x;
-					bodyPtr->_velocity.y = buffer.velocities[index].y;
-					bodyPtr->_velocity.z = buffer.velocities[index].z;
+					bodyPtr->Velocity().x = buffer.velocities[index].x;
+					bodyPtr->Velocity().y = buffer.velocities[index].y;
+					bodyPtr->Velocity().z = buffer.velocities[index].z;
 
-					bodyPtr->_mass = buffer.masses[index];
+					bodyPtr->Mass() = buffer.masses[index];
 
 					newBodies.emplace_back(bodyPtr);
-					//newBodies.emplace_back(std::move(bodyPtr));
 				}
 
 				++index;
 			}
 
 			std::swap(_bodies, newBodies);
-			buffer.Load<BodyData::Ptr>(_bodies);
+			buffer.Load<Body::Ptr>(_bodies);
 		}
 	}
 	else {
@@ -174,14 +174,12 @@ void SpaceGpuX1::Update() {
 		}
 
 		for (size_t index = 0; index < count; ++index) {
-			_bodies[index]->SetPos(Math::Vector3d(_positions[index].x, _positions[index].y, _positions[index].z));
+			_bodies[index]->SetPos(Math::Vector3(_positions[index].x, _positions[index].y, _positions[index].z));
 		}
 	}
 }
 
 void SpaceGpuX1::Preparation() {
-	double lastTime = Engine::Core::currentTime();
-
 	_positions.clear();
 	_masses.clear();
 	_forces.clear();
@@ -192,17 +190,9 @@ void SpaceGpuX1::Preparation() {
 		return;
 	}
 
-	/*printf("\nPREPARE\n");
-	for (BodyData::Ptr& body : _bodies) {
-		{
-			auto pos = body->GetPos();
-			printf("PREPARE: pos: [%f, %f, %f] vel: [%f, %f, %f] m: %f\n", pos.x, pos.y, pos.z, body->_velocity.x, body->_velocity.y, body->_velocity.z, body->_mass);
-		}
-	}*/
-
-	std::sort(_bodies.begin(), _bodies.end(), [](const BodyData::Ptr& left, const BodyData::Ptr& right) {
+	std::sort(_bodies.begin(), _bodies.end(), [](const Body::Ptr& left, const Body::Ptr& right) {
 		if (left && right) {
-			return left->_mass > right->_mass;
+			return left->Mass() > right->Mass();
 		}
 		return left && !right;
 	});
@@ -212,29 +202,16 @@ void SpaceGpuX1::Preparation() {
 	_velocities.reserve(count);
 	_forces.resize(count);
 
-	//printf("\nPREPARE SORT\n");
-	for (BodyData::Ptr& body : _bodies) {
-		 /* {
-			auto pos = body->GetPos();
-			printf("PREPARE: pos: [%f, %f, %f] vel: [%f, %f, %f] m: %f\n", pos.x, pos.y, pos.z, body->_velocity.x, body->_velocity.y, body->_velocity.z, body->_mass);
-		}*/
-
-		body->Scale();
+	for (Body::Ptr& body : _bodies) {
+		body->CalcScale();
 
 		auto pos = body->GetPos();
 		_positions.emplace_back(CUDA::Vector3(pos.x, pos.y, pos.z));
-		_masses.emplace_back(body->_mass);
-		_velocities.emplace_back(body->_velocity.x, body->_velocity.y, body->_velocity.z);
+		_masses.emplace_back(body->Mass());
+		_velocities.emplace_back(body->Velocity().x, body->Velocity().y, body->Velocity().z);
 	}
 
-	buffer.Load<BodyData::Ptr>(_bodies);
-
-	/*printf("\nBUFFER\n");
-	for (unsigned int i2 = 0; i2 < buffer.count; ++i2) {
-		printf("nBUFFER: pos: [%f, %f, %f] vel: [%f, %f, %f] m: %f\n", buffer.positions[i2].x, buffer.positions[i2].y, buffer.positions[i2].z,
-			buffer.velocities[i2].x, buffer.velocities[i2].y, buffer.velocities[i2].z,
-			buffer.masses[i2]);
-	}*/
+	buffer.Load<Body::Ptr>(_bodies);
 
 	size_t sizeInfo = 10;
 	sizeInfo = sizeInfo > _bodies.size() ? _bodies.size() : 10;
@@ -242,13 +219,10 @@ void SpaceGpuX1::Preparation() {
 	_heaviestInfo.reserve(sizeInfo);
 
 	for (size_t index = 0; index < sizeInfo; ++index) {
-		if (BodyData::Ptr& body = _bodies[index]) {
-			_heaviestInfo.emplace_back(body, std::to_string(body->_mass));
+		if (Body::Ptr& body = _bodies[index]) {
+			_heaviestInfo.emplace_back(body, std::to_string(body->Mass()));
 		}
 	}
-
-	lastTime = Engine::Core::currentTime() - lastTime;
-	printf("SpaceGpuX1::Preparation: %f size: %i\n", lastTime, _bodies.size());
 }
 
 std::string SpaceGpuX1::GetNameClass() {

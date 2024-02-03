@@ -95,7 +95,7 @@ void MainUI::InitCallback() {
 				if (BottomUI* bottomUI = dynamic_cast<BottomUI*>(UI::GetWindow<BottomUI>().get())) {
 					if (bottomUI->_addBodyType == AddBodyType::ORBIT) {
 						auto cursorPosGlm = _mySystem->_camearCurrent->corsorCoord();
-						Math::Vector3d cursorPos(cursorPosGlm.x, cursorPosGlm.y, cursorPosGlm.z);
+						Math::Vector3 cursorPos(cursorPosGlm.x, cursorPosGlm.y, cursorPosGlm.z);
 						SpaceManager::AddObjectOnOrbit(spacePtr.get(), cursorPos);
 						bottomUI->_addBodyType = AddBodyType::NONE;
 					}
@@ -115,7 +115,7 @@ void MainUI::DrawOnSpace() {
 	Camera::Set(_mySystem->_camearScreen);
 	Shader2::current->Use();
 
-	for (BodyData::Ptr& body : spacePtr->_bodies) {	
+	for (Body::Ptr& body : spacePtr->_bodies) {	
 		Math::Vector3 posOnScreen = body->PosOnScreen(matCamera, false);
 		float pos[] = { posOnScreen.x, posOnScreen.y, posOnScreen.z };
 		

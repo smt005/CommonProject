@@ -82,7 +82,7 @@ void SpaceManagerUI::Draw() {
         if (_mySystem && _mySystem->_space) {
             Space& space = *_mySystem->_space;
 
-            BodyData::Ptr heaviestBody = space.GetHeaviestBody();
+            auto heaviestBody = space.GetHeaviestBody();
             space._bodies.clear();
             space._bodies.emplace_back(heaviestBody);
             space.Preparation();
@@ -121,7 +121,7 @@ void SpaceManagerUI::Draw() {
 
                 _mySystem->_space->_bodies.reserve(count);
 
-                Math::Vector3d pos;
+                Math::Vector3 pos;
 
                 int i = 0;
                 while (i < count) {
@@ -175,7 +175,7 @@ void SpaceManagerUI::Draw() {
                 }
 
                 _mySystem->_space->_bodies.reserve(count);
-                Math::Vector3d pos;
+                Math::Vector3 pos;
 
                 int i = 0;
                 while (i < count) {

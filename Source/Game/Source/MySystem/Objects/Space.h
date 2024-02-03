@@ -8,7 +8,7 @@
 #include "Math/Vector.h"
 #include "MyStl/shared.h"
 #include "../UI/SpatialGrid.h"
-#include "BodyData.h"
+#include "Body.h"
 #include "Object/Object.h"
 
 class Space {
@@ -25,29 +25,29 @@ public:
 	virtual bool Load(Json::Value& valueData);
 	virtual bool Load();
 
-	virtual BodyData::Ptr& Add(BodyData* body);
-	virtual BodyData::Ptr& Add(BodyData::Ptr& body);
-	virtual void RemoveBody(BodyData::Ptr& body);
+	virtual Body::Ptr& Add(Body* body);
+	virtual Body::Ptr& Add(Body::Ptr& body);
+	virtual void RemoveBody(Body::Ptr& body);
 	
-	template<typename ... Args>
-	BodyData& Add(Args&& ... args) {
-		BodyData* body = new BodyData(std::forward<Args>(args)...);
+	template<typename BodyT, typename ... Args>
+	Body& Add(Args&& ... args) {
+		Body* body = new BodyT(std::forward<Args>(args)...);
 		_bodies.emplace_back(body);
 		return *body;
 	}
 	
 	virtual void Preparation() {}
 
-	std::vector<BodyData::Ptr>& Objects() {
+	std::vector<Body::Ptr>& Objects() {
 		return _bodies;
 	}
 	
-	std::pair<bool, BodyData&> RefFocusBody();
-	Math::Vector3d CenterMass();
-	BodyData::Ptr GetHeaviestBody();
-	BodyData::Ptr GetBody(const char* chName);
+	std::pair<bool, Body&> RefFocusBody();
+	Math::Vector3 CenterMass();
+	Body::Ptr GetHeaviestBody();
+	Body::Ptr GetBody(const char* chName);
 	virtual void RemoveVelocity(bool toCenter = false);
-	BodyData::Ptr HitObject(const glm::mat4x4& matCamera);
+	Body::Ptr HitObject(const glm::mat4x4& matCamera);
 	
 public:
 	virtual std::string GetNameClass();
@@ -64,11 +64,11 @@ public:
 	int tag = 0;
 
 	std::map<std::string, std::string> _params;
-	std::vector<BodyData::Ptr> _bodies;
+	std::vector<Body::Ptr> _bodies;
 
 	SpatialGrid spatialGrid;
 	std::shared_ptr<Object> _skyboxObject;
-	BodyData::Ptr _focusBody;
-	BodyData::Ptr _selectBody;
-	std::vector<std::pair<BodyData::Ptr, std::string>> _heaviestInfo;
+	Body::Ptr _focusBody;
+	Body::Ptr _selectBody;
+	std::vector<std::pair<Body::Ptr, std::string>> _heaviestInfo;
 };

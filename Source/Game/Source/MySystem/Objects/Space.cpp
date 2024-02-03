@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include "Common/Common.h"
 #include "Common/Help.h"
+#include "BodyData.h"
 
 Space::Space(const std::string& name)
 	: _name(name)
@@ -24,11 +25,11 @@ void Space::Save() {
 	std::string sc = GetNameClass();
 	jsonMap["class"] = sc;
 
-	if (_skyboxObject) {		
+	/*if (_skyboxObject) {
 		jsonMap["sky_box"] = _skyboxObject->getModel().getName();
-	}
+	}*/
 
-	for (BodyData::Ptr& body : Objects()) {
+	for (Body::Ptr& body : Objects()) {
 		Json::Value jsonObject;
 
 		if (body->_name) {
@@ -36,14 +37,14 @@ void Space::Save() {
 		}
 
 		jsonObject["model"] = body->getModel().getName();
-		jsonObject["mass"] = body->_mass;
+		jsonObject["mass"] = body->Mass();
 
-		Math::Vector3d pos = body->GetPos();
+		Math::Vector3 pos = body->GetPos();
 		jsonObject["pos"][0] = pos.x;
 		jsonObject["pos"][1] = pos.y;
 		jsonObject["pos"][2] = pos.z;
 
-		Math::Vector3d velocity = body->_velocity;
+		Math::Vector3 velocity = body->Velocity();
 		jsonObject["vel"][0] = velocity.x;
 		jsonObject["vel"][1] = velocity.y;
 		jsonObject["vel"][2] = velocity.z;
@@ -110,14 +111,14 @@ bool Space::Load(Json::Value& valueData) {
 		std::string name = jsonObject["name"].isString() ? jsonObject["name"].asString() : "";
 		double mass = jsonObject["mass"].isDouble() ? jsonObject["mass"].asDouble() : 1.f;
 
-		Math::Vector3d pos(0.f, 0.f, 0.f);
+		Math::Vector3 pos(0.f, 0.f, 0.f);
 		if (jsonObject["pos"].isArray()) {
 			pos.x = jsonObject["pos"][0].asDouble();
 			pos.y = jsonObject["pos"][1].asDouble();
 			pos.z = jsonObject["pos"][2].asDouble();
 		}
 
-		Math::Vector3d vel(0.f, 0.f, 0.f);
+		Math::Vector3 vel(0.f, 0.f, 0.f);
 		if (jsonObject["vel"].isArray()) {
 			vel.x = jsonObject["vel"][0].asDouble();
 			vel.y = jsonObject["vel"][1].asDouble();
@@ -151,19 +152,19 @@ bool Space::Load() {
 	return Load(valueData);
 }
 
-BodyData::Ptr Space::GetHeaviestBody() {
-	BodyData::Ptr heaviestBody;
+Body::Ptr Space::GetHeaviestBody() {
+	Body::Ptr heaviestBody;
 	
 	if (_bodies.empty()) {
 		return heaviestBody;
 	}
 	
-	for (BodyData::Ptr& body : _bodies) {
+	for (Body::Ptr& body : _bodies) {
 		if (body) {
 			if (!heaviestBody) {
 				heaviestBody = body;
 			}
-			else if (body->_mass > heaviestBody->_mass) {
+			else if (body->Mass() > heaviestBody->Mass()) {
 				heaviestBody = body;
 			}
 		}
@@ -172,13 +173,13 @@ BodyData::Ptr Space::GetHeaviestBody() {
 	return heaviestBody;
 }
 
-Math::Vector3d Space::CenterMass() {
+Math::Vector3 Space::CenterMass() {
 	double sumMass = 0;
-	Math::Vector3d sunPosMass(0, 0, 0);
+	Math::Vector3 sunPosMass(0, 0, 0);
 
-	for (BodyData::Ptr& body : _bodies) {
-		sunPosMass += body->GetPos() * body->_mass;
-		sumMass += body->_mass;
+	for (Body::Ptr& body : _bodies) {
+		sunPosMass += body->GetPos() * body->Mass();
+		sumMass += body->Mass();
 	}
 
 	return sunPosMass / sumMass;
@@ -189,70 +190,70 @@ void Space::RemoveVelocity(bool toCenter) {
 		return;
 	}
 
-	Math::Vector3d velocity;
+	Math::Vector3 velocity;
 
-	for (BodyData::Ptr& body : _bodies) {
-		velocity += body->_velocity;
+	for (Body::Ptr& body : _bodies) {
+		velocity += body->Velocity();
 	}
 
 	velocity /= static_cast<double>(_bodies.size());
 
 	toCenter = toCenter && _focusBody;
-	Math::Vector3d focusPos = toCenter ? _focusBody->GetPos() : Math::Vector3d();
+	Math::Vector3 focusPos = toCenter ? _focusBody->GetPos() : Math::Vector3();
 
-	for (BodyData::Ptr& body : _bodies) {
-		body->_velocity -= velocity;
+	for (Body::Ptr& body : _bodies) {
+		body->Velocity() -= velocity;
 
 		if (toCenter) {
-			Math::Vector3d pos = _focusBody->GetPos();
+			Math::Vector3 pos = _focusBody->GetPos();
 			pos -= toCenter;
 			_focusBody->SetPos(pos);
 		}
 	}
 }
 
-BodyData::Ptr Space::HitObject(const glm::mat4x4& matCamera) {
-	for (BodyData::Ptr& body : _bodies) {
+Body::Ptr Space::HitObject(const glm::mat4x4& matCamera) {
+	for (Body::Ptr& body : _bodies) {
 		if (body->hit(matCamera)) {
 			return body;
 		}
 	}
 
-	return BodyData::Ptr();
+	return Body::Ptr();
 }
 
-BodyData::Ptr Space::GetBody(const char* chName) {
-	auto itBody = std::find_if(_bodies.begin(), _bodies.end(), [chName](const BodyData::Ptr& body) {
+Body::Ptr Space::GetBody(const char* chName) {
+	auto itBody = std::find_if(_bodies.begin(), _bodies.end(), [chName](const Body::Ptr& body) {
 		return body ? (body->_name && chName && strcmp(body->_name, chName) == 0) : false;
 	});
 	return itBody != _bodies.end() ? *itBody : nullptr;
 }
 
-BodyData::Ptr& Space::Add(BodyData* body) {
+Body::Ptr& Space::Add(Body* body) {
 	_bodies.emplace_back(body);
 	return _bodies.back();
 }
 
-BodyData::Ptr& Space::Add(BodyData::Ptr& body) {
+Body::Ptr& Space::Add(Body::Ptr& body) {
 	_bodies.emplace_back(body);
 	return body;
 }
 
-void Space::RemoveBody(BodyData::Ptr& body) {
-	auto itRemove = std::find_if(_bodies.begin(), _bodies.end(), [&body](const BodyData::Ptr& itBody) { return itBody == body; });
+void Space::RemoveBody(Body::Ptr& body) {
+	auto itRemove = std::find_if(_bodies.begin(), _bodies.end(), [&body](const Body::Ptr& itBody) { return itBody == body; });
 	if (itRemove != _bodies.end()) {
 		_bodies.erase(itRemove);
 	}
 }
 
-std::pair<bool, BodyData&> Space::RefFocusBody() {
+std::pair<bool, Body&> Space::RefFocusBody() {
 	auto it = std::find(_bodies.begin(), _bodies.end(), _focusBody);
 	if (it != _bodies.end()) {
-		BodyData& body = **it;
+		Body& body = **it;
 		return {true, body};
 	}
 
-	static BodyData defaultBody;
+	static Body defaultBody;
 	return {false, defaultBody};
 }
 

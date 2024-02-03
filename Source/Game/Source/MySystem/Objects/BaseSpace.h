@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Space.h"
+#include "BodyData.h"
 
 class BaseSpace : public Space {
 public:

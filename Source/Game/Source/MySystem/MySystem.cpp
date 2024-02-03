@@ -142,13 +142,13 @@ void MySystem::draw() {
 	}*/
 
 	//...
-	for (BodyData::Ptr& bodyPtr : _space->_bodies) {
+	for (Body::Ptr& bodyPtr : _space->_bodies) {
 		if (!bodyPtr->visible) {
 			continue;
 		}
 
 		Draw2::SetModelMatrix(bodyPtr->getMatrix());
-		Draw2::Draw(*bodyPtr->_model);
+		Draw2::Draw(bodyPtr->getModel());
 	}
 
 	//Draw2::DepthTest(true);
@@ -279,7 +279,7 @@ void MySystem::initCallback() {
 		/*if (Engine::TapCallbackEvent* tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
 			if (!MainUI::IsLockAction() && tapCallbackEvent->_id == Engine::VirtualTap::LEFT) {
 				auto cursorPosGlm = _camearCurrent->corsorCoord();
-				Math::Vector3d cursorPos(cursorPosGlm.x, cursorPosGlm.y, cursorPosGlm.z);
+				Math::Vector3 cursorPos(cursorPosGlm.x, cursorPosGlm.y, cursorPosGlm.z);
 				SpaceManager::AddObjectOnOrbit(_space.get(), cursorPos);
 			}
 		}*/

@@ -11,7 +11,7 @@
 #include "Draw/DrawLight.h"
 #include "MySystem/MySystem.h"
 #include "../Objects/SpaceManager.h"
-#include "../Objects/Body.h"
+#include "../Objects/BodyData.h"
 #include "../Objects/Space.h"
 #include "Object/Object.h"
 #include "Object/Model.h"
@@ -115,7 +115,7 @@ void MainUI::DrawOnSpace() {
 	Camera::Set(_mySystem->_camearScreen);
 	Shader2::current->Use();
 
-	for (Body::Ptr& body : spacePtr->_bodies) {	
+	for (BodyData::Ptr& body : spacePtr->_bodies) {	
 		Math::Vector3 posOnScreen = body->PosOnScreen(matCamera, false);
 		float pos[] = { posOnScreen.x, posOnScreen.y, posOnScreen.z };
 		

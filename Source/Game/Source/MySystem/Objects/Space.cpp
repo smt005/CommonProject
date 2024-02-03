@@ -28,7 +28,7 @@ void Space::Save() {
 		jsonMap["sky_box"] = _skyboxObject->getModel().getName();
 	}
 
-	for (Body::Ptr& body : Objects()) {
+	for (BodyData::Ptr& body : Objects()) {
 		Json::Value jsonObject;
 
 		if (body->_name) {
@@ -124,7 +124,7 @@ bool Space::Load(Json::Value& valueData) {
 			vel.z = jsonObject["vel"][2].asDouble();
 		}
 
-		Body* body = new Body(model);
+		BodyData* body = new BodyData(model);
 		_bodies.emplace_back(body);
 
 		if (!name.empty()) {
@@ -151,14 +151,14 @@ bool Space::Load() {
 	return Load(valueData);
 }
 
-Body::Ptr Space::GetHeaviestBody() {
-	Body::Ptr heaviestBody;
+BodyData::Ptr Space::GetHeaviestBody() {
+	BodyData::Ptr heaviestBody;
 	
 	if (_bodies.empty()) {
 		return heaviestBody;
 	}
 	
-	for (Body::Ptr& body : _bodies) {
+	for (BodyData::Ptr& body : _bodies) {
 		if (body) {
 			if (!heaviestBody) {
 				heaviestBody = body;
@@ -176,7 +176,7 @@ Math::Vector3d Space::CenterMass() {
 	double sumMass = 0;
 	Math::Vector3d sunPosMass(0, 0, 0);
 
-	for (Body::Ptr& body : _bodies) {
+	for (BodyData::Ptr& body : _bodies) {
 		sunPosMass += body->GetPos() * body->_mass;
 		sumMass += body->_mass;
 	}
@@ -191,7 +191,7 @@ void Space::RemoveVelocity(bool toCenter) {
 
 	Math::Vector3d velocity;
 
-	for (Body::Ptr& body : _bodies) {
+	for (BodyData::Ptr& body : _bodies) {
 		velocity += body->_velocity;
 	}
 
@@ -200,7 +200,7 @@ void Space::RemoveVelocity(bool toCenter) {
 	toCenter = toCenter && _focusBody;
 	Math::Vector3d focusPos = toCenter ? _focusBody->GetPos() : Math::Vector3d();
 
-	for (Body::Ptr& body : _bodies) {
+	for (BodyData::Ptr& body : _bodies) {
 		body->_velocity -= velocity;
 
 		if (toCenter) {
@@ -211,48 +211,48 @@ void Space::RemoveVelocity(bool toCenter) {
 	}
 }
 
-Body::Ptr Space::HitObject(const glm::mat4x4& matCamera) {
-	for (Body::Ptr& body : _bodies) {
+BodyData::Ptr Space::HitObject(const glm::mat4x4& matCamera) {
+	for (BodyData::Ptr& body : _bodies) {
 		if (body->hit(matCamera)) {
 			return body;
 		}
 	}
 
-	return Body::Ptr();
+	return BodyData::Ptr();
 }
 
-Body::Ptr Space::GetBody(const char* chName) {
-	auto itBody = std::find_if(_bodies.begin(), _bodies.end(), [chName](const Body::Ptr& body) {
+BodyData::Ptr Space::GetBody(const char* chName) {
+	auto itBody = std::find_if(_bodies.begin(), _bodies.end(), [chName](const BodyData::Ptr& body) {
 		return body ? (body->_name && chName && strcmp(body->_name, chName) == 0) : false;
 	});
 	return itBody != _bodies.end() ? *itBody : nullptr;
 }
 
-Body::Ptr& Space::Add(Body* body) {
+BodyData::Ptr& Space::Add(BodyData* body) {
 	_bodies.emplace_back(body);
 	return _bodies.back();
 }
 
-Body::Ptr& Space::Add(Body::Ptr& body) {
+BodyData::Ptr& Space::Add(BodyData::Ptr& body) {
 	_bodies.emplace_back(body);
 	return body;
 }
 
-void Space::RemoveBody(Body::Ptr& body) {
-	auto itRemove = std::find_if(_bodies.begin(), _bodies.end(), [&body](const Body::Ptr& itBody) { return itBody == body; });
+void Space::RemoveBody(BodyData::Ptr& body) {
+	auto itRemove = std::find_if(_bodies.begin(), _bodies.end(), [&body](const BodyData::Ptr& itBody) { return itBody == body; });
 	if (itRemove != _bodies.end()) {
 		_bodies.erase(itRemove);
 	}
 }
 
-std::pair<bool, Body&> Space::RefFocusBody() {
+std::pair<bool, BodyData&> Space::RefFocusBody() {
 	auto it = std::find(_bodies.begin(), _bodies.end(), _focusBody);
 	if (it != _bodies.end()) {
-		Body& body = **it;
+		BodyData& body = **it;
 		return {true, body};
 	}
 
-	static Body defaultBody;
+	static BodyData defaultBody;
 	return {false, defaultBody};
 }
 

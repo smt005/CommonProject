@@ -41,7 +41,7 @@ void SpaceGpuX0::Preparation() {
 		return;
 	}
 
-	std::sort(_bodies.begin(), _bodies.end(), [](const Body::Ptr& left, const Body::Ptr& right) {
+	std::sort(_bodies.begin(), _bodies.end(), [](const BodyData::Ptr& left, const BodyData::Ptr& right) {
 		if (left && right) {
 			return left->_mass > right->_mass;
 		}
@@ -53,7 +53,7 @@ void SpaceGpuX0::Preparation() {
 	_velocities.reserve(count);
 	_forces.resize(count);
 
-	for (Body::Ptr& body : _bodies) {
+	for (BodyData::Ptr& body : _bodies) {
 		body->Scale();
 
 		auto pos = body->GetPos();
@@ -68,7 +68,7 @@ void SpaceGpuX0::Preparation() {
 	_heaviestInfo.reserve(sizeInfo);
 
 	for (size_t index = 0; index < sizeInfo; ++index) {
-		if (Body::Ptr& body = _bodies[index]) {
+		if (BodyData::Ptr& body = _bodies[index]) {
 			_heaviestInfo.emplace_back(body, std::to_string(body->_mass));
 		}
 	}

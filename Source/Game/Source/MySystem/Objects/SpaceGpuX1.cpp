@@ -55,7 +55,7 @@ void SpaceGpuX1::Update() {
 				for (std::set<int>* setPtr : collisionVector) {
 					auto& bodyIndexes = *setPtr;
 
-					Body* bodyPtr = nullptr;
+					BodyData* bodyPtr = nullptr;
 
 					float sumMass = 0;
 					cuda::Vector3 sumForce;
@@ -140,7 +140,7 @@ void SpaceGpuX1::Update() {
 		}
 		else {
 			count = _bodies.size();
-			std::vector<Body::Ptr> newBodies;
+			std::vector<BodyData::Ptr> newBodies;
 			newBodies.reserve(_bodies.size() - countRemove);
 			size_t index = 0;
 
@@ -162,7 +162,7 @@ void SpaceGpuX1::Update() {
 			}
 
 			std::swap(_bodies, newBodies);
-			buffer.Load<Body::Ptr>(_bodies);
+			buffer.Load<BodyData::Ptr>(_bodies);
 		}
 	}
 	else {
@@ -193,14 +193,14 @@ void SpaceGpuX1::Preparation() {
 	}
 
 	/*printf("\nPREPARE\n");
-	for (Body::Ptr& body : _bodies) {
+	for (BodyData::Ptr& body : _bodies) {
 		{
 			auto pos = body->GetPos();
 			printf("PREPARE: pos: [%f, %f, %f] vel: [%f, %f, %f] m: %f\n", pos.x, pos.y, pos.z, body->_velocity.x, body->_velocity.y, body->_velocity.z, body->_mass);
 		}
 	}*/
 
-	std::sort(_bodies.begin(), _bodies.end(), [](const Body::Ptr& left, const Body::Ptr& right) {
+	std::sort(_bodies.begin(), _bodies.end(), [](const BodyData::Ptr& left, const BodyData::Ptr& right) {
 		if (left && right) {
 			return left->_mass > right->_mass;
 		}
@@ -213,7 +213,7 @@ void SpaceGpuX1::Preparation() {
 	_forces.resize(count);
 
 	//printf("\nPREPARE SORT\n");
-	for (Body::Ptr& body : _bodies) {
+	for (BodyData::Ptr& body : _bodies) {
 		 /* {
 			auto pos = body->GetPos();
 			printf("PREPARE: pos: [%f, %f, %f] vel: [%f, %f, %f] m: %f\n", pos.x, pos.y, pos.z, body->_velocity.x, body->_velocity.y, body->_velocity.z, body->_mass);
@@ -227,7 +227,7 @@ void SpaceGpuX1::Preparation() {
 		_velocities.emplace_back(body->_velocity.x, body->_velocity.y, body->_velocity.z);
 	}
 
-	buffer.Load<Body::Ptr>(_bodies);
+	buffer.Load<BodyData::Ptr>(_bodies);
 
 	/*printf("\nBUFFER\n");
 	for (unsigned int i2 = 0; i2 < buffer.count; ++i2) {
@@ -242,7 +242,7 @@ void SpaceGpuX1::Preparation() {
 	_heaviestInfo.reserve(sizeInfo);
 
 	for (size_t index = 0; index < sizeInfo; ++index) {
-		if (Body::Ptr& body = _bodies[index]) {
+		if (BodyData::Ptr& body = _bodies[index]) {
 			_heaviestInfo.emplace_back(body, std::to_string(body->_mass));
 		}
 	}

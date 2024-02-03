@@ -27,7 +27,7 @@ void BaseSpace::Update() {
 		std::pair<int, Indices>* mergePair = nullptr;
 
 		for (size_t index = statIndex; index <= endIndex; ++index) {
-			Body::Data& data = _datas[index];
+			BodyData::Data& data = _datas[index];
 
 			float radius = _bodies[index]->_scale;
 
@@ -39,7 +39,7 @@ void BaseSpace::Update() {
 			forceVec.z = 0;
 
 			for (size_t otherIndex = 0; otherIndex < sizeData; ++otherIndex) {
-				Body::Data& otherBody = _datas[otherIndex];
+				BodyData::Data& otherBody = _datas[otherIndex];
 
 				float otherRadius = _bodies[otherIndex]->_scale;
 
@@ -80,8 +80,8 @@ void BaseSpace::Update() {
 	getForce(0, _bodies.size() - 1);
 
 	//...
-	std::vector<Body::Ptr> newBodies;
-	std::vector<Body::Data> newDatas;
+	std::vector<BodyData::Ptr> newBodies;
+	std::vector<BodyData::Data> newDatas;
 
 	newBodies.reserve(2000);
 	newDatas.reserve(2000);
@@ -97,14 +97,14 @@ void BaseSpace::Update() {
 			Math::Vector3d sumForce;
 			Math::Vector3d sumMassPos;
 
-			Body::Ptr newBody;
+			BodyData::Ptr newBody;
 
 			for (auto& index : mergePair.second) {
 				if (!_bodies[index]) {
 					continue;
 				}
 
-				Body::Data& data = _datas[index];
+				BodyData::Data& data = _datas[index];
 				if (data.mass == 0) {
 					continue;
 				}
@@ -120,7 +120,7 @@ void BaseSpace::Update() {
 					Math::Vector3d _pos_ = _bodies[index]->GetPos();
 					std::string nameMode = _bodies[index]->GetModel() ? _bodies[index]->getModel().getName() : "BrownStone";
 
-					newBody = newBodies.emplace_back(new Body(nameMode));
+					newBody = newBodies.emplace_back(new BodyData(nameMode));
 					newBody->_dataPtr = &newDatas.emplace_back(sumMass, Math::Vector3d(0, 0, 0), sumForce);
 				}
 
@@ -145,11 +145,11 @@ void BaseSpace::Update() {
 
 	size_t size = _bodies.size();
 
-	Body::Ptr star = GetHeaviestBody();
+	BodyData::Ptr star = GetHeaviestBody();
 	Math::Vector3d posStar = star ? star->GetPos() : Math::Vector3d();
 
 	for (size_t index = 0; index < size; ++index) {
-		Body::Ptr& body = _bodies[index];
+		BodyData::Ptr& body = _bodies[index];
 		if (!body) {
 			continue;
 		}
@@ -173,10 +173,10 @@ void BaseSpace::Update() {
 	}
 
 	if (needDataAssociation > 0) {
-		std::vector<Body::Ptr> bodies;
+		std::vector<BodyData::Ptr> bodies;
 		bodies.reserve(_bodies.size() - needDataAssociation);
 
-		for (Body::Ptr& body : _bodies) {
+		for (BodyData::Ptr& body : _bodies) {
 			if (body) {
 				bodies.emplace_back(body);
 			}
@@ -192,7 +192,7 @@ void BaseSpace::Update() {
 		size_t newSize = newBodies.size();
 
 		for (size_t index = 0; index < newSize; ++index) {
-			Body::Ptr& body = newBodies[index];
+			BodyData::Ptr& body = newBodies[index];
 
 			Math::Vector3d acceleration = body->_dataPtr->force / body->_mass;
 			Math::Vector3d newVelocity = acceleration * static_cast<double>(dt);
@@ -205,16 +205,16 @@ void BaseSpace::Update() {
 			body->force = body->_dataPtr->force.length();
 		}
 
-		std::vector<Body::Ptr> bodies;
+		std::vector<BodyData::Ptr> bodies;
 		bodies.reserve(_bodies.size());
 
-		for (Body::Ptr body : _bodies) {
+		for (BodyData::Ptr body : _bodies) {
 			if (body) {
 				bodies.emplace_back(body);
 			}
 		}
 
-		for (Body::Ptr bodyFromNew : newBodies) {
+		for (BodyData::Ptr bodyFromNew : newBodies) {
 			if (bodyFromNew) {
 				bodies.emplace_back(bodyFromNew);
 			}
@@ -232,14 +232,14 @@ void BaseSpace::Preparation() {
 	_datas.clear();
 	_datas.reserve(_bodies.size());
 
-	std::sort(_bodies.begin(), _bodies.end(), [](const Body::Ptr& left, const Body::Ptr& right) {
+	std::sort(_bodies.begin(), _bodies.end(), [](const BodyData::Ptr& left, const BodyData::Ptr& right) {
 		if (left && right) {
 			return left->_mass > right->_mass;
 		}
 	return left && !right;
 		});
 
-	for (Body::Ptr& body : _bodies) {
+	for (BodyData::Ptr& body : _bodies) {
 		if (!body) {
 			continue;
 		}
@@ -254,7 +254,7 @@ void BaseSpace::Preparation() {
 	_heaviestInfo.reserve(sizeInfo);
 
 	for (size_t index = 0; index < sizeInfo; ++index) {
-		if (Body::Ptr& body = _bodies[index]) {
+		if (BodyData::Ptr& body = _bodies[index]) {
 			_heaviestInfo.emplace_back(body, std::to_string(body->_mass));
 		}
 	}

@@ -6,7 +6,7 @@
 #include "CommonData.h"
 #include "Math/Vector.h"
 #include "MySystem/MySystem.h"
-#include "../Objects/Body.h"
+#include "../Objects/BodyData.h"
 #include "../Objects/Space.h"
 #include "Core.h"
 #include "Screen.h"

@@ -23,5 +23,5 @@ public:
 	void Update();
 
 private:
-	std::vector<Body::Data> _datas;
+	std::vector<BodyData::Data> _datas;
 };

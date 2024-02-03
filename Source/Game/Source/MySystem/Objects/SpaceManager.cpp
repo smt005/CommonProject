@@ -35,7 +35,7 @@ void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3d& pos, bool with
 
 	float mass = help::random(minMass, maxMass);
 
-	Body& mainBody = *space->_selectBody;
+	BodyData& mainBody = *space->_selectBody;
 
 	Math::Vector3d mainPos = mainBody.GetPos();
 	Math::Vector3d gravityVector = pos - mainPos;
@@ -70,7 +70,7 @@ void SpaceManager::AddObjectDirect(Space* space, Math::Vector3d& pos, Math::Vect
 void SpaceManager::AddObjects(Space* space, int count, double spaceRange, double conventionalMass) {
 	Math::Vector3d gravityPos;
 	double sumMass = 0;
-	std::vector<Body::Ptr>& bodies = space->_bodies;
+	std::vector<BodyData::Ptr>& bodies = space->_bodies;
 
 	// Создание тел
 	{
@@ -106,7 +106,7 @@ void SpaceManager::AddObjects(Space* space, int count, double spaceRange, double
 	{
 		Math::Vector3d sumMassPos(0, 0, 0);
 
-		for (Body::Ptr& bodyPtr : bodies) {
+		for (BodyData::Ptr& bodyPtr : bodies) {
 			double mass = bodyPtr->_mass;
 			Math::Vector3d pos = bodyPtr->GetPos();
 
@@ -121,7 +121,7 @@ void SpaceManager::AddObjects(Space* space, int count, double spaceRange, double
 	{
 		double mainMass = conventionalMass > 0 ? conventionalMass : sumMass / std::abs(conventionalMass);
 
-		for (Body::Ptr& bodyPtr : bodies) {
+		for (BodyData::Ptr& bodyPtr : bodies) {
 			Math::Vector3d mainPos(0, 0, 0);
 			Math::Vector3d pos = bodyPtr->GetPos();
 

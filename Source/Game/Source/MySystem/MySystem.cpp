@@ -142,7 +142,7 @@ void MySystem::draw() {
 	}*/
 
 	//...
-	for (Body::Ptr& bodyPtr : _space->_bodies) {
+	for (BodyData::Ptr& bodyPtr : _space->_bodies) {
 		if (!bodyPtr->visible) {
 			continue;
 		}

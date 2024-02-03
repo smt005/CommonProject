@@ -8,7 +8,7 @@
 #include <glm/ext/scalar_constants.hpp>
 #include "CommonData.h"
 #include "Math/Vector.h"
-#include "../Objects/Body.h"
+#include "../Objects/BodyData.h"
 #include "../Objects/Space.h"
 #include "../Objects/Space.h"
 #include <../../CUDA/Source/Wrapper.h>

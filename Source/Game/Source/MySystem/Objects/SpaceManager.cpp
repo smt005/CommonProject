@@ -9,6 +9,7 @@
 #include "BaseSpace.h"
 #include "SpaceGpuX0.h"
 #include "SpaceGpuX1.h"
+#include "SpaceTree.h"
 
 void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3& pos, bool withAssotiation) {
 	if (!space->_selectBody) {
@@ -185,6 +186,10 @@ Space::Ptr SpaceManager::Load(const std::string& name) {
 	if (classStr == Engine::GetClassName<SpaceGpuX1>()) {
 		return Space::Ptr(new SpaceGpuX1(valueData));
 	}
+	else
+	if (classStr == Engine::GetClassName<SpaceTree>()) {
+		return Space::Ptr(new SpaceTree(valueData));
+	}
 	else {
 		return Space::Ptr(new Space(valueData));
 	}
@@ -193,7 +198,7 @@ Space::Ptr SpaceManager::Load(const std::string& name) {
 }
 
 const std::vector<std::string>& SpaceManager::GetListClasses() {
-	static const std::vector<std::string> listClasses = { "BaseSpace", "SpaceGpuX0", "SpaceGpuX1" };
+	static const std::vector<std::string> listClasses = { "BaseSpace", "SpaceGpuX0", "SpaceGpuX1", "SpaceTree"};
 	return listClasses;
 }
 
@@ -214,6 +219,10 @@ std::shared_ptr<Space> SpaceManager::CopySpace(const std::string& className, Spa
 	else
 	if (className == Engine::GetClassName<SpaceGpuX1>()) {
 		copySpacePtr = std::make_shared<SpaceGpuX1>();
+	}
+	else
+	if (className == Engine::GetClassName<SpaceTree>()) {
+		copySpacePtr = std::make_shared<SpaceTree>();
 	}
 
 	auto* copySpace = copySpacePtr.get();

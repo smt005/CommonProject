@@ -1,30 +1,25 @@
-#include "Body.h"
+#include "BodyData.h"
 
 #include "Object/Model.h"
 #include "Common/Help.h"
 #include "Callback/Callback.h"
 #include "Draw/Camera/Camera.h"
 
-Body::Body(const std::string& nameModel)
+BodyData::BodyData(const std::string& nameModel)
 	: _model(Model::getByName(nameModel))
 {}
 
-Body::Body(const std::string& nameModel, const Math::Vector3d& pos, const Math::Vector3d& velocity, double mass, const std::string& name)
+BodyData::BodyData(const std::string& nameModel, const Math::Vector3& pos, const Math::Vector3& velocity, double mass, const std::string& name)
 	: _mass(mass)
 	, _velocity(velocity)
 	, _model(Model::getByName(nameModel))
 {
 	SetPos(pos);
-
-	//printf("Body: pos: [%f, %f, %f] vel: [%f, %f, %f] m: %f\n", pos.x, pos.y, pos.z, _velocity.x, _velocity.y, _velocity.z, mass);
 }
 
-Body::~Body() {
-	delete _name;
-}
 // TODO:
-Math::Vector3 Body::PosOnScreen(const glm::mat4x4& matCamera, bool applySizeScreen) {
-	Math::Vector3d posOnScreen;
+Math::Vector3 BodyData::PosOnScreen(const glm::mat4x4& matCamera, bool applySizeScreen) {
+	Math::Vector3 posOnScreen;
 
 	auto transformToScreen = [](Math::Vector3& point, const glm::mat4x4& mat) {
 		glm::vec4 p(point.x, point.y, point.z, 1.0f);
@@ -76,7 +71,7 @@ Math::Vector3 Body::PosOnScreen(const glm::mat4x4& matCamera, bool applySizeScre
 }
 
 // TODO:
-bool Body::hit(const glm::mat4x4& matCamera) {
+bool BodyData::hit(const glm::mat4x4& matCamera) {
 	if (!_model) {
 		return false;
 	}
@@ -156,12 +151,12 @@ bool Body::hit(const glm::mat4x4& matCamera) {
 	return false;
 }
 
-void Body::Rotate() {
+void BodyData::Rotate() {
 	_angular += _angularVelocity;
 	_matrix = glm::rotate(_matrix, _angular, { 0.f, 0.f, 1.f });
 }
 
-void Body::Scale() {
+void BodyData::CalcScale() {
 	constexpr float val3div4 = (3.f / 4.f) / PI;
 
 	//  std::pow(n, 1/3.) (or std::cbrtf(v);

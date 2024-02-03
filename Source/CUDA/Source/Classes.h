@@ -55,12 +55,12 @@ namespace cuda {
 				auto pos = bodyT->GetPos();
 				positions.emplace_back(Vector3(pos.x, pos.y, pos.z));
 
-				radiuses.emplace_back(bodyT->_scale);
-				masses.emplace_back(bodyT->_mass);
+				radiuses.emplace_back(bodyT->Scale());
+				masses.emplace_back(bodyT->Mass());
 
-				float vx = bodyT->_velocity.x;
-				float vy = bodyT->_velocity.y;
-				float vz = bodyT->_velocity.z;
+				float vx = bodyT->Velocity().x;
+				float vy = bodyT->Velocity().y;
+				float vz = bodyT->Velocity().z;
 				velocities.emplace_back(vx, vy, vz);
 			}
 		}

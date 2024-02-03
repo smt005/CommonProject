@@ -6,7 +6,7 @@
 #include "CommonData.h"
 #include "Math/Vector.h"
 #include "MySystem/MySystem.h"
-#include "../Objects/Body.h"
+#include "../Objects/BodyData.h"
 #include "../Objects/Space.h"
 #include "Core.h"
 #include "Screen.h"
@@ -80,7 +80,7 @@ void ListHeaviestUI::Draw() {
 
     if (_mySystem->_space->_focusBody) {
         // Speed
-        double speed = _mySystem->_space->_focusBody->_velocity.length();
+        double speed = _mySystem->_space->_focusBody->Velocity().length();
         std::string speedStr = std::to_string(speed);
 
         if (speed != 0.0 && speedStr == "0.000000") {
@@ -90,7 +90,7 @@ void ListHeaviestUI::Draw() {
         }
 
         // Force
-        double force = _mySystem->_space->_focusBody->force;
+        float force = _mySystem->_space->_focusBody->Force().length();
         std::string forceStr = std::to_string(force);
 
         if (force != 0.0 && forceStr == "0.000000") {
@@ -104,7 +104,7 @@ void ListHeaviestUI::Draw() {
         ImGui::Text("Pos: %s, %s, %s", std::to_string((int)round(pos.x)).c_str(), std::to_string((int)round(pos.y)).c_str(), std::to_string((int)round(pos.z)).c_str());
 
         // Scale
-        float scale = _mySystem->_space->_focusBody->_scale;
+        float scale = _mySystem->_space->_focusBody->Scale();
         std::string scaleStr = std::to_string(scale);
         ImGui::Text("scale: %s", scaleStr.c_str());
     }

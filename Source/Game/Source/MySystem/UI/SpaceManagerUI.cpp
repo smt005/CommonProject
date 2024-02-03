@@ -8,7 +8,7 @@
 #include <glm/ext/scalar_constants.hpp>
 #include "CommonData.h"
 #include "Math/Vector.h"
-#include "../Objects/Body.h"
+#include "../Objects/BodyData.h"
 #include "../Objects/Space.h"
 #include "../Objects/Space.h"
 #include <../../CUDA/Source/Emulate.h>
@@ -82,7 +82,7 @@ void SpaceManagerUI::Draw() {
         if (_mySystem && _mySystem->_space) {
             Space& space = *_mySystem->_space;
 
-            Body::Ptr heaviestBody = space.GetHeaviestBody();
+            auto heaviestBody = space.GetHeaviestBody();
             space._bodies.clear();
             space._bodies.emplace_back(heaviestBody);
             space.Preparation();
@@ -121,7 +121,7 @@ void SpaceManagerUI::Draw() {
 
                 _mySystem->_space->_bodies.reserve(count);
 
-                Math::Vector3d pos;
+                Math::Vector3 pos;
 
                 int i = 0;
                 while (i < count) {
@@ -175,7 +175,7 @@ void SpaceManagerUI::Draw() {
                 }
 
                 _mySystem->_space->_bodies.reserve(count);
-                Math::Vector3d pos;
+                Math::Vector3 pos;
 
                 int i = 0;
                 while (i < count) {

@@ -11,7 +11,7 @@
 #include "Draw/DrawLight.h"
 #include "MySystem/MySystem.h"
 #include "../Objects/SpaceManager.h"
-#include "../Objects/Body.h"
+#include "../Objects/BodyData.h"
 #include "../Objects/Space.h"
 #include "Object/Object.h"
 #include "Object/Model.h"
@@ -95,7 +95,7 @@ void MainUI::InitCallback() {
 				if (BottomUI* bottomUI = dynamic_cast<BottomUI*>(UI::GetWindow<BottomUI>().get())) {
 					if (bottomUI->_addBodyType == AddBodyType::ORBIT) {
 						auto cursorPosGlm = _mySystem->_camearCurrent->corsorCoord();
-						Math::Vector3d cursorPos(cursorPosGlm.x, cursorPosGlm.y, cursorPosGlm.z);
+						Math::Vector3 cursorPos(cursorPosGlm.x, cursorPosGlm.y, cursorPosGlm.z);
 						SpaceManager::AddObjectOnOrbit(spacePtr.get(), cursorPos);
 						bottomUI->_addBodyType = AddBodyType::NONE;
 					}

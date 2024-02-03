@@ -29,9 +29,9 @@ public:
 	virtual Body::Ptr& Add(Body::Ptr& body);
 	virtual void RemoveBody(Body::Ptr& body);
 	
-	template<typename ... Args>
+	template<typename BodyT, typename ... Args>
 	Body& Add(Args&& ... args) {
-		Body* body = new Body(std::forward<Args>(args)...);
+		Body* body = new BodyT(std::forward<Args>(args)...);
 		_bodies.emplace_back(body);
 		return *body;
 	}
@@ -43,7 +43,7 @@ public:
 	}
 	
 	std::pair<bool, Body&> RefFocusBody();
-	Math::Vector3d CenterMass();
+	Math::Vector3 CenterMass();
 	Body::Ptr GetHeaviestBody();
 	Body::Ptr GetBody(const char* chName);
 	virtual void RemoveVelocity(bool toCenter = false);

@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include "Common/Common.h"
 #include "Common/Help.h"
+#include "BodyData.h"
 
 Space::Space(const std::string& name)
 	: _name(name)
@@ -24,9 +25,9 @@ void Space::Save() {
 	std::string sc = GetNameClass();
 	jsonMap["class"] = sc;
 
-	if (_skyboxObject) {		
+	/*if (_skyboxObject) {
 		jsonMap["sky_box"] = _skyboxObject->getModel().getName();
-	}
+	}*/
 
 	for (Body::Ptr& body : Objects()) {
 		Json::Value jsonObject;
@@ -36,14 +37,14 @@ void Space::Save() {
 		}
 
 		jsonObject["model"] = body->getModel().getName();
-		jsonObject["mass"] = body->_mass;
+		jsonObject["mass"] = body->Mass();
 
-		Math::Vector3d pos = body->GetPos();
+		Math::Vector3 pos = body->GetPos();
 		jsonObject["pos"][0] = pos.x;
 		jsonObject["pos"][1] = pos.y;
 		jsonObject["pos"][2] = pos.z;
 
-		Math::Vector3d velocity = body->_velocity;
+		Math::Vector3 velocity = body->Velocity();
 		jsonObject["vel"][0] = velocity.x;
 		jsonObject["vel"][1] = velocity.y;
 		jsonObject["vel"][2] = velocity.z;
@@ -110,21 +111,21 @@ bool Space::Load(Json::Value& valueData) {
 		std::string name = jsonObject["name"].isString() ? jsonObject["name"].asString() : "";
 		double mass = jsonObject["mass"].isDouble() ? jsonObject["mass"].asDouble() : 1.f;
 
-		Math::Vector3d pos(0.f, 0.f, 0.f);
+		Math::Vector3 pos(0.f, 0.f, 0.f);
 		if (jsonObject["pos"].isArray()) {
 			pos.x = jsonObject["pos"][0].asDouble();
 			pos.y = jsonObject["pos"][1].asDouble();
 			pos.z = jsonObject["pos"][2].asDouble();
 		}
 
-		Math::Vector3d vel(0.f, 0.f, 0.f);
+		Math::Vector3 vel(0.f, 0.f, 0.f);
 		if (jsonObject["vel"].isArray()) {
 			vel.x = jsonObject["vel"][0].asDouble();
 			vel.y = jsonObject["vel"][1].asDouble();
 			vel.z = jsonObject["vel"][2].asDouble();
 		}
 
-		Body* body = new Body(model);
+		BodyData* body = new BodyData(model);
 		_bodies.emplace_back(body);
 
 		if (!name.empty()) {
@@ -163,7 +164,7 @@ Body::Ptr Space::GetHeaviestBody() {
 			if (!heaviestBody) {
 				heaviestBody = body;
 			}
-			else if (body->_mass > heaviestBody->_mass) {
+			else if (body->Mass() > heaviestBody->Mass()) {
 				heaviestBody = body;
 			}
 		}
@@ -172,13 +173,13 @@ Body::Ptr Space::GetHeaviestBody() {
 	return heaviestBody;
 }
 
-Math::Vector3d Space::CenterMass() {
+Math::Vector3 Space::CenterMass() {
 	double sumMass = 0;
-	Math::Vector3d sunPosMass(0, 0, 0);
+	Math::Vector3 sunPosMass(0, 0, 0);
 
 	for (Body::Ptr& body : _bodies) {
-		sunPosMass += body->GetPos() * body->_mass;
-		sumMass += body->_mass;
+		sunPosMass += body->GetPos() * body->Mass();
+		sumMass += body->Mass();
 	}
 
 	return sunPosMass / sumMass;
@@ -189,22 +190,22 @@ void Space::RemoveVelocity(bool toCenter) {
 		return;
 	}
 
-	Math::Vector3d velocity;
+	Math::Vector3 velocity;
 
 	for (Body::Ptr& body : _bodies) {
-		velocity += body->_velocity;
+		velocity += body->Velocity();
 	}
 
 	velocity /= static_cast<double>(_bodies.size());
 
 	toCenter = toCenter && _focusBody;
-	Math::Vector3d focusPos = toCenter ? _focusBody->GetPos() : Math::Vector3d();
+	Math::Vector3 focusPos = toCenter ? _focusBody->GetPos() : Math::Vector3();
 
 	for (Body::Ptr& body : _bodies) {
-		body->_velocity -= velocity;
+		body->Velocity() -= velocity;
 
 		if (toCenter) {
-			Math::Vector3d pos = _focusBody->GetPos();
+			Math::Vector3 pos = _focusBody->GetPos();
 			pos -= toCenter;
 			_focusBody->SetPos(pos);
 		}

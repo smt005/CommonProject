@@ -10,7 +10,7 @@
 #include "SpaceGpuX0.h"
 #include "SpaceGpuX1.h"
 
-void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3d& pos, bool withAssotiation) {
+void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3& pos, bool withAssotiation) {
 	if (!space->_selectBody) {
 		return;
 	}
@@ -37,17 +37,17 @@ void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3d& pos, bool with
 
 	Body& mainBody = *space->_selectBody;
 
-	Math::Vector3d mainPos = mainBody.GetPos();
-	Math::Vector3d gravityVector = pos - mainPos;
-	Math::Vector3d normalizeGravityVector = Math::normalize(gravityVector);
+	Math::Vector3 mainPos = mainBody.GetPos();
+	Math::Vector3 gravityVector = pos - mainPos;
+	Math::Vector3 normalizeGravityVector = Math::normalize(gravityVector);
 
 	float g90 = PI / 2;
-	Math::Vector3d velocity(normalizeGravityVector.x * std::cos(g90) - normalizeGravityVector.y * std::sin(g90),
+	Math::Vector3 velocity(normalizeGravityVector.x * std::cos(g90) - normalizeGravityVector.y * std::sin(g90),
 		normalizeGravityVector.x * std::sin(g90) + normalizeGravityVector.y * std::cos(g90),
 		0.f);
 
-	velocity *= std::sqrtf(space->_constGravity * mainBody._mass / Math::length(gravityVector));
-	velocity += mainBody._velocity;
+	velocity *= std::sqrtf(space->_constGravity * mainBody.Mass() / Math::length(gravityVector));
+	velocity += mainBody.Velocity();
 
 	float speedFactor = 1.f;
 	std::string speedFactorStr = space->_params["SPEED_FACTOR"];
@@ -56,19 +56,19 @@ void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3d& pos, bool with
 		velocity *= speedFactor;
 	}
 
-	space->Add(model, pos, velocity, mass, "");
+	space->Add<BodyData>(model, pos, velocity, mass, "");
 	
 	if (withAssotiation) {
 		space->Preparation();
 	}
 }
 
-void SpaceManager::AddObjectDirect(Space* space, Math::Vector3d& pos, Math::Vector3d& vel) {
+void SpaceManager::AddObjectDirect(Space* space, Math::Vector3& pos, Math::Vector3& vel) {
 	//...
 }
 
 void SpaceManager::AddObjects(Space* space, int count, double spaceRange, double conventionalMass) {
-	Math::Vector3d gravityPos;
+	Math::Vector3 gravityPos;
 	double sumMass = 0;
 	std::vector<Body::Ptr>& bodies = space->_bodies;
 
@@ -80,8 +80,8 @@ void SpaceManager::AddObjects(Space* space, int count, double spaceRange, double
 		size_t newCount = bodies.size() + count;
 		bodies.reserve(newCount);
 
-		Math::Vector3d pos;
-		Math::Vector3d velocity;
+		Math::Vector3 pos;
+		Math::Vector3 velocity;
 
 		int i = 0;
 		while (i < count) {
@@ -96,7 +96,7 @@ void SpaceManager::AddObjects(Space* space, int count, double spaceRange, double
 			++i;
 
 			//float mass = help::random(50, 150);
-			space->Add(model, pos, velocity, mass, "");
+			space->Add<BodyData>(model, pos, velocity, mass, "");
 		}
 
 		space->Preparation();
@@ -104,11 +104,11 @@ void SpaceManager::AddObjects(Space* space, int count, double spaceRange, double
 
 	// Расчёт центра масс
 	{
-		Math::Vector3d sumMassPos(0, 0, 0);
+		Math::Vector3 sumMassPos(0, 0, 0);
 
 		for (Body::Ptr& bodyPtr : bodies) {
-			double mass = bodyPtr->_mass;
-			Math::Vector3d pos = bodyPtr->GetPos();
+			double mass = bodyPtr->Mass();
+			Math::Vector3 pos = bodyPtr->GetPos();
 
 			sumMassPos += pos * mass;
 			sumMass += mass;
@@ -122,23 +122,23 @@ void SpaceManager::AddObjects(Space* space, int count, double spaceRange, double
 		double mainMass = conventionalMass > 0 ? conventionalMass : sumMass / std::abs(conventionalMass);
 
 		for (Body::Ptr& bodyPtr : bodies) {
-			Math::Vector3d mainPos(0, 0, 0);
-			Math::Vector3d pos = bodyPtr->GetPos();
+			Math::Vector3 mainPos(0, 0, 0);
+			Math::Vector3 pos = bodyPtr->GetPos();
 
 			if (pos.x == mainPos.x && pos.y == mainPos.y && pos.z == mainPos.z) {
 				continue;
 			}
 
-			Math::Vector3d gravityVector = pos - mainPos;
-			Math::Vector3d normalizeGravityVector = Math::normalize(gravityVector);
+			Math::Vector3 gravityVector = pos - mainPos;
+			Math::Vector3 normalizeGravityVector = Math::normalize(gravityVector);
 
 			float g90 = PI / 2;
-			Math::Vector3d velocity(normalizeGravityVector.x * std::cos(g90) - normalizeGravityVector.y * std::sin(g90),
+			Math::Vector3 velocity(normalizeGravityVector.x * std::cos(g90) - normalizeGravityVector.y * std::sin(g90),
 				normalizeGravityVector.x * std::sin(g90) + normalizeGravityVector.y * std::cos(g90),
 				0.f);
 
 			velocity *= std::sqrtf(space->_constGravity * mainMass / Math::length(gravityVector));
-			bodyPtr->_velocity = velocity;
+			bodyPtr->Velocity() = velocity;
 		}
 	}
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Space.h"
+#include "BodyData.h"
 
 class BaseSpace : public Space {
 public:
@@ -23,5 +24,5 @@ public:
 	void Update();
 
 private:
-	std::vector<Body::Data> _datas;
+	std::vector<BodyData::Data> _datas;
 };

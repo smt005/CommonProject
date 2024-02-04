@@ -13,7 +13,7 @@ class Space;
 class Model;
 using ModelPtr = std::shared_ptr<Model>;
 
-class BodyData final : public Body {
+class BodyData : public Body {
 	friend Space;
 
 public:
@@ -42,6 +42,7 @@ public:
 	BodyData(std::shared_ptr<Model>& model) : _model(model) {}
 	BodyData(const std::string& nameModel);
 	BodyData(const std::string& nameModel, const Math::Vector3& pos, const Math::Vector3& velocity, double mass, const std::string& name);
+	virtual ~BodyData() = default;
 
 	Math::Vector3 GetPos() const {
 		return Math::Vector3(_matrix[3][0], _matrix[3][1], _matrix[3][2]);

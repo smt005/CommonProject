@@ -1,6 +1,7 @@
 [
 	{
-		"class" : "SpaceGpuX1",
+		"class": "SpaceTree00",
+		"_class" : "SpaceGpuX1",
 		"_class" : "SpaceGpuX0",
 		"_class" : "BaseSpace",
 		"const_gravity" : 0.01,
@@ -10,7 +11,7 @@
 			"_PROCESS": "GPU",
 			"_MULTITHREAD": "true",
 			"tag": "0",
-			"COUNT": 5000,
+			"COUNT": 1000,
 			"MIN_MASS": 10,
 			"MAX_MASS": 100,
 			"MIN_RADIUS": 10000,

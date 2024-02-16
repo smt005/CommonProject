@@ -10,6 +10,7 @@
 #include "SpaceGpuX0.h"
 #include "SpaceGpuX1.h"
 #include "SpaceTree00.h"
+#include "SpaceTree01.h"
 
 void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3& pos, bool withAssotiation) {
 	if (!space->_selectBody) {
@@ -88,7 +89,7 @@ void SpaceManager::AddObjects(Space* space, int count, double spaceRange, double
 		while (i < count) {
 			pos.x = help::random(-spaceRange, spaceRange);
 			pos.y = help::random(-spaceRange, spaceRange);
-			pos.z = 0;// help::random(-spaceRange, spaceRange);
+			pos.z = 0.f; // help::random(-spaceRange, spaceRange);
 
 			if (pos.length() > spaceRange) {
 				continue;
@@ -190,6 +191,10 @@ Space::Ptr SpaceManager::Load(const std::string& name) {
 	if (classStr == Engine::GetClassName<SpaceTree00>()) {
 		return Space::Ptr(new SpaceTree00(valueData));
 	}
+	else
+	if (classStr == Engine::GetClassName<SpaceTree01>()) {
+		return Space::Ptr(new SpaceTree01(valueData));
+	}
 	else {
 		return Space::Ptr(new Space(valueData));
 	}
@@ -198,7 +203,7 @@ Space::Ptr SpaceManager::Load(const std::string& name) {
 }
 
 const std::vector<std::string>& SpaceManager::GetListClasses() {
-	static const std::vector<std::string> listClasses = { "BaseSpace", "SpaceGpuX0", "SpaceGpuX1", "SpaceTree00"};
+	static const std::vector<std::string> listClasses = { "SpaceTree01", "SpaceGpuX1", "BaseSpace", "SpaceGpuX0", "SpaceTree00" };
 	return listClasses;
 }
 
@@ -223,6 +228,10 @@ std::shared_ptr<Space> SpaceManager::CopySpace(const std::string& className, Spa
 	else
 	if (className == Engine::GetClassName<SpaceTree00>()) {
 		copySpacePtr = std::make_shared<SpaceTree00>();
+	}
+	else
+	if (className == Engine::GetClassName<SpaceTree01>()) {
+		copySpacePtr = std::make_shared<SpaceTree01>();
 	}
 
 	auto* copySpace = copySpacePtr.get();

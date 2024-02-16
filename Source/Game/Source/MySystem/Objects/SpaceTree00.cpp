@@ -244,4 +244,12 @@ void SpaceTree00::Preparation() {
 	cluster.countBodiesCluster = 100;
 	cluster.LoadBodies(_bodies);
 	cluster.CreateChilds();
+
+	if (lastCountBodies != _bodies.size()) {
+		lastCountBodies = _bodies.size();
+
+		for (Body::Ptr bodyPtr : _bodies) {
+			bodyPtr->CalcScale();
+		}
+	}
 }

@@ -72,4 +72,5 @@ public:
 
 private:
 	Cluster cluster;
+	size_t lastCountBodies;
 };

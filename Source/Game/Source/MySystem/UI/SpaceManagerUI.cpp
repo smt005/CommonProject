@@ -127,7 +127,7 @@ void SpaceManagerUI::Draw() {
                 while (i < count) {
                     pos.x = help::random(-spaceRange, spaceRange);
                     pos.y = help::random(-spaceRange, spaceRange);
-                    pos.z = help::random(-1.f, 1.f);
+                    pos.z = 0.f; //pos.z = help::random(-1.f, 1.f);
 
                     double radius = pos.length();
 

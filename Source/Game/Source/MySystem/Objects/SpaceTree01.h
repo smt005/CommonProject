@@ -28,14 +28,17 @@ namespace spaceTree01 {
 	};
 
 	struct Cluster01 {
-		using Ptr = mystd::shared<Cluster01>;
+		//using Ptr = mystd::shared<Cluster01>;
+		using Ptr = std::shared_ptr<Cluster01>;
 
 		Math::Vector3 min;
 		Math::Vector3 max;
 
 		Math::Vector3 centerPos;
 		Math::Vector3 centerMass;
+		Math::Vector3 force;
 		float mass = 0;
+		float dist = 0;
 
 		std::vector<Body*> bodies;
 	};
@@ -58,6 +61,10 @@ public:
 
 private:
 	void Update();
+	void UpdateForceByBody(std::vector<Body*>& bodies, std::vector<Body*>& subBodies);
+	void UpdateForceByCluster(spaceTree01::Cluster01& cluster);
+	bool IsClosestCluster(spaceTree01::Cluster01& cluster0, spaceTree01::Cluster01& cluster1);
+	void UpdatePos();
 
 public:
 	std::string GetNameClass() override;

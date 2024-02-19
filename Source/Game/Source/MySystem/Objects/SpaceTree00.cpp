@@ -133,9 +133,29 @@ void SpaceTree00::Update(double dt) {
 }
 
 void SpaceTree00::Update() {
-	UpdateForceClusters(&cluster);
-	UpdateForceClusters();
-	ApplyForce();
+	GenerateClusters();
+
+	{
+		double time = Engine::Core::currentTime();
+
+		UpdateForceClusters(&cluster);
+		UpdateForceClusters();
+
+		double time1 = Engine::Core::currentTime();
+		double dTime = time1 - time;
+		printf("Update force: %lf\n", dTime);
+	}
+
+	{
+		double time = Engine::Core::currentTime();
+
+		ApplyForce();
+
+		double time1 = Engine::Core::currentTime();
+		double dTime = time1 - time;
+		printf("Update pos: %lf\n", dTime);
+	}
+
 
 	Preparation();
 }
@@ -240,7 +260,9 @@ void SpaceTree00::ApplyForce() {
 	}
 }
 
-void SpaceTree00::Preparation() {
+void SpaceTree00::GenerateClusters() {
+	double time = Engine::Core::currentTime();
+
 	cluster.countBodiesCluster = 100;
 	cluster.LoadBodies(_bodies);
 	cluster.CreateChilds();
@@ -252,4 +274,12 @@ void SpaceTree00::Preparation() {
 			bodyPtr->CalcScale();
 		}
 	}
+
+	double time1 = Engine::Core::currentTime();
+	double dTme = time1 - time;
+	printf("Preparation:: %lf\n", dTme);
+}
+
+void SpaceTree00::Preparation() {
+
 }

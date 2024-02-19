@@ -51,9 +51,11 @@ public:
 	SpaceTree01() = default;
 	SpaceTree01(const std::string& name)
 		: Space(name) {
+		LoadProperty();
 	}
 	SpaceTree01(Json::Value& valueData)
 		: Space(valueData) {
+		LoadProperty();
 	}
 
 	void Update(double dt) override;
@@ -65,11 +67,17 @@ private:
 	void UpdateForceByCluster(spaceTree01::Cluster01& cluster);
 	bool IsClosestCluster(spaceTree01::Cluster01& cluster0, spaceTree01::Cluster01& cluster1);
 	void UpdatePos();
+	void GenerateClusters();
+	void LoadProperty();
 
 public:
 	std::string GetNameClass() override;
 
+
 private:
 	std::vector<spaceTree01::Cluster01::Ptr> buffer;
 	spaceTree01::DebugInfo _debugInfo;
+	size_t maxCountBodies = 500;
+	float distFactor = 1.f;
+	bool showDebugInfo = false;
 };

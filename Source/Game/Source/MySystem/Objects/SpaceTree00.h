@@ -61,6 +61,8 @@ public:
 	void Update(double dt) override;
 	void Preparation() override;
 
+	void GenerateClusters();
+
 private:
 	void Update();
 	void UpdateForceClusters();

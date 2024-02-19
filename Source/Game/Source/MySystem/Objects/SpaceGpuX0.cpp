@@ -16,6 +16,8 @@ void SpaceGpuX0::Update(double dt) {
 
 	unsigned int count = _bodies.size();
 
+	debugInfo.countOperation = count * count;
+
 	if (processGPU) {
 		WrapperX0::UpdatePositionGPU(count, _positions.data(), _masses.data(), _forces.data(), _velocities.data(), deltaTime, countOfIteration);
 	} else {
@@ -25,6 +27,8 @@ void SpaceGpuX0::Update(double dt) {
 	for (size_t index = 0; index < count; ++index) {
 		_bodies[index]->SetPos(Math::Vector3(_positions[index].x, _positions[index].y, _positions[index].z));
 	}
+
+	printf("OPERATIONS: %i\n", debugInfo.countOperation);
 }
 
 void SpaceGpuX0::Preparation() {

@@ -203,7 +203,7 @@ Space::Ptr SpaceManager::Load(const std::string& name) {
 }
 
 const std::vector<std::string>& SpaceManager::GetListClasses() {
-	static const std::vector<std::string> listClasses = { "SpaceTree01", "SpaceGpuX1", "BaseSpace", "SpaceGpuX0", "SpaceTree00" };
+	static const std::vector<std::string> listClasses = { "SpaceTree01", "SpaceGpuX0", "SpaceGpuX1", "BaseSpace", "SpaceTree00" };
 	return listClasses;
 }
 

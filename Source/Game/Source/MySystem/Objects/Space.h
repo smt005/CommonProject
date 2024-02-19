@@ -51,7 +51,12 @@ public:
 	
 public:
 	virtual std::string GetNameClass();
-	
+
+public:
+	struct Debug {
+		int countOperation = 0;
+	} debugInfo;
+
 public:
 	std::string _name;
 	double _constGravity = 0.01f;

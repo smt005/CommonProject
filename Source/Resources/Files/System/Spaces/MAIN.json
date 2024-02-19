@@ -1,6 +1,7 @@
 [
 	{
-		"class": "SpaceTree00",
+		"class": "SpaceTree01",
+		"_class": "SpaceTree00",
 		"_class" : "SpaceGpuX1",
 		"_class" : "SpaceGpuX0",
 		"_class" : "BaseSpace",
@@ -11,12 +12,16 @@
 			"_PROCESS": "GPU",
 			"_MULTITHREAD": "true",
 			"tag": "0",
-			"COUNT": 1000,
+			"_COUNT": 31622,
+			"COUNT": 10000,
+			"COUNT_IN_CLUSTER": 40,
+			"DIST_FACTOR": 1.1,
 			"MIN_MASS": 10,
 			"MAX_MASS": 100,
-			"MIN_RADIUS": 10000,
-			"MAX_RADIUS": 100000,
-			"SPEED_FACTOR": 1.0
+			"MIN_RADIUS": 10,
+			"MAX_RADIUS": 50000,
+			"SPEED_FACTOR": 3.0,
+			"_DEBUG_INFO": true
 		},
 		"objects" : 
 		[

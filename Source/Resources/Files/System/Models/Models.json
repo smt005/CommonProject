@@ -4,10 +4,15 @@
 	"texture": "Textures/star/orange_star.jpg",
     "scale": 10
   },
-  "BrownStone": {
+  "BrownStone_x10": {
 	"shape": "Models/GeoSphere/GeoSphere_1_4_planar.obj",
     "texture": "Textures/planet/brown_stone.jpg",
     "scale": 10
+  },
+  "BrownStone": {
+	"shape": "Models/GeoSphere/GeoSphere_1_4_planar.obj",
+    "texture": "Textures/planet/brown_stone.jpg",
+    "scale": 50
   },
    "PointWhite": {
 	"shape": "Models/Interface/Plane_1_1_z.obj",

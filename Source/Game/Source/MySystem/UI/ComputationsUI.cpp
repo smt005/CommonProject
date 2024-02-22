@@ -10,7 +10,7 @@
 #include "Math/Vector.h"
 #include "../Objects/BodyData.h"
 #include "../Objects/Space.h"
-#include "../Objects/Space.h"
+#include "../Objects/SpaceTree02.h"
 #include <../../CUDA/Source/Wrapper.h>
 #include <../../CUDA/Source/Emulate.h>
 
@@ -86,6 +86,7 @@ void ComputationsUI::Draw() {
         }   
     }
 
+    //................................................................
     ImGui::Separator();
     ImGui::BeginChild("Classes", { 140.f, 100.f }, false);
 
@@ -104,22 +105,17 @@ void ComputationsUI::Draw() {
 
     ImGui::EndChild();
 
+    //................................................................
     ImGui::Separator();
+    ImGui::BeginChild("Params", { 140.f, 100.f }, false);
 
-    /*{
-        ImGui::Dummy(ImVec2(0.f, 0.f));
-
-        if (ImGui::Button("Test CUDA##test_cuda", { 128.f, 32.f })) {
-            CUDA_TEST::Test(100);
-
-            CUDA_TEST::Test(100000);
-            CUDA_TEST::Test(50000, true);
-            CUDA_TEST::Test(50000, false);
-            CUDA_TEST::Test(10000, true);
-            CUDA_TEST::Test(10000, false);
-            CUDA_TEST::Test(1024);
-            CUDA_TEST::Test(1000);
-            CUDA_TEST::Test(100);
+    if (SpaceTree02* spacePtr = dynamic_cast<SpaceTree02*>(currentSpacePtr)) {
+        if (ImGui::Button("Reset CO", {128.f, 32.f})) {
+            spacePtr->searchOptimalCountBodies = true;
         }
-    }*/
+    }
+
+    ImGui::EndChild();
+
+    ImGui::Separator();
 }

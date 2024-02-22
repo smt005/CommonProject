@@ -1,6 +1,7 @@
 [
 	{
-		"class": "SpaceTree01",
+		"class": "SpaceTree02",
+		"_class": "SpaceTree01",
 		"_class": "SpaceTree00",
 		"_class" : "SpaceGpuX1",
 		"_class" : "SpaceGpuX0",
@@ -13,21 +14,22 @@
 			"_MULTITHREAD": "true",
 			"tag": "0",
 			"_COUNT": 31622,
-			"COUNT": 10000,
-			"COUNT_IN_CLUSTER": 40,
-			"DIST_FACTOR": 1.1,
+			"COUNT": 5000,
+			"COUNT_IN_CLUSTER": 10,
+			"AUTO_COUNT_IN_CLUSTER": false,
+			"DIST_FACTOR": 2.1,
 			"MIN_MASS": 10,
 			"MAX_MASS": 100,
 			"MIN_RADIUS": 10,
 			"MAX_RADIUS": 50000,
 			"SPEED_FACTOR": 3.0,
-			"_DEBUG_INFO": true
+			"DEBUG_INFO": true
 		},
 		"objects" : 
 		[
 			{
 				"mass" : 1000.0,
-				"model" : "BrownStone",
+				"model" : "OrangeStar",
 				"pos" : 
 				[
 					0.0,

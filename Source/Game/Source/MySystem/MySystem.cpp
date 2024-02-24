@@ -20,7 +20,8 @@
 #include "Quests/Quest.h"
 
 #include <Draw2/Draw2.h>
-#include <Draw2/Shader2.h>
+#include <Draw2/Shader/ShaderLine.h>
+#include <Draw2/Shader/ShaderDefault.h>>
 
 #include <../../CUDA/Source/Wrapper.h>
 
@@ -37,13 +38,17 @@ MySystem::MySystem() {
 MySystem::~MySystem() {
 }
 
-
-
 void MySystem::init() {
 	CUDA::GetProperty();
 
 	//...
 	Draw2::SetClearColor(0.0333f, 0.0666f, 0.0999f, 1.0f);
+
+	ShaderDefault::current = std::make_shared<ShaderDefault>();
+	ShaderDefault::current->Init("Default.vert", "Default.frag");
+
+	ShaderLine::current = std::make_shared<ShaderLine>();
+	ShaderLine::current->Init("Line.vert", "Line.frag");
 
 	//...
 	_space = SpaceManager::Load("MAIN");
@@ -120,15 +125,12 @@ void MySystem::draw() {
 		return;
 	}
 
-	static Shader2::Ptr shaderPtr(new Shader2("Default.vert", "Default.frag"));
-	Shader2::current = shaderPtr;
-
 	Camera::Set<Camera>(_camearCurrent);
 
 	Draw2::Viewport();
 	Draw2::ClearColor();
 
-	shaderPtr->Use();
+	ShaderDefault::current->Use();
 	//Draw2::DepthTest(false);
 
 	// SkyBox	
@@ -147,8 +149,20 @@ void MySystem::draw() {
 			continue;
 		}
 
-		Draw2::SetModelMatrix(bodyPtr->getMatrix());
+		Draw2::SetModelMatrixClass<ShaderDefault>(bodyPtr->getMatrix());
 		Draw2::Draw(bodyPtr->getModel());
+	}
+
+	//...
+	ShaderLine::current->Use();
+
+	for (Body::Ptr& bodyPtr : _space->_bodies) {
+		if (!bodyPtr->visible) {
+			continue;
+		}
+		//Draw2::SetModelMatrixClass<ShaderDefault>(glm::mat4x4(1.f));
+		Draw2::SetModelMatrixClass<ShaderLine>(bodyPtr->getMatrix());
+		Draw2::drawLine();
 	}
 
 	//Draw2::DepthTest(true);

@@ -17,7 +17,7 @@
 #include "Object/Model.h"
 
 #include <Draw2/Draw2.h>
-#include <Draw2/Shader2.h>
+#include <Draw2/Shader/ShaderDefault.h>
 
 namespace {
 	Engine::Callback callback;
@@ -106,14 +106,14 @@ void MainUI::InitCallback() {
 }
 
 void MainUI::DrawOnSpace() {
-	if (!bodyMarker) {
+	/*if (!bodyMarker) {
 		bodyMarker = std::make_shared<Object>("Marker", "Marker");
 	}
 
 	const glm::mat4x4& matCamera = _mySystem->_camearCurrent->ProjectView();
 
 	Camera::Set(_mySystem->_camearScreen);
-	Shader2::current->Use();
+	ShaderDefault::current->Use();
 
 	for (Body::Ptr& body : spacePtr->_bodies) {	
 		Math::Vector3 posOnScreen = body->PosOnScreen(matCamera, false);
@@ -123,7 +123,7 @@ void MainUI::DrawOnSpace() {
 
 		Draw2::SetModelMatrix(bodyMarker->getMatrix());
 		Draw2::Draw(bodyMarker->getModel());
-	}
+	}*/
 }
 
 bool MainUI::IsLockAction() {

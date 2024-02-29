@@ -77,6 +77,39 @@ void MainUI::InitCallback() {
 				UI::ShowWindow<ListHeaviestUI>(MainUI::_mySystem);
 			}
 		}
+
+		// Цифровые кнопки
+		if (key == Engine::VirtualKey::VK_0) {
+			CommonData::bool0 = !CommonData::bool0;
+		}
+		else if (key == Engine::VirtualKey::VK_1) {
+			CommonData::bool1 = !CommonData::bool1;
+		}
+		else if (key == Engine::VirtualKey::VK_2) {
+			CommonData::bool2 = !CommonData::bool2;
+		}
+		else if (key == Engine::VirtualKey::VK_3) {
+			CommonData::bool3 = !CommonData::bool3;
+		}
+		else if (key == Engine::VirtualKey::VK_4) {
+			CommonData::bool4 = !CommonData::bool4;
+		}
+		else if (key == Engine::VirtualKey::VK_5) {
+			CommonData::bool5 = !CommonData::bool5;
+		}
+		else if (key == Engine::VirtualKey::VK_6) {
+			CommonData::bool6 = !CommonData::bool6;
+		}
+		else if (key == Engine::VirtualKey::VK_7) {
+			CommonData::bool7 = !CommonData::bool7;
+		}
+		else if (key == Engine::VirtualKey::VK_8) {
+			CommonData::bool8 = !CommonData::bool8;
+		}
+		else if (key == Engine::VirtualKey::VK_9) {
+			CommonData::bool9 = !CommonData::bool9;
+		}
+
 	});
 
 	callback.add(Engine::CallbackType::RELEASE_TAP, [](const Engine::CallbackEventPtr& callbackEventPtr) {

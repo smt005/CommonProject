@@ -44,11 +44,10 @@ void MySystem::init() {
 	//...
 	Draw2::SetClearColor(0.0333f, 0.0666f, 0.0999f, 1.0f);
 
-	ShaderDefault::current = std::make_shared<ShaderDefault>();
-	ShaderDefault::current->Init("Default.vert", "Default.frag");
-
-	ShaderLine::current = std::make_shared<ShaderLine>();
-	ShaderLine::current->Init("Line.vert", "Line.frag");
+	ShaderDefault::Instance().Init("Default.vert", "Default.frag");
+	ShaderLine::Instance().Init("Line.vert", "Line.frag");
+	ShaderLineP::Instance().Init("LineP.vert", "Line.frag");
+	ShaderLinePM::Instance().Init("LinePM.vert", "Line.frag");
 
 	//...
 	_space = SpaceManager::Load("MAIN");
@@ -56,7 +55,7 @@ void MySystem::init() {
 	//...
 	_camearSide = std::make_shared<CameraControlOutside>();
 	if (CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(_camearSide.get())) {
-		cameraPtr->SetPerspective();
+		cameraPtr->SetPerspective(10000000.f, 1.f, 45.f);
 		cameraPtr->SetPos({ 0, 0, 0 });
 		cameraPtr->SetDirect({ -0.440075815f, -0.717726171f, -0.539631844f });
 		cameraPtr->SetSpeed(1.0);
@@ -130,7 +129,9 @@ void MySystem::draw() {
 	Draw2::Viewport();
 	Draw2::ClearColor();
 
-	ShaderDefault::current->Use();
+	//ShaderDefault::current->Use();
+	
+	
 	//Draw2::DepthTest(false);
 
 	// SkyBox	
@@ -144,25 +145,46 @@ void MySystem::draw() {
 	}*/
 
 	//...
-	for (Body::Ptr& bodyPtr : _space->_bodies) {
-		if (!bodyPtr->visible) {
-			continue;
-		}
+	if (CommonData::bool1) {
+		ShaderDefault::Instance().Use();
 
-		Draw2::SetModelMatrixClass<ShaderDefault>(bodyPtr->getMatrix());
-		Draw2::Draw(bodyPtr->getModel());
+		for (Body::Ptr& bodyPtr : _space->_bodies) {
+			if (!bodyPtr->visible) {
+				continue;
+			}
+
+			Draw2::SetModelMatrixClass<ShaderDefault>(bodyPtr->getMatrix());
+			Draw2::Draw(bodyPtr->getModel());
+		}
 	}
 
 	//...
-	ShaderLine::current->Use();
+	if (CommonData::bool2) {
+		ShaderLineP::Instance().Use();
 
-	for (Body::Ptr& bodyPtr : _space->_bodies) {
-		if (!bodyPtr->visible) {
-			continue;
+		static float sizePoint = 1.f;
+		Draw2::SetPointSize(sizePoint);
+
+		static float color4[] = { 1.f, 0.75f, 0.f, 1.f };
+		Draw2::SetColorClass<ShaderLineP>(color4);
+
+		unsigned int countPoints = _space->_bodies.size();
+		std::vector<float> points;
+		points.reserve(countPoints * 3);
+
+		for (Body::Ptr& bodyPtr : _space->_bodies) {
+			if (!bodyPtr->visible) {
+				continue;
+			}
+
+			auto pos = bodyPtr->GetPos();
+
+			points.emplace_back(pos.x);
+			points.emplace_back(pos.y);
+			points.emplace_back(pos.z);
 		}
-		//Draw2::SetModelMatrixClass<ShaderDefault>(glm::mat4x4(1.f));
-		Draw2::SetModelMatrixClass<ShaderLine>(bodyPtr->getMatrix());
-		Draw2::drawLine();
+
+		Draw2::drawPoints(points.data(), countPoints);
 	}
 
 	//Draw2::DepthTest(true);

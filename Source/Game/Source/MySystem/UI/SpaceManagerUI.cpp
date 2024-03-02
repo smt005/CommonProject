@@ -50,37 +50,37 @@ void SpaceManagerUI::Draw() {
     //ImGuiStyle& style = ImGui::GetStyle();
     //style.FramePadding.y = 3.f;
 
-    if (!_mySystem || !_mySystem->_space) {
+    if (!MySystem::currentSpace) {
         return;
     }
 
-    Space* currentSpacePtr = _mySystem->_space.get();
+    Space* currentSpacePtr = MySystem::currentSpace.get();
     std::string currentClass = currentSpacePtr->GetNameClass();
     ImGui::Text(currentClass.c_str());
 
     ImGui::Separator();
     if (ImGui::Button("Save", { 128.f, 32.f })) {
-        if (_mySystem && _mySystem->_space) {
-            _mySystem->_space->Save();
+        if (_mySystem && MySystem::currentSpace) {
+            MySystem::currentSpace->Save();
         }
     }
     
     ImGui::Dummy(ImVec2(0.f, 0.f));
     if (ImGui::Button("Reload", { 128.f, 32.f })) {
-        if (_mySystem && _mySystem->_space) {
-            _mySystem->_space->Load();
+        if (_mySystem && MySystem::currentSpace) {
+            MySystem::currentSpace->Load();
         }
     }
 
     ImGui::Dummy(ImVec2(0.f, 0.f));
     if (ImGui::Button("Correct system", { 128.f, 32.f })) {
-        _mySystem->_space->RemoveVelocity(true);
+        MySystem::currentSpace->RemoveVelocity(true);
     }
 
     ImGui::Dummy(ImVec2(0.f, 0.f));
     if (ImGui::Button("Clear", { 128.f, 32.f })) {
-        if (_mySystem && _mySystem->_space) {
-            Space& space = *_mySystem->_space;
+        if (_mySystem && MySystem::currentSpace) {
+            Space& space = *MySystem::currentSpace;
 
             auto heaviestBody = space.GetHeaviestBody();
             space._bodies.clear();
@@ -94,32 +94,32 @@ void SpaceManagerUI::Draw() {
 
     ImGui::Dummy(ImVec2(0.f, 0.f));
     if (ImGui::Button("Generate round", { 128.f, 32.f })) {
-        if (_mySystem && _mySystem->_space) {
-            if (_mySystem && _mySystem->_space) {
-                if (_mySystem && _mySystem->_space->_selectBody == nullptr && _mySystem && _mySystem->_space->_bodies.size() == 1) {
-                    _mySystem->_space->_selectBody = _mySystem->_space->_bodies.front();
+        if (_mySystem && MySystem::currentSpace) {
+            if (_mySystem && MySystem::currentSpace) {
+                if (_mySystem && MySystem::currentSpace->_selectBody == nullptr && _mySystem && MySystem::currentSpace->_bodies.size() == 1) {
+                    MySystem::currentSpace->_selectBody = MySystem::currentSpace->_bodies.front();
                 }
 
                 int count = 1000;
                 float minSpaceRange = 1000;
                 float spaceRange = 5000;
 
-                std::string countStr = _mySystem->_space->_params["COUNT"];
+                std::string countStr = MySystem::currentSpace->_params["COUNT"];
                 if (!countStr.empty()) {
                     count = std::stoi(countStr);
                 }
 
-                std::string minSpaceRangeStr = _mySystem->_space->_params["MIN_RADIUS"];
+                std::string minSpaceRangeStr = MySystem::currentSpace->_params["MIN_RADIUS"];
                 if (!minSpaceRangeStr.empty()) {
                     minSpaceRange = std::stoi(minSpaceRangeStr);
                 }
 
-                std::string spaceRangeStr = _mySystem->_space->_params["MAX_RADIUS"];
+                std::string spaceRangeStr = MySystem::currentSpace->_params["MAX_RADIUS"];
                 if (!spaceRangeStr.empty()) {
                     spaceRange = std::stoi(spaceRangeStr);
                 }
 
-                _mySystem->_space->_bodies.reserve(count);
+                MySystem::currentSpace->_bodies.reserve(count);
 
                 Math::Vector3 pos;
 
@@ -140,41 +140,41 @@ void SpaceManagerUI::Draw() {
                     }
                     ++i;
 
-                    SpaceManager::AddObjectOnOrbit(_mySystem->_space.get(), pos, false);
+                    SpaceManager::AddObjectOnOrbit(MySystem::currentSpace.get(), pos, false);
                 }
 
-                _mySystem->_space->Preparation();
+                MySystem::currentSpace->Preparation();
             }
         }
     }
 
     ImGui::Dummy(ImVec2(0.f, 0.f));
     if (ImGui::Button("Generate sphere", { 128.f, 32.f })) {
-        if (_mySystem && _mySystem->_space) {
-            if (_mySystem && _mySystem->_space) {
-                if (_mySystem && _mySystem->_space->_selectBody == nullptr && _mySystem && _mySystem->_space->_bodies.size() == 1) {
-                    _mySystem->_space->_selectBody = _mySystem->_space->_bodies.front();
+        if (_mySystem && MySystem::currentSpace) {
+            if (_mySystem && MySystem::currentSpace) {
+                if (_mySystem && MySystem::currentSpace->_selectBody == nullptr && _mySystem && MySystem::currentSpace->_bodies.size() == 1) {
+                    MySystem::currentSpace->_selectBody = MySystem::currentSpace->_bodies.front();
                 }
                 int count = 1000;
                 float minSpaceRange = 1000;
                 float spaceRange = 5000;
 
-                std::string countStr = _mySystem->_space->_params["COUNT"];
+                std::string countStr = MySystem::currentSpace->_params["COUNT"];
                 if (!countStr.empty()) {
                     count = std::stoi(countStr);
                 }
 
-                std::string minSpaceRangeStr = _mySystem->_space->_params["MIN_RADIUS"];
+                std::string minSpaceRangeStr = MySystem::currentSpace->_params["MIN_RADIUS"];
                 if (!minSpaceRangeStr.empty()) {
                     minSpaceRange = std::stoi(minSpaceRangeStr);
                 }
 
-                std::string spaceRangeStr = _mySystem->_space->_params["MAX_RADIUS"];
+                std::string spaceRangeStr = MySystem::currentSpace->_params["MAX_RADIUS"];
                 if (!spaceRangeStr.empty()) {
                     spaceRange = std::stoi(spaceRangeStr);
                 }
 
-                _mySystem->_space->_bodies.reserve(count);
+                MySystem::currentSpace->_bodies.reserve(count);
                 Math::Vector3 pos;
 
                 int i = 0;
@@ -194,10 +194,10 @@ void SpaceManagerUI::Draw() {
                     }
                     ++i;
 
-                    SpaceManager::AddObjectOnOrbit(_mySystem->_space.get(), pos, false);
+                    SpaceManager::AddObjectOnOrbit(MySystem::currentSpace.get(), pos, false);
                 }
 
-                _mySystem->_space->Preparation();
+                MySystem::currentSpace->Preparation();
             }
         }
     }

@@ -9,17 +9,32 @@ class Quest {
 public:
 	using Ptr = mystd::shared<Quest>;
 
-public:
-	Quest() = delete;
-	Quest(const std::string& name);
+	enum class State {
+		NONE,
+		INACTINE,
+		ACTINE,
+		REVARD,
+		COMPLETE
+	};
 
 public:
-	static bool Load();
+	Quest() = delete;
+	Quest(const std::string& name): _name(name) {}
+
+	virtual ~Quest() = default;
+
+	virtual void Init() = 0;
+	virtual void Update() {};
+
+	const std::string& Name() { return _name; };
+	void SetState(State state) {
+		_state = state;
+		Init();
+	}
+
+	State GetState() { return _state; }
 
 private:
 	const std::string _name;
-	std::string _test;
-
-private:
-	static std::map<std::string, Quest::Ptr> quests;
+	State _state = State::INACTINE;
 };

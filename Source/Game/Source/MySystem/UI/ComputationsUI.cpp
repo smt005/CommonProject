@@ -45,11 +45,11 @@ void ComputationsUI::Update() {
 }
 
 void ComputationsUI::Draw() {
-    if (!_mySystem || !_mySystem->_space) {
+    if (!MySystem::currentSpace) {
         return;
     }
 
-    Space* currentSpacePtr = _mySystem->_space.get();
+    Space* currentSpacePtr = MySystem::currentSpace.get();
     std::string currentClass = currentSpacePtr->GetNameClass();
     ImGui::Text(currentClass.c_str());
 
@@ -95,9 +95,9 @@ void ComputationsUI::Draw() {
     
         if (ImGui::Button(className.c_str(), { 128.f, 32.f }) && currentClass != className) {
             std::shared_ptr<Space> space = SpaceManager::CopySpace(className, currentSpacePtr);
-            spaceTemp = _mySystem->_space;
+            spaceTemp = MySystem::currentSpace;
             space->Preparation();
-            _mySystem->_space = space;
+            MySystem::currentSpace = space;
         }
 
         ImGui::PopStyleColor();

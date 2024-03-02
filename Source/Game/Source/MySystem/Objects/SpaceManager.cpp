@@ -15,7 +15,11 @@
 
 void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3& pos, bool withAssotiation) {
 	if (!space->_selectBody) {
-		return;
+		if (space->_bodies.empty() && space->_bodies.front()) {
+			return;
+		}
+
+		space->_selectBody = space->_bodies.front();
 	}
 
 	//static std::vector<std::string> models = { "PointWhite", "PointTurquoise", "PointViolet", "PointYellow" };

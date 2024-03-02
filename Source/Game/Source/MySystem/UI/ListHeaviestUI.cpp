@@ -44,20 +44,20 @@ void ListHeaviestUI::Update() {
 }
 
 void ListHeaviestUI::Draw() {
-    if (!_mySystem || !_mySystem->_space) {
+    if (!MySystem::currentSpace) {
         return;
     }
 
     int _guiId = 0;
 
-    auto& heaviestInfo = _mySystem->_space->_heaviestInfo;
+    auto& heaviestInfo = MySystem::currentSpace->_heaviestInfo;
 
     for (auto& pair : heaviestInfo) {
         ImGui::PushID(++_guiId);
-        ImGui::PushStyleColor(ImGuiCol_Button, pair.first == _mySystem->_space->_focusBody ? Editor::greenColor : Editor::defaultColor);
+        ImGui::PushStyleColor(ImGuiCol_Button, pair.first == MySystem::currentSpace->_focusBody ? Editor::greenColor : Editor::defaultColor);
 
         if (ImGui::Button(pair.second.c_str(), { 110.f, 32.f })) {            
-            _mySystem->_space->_focusBody = pair.first;
+            MySystem::currentSpace->_focusBody = pair.first;
         }
         ImGui::PopID();
         ImGui::PopStyleColor();
@@ -66,7 +66,7 @@ void ListHeaviestUI::Draw() {
 
         ImGui::PushID(++_guiId);
         if (ImGui::Button("x", { 32.f, 32.f })) {
-            _mySystem->_space->RemoveBody(pair.first);
+            MySystem::currentSpace->RemoveBody(pair.first);
         }
         ImGui::PopID();
     }
@@ -74,13 +74,13 @@ void ListHeaviestUI::Draw() {
     ImGui::Separator();
     ImGui::PushID(++_guiId);
     if (ImGui::Button("Detuch", { 150.f, 32.f })) {
-        _mySystem->_space->_focusBody.reset();
+        MySystem::currentSpace->_focusBody.reset();
     }
     ImGui::PopID();
 
-    if (_mySystem->_space->_focusBody) {
+    if (MySystem::currentSpace->_focusBody) {
         // Speed
-        double speed = _mySystem->_space->_focusBody->Velocity().length();
+        double speed = MySystem::currentSpace->_focusBody->Velocity().length();
         std::string speedStr = std::to_string(speed);
 
         if (speed != 0.0 && speedStr == "0.000000") {
@@ -90,7 +90,7 @@ void ListHeaviestUI::Draw() {
         }
 
         // Force
-        float force = _mySystem->_space->_focusBody->Force().length();
+        float force = MySystem::currentSpace->_focusBody->Force().length();
         std::string forceStr = std::to_string(force);
 
         if (force != 0.0 && forceStr == "0.000000") {
@@ -100,11 +100,11 @@ void ListHeaviestUI::Draw() {
         }
 
         // Position
-        auto pos = _mySystem->_space->_focusBody->GetPos();
+        auto pos = MySystem::currentSpace->_focusBody->GetPos();
         ImGui::Text("Pos: %s, %s, %s", std::to_string((int)round(pos.x)).c_str(), std::to_string((int)round(pos.y)).c_str(), std::to_string((int)round(pos.z)).c_str());
 
         // Scale
-        float scale = _mySystem->_space->_focusBody->Scale();
+        float scale = MySystem::currentSpace->_focusBody->Scale();
         std::string scaleStr = std::to_string(scale);
         ImGui::Text("scale: %s", scaleStr.c_str());
     }

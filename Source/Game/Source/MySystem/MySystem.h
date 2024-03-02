@@ -32,11 +32,12 @@ public:
 	void initCallback();
 	bool load();
 	void save();
+	void InitQuest();
 
 	void draw2(); // TEMP_
 
 public:
-	std::shared_ptr<Space> _space;
+	static std::shared_ptr<Space> currentSpace;
 
 	std::shared_ptr<Engine::Callback> _callbackPtr;
 	std::shared_ptr<Camera> _camearCurrent;

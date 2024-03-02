@@ -29,11 +29,11 @@ MySystem* MainUI::_mySystem = nullptr;
 
 void MainUI::Open(MySystem* mySystem) {
 	_mySystem = mySystem;
-	if (!_mySystem || !_mySystem->_space) {
+	if (!MySystem::currentSpace) {
 		return;
 	}
 
-	spacePtr = _mySystem->_space;
+	spacePtr = MySystem::currentSpace;
 
 	InitCallback();
 

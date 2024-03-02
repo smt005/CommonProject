@@ -126,7 +126,7 @@ void BottomUI::Draw() {
     volatile static float framePadding = 18.f;
     volatile static float offsetBottom = 90.f;
 
-    if (!_mySystem || !_mySystem->_space) {
+    if (!MySystem::currentSpace) {
         return;
     }
 
@@ -162,13 +162,13 @@ void BottomUI::Draw() {
     float widthSlider = Engine::Screen::width() - widthSpaceSlider;
     widthSlider /= 2;
 
-    int deltaTime = (int)_mySystem->_space->deltaTime;
-    int countOfIteration = (int)_mySystem->_space->countOfIteration;
+    int deltaTime = (int)MySystem::currentSpace->deltaTime;
+    int countOfIteration = (int)MySystem::currentSpace->countOfIteration;
 
     ImGui::PushItemWidth(widthSlider);
 
     if (ImGui::SliderInt("##deltaTime_slider", &deltaTime, 1, 100, "error = %d")) {
-        _mySystem->_space->deltaTime = (float)deltaTime;
+        MySystem::currentSpace->deltaTime = (float)deltaTime;
     }
 
     ImGui::SameLine();
@@ -178,7 +178,7 @@ void BottomUI::Draw() {
 
     if (ImGui::SliderFloat("##time_speed_slider", &_countOfIteration, 0.8f, 8, text.c_str())) {
         countOfIteration = (int)std::expf(_countOfIteration - 1);
-        _mySystem->_space->countOfIteration = countOfIteration;
+        MySystem::currentSpace->countOfIteration = countOfIteration;
     }
 
     ImGui::PopItemWidth();
@@ -228,7 +228,7 @@ void BottomUI::GenerateFunAddObjectUI() {
 #else
         int countBody = 3000;
 #endif
-    SpaceManager::AddObjects(_mySystem->_space.get(), countBody, 10000, -20);
+    SpaceManager::AddObjects(MySystem::currentSpace.get(), countBody, 10000, -20);
 
     });
     

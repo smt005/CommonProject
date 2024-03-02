@@ -18,6 +18,8 @@
 #include "Objects/BaseSpace.h"
 #include "Objects/SpaceManager.h"
 #include "Quests/Quest.h"
+#include "Quests/QuestManager.h"
+#include "Quests/Quests.h"
 
 #include <Draw2/Draw2.h>
 #include <Draw2/Shader/ShaderLine.h>
@@ -27,6 +29,8 @@
 
 #define DRAW DrawLight
 std::string MySystem::_resourcesDir;
+std::shared_ptr<Space> MySystem::currentSpace;
+
 const std::string saveFileName("../../../Executable/Save.json");
 
 double minDt = std::numeric_limits<double>::max();
@@ -50,7 +54,7 @@ void MySystem::init() {
 	//ShaderLinePM::Instance().Init("LinePM.vert", "Line.frag");
 
 	//...
-	_space = SpaceManager::Load("MAIN");
+	InitQuest();
 
 	//...
 	_camearSide = std::make_shared<CameraControlOutside>();
@@ -85,7 +89,7 @@ void MySystem::init() {
 
 	MainUI::Open(this);
 
-	Quest::Load();
+	QuestManager::Load();
 }
 
 void MySystem::close() {
@@ -94,19 +98,21 @@ void MySystem::close() {
 }
 
 void MySystem::update() {
-	if (!_space) {
+	QuestManager::Update();
+
+	if (!currentSpace) {
 		return;
 	}
 
-	if ((Engine::Core::currentTime() - _time) < (_space->deltaTime > 33 ? 33 : _space->deltaTime)) {
+	if ((Engine::Core::currentTime() - _time) < (currentSpace->deltaTime > 33 ? 33 : currentSpace->deltaTime)) {
 		return;
 	} else {
 		_time = Engine::Core::currentTime();
 	}
 
-	_space->Update(1);
+	currentSpace->Update(1);
 
-	auto[hasBody, body] = _space->RefFocusBody();
+	auto[hasBody, body] = currentSpace->RefFocusBody();
 	if (hasBody) {
 		auto centerMassT = body.GetPos();
 		glm::vec3 centerMass = glm::vec3(centerMassT.x, centerMassT.y, centerMassT.z);
@@ -120,7 +126,7 @@ void MySystem::update() {
 }
 
 void MySystem::draw() {
-	if (!_space) {
+	if (!currentSpace) {
 		return;
 	}
 
@@ -135,12 +141,12 @@ void MySystem::draw() {
 	//Draw2::DepthTest(false);
 
 	// SkyBox	
-	/*if (MainUI::GetViewType() == 0 && _space->_skyboxObject) {
+	/*if (MainUI::GetViewType() == 0 && currentSpace->_skyboxObject) {
 		auto camPos = Camera::_currentCameraPtr->Pos();
-		_space->_skyboxObject->setPos(camPos);
+		currentSpace->_skyboxObject->setPos(camPos);
 		Draw2::SetModelMatrix(glm::mat4x4(1.f));
 
-		Draw2::Draw(_space->_skyboxObject->getModel());
+		Draw2::Draw(currentSpace->_skyboxObject->getModel());
 		Draw2::ClearDepth();
 	}*/
 
@@ -148,7 +154,7 @@ void MySystem::draw() {
 	if (CommonData::bool1) {
 		ShaderDefault::Instance().Use();
 
-		for (Body::Ptr& bodyPtr : _space->_bodies) {
+		for (Body::Ptr& bodyPtr : currentSpace->_bodies) {
 			if (!bodyPtr->visible) {
 				continue;
 			}
@@ -168,11 +174,11 @@ void MySystem::draw() {
 		static float color4[] = { 1.f, 0.75f, 0.f, 1.f };
 		Draw2::SetColorClass<ShaderLineP>(color4);
 
-		unsigned int countPoints = _space->_bodies.size();
+		unsigned int countPoints = currentSpace->_bodies.size();
 		std::vector<float> points;
 		points.reserve(countPoints * 3);
 
-		for (Body::Ptr& bodyPtr : _space->_bodies) {
+		for (Body::Ptr& bodyPtr : currentSpace->_bodies) {
 			if (!bodyPtr->visible) {
 				continue;
 			}
@@ -199,10 +205,10 @@ void MySystem::draw2() {
 	DRAW::prepare();
 
 	// SkyBox	
-	if (MainUI::GetViewType() == 0 && _space->_skyboxObject) {
+	if (MainUI::GetViewType() == 0 && currentSpace->_skyboxObject) {
 		auto camPos = Camera::_currentCameraPtr->Pos();
-		_space->_skyboxObject->setPos(camPos);
-		DRAW::draw(*_space->_skyboxObject);
+		currentSpace->_skyboxObject->setPos(camPos);
+		DRAW::draw(*currentSpace->_skyboxObject);
 		DRAW::clearDepth();
 	}
 
@@ -211,7 +217,7 @@ void MySystem::draw2() {
 
 	// Draw
 	DRAW::prepare();
-	DRAW::DrawMap(*_space);
+	DRAW::DrawMap(*currentSpace);
 	
 	MainUI::DrawOnSpace();
 }
@@ -235,18 +241,18 @@ void MySystem::Drawline() {
 		_greedBig->setPos({ 0.0f, 0.0f, 0.1f });
 	}
 
-	if (_space) {
-		/*if (_space->_skyboxModel) {
-			DRAW::draw(*_space->_skyboxModel);
+	if (currentSpace) {
+		/*if (currentSpace->_skyboxModel) {
+			DRAW::draw(*currentSpace->_skyboxModel);
 		}*/
 
-		auto [hasBody, star] = _space->RefFocusBody();
+		auto [hasBody, star] = currentSpace->RefFocusBody();
 		if (hasBody) {
 			auto centerMassT = star.GetPos();
 			glm::vec3 centerMass = glm::vec3(centerMassT.x, centerMassT.y, centerMassT.z);
 			float cm[3] = { centerMass.x, centerMass.y, centerMass.z };
 			DrawLine::SetIdentityMatrixByPos(cm);
-			DrawLine::Draw(_space->spatialGrid);
+			DrawLine::Draw(currentSpace->spatialGrid);
 		}
 	}
 }
@@ -316,7 +322,7 @@ void MySystem::initCallback() {
 			if (!MainUI::IsLockAction() && tapCallbackEvent->_id == Engine::VirtualTap::LEFT) {
 				auto cursorPosGlm = _camearCurrent->corsorCoord();
 				Math::Vector3 cursorPos(cursorPosGlm.x, cursorPosGlm.y, cursorPosGlm.z);
-				SpaceManager::AddObjectOnOrbit(_space.get(), cursorPos);
+				SpaceManager::AddObjectOnOrbit(currentSpace.get(), cursorPos);
 			}
 		}*/
 	});
@@ -349,4 +355,23 @@ void MySystem::initCallback() {
 			cameraPtr->SetDistanceOutside(dist);
 		}
 	});
+}
+
+void MySystem::InitQuest() {
+	{
+		Quest::Ptr questPtr(new QuestStart("QuestStart"));
+		QuestManager::Add(questPtr);
+	}
+	{
+		Quest::Ptr questPtr(new QuestSphere100("QuestSphere100"));
+		QuestManager::Add(questPtr);
+	}
+	{
+		Quest::Ptr questPtr(new QuestSphere("QuestSphere"));
+		QuestManager::Add(questPtr);
+	}
+
+	QuestManager::SetState("QuestStart", Quest::State::ACTINE);
+	//QuestManager::SetState("QuestSphere100", Quest::State::ACTINE);
+	//QuestManager::SetState("QuestSphere", Quest::State::ACTINE);
 }

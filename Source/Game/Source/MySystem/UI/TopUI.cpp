@@ -38,9 +38,9 @@ void TopUI::Update() {
 }
 
 void TopUI::Draw() {
-    if (_mySystem && _mySystem->_space) {
+    if (_mySystem && MySystem::currentSpace) {
         int time = 0;
-        time = (int)_mySystem->_space->timePassed / 1000;
+        time = (int)MySystem::currentSpace->timePassed / 1000;
 
         if (time == 10) {
             minFPS = FPS;
@@ -52,7 +52,7 @@ void TopUI::Draw() {
         }
 
         FPS = static_cast<int>(1 / Engine::Core::deltaTime());
-        int countBody = _mySystem->_space->Objects().size();
+        int countBody = MySystem::currentSpace->Objects().size();
 
         ImGui::Text("Time: %d Count: %d FPS: %d - %d - %d", time, countBody, minFPS, FPS, maxFPS);
 

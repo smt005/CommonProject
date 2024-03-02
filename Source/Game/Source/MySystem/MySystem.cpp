@@ -45,9 +45,9 @@ void MySystem::init() {
 	Draw2::SetClearColor(0.0333f, 0.0666f, 0.0999f, 1.0f);
 
 	ShaderDefault::Instance().Init("Default.vert", "Default.frag");
-	ShaderLine::Instance().Init("Line.vert", "Line.frag");
+	//ShaderLine::Instance().Init("Line.vert", "Line.frag");
 	ShaderLineP::Instance().Init("LineP.vert", "Line.frag");
-	ShaderLinePM::Instance().Init("LinePM.vert", "Line.frag");
+	//ShaderLinePM::Instance().Init("LinePM.vert", "Line.frag");
 
 	//...
 	_space = SpaceManager::Load("MAIN");

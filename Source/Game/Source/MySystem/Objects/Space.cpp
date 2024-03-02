@@ -71,11 +71,10 @@ bool Space::Load(Json::Value& valueData) {
 	Json::Value jsonParams = valueData[0]["params"].isObject() ? valueData[0]["params"] : Json::Value();
 	if (!jsonParams.empty()) {
 		for (auto const& key : jsonParams.getMemberNames()) {
-			std::cout << key << std::endl;
-
 			std::string value = jsonParams[key].asString();
-
 			_params[key] = value;
+
+			std::cout << key << ": " << value << std::endl;
 		}
 	}
 

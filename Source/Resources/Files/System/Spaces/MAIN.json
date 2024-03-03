@@ -1,9 +1,9 @@
 [
 	{
-		"class": "SpaceTree02",
+		"_class": "SpaceTree02",
 		"_class": "SpaceTree01",
 		"_class": "SpaceTree00",
-		"_class" : "SpaceGpuX1",
+		"class" : "SpaceGpuX1",
 		"_class" : "SpaceGpuX0",
 		"_class" : "BaseSpace",
 		"const_gravity" : 0.01,
@@ -14,7 +14,7 @@
 			"_MULTITHREAD": "true",
 			"tag": "0",
 			"_COUNT": 31622,
-			"COUNT": 5000,
+			"COUNT": 15000,
 			"COUNT_IN_CLUSTER": 10,
 			"AUTO_COUNT_IN_CLUSTER": false,
 			"DIST_FACTOR": 2.1,

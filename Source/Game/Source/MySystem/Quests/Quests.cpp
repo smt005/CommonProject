@@ -55,7 +55,7 @@ void QuestSphere::Activete() {
 	}
 
     // TODO:
-    CUDA::multithread = true;
+    //CUDA::multithread = true;
     
     //...
     int count = 1000;

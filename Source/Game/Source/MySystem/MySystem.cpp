@@ -20,7 +20,7 @@
 #include "Quests/Quest.h"
 #include "Quests/QuestManager.h"
 #include "Quests/Quests.h"
-
+#include "Commands/Commands.h"
 #include <Draw2/Draw2.h>
 #include <Draw2/Shader/ShaderLine.h>
 #include <Draw2/Shader/ShaderDefault.h>>
@@ -54,7 +54,8 @@ void MySystem::init() {
 	//ShaderLinePM::Instance().Init("LinePM.vert", "Line.frag");
 
 	//...
-	InitQuest();
+	//InitQuest();
+	CommandManager::Run("Quests/StartCommands.json");
 
 	//...
 	_camearSide = std::make_shared<CameraControlOutside>();
@@ -88,8 +89,6 @@ void MySystem::init() {
 	initCallback();
 
 	MainUI::Open(this);
-
-	QuestManager::Load();
 }
 
 void MySystem::close() {
@@ -171,7 +170,7 @@ void MySystem::draw() {
 		static float sizePoint = 1.f;
 		Draw2::SetPointSize(sizePoint);
 
-		static float color4[] = { 1.f, 0.75f, 0.f, 1.f };
+		static float color4[] = { 1.f, 1.f, 0.5f, 1.f };
 		Draw2::SetColorClass<ShaderLineP>(color4);
 
 		unsigned int countPoints = currentSpace->_bodies.size();
@@ -358,7 +357,7 @@ void MySystem::initCallback() {
 }
 
 void MySystem::InitQuest() {
-	{
+	/*{
 		Quest::Ptr questPtr(new QuestStart("QuestStart"));
 		QuestManager::Add(questPtr);
 	}
@@ -369,9 +368,12 @@ void MySystem::InitQuest() {
 	{
 		Quest::Ptr questPtr(new QuestSphere("QuestSphere"));
 		QuestManager::Add(questPtr);
-	}
+	}*/
 
-	QuestManager::SetState("QuestStart", Quest::State::ACTINE);
+	//QuestManager::SetState("QuestStart", Quest::State::ACTINE);
 	//QuestManager::SetState("QuestSphere100", Quest::State::ACTINE);
 	//QuestManager::SetState("QuestSphere", Quest::State::ACTINE);
+
+	//CommandManager::Run(Command("QuestStart", { "QuestSphere", "ACTIVE" }));
+	//CommandManager::Run(Command("SetActiveQuest", {"QuestSphere", "ACTIVE"}));
 }

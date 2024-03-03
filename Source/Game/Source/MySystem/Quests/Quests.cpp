@@ -3,15 +3,16 @@
 #include "../Objects/Space.h"
 #include "../Objects/SpaceManager.h"
 #include "Common/Help.h"
+#include "../../CUDA/Source/Wrapper.h"
 
 // QuestStart
-void QuestStart::Init() {
+void QuestStart::Activete() {
 	MySystem::currentSpace.reset();
     MySystem::currentSpace = SpaceManager::Load("MAIN");
 }
 
 // QuestSphere100
-void QuestSphere100::Init() {
+void QuestSphere100::Activete() {
     if (!MySystem::currentSpace) {
         MySystem::currentSpace = SpaceManager::Load("MAIN");
     }
@@ -48,11 +49,14 @@ void QuestSphere100::Init() {
 }
 
 // QuestSphere
-void QuestSphere::Init() {
+void QuestSphere::Activete() {
 	if (!MySystem::currentSpace) {
 		MySystem::currentSpace = SpaceManager::Load("MAIN");
 	}
 
+    // TODO:
+    CUDA::multithread = true;
+    
     //...
     int count = 1000;
     float minSpaceRange = 1000;

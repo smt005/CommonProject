@@ -1,14 +1,17 @@
 [
   {
-    "name": "quest_00",
-    "test": "test_00"
+    "id": "Start",
+    "class": "QuestStart",
+    "state": "ACTIVE"
   },
   {
-    "name": "quest_01",
-    "test": "test_01"
+    "id": "Quest100",
+    "class": "QuestSphere100",
+    "state": "INACTIVE"
   },
   {
-    "name": "quest_02",
-    "test": "test_02"
+    "id": "QuestN",
+    "class": "QuestSphere",
+    "state": "INACTIVE"
   }
 ]

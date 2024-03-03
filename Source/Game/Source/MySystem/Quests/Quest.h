@@ -11,9 +11,8 @@ public:
 
 	enum class State {
 		NONE,
-		INACTINE,
-		ACTINE,
-		REVARD,
+		INACTIVE,
+		ACTIVE,
 		COMPLETE
 	};
 
@@ -23,18 +22,35 @@ public:
 
 	virtual ~Quest() = default;
 
-	virtual void Init() = 0;
+	virtual void Activete() {};
+	virtual void Inactivete() {};
+	virtual void Complete() {};
 	virtual void Update() {};
 
 	const std::string& Name() { return _name; };
 	void SetState(State state) {
 		_state = state;
-		Init();
+	}
+
+	void ActivateState(State state = State::NONE) {
+		if (state != State::NONE) {
+			SetState(state);
+		}
+
+		if (_state == Quest::State::ACTIVE) {
+			Activete();
+		}
+		else if (_state == Quest::State::INACTIVE) {
+			Inactivete();
+		}
+		else if (_state == Quest::State::COMPLETE) {
+			Complete();
+		}
 	}
 
 	State GetState() { return _state; }
 
 private:
 	const std::string _name;
-	State _state = State::INACTINE;
+	State _state = State::INACTIVE;
 };

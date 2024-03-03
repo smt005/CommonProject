@@ -1,0 +1,22 @@
+[
+  {
+    "id": "LoadQuests",
+    "params": [
+      "Quests/Quests.json"
+    ]
+  },
+  {
+    "id": "SetActiveQuest",
+    "params": [
+      "Start",
+      "ACTIVE"
+    ]
+  },
+  {
+    "id": "SetActiveQuest",
+    "params": [
+      "QuestN",
+      "ACTIVE"
+    ]
+  }
+]

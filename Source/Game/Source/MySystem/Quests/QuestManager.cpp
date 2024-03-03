@@ -82,8 +82,8 @@ void QuestManager::Load(const std::string& pathFileName) {
 		}
 
 		Json::Value& jsonId = jsonCommand["id"];
-		const std::string id = !jsonId.empty() ? jsonId.asString() : std::string();
-		if (id.empty()) {
+		const std::string questId = !jsonId.empty() ? jsonId.asString() : std::string();
+		if (questId.empty()) {
 			continue;
 		}
 
@@ -97,20 +97,27 @@ void QuestManager::Load(const std::string& pathFileName) {
 		Quest* quest = nullptr;
 
 		if (classStr == "QuestStart") {
-			quest = quests.emplace_back(new QuestStart(id)).get();
+			quest = quests.emplace_back(new QuestStart(questId)).get();
 
 		} else if (classStr == "QuestSphere100") {
-			quest = quests.emplace_back(new QuestSphere100(id)).get();
+			quest = quests.emplace_back(new QuestSphere100(questId)).get();
 		}
 		else if (classStr == "QuestSphere") {
-			quest = quests.emplace_back(new QuestSphere(id)).get();
+			quest = quests.emplace_back(new QuestSphere(questId)).get();
 		}
 		else {
-			quest = quests.emplace_back(new Quest(id)).get();
+			quest = quests.emplace_back(new Quest(questId)).get();
 		}
 
 		if (quest) {
 			quest->SetState(state);
+
+			Json::Value& jsonParams = jsonCommand["commands"];
+			quest->_commands = CommandManager::Load(jsonParams);
+
+			for (Command& conmmand : quest->_commands) {
+				conmmand.tag = questId;
+			}
 		}
 	}
 }

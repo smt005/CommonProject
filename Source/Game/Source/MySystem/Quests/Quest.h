@@ -3,7 +3,7 @@
 #include <string>
 #include <map>
 #include <MyStl/shared.h>
-
+#include "../Commands/Commands.h"
 
 class Quest {
 public:
@@ -39,6 +39,7 @@ public:
 
 		if (_state == Quest::State::ACTIVE) {
 			Activete();
+			CommandManager::Run(_commands);
 		}
 		else if (_state == Quest::State::INACTIVE) {
 			Inactivete();
@@ -50,7 +51,8 @@ public:
 
 	State GetState() { return _state; }
 
-private:
+public:
 	const std::string _name;
 	State _state = State::INACTIVE;
+	Commands _commands;
 };

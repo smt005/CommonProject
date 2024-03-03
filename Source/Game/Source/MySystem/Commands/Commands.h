@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include "json/json.h"
 
 struct Command final {
 	Command() = default;
@@ -17,6 +18,8 @@ struct Command final {
 	}
 
 	bool disable = false;
+	std::string tag;
+
 	std::string id;
 	std::vector<std::string> parameters;
 };
@@ -25,6 +28,8 @@ using Commands = std::vector<Command>;
 
 class CommandManager final {
 public:
+	static Commands Load(const std::string& pathFileName);
+	static Commands Load(const Json::Value& valueData);
 	static void Run(const std::string& pathFileName);
 	static void Run(const Commands& commands);
 	static void Run(const Command& command);

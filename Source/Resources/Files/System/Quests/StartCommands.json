@@ -7,6 +7,7 @@
   },
   {
     "id": "SetActiveQuest",
+	"_disable": true,
     "params": [
       "Start",
       "ACTIVE"
@@ -14,31 +15,10 @@
   },
   {
     "id": "SetActiveQuest",
-	"disable": true,
+	"_disable": true,
     "params": [
       "QuestN",
       "ACTIVE"
-    ]
-  },
-  {
-    "id": "SetProcess",
-    "params": [
-      "GPU"
-    ]
-  },
-  {
-    "id": "SetMultithread",
-    "params": [
-      "true"
-    ]
-  },
-  {
-    "id": "SetClearColor",
-    "params": [
-      "0.1",
-      "0.15",
-      "0.2",
-      "1.0"
     ]
   }
 ]

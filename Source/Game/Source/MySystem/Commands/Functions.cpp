@@ -4,8 +4,28 @@
 #include "../Objects/Space.h"
 #include "../Quests/QuestManager.h"
 #include "../../CUDA/Source/Wrapper.h"
+#include <iostream>
 
 namespace commands {
+void CommandLog(const Command& command) {
+	if (command.tag.empty()) {
+		std::cout << command.id << ": [";
+	}
+	else {
+		std::cout << command.tag << ":" << command.id << ": [";
+	}
+
+	size_t size = command.parameters.size() - 1;
+	for (const std::string& param : command.parameters) {
+		std::cout << param;
+		if (size > 0) {
+			std::cout << ", ";
+			--size;
+		}
+	}
+
+	std::cout << ']' << std::endl;
+}
 
 void SetProcess(const std::string stateStr) {
 	// CPU, GPU
@@ -59,36 +79,43 @@ void SetClearColor(const std::vector<std::string>& strColors) {
 
 	Draw2::SetClearColor(r, g, b, a);
 }
+
 //..................................................................
 void Run(const Command& comand) {
 	const std::string& comandId = comand.id;
 
 	if (comandId == "SetActiveQuest") {
 		if (comand.parameters.size() >= 2) {
+			CommandLog(comand);
 			QuestManager::ActivateState(comand.parameters[0], QuestManager::StateFromString(comand.parameters[1]));
 		}
 	}
 	else if (comandId == "SetStateQuest") {
 		if (comand.parameters.size() >= 2) {
+			CommandLog(comand);
 			QuestManager::SetState(comand.parameters[0], QuestManager::StateFromString(comand.parameters[1]));
 		}
 	}
 	else if (comandId == "LoadQuests") {
 		if (comand.parameters.size() >= 1) {
+			CommandLog(comand);
 			QuestManager::Load(comand.parameters[0]);
 		}
 	}
 	else if (comandId == "SetProcess") {
 		if (comand.parameters.size() >= 1) {
+			CommandLog(comand);
 			SetProcess(comand.parameters[0]);
 		}
 	}
 	else if (comandId == "SetMultithread") {
 		if (comand.parameters.size() >= 1) {
+			CommandLog(comand);
 			SetMultithread(comand.parameters[0]);
 		}
 	}
 	else if (comandId == "SetClearColor") {
+		CommandLog(comand);
 		SetClearColor(comand.parameters);
 	}
 }

@@ -2,7 +2,30 @@
   {
     "id": "Start",
     "class": "QuestStart",
-    "state": "ACTIVE"
+    "state": "ACTIVE",
+    "commands": [
+      {
+        "id": "SetProcess",
+        "params": [
+          "CPU"
+        ]
+      },
+      {
+        "id": "SetMultithread",
+        "params": [
+          "false"
+        ]
+      },
+      {
+        "id": "SetClearColor",
+        "params": [
+          "0.3",
+          "0.6",
+          "0.9",
+          "1.0"
+        ]
+      }
+    ]
   },
   {
     "id": "Quest100",
@@ -12,6 +35,29 @@
   {
     "id": "QuestN",
     "class": "QuestSphere",
-    "state": "INACTIVE"
+    "state": "INACTIVE",
+    "commands": [
+      {
+        "id": "SetProcess",
+        "params": [
+          "GPU"
+        ]
+      },
+      {
+        "id": "SetMultithread",
+        "params": [
+          "true"
+        ]
+      },
+      {
+        "id": "SetClearColor",
+        "params": [
+          "0.1",
+          "0.15",
+          "0.2",
+          "1.0"
+        ]
+      }
+    ]
   }
 ]

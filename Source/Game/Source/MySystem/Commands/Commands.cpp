@@ -2,25 +2,29 @@
 #include "Common/Help.h"
 #include "Functions.h"
 
-void CommandManager::Run(const std::string& pathFileName) {
+Commands CommandManager::Load(const std::string& pathFileName) {
 	Json::Value valueData;
 
 	if (!help::loadJson(pathFileName, valueData)) {
-		return;
+		return Commands();
 	}
+
+	return Load(valueData);
+}
+
+Commands CommandManager::Load(const Json::Value& valueData) {
+	Commands commands;
 
 	if (!valueData.isArray()) {
-		return;
+		return commands;
 	}
-
-	Commands commands;
 
 	for (auto& jsonCommand : valueData) {
 		if (!jsonCommand.isObject()) {
 			continue;
 		}
 
-		Json::Value& jsonId = jsonCommand["id"];
+		const Json::Value& jsonId = jsonCommand["id"];
 		const std::string id = jsonId.asString();
 		if (id.empty()) {
 			continue;
@@ -28,10 +32,10 @@ void CommandManager::Run(const std::string& pathFileName) {
 
 		Command& command = commands.emplace_back(id);
 
-		Json::Value& jsonDisable = jsonCommand["disable"];
+		const Json::Value& jsonDisable = jsonCommand["disable"];
 		command.disable = (!jsonDisable.empty() && jsonDisable.isBool()) ? jsonDisable.asBool() : false;
 
-		Json::Value& jsonParams = jsonCommand["params"];
+		const Json::Value& jsonParams = jsonCommand["params"];
 		if (jsonParams.empty() || !jsonParams.isArray()) {
 			continue;
 		}
@@ -43,6 +47,11 @@ void CommandManager::Run(const std::string& pathFileName) {
 		}
 	}
 
+	return commands;
+}
+
+void CommandManager::Run(const std::string& pathFileName) {
+	Commands commands = Load(pathFileName);
 	CommandManager::Run(commands);
 }
 

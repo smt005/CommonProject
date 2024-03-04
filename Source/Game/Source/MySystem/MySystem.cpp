@@ -45,47 +45,13 @@ MySystem::~MySystem() {
 void MySystem::init() {
 	CUDA::GetProperty();
 
-	//...
-	Draw2::SetClearColor(0.0333f, 0.0666f, 0.0999f, 1.0f);
-
 	ShaderDefault::Instance().Init("Default.vert", "Default.frag");
 	//ShaderLine::Instance().Init("Line.vert", "Line.frag");
 	ShaderLineP::Instance().Init("LineP.vert", "Line.frag");
 	//ShaderLinePM::Instance().Init("LinePM.vert", "Line.frag");
 
-	//...
-	//InitQuest();
 	CommandManager::Run("Quests/StartCommands.json");
-
-	//...
-	_camearSide = std::make_shared<CameraControlOutside>();
-	if (CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(_camearSide.get())) {
-		cameraPtr->SetPerspective(10000000.f, 1.f, 45.f);
-		cameraPtr->SetPos({ 0, 0, 0 });
-		cameraPtr->SetDirect({ -0.440075815f, -0.717726171f, -0.539631844f });
-		cameraPtr->SetSpeed(1.0);
-		cameraPtr->SetDistanceOutside(500.f);
-		cameraPtr->Enable(true);
-	}
-
-	//...
-	_camearTop = std::make_shared<Camera>();
-	if (Camera* cameraPtr = dynamic_cast<Camera*>(_camearTop.get())) {
-		cameraPtr->SetPerspective();
-		cameraPtr->SetPos({ 0, 0, 100000 });
-		cameraPtr->SetUp({ 0.f, -1.f, 0.f });
-		cameraPtr->SetDirect({ 0.f, 0.f, -1.0f });
-	}
-
-	//...
-	//_camearCurrent = _camearSide;
-	_camearCurrent = _camearSide;
-	Camera::Set<Camera>(_camearCurrent);
-
-	//...
-	_camearScreen = std::make_shared<Camera>(Camera::Type::ORTHO);
-
-	//...
+	Init—ameras();
 	initCallback();
 
 	MainUI::Open(this);
@@ -356,24 +322,27 @@ void MySystem::initCallback() {
 	});
 }
 
-void MySystem::InitQuest() {
-	/*{
-		Quest::Ptr questPtr(new QuestStart("QuestStart"));
-		QuestManager::Add(questPtr);
+void MySystem::Init—ameras() {
+	_camearSide = std::make_shared<CameraControlOutside>();
+	if (CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(_camearSide.get())) {
+		cameraPtr->SetPerspective(10000000.f, 1.f, 45.f);
+		cameraPtr->SetPos({ 0, 0, 0 });
+		cameraPtr->SetDirect({ -0.440075815f, -0.717726171f, -0.539631844f });
+		cameraPtr->SetSpeed(1.0);
+		cameraPtr->SetDistanceOutside(500.f);
+		cameraPtr->Enable(true);
 	}
-	{
-		Quest::Ptr questPtr(new QuestSphere100("QuestSphere100"));
-		QuestManager::Add(questPtr);
+
+	//...
+	_camearTop = std::make_shared<Camera>();
+	if (Camera* cameraPtr = dynamic_cast<Camera*>(_camearTop.get())) {
+		cameraPtr->SetPerspective();
+		cameraPtr->SetPos({ 0, 0, 100000 });
+		cameraPtr->SetUp({ 0.f, -1.f, 0.f });
+		cameraPtr->SetDirect({ 0.f, 0.f, -1.0f });
 	}
-	{
-		Quest::Ptr questPtr(new QuestSphere("QuestSphere"));
-		QuestManager::Add(questPtr);
-	}*/
 
-	//QuestManager::SetState("QuestStart", Quest::State::ACTINE);
-	//QuestManager::SetState("QuestSphere100", Quest::State::ACTINE);
-	//QuestManager::SetState("QuestSphere", Quest::State::ACTINE);
-
-	//CommandManager::Run(Command("QuestStart", { "QuestSphere", "ACTIVE" }));
-	//CommandManager::Run(Command("SetActiveQuest", {"QuestSphere", "ACTIVE"}));
+	_camearCurrent = _camearSide;
+	Camera::Set<Camera>(_camearCurrent);
+	_camearScreen = std::make_shared<Camera>(Camera::Type::ORTHO);
 }

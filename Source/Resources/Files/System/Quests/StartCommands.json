@@ -7,9 +7,17 @@
   },
   {
     "id": "SetActiveQuest",
-	"_disable": true,
+	"disable": true,
     "params": [
       "Start",
+      "ACTIVE"
+    ]
+  },
+  {
+    "id": "SetActiveQuest",
+	"disable": true,
+    "params": [
+      "Quest100",
       "ACTIVE"
     ]
   },

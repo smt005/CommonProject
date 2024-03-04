@@ -1,10 +1,17 @@
 #include "Functions.h"
-#include "Draw2/Draw2.h"
+
+// Common
 #include "MySystem/MySystem.h"
 #include "../Objects/Space.h"
 #include "../Quests/QuestManager.h"
 #include "../../CUDA/Source/Wrapper.h"
 #include <iostream>
+
+// View
+#include "Draw2/Draw2.h"
+
+// Windows
+#include "../UI/RewardWindow.h"
 
 namespace commands {
 void CommandLog(const Command& command) {
@@ -55,6 +62,7 @@ void SetMultithread(const std::string stateStr) {
 	}
 }
 
+// View
 void SetClearColor(const std::vector<std::string>& strColors) {
 	if (strColors.size() < 3) {
 		return;
@@ -80,6 +88,20 @@ void SetClearColor(const std::vector<std::string>& strColors) {
 	Draw2::SetClearColor(r, g, b, a);
 }
 
+// Windows
+void OpenWindow(const std::string& classWindow) {
+	if (classWindow == "RewardWindow") {
+		if (!UI::ShowingWindow<RewardWindow>()) {
+			UI::ShowWindow<RewardWindow>();
+		}
+	}
+	/*else if (classWindow == "XXX") {
+		if (!UI::ShowingWindow<XXX>()) {
+			UI::ShowWindow<XXX>();
+		}
+	}*/
+}
+
 //..................................................................
 void Run(const Command& comand) {
 	const std::string& comandId = comand.id;
@@ -99,24 +121,30 @@ void Run(const Command& comand) {
 	else if (comandId == "LoadQuests") {
 		if (comand.parameters.size() >= 1) {
 			CommandLog(comand);
-			QuestManager::Load(comand.parameters[0]);
+			QuestManager::Load(comand.parameters.front());
 		}
 	}
 	else if (comandId == "SetProcess") {
 		if (comand.parameters.size() >= 1) {
 			CommandLog(comand);
-			SetProcess(comand.parameters[0]);
+			SetProcess(comand.parameters.front());
 		}
 	}
 	else if (comandId == "SetMultithread") {
 		if (comand.parameters.size() >= 1) {
 			CommandLog(comand);
-			SetMultithread(comand.parameters[0]);
+			SetMultithread(comand.parameters.front());
 		}
 	}
 	else if (comandId == "SetClearColor") {
 		CommandLog(comand);
 		SetClearColor(comand.parameters);
+	}
+	else if (comandId == "OpenWindow") {
+		CommandLog(comand);
+		if (comand.parameters.size() >= 1) {
+			OpenWindow(comand.parameters.front());
+		}
 	}
 }
 

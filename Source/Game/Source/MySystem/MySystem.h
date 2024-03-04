@@ -30,9 +30,9 @@ public:
 	void Drawline();
 
 	void initCallback();
+	void Init—ameras();
 	bool load();
 	void save();
-	void InitQuest();
 
 	void draw2(); // TEMP_
 

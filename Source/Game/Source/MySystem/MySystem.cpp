@@ -11,6 +11,8 @@
 #include "Draw/DrawLight.h"
 #include "Draw/DrawLine.h"
 #include "Object/Line.h"
+#include <Object/Samples/Plane.h>
+#include <Object/Samples/Box.h>
 #include "ImGuiManager/UI.h"
 #include "UI/MainUI.h"
 #include "Math/Vector.h"
@@ -26,6 +28,7 @@
 #include <Draw2/Shader/ShaderDefault.h>>
 
 #include <../../CUDA/Source/Wrapper.h>
+#include "Objects/SpaceTree02.h"
 
 #define DRAW DrawLight
 std::string MySystem::_resourcesDir;
@@ -36,21 +39,28 @@ const std::string saveFileName("../../../Executable/Save.json");
 double minDt = std::numeric_limits<double>::max();
 double maxDt = std::numeric_limits<double>::min();
 
-MySystem::MySystem() {
-}
-
 MySystem::~MySystem() {
+	if (_plane) { delete _plane; }
+	if (_box) { delete _box; }
+	if (_box2) { delete _box2; }
 }
 
 void MySystem::init() {
 	CUDA::GetProperty();
 
 	ShaderDefault::Instance().Init("Default.vert", "Default.frag");
+	/*{
+		float color4[] = { 1.f, 1.f, 1.0f, 0.5f };
+		ShaderDefault::Instance().Use();
+		Draw2::SetColorClass<ShaderDefault>(color4);
+	}*/
+
 	//ShaderLine::Instance().Init("Line.vert", "Line.frag");
 	ShaderLineP::Instance().Init("LineP.vert", "Line.frag");
 	//ShaderLinePM::Instance().Init("LinePM.vert", "Line.frag");
 
-	CommandManager::Run("Quests/StartCommands.json");
+	CommandManager::Run("Commands/Main.json");
+	//CommandManager::Run("Commands/EmptySpace.json");
 	Init—ameras();
 	initCallback();
 
@@ -125,7 +135,81 @@ void MySystem::draw() {
 			}
 
 			Draw2::SetModelMatrixClass<ShaderDefault>(bodyPtr->getMatrix());
+			Draw2::SetColorClass<ShaderDefault>(bodyPtr->getModel().getDataPtr());
+			{
+				float color4[] = { 1.f, 1.f, 1.0f, 1.0f };
+				Draw2::SetColorClass<ShaderDefault>(color4);
+			}
 			Draw2::Draw(bodyPtr->getModel());
+		}
+	}
+
+	//...
+	if (CommonData::bool3) {
+		if (SpaceTree02* space = dynamic_cast<SpaceTree02*>(currentSpace.get())) {
+			Draw2::DepthTest(false);
+
+			ShaderDefault::Instance().Use();
+
+			Draw2::SetModelMatrix(glm::mat4x4(1.f));
+
+			for (auto& clusterPtr : space->buffer) {
+				//static float color4[] = { 0.f, 1.f, 0.0f, 0.1f };
+				Draw2::SetColorClass<ShaderDefault>(clusterPtr->boxPtr->getDataPtr());
+				Draw2::Draw(*clusterPtr->boxPtr);
+			}
+
+			ShaderLineP::Instance().Use();
+			for (auto& clusterPtr : space->buffer) {
+				//static float color4[] = { 0.f, 0.f, 1.0f, 1.f };
+				Draw2::SetColorClass<ShaderLineP>(clusterPtr->boxPtr->getDataPtr());
+				Draw2::Lines(*clusterPtr->boxPtr);
+			}
+		}
+
+	}
+
+	if (CommonData::bool4) {
+		if (_plane) {
+			Draw2::SetModelMatrix(glm::mat4x4(1.f));
+			Draw2::Draw(*_plane);
+		}
+		else {
+			//_plane = new Plane(Math::Vector3(-100.f, -100.f, 0.f), Math::Vector3(10.f, 10.f, 0.f));
+		}
+
+		//...
+		if (_box && _box2) {
+			ShaderDefault::Instance().Use();
+			Draw2::SetModelMatrix(glm::mat4x4(1.f));
+
+			{
+				static float color4[] = { 0.f, 1.f, 0.f, 0.333f };
+				Draw2::SetColorClass<ShaderDefault>(color4);
+				Draw2::Draw(*_box);
+			}
+			{
+				static float color4[] = { 0.f, 0.f, 1.f, 0.333f };
+				Draw2::SetColorClass<ShaderDefault>(color4);
+				Draw2::Draw(*_box2);
+			}
+
+			ShaderLineP::Instance().Use();
+			{
+				static float color4[] = { 0.f, 1.f, 0.f, 0.5f };
+				Draw2::SetColorClass<ShaderLineP>(color4);
+				Draw2::Lines(*_box);
+			}
+			{
+				static float color4[] = { 0.f, 0.f, 1.f, 1.f };
+				Draw2::SetColorClass<ShaderLineP>(color4);
+				Draw2::Lines(*_box2);
+			}
+
+		}
+		else {
+			_box = new Box(Math::Vector3(-200.f, -100.f, -100.f), Math::Vector3(-10.f, -10.f, -10.f));
+			_box2 = new Box(Math::Vector3(10.f, 10.f, 10.f), Math::Vector3(100.f, 200.f, 100.f));
 		}
 	}
 

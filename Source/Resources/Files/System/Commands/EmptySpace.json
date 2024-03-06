@@ -1,5 +1,8 @@
 [
   {
+    "id": "ClearSpace"
+  },
+  {
     "id": "LoadQuests",
     "params": [
       "Quests/Quests.json"
@@ -7,7 +10,7 @@
   },
   {
     "id": "SetActiveQuest",
-	"disable": true,
+	"_disable": true,
     "params": [
       "Start",
       "ACTIVE"
@@ -23,7 +26,7 @@
   },
   {
     "id": "SetActiveQuest",
-	"_disable": true,
+	"disable": true,
     "params": [
       "QuestN",
       "ACTIVE"

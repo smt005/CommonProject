@@ -14,6 +14,10 @@
 #include "SpaceTree02.h"
 
 void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3& pos, bool withAssotiation) {
+	if (space->_bodies.empty()) {
+		return;
+	}
+
 	if (!space->_selectBody) {
 		if (space->_bodies.empty() && space->_bodies.front()) {
 			return;
@@ -151,6 +155,17 @@ void SpaceManager::AddObjects(Space* space, int count, double spaceRange, double
 
 	//...
 	space->Preparation();
+}
+
+void SpaceManager::AddObject(const std::string& nameModel, const Math::Vector3& pos, const Math::Vector3& vel, float mass) {
+	if (!MySystem::currentSpace) {
+		return;
+	}
+
+	const std::string& model = !nameModel.empty() ? nameModel : "BrownStone";
+
+	MySystem::currentSpace->Add<BodyData>(nameModel, pos, vel, mass, "");
+	MySystem::currentSpace->Preparation();
 }
 
 unsigned int SpaceManager::SetView(MySystem* systemMy) {

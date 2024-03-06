@@ -19,10 +19,26 @@
       {
         "id": "SetClearColor",
         "params": [
-          "0.3",
-          "0.6",
-          "0.9",
+          "0.03",
+          "0.06",
+          "0.09",
           "1.0"
+        ]
+      },
+      {
+        "id": "ClearSpace"
+      },
+      {
+        "id": "AddBody",
+        "params": [
+          "OrangeStar",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "100"
         ]
       }
     ]
@@ -58,10 +74,12 @@
           "1.0"
         ]
       },
-	  {
-		  "id": "OpenWindow",
-		  "params": ["RewardWindow"]
-	  }
+      {
+        "id": "OpenWindow",
+        "params": [
+          "RewardWindow"
+        ]
+      }
     ]
   }
 ]

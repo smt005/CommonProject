@@ -8,6 +8,7 @@
 #include <Wrapper.h>
 #include <Classes.h>
 #include "BodyData.h"
+#include "../../Engine/Source/Object/Samples/Box.h"
 
 namespace spaceTree02 {
 	struct DebugInfo {
@@ -41,7 +42,11 @@ namespace spaceTree02 {
 		float mass = 0;
 		float dist = 0;
 
+		Box::Ptr boxPtr;
+
 		std::vector<Body*> bodies;
+
+		bool IsInside(const Math::Vector3& pos);
 	};
 }
 
@@ -79,6 +84,7 @@ public:
 	bool searchOptimalCountBodies = true;
 
 private:
+public:
 	std::vector<spaceTree02::Cluster02::Ptr> buffer;
 	spaceTree02::DebugInfo _debugInfo;
 	

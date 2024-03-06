@@ -1,0 +1,23 @@
+[
+  {
+    "id": "OpenWindow",
+    "_disable": true,
+    "params": [
+      "CommandsWindow"
+    ]
+  },
+  {
+    "id": "RunCommands",
+    "_disable": true,
+    "params": [
+      "Commands/EmptySpace.json"
+    ]
+  },
+  {
+    "id": "RunCommands",
+    "disable": true,
+    "params": [
+      "Commands/Start.json"
+    ]
+  }
+]

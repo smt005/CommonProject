@@ -240,34 +240,53 @@ void SpaceTree02::GenerateClusters() {
 
 				}
 
+				// Создание прямоугольников
+				cluster->boxPtr = std::make_shared<Box>(cluster->min, cluster->max);
+
+				// Color
+				float r = 0.f;
+				float g = 0.f;
+				float b = 0.f;
+				float a = 0.1f;
+
+				{
+					r = ((cluster->max.x + _debugInfo.min.x) * 0.5f - _debugInfo.min.x) / _debugInfo.size.x;
+					r = r < 0.f ? 0.f : r;
+					r = r < 1.f ? r : 1.f;
+				}
+				{
+					g = ((cluster->max.y + _debugInfo.min.y) * 0.5f - _debugInfo.min.y) / _debugInfo.size.y;
+					g = g < 0.f ? 0.f : g;
+					g = g > 1.f ? 1.f : g;
+				}
+				{
+					b = ((cluster->max.z + _debugInfo.min.z) * 0.5f - _debugInfo.min.z) / _debugInfo.size.z;
+					b = b < 0.f ? 0.f : b;
+					b = b > 1.f ? 1.f : b;
+				}
+				a = 0.25f;
+
+				cluster->boxPtr->setColor(Color(r, g, b, a));
+
 				continue;
 			}
-			//...
 
-			Math::Vector3& min = cluster->min;
-			Math::Vector3& max = cluster->max;
+			//...
+			Math::Vector3 min = cluster->min;
+			Math::Vector3 max = cluster->max;
 			Math::Vector3 half = min + (max - min) / 2.f;
 
 			std::vector<Cluster::Ptr> tempBuffer = CreateSubClusters(min, max, half);
 
 			//...
 			for (Body* body : cluster->bodies) {
-				auto pos = body->GetPos();
+				Math::Vector3 pos = body->GetPos();
 
-				if (pos.x <= half.x && pos.y <= half.y) {
-					tempBuffer[0]->bodies.emplace_back(body);
-				}
-				else
-				if (pos.x <= half.x && pos.y > half.y) {
-					tempBuffer[1]->bodies.emplace_back(body);
-				}
-				else
-				if (pos.x > half.x && pos.y <= half.y) {
-					tempBuffer[2]->bodies.emplace_back(body);
-				}
-				else
-				if (pos.x > half.x && pos.y > half.y) {
-					tempBuffer[3]->bodies.emplace_back(body);
+				for (auto& cl : tempBuffer) {
+					if (cl->IsInside(pos)) {
+						cl->bodies.emplace_back(body);
+						break;
+					}
 				}
 			}
 
@@ -286,6 +305,28 @@ void SpaceTree02::GenerateClusters() {
 		std::swap(newBufferPtr, bufferPtr);
 		newBufferPtr->clear();
 		++_debugInfo.countLevel;
+	}
+
+	// DEBUG
+	if (false) {
+		float minX = 0.f;
+		float minY = 0.f;
+		float minZ = 0.f;
+		float maxX = 0.f;
+		float maxY = 0.f;
+		float maxZ = 0.f;
+
+		for (auto& cl : buffer) {
+			minX = cl->min.x < minX ? cl->min.x : minX;
+			minY = cl->min.y < minY ? cl->min.y : minY;
+			minZ = cl->min.z < minZ ? cl->min.z : minZ;
+
+			maxX = cl->max.x > maxX ? cl->max.x : maxX;
+			maxY = cl->max.y > maxY ? cl->max.y : maxY;
+			maxZ = cl->max.z > maxZ ? cl->max.z : maxZ;
+		}
+
+		printf("Box: min: [%f, %f, %f] max: [%f, %f, %f]\n", minX, minY, minZ, maxX, maxY, maxZ);
 	}
 }
 
@@ -379,6 +420,16 @@ std::vector<Cluster::Ptr> SpaceTree02::CreateSubClusters(const Math::Vector3& mi
 	return tempBuffer;
 }
 
+
+bool spaceTree02::Cluster02::IsInside(const Math::Vector3& pos) {
+	if (pos.x > min.x && pos.x <= max.x &&
+		pos.y > min.y && pos.y <= max.y &&
+		pos.z > min.z && pos.z <= max.z)
+	{
+		return true;
+	}
+	return false;
+}
 
 void spaceTree02::DebugInfo::Clear() {
 	countLevel = 0;

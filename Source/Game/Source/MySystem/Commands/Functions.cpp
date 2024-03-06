@@ -12,6 +12,11 @@
 
 // Windows
 #include "../UI/RewardWindow.h"
+#include "../UI/Debug/CommandsWindow.h"
+
+// Space
+#include "../../MySystem/Objects/SpaceManager.h"
+
 
 namespace commands {
 void CommandLog(const Command& command) {
@@ -32,6 +37,10 @@ void CommandLog(const Command& command) {
 	}
 
 	std::cout << ']' << std::endl;
+}
+
+void RunCommands(const std::string& filePathName) {
+	CommandManager::Run(filePathName);
 }
 
 void SetProcess(const std::string stateStr) {
@@ -95,11 +104,51 @@ void OpenWindow(const std::string& classWindow) {
 			UI::ShowWindow<RewardWindow>();
 		}
 	}
+	else if (classWindow == "CommandsWindow") {
+		if (!UI::ShowingWindow<CommandsWindow>()) {
+			UI::ShowWindow<CommandsWindow>();
+		}
+	}
 	/*else if (classWindow == "XXX") {
 		if (!UI::ShowingWindow<XXX>()) {
 			UI::ShowWindow<XXX>();
 		}
 	}*/
+}
+
+// Space
+void ClearSpace() {
+	if (MySystem::currentSpace) {
+		MySystem::currentSpace->_bodies.clear();
+		MySystem::currentSpace->Preparation();
+	}
+}
+
+void AddBody(const std::vector<std::string>& parameters) {
+	// model, pos, vel, mass
+	size_t countParams = parameters.size();
+
+	const std::string tempStr;
+	const std::string& nameMode = countParams >= 1 ? parameters[0] : tempStr;
+
+	Math::Vector3 pos(0.f);
+	if (countParams >= 4) {
+		pos.x = atof(parameters[1].c_str());
+		pos.y = atof(parameters[2].c_str());
+		pos.z = atof(parameters[3].c_str());
+	}
+	
+	Math::Vector3 vel(0.f);
+	if (countParams >= 7) {
+		vel.x = atof(parameters[4].c_str());
+		vel.y = atof(parameters[5].c_str());
+		vel.z = atof(parameters[6].c_str());
+	}
+
+	float mass = countParams >= 8 ? atof(parameters[7].c_str()) : 1.f;
+
+	//...
+	SpaceManager::AddObject(nameMode, pos, vel, mass);
 }
 
 //..................................................................
@@ -119,19 +168,19 @@ void Run(const Command& comand) {
 		}
 	}
 	else if (comandId == "LoadQuests") {
-		if (comand.parameters.size() >= 1) {
+		if (!comand.parameters.empty()) {
 			CommandLog(comand);
 			QuestManager::Load(comand.parameters.front());
 		}
 	}
 	else if (comandId == "SetProcess") {
-		if (comand.parameters.size() >= 1) {
+		if (!comand.parameters.empty()) {
 			CommandLog(comand);
 			SetProcess(comand.parameters.front());
 		}
 	}
 	else if (comandId == "SetMultithread") {
-		if (comand.parameters.size() >= 1) {
+		if (!comand.parameters.empty()) {
 			CommandLog(comand);
 			SetMultithread(comand.parameters.front());
 		}
@@ -142,8 +191,19 @@ void Run(const Command& comand) {
 	}
 	else if (comandId == "OpenWindow") {
 		CommandLog(comand);
-		if (comand.parameters.size() >= 1) {
+		if (!comand.parameters.empty()) {
 			OpenWindow(comand.parameters.front());
+		}
+	}
+	else if (comandId == "ClearSpace") {
+		ClearSpace();
+	}
+	else if (comandId == "AddBody") {
+		AddBody(comand.parameters);
+	}
+	else if (comandId == "RunCommands") {
+		if (!comand.parameters.empty()) {
+			RunCommands(comand.parameters.front());
 		}
 	}
 }

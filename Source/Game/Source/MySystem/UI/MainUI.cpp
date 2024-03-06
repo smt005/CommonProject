@@ -5,6 +5,7 @@
 #include "SpaceManagerUI.h"
 #include "ListHeaviestUI.h"
 #include "ComputationsUI.h"
+#include "Debug/CommandsWindow.h""
 #include "Draw/Camera/CameraControlOutside.h"
 #include "Callback/Callback.h"
 #include "Callback/CallbackEvent.h"
@@ -21,7 +22,6 @@
 
 namespace {
 	Engine::Callback callback;
-	std::shared_ptr<Space> spacePtr;
 	Object::Ptr bodyMarker;
 }
 
@@ -29,11 +29,6 @@ MySystem* MainUI::_mySystem = nullptr;
 
 void MainUI::Open(MySystem* mySystem) {
 	_mySystem = mySystem;
-	if (!MySystem::currentSpace) {
-		return;
-	}
-
-	spacePtr = MySystem::currentSpace;
 
 	InitCallback();
 
@@ -51,7 +46,7 @@ void MainUI::InitCallback() {
 		Engine::KeyCallbackEvent* releaseKeyEvent = (Engine::KeyCallbackEvent*)callbackEventPtr->get();
 		Engine::VirtualKey key = releaseKeyEvent->getId();
 
-		if (key == Engine::VirtualKey::Q) {
+		if (key == Engine::VirtualKey::F1) {
 			if (UI::ShowingWindow<ComputationsUI>()) {
 				UI::CloseWindowT<ComputationsUI>();
 			}
@@ -60,7 +55,7 @@ void MainUI::InitCallback() {
 			}
 		}
 
-		if (key == Engine::VirtualKey::W) {
+		if (key == Engine::VirtualKey::F2) {
 			if (UI::ShowingWindow<SpaceManagerUI>()) {
 				UI::CloseWindowT<SpaceManagerUI>();
 			}
@@ -69,12 +64,21 @@ void MainUI::InitCallback() {
 			}
 		}
 
-		if (key == Engine::VirtualKey::E) {
+		if (key == Engine::VirtualKey::F3) {
 			if (UI::ShowingWindow<ListHeaviestUI>()) {
 				UI::CloseWindowT<ListHeaviestUI>();
 			}
 			else {
 				UI::ShowWindow<ListHeaviestUI>(MainUI::_mySystem);
+			}
+		}
+
+		if (key == Engine::VirtualKey::F4) {
+			if (UI::ShowingWindow<CommandsWindow>()) {
+				UI::CloseWindowT<CommandsWindow>();
+			}
+			else {
+				UI::ShowWindow<CommandsWindow>();
 			}
 		}
 
@@ -117,11 +121,11 @@ void MainUI::InitCallback() {
 			return;
 		}
 
-		if (Engine::TapCallbackEvent* tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
+	if (MySystem::currentSpace;  Engine::TapCallbackEvent * tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
 			if (tapCallbackEvent->_id == Engine::VirtualTap::MIDDLE) {
 				const glm::mat4x4& matCamera = _mySystem->_camearCurrent->ProjectView();
-				spacePtr->_focusBody = spacePtr->HitObject(matCamera);
-				spacePtr->_selectBody = spacePtr->_focusBody;
+				MySystem::currentSpace->_focusBody = MySystem::currentSpace->HitObject(matCamera);
+				MySystem::currentSpace->_selectBody = MySystem::currentSpace->_focusBody;
 			}
 
 			if (tapCallbackEvent->_id == Engine::VirtualTap::LEFT) {
@@ -129,7 +133,7 @@ void MainUI::InitCallback() {
 					if (bottomUI->_addBodyType == AddBodyType::ORBIT) {
 						auto cursorPosGlm = _mySystem->_camearCurrent->corsorCoord();
 						Math::Vector3 cursorPos(cursorPosGlm.x, cursorPosGlm.y, cursorPosGlm.z);
-						SpaceManager::AddObjectOnOrbit(spacePtr.get(), cursorPos);
+						SpaceManager::AddObjectOnOrbit(MySystem::currentSpace.get(), cursorPos);
 						bottomUI->_addBodyType = AddBodyType::NONE;
 					}
 				}
@@ -148,7 +152,7 @@ void MainUI::DrawOnSpace() {
 	Camera::Set(_mySystem->_camearScreen);
 	ShaderDefault::current->Use();
 
-	for (Body::Ptr& body : spacePtr->_bodies) {	
+	for (Body::Ptr& body : MySystem::currentSpace->_bodies) {	
 		Math::Vector3 posOnScreen = body->PosOnScreen(matCamera, false);
 		float pos[] = { posOnScreen.x, posOnScreen.y, posOnScreen.z };
 		

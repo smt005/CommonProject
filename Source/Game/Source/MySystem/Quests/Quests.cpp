@@ -22,7 +22,13 @@ void QuestSphere100::Activete() {
     float minSpaceRange = 100;
     float spaceRange = 5000;
 
-    MySystem::currentSpace->_bodies.reserve(count);
+    MySystem::currentSpace->_bodies.reserve(count + 1);
+
+    if (MySystem::currentSpace->_bodies.empty()) {
+        SpaceManager::AddObject("OrangeStar", Math::Vector3(0.f, 0.f, 0.f), Math::Vector3(0.f, 0.f, 0.f), 100.f);
+        MySystem::currentSpace->_focusBody = MySystem::currentSpace->_bodies.front();
+    }
+
     Math::Vector3 pos;
 
     int i = 0;
@@ -77,7 +83,13 @@ void QuestSphere::Activete() {
         spaceRange = std::stoi(spaceRangeStr);
     }
 
-    MySystem::currentSpace->_bodies.reserve(count);
+    MySystem::currentSpace->_bodies.reserve(count + 1);
+
+    if (MySystem::currentSpace->_bodies.empty()) {
+        SpaceManager::AddObject("OrangeStar", Math::Vector3(0.f, 0.f, 0.f), Math::Vector3(0.f, 0.f, 0.f), 100.f);
+        MySystem::currentSpace->_focusBody = MySystem::currentSpace->_bodies.front();
+    }
+
     Math::Vector3 pos;
 
     int i = 0;

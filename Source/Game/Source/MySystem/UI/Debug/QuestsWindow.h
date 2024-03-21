@@ -2,9 +2,9 @@
 
 #include "ImGuiManager/UI.h"
 
-class CommandsWindow final : public UI::Window {
+class QuestsWindow final : public UI::Window {
 public:
-	CommandsWindow();
+	QuestsWindow();
 	void OnOpen() override;
 	void Draw() override;
 

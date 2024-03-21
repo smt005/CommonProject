@@ -6,7 +6,8 @@
 #include "ListHeaviestUI.h"
 #include "ComputationsUI.h"
 #include "CommonData.h"
-#include "Debug/CommandsWindow.h""
+#include "Debug/CommandsWindow.h"
+#include "Debug/QuestsWindow.h"
 #include "Draw/Camera/CameraControlOutside.h"
 #include "Callback/Callback.h"
 #include "Callback/CallbackEvent.h"
@@ -20,6 +21,9 @@
 
 #include <Draw2/Draw2.h>
 #include <Draw2/Shader/ShaderDefault.h>
+
+#include "../Commands/Functions.h"
+#include "../Commands/Event.h"
 
 namespace {
 	Engine::Callback callback;
@@ -83,6 +87,15 @@ void MainUI::InitCallback() {
 			}
 		}
 
+		if (key == Engine::VirtualKey::F5) {
+			if (UI::ShowingWindow<QuestsWindow>()) {
+				UI::CloseWindowT<QuestsWindow>();
+			}
+			else {
+				UI::ShowWindow<QuestsWindow>();
+			}
+		}
+
 		// Цифровые кнопки
 		if (key == Engine::VirtualKey::VK_0) {
 			CommonData::bool0 = !CommonData::bool0;
@@ -117,12 +130,25 @@ void MainUI::InitCallback() {
 
 	});
 
+	callback.add(Engine::CallbackType::PRESS_TAP, [](const Engine::CallbackEventPtr& callbackEventPtr) {
+		if (IsLockAction()) {
+			return;
+		}
+
+		if (Engine::TapCallbackEvent* tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
+			if (tapCallbackEvent->_id == Engine::VirtualTap::LEFT) {
+				commands::Run(Command("AddBody", { "BrownStone", "mouse" }));
+				Event::Instance().Action();
+			}
+		}
+	});
+
 	callback.add(Engine::CallbackType::RELEASE_TAP, [](const Engine::CallbackEventPtr& callbackEventPtr) {
 		if (IsLockAction()) {
 			return;
 		}
 
-	if (MySystem::currentSpace;  Engine::TapCallbackEvent * tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
+		if (MySystem::currentSpace;  Engine::TapCallbackEvent * tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
 			if (tapCallbackEvent->_id == Engine::VirtualTap::MIDDLE) {
 				const glm::mat4x4& matCamera = _mySystem->_camearCurrent->ProjectView();
 				MySystem::currentSpace->_focusBody = MySystem::currentSpace->HitObject(matCamera);

@@ -1,5 +1,8 @@
 [
   {
+    "id": "ClearQuests"
+  },
+  {
     "id": "OpenWindow",
     "disable": true,
     "params": [
@@ -8,26 +11,16 @@
   },
   {
     "id": "RunCommands",
-    "disable": false,
+    "disable": true,
     "params": [
       "Commands/EmptySpace.json"
     ]
   },
   {
     "id": "RunCommands",
-    "disable": true,
+    "disable": false,
     "params": [
       "Commands/Start.json"
     ]
-  },
-  {
-	"id": "SetClearColor",
-	"disable": false,
-	"params": [
-	  "0.333",
-	  "0.666",
-	  "0.999",
-	  "1.0"
-	]
   }
 ]

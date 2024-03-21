@@ -3,6 +3,7 @@
     "id": "Start",
     "class": "QuestStart",
     "state": "ACTIVE",
+    "next_quest": "Second",
     "commands": [
       {
         "id": "SetProcess",
@@ -19,67 +20,78 @@
       {
         "id": "SetClearColor",
         "params": [
-          "0.03",
-          "0.06",
-          "0.09",
+          "0.1",
+          "0.1",
+          "0.1",
           "1.0"
         ]
       },
       {
         "id": "ClearSpace"
-      },
-      {
-        "id": "AddBody",
-        "params": [
-          "xyz_low",
-          "0",
-          "0",
-          "0",
-          "0",
-          "0",
-          "0",
-          "100"
-        ]
       }
     ]
   },
   {
-    "id": "Quest100",
-    "class": "QuestSphere100",
-    "state": "INACTIVE"
-  },
-  {
-    "id": "QuestN",
-    "class": "QuestSphere",
-    "state": "INACTIVE",
+    "id": "Second",
+    "class": "QuestStart",
+    "state": "ACTIVE",
+    "next_quest": "Third",
     "commands": [
       {
         "id": "SetProcess",
         "params": [
-          "GPU"
+          "CPU"
         ]
       },
       {
         "id": "SetMultithread",
         "params": [
-          "true"
+          "false"
         ]
       },
       {
         "id": "SetClearColor",
         "params": [
-          "0.1",
-          "0.15",
-          "0.2",
+          "0.3",
+          "0.6",
+          "0.9",
           "1.0"
         ]
       },
       {
-        "id": "OpenWindow",
-		"disable": true,
+        "id": "ClearSpace"
+      }
+    ]
+  },
+  {
+    "id": "Third",
+    "class": "QuestStart",
+    "state": "ACTIVE",
+    "next_quest": "Start",
+    "commands": [
+      {
+        "id": "SetProcess",
         "params": [
-          "RewardWindow"
+          "CPU"
         ]
+      },
+      {
+        "id": "SetMultithread",
+        "params": [
+          "false"
+        ]
+      },
+      {
+        "id": "SetClearColor",
+        "params": [
+          "0.9",
+          "0.6",
+          "0.3",
+          "1.0"
+        ]
+      },
+      {
+        "id": "ClearSpace"
       }
     ]
   }

@@ -3,6 +3,9 @@
     "id": "ClearSpace"
   },
   {
+    "id": "ClearQuests"
+  },
+  {
     "id": "LoadQuests",
     "params": [
       "Quests/Quests.json"

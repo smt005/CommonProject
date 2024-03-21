@@ -94,6 +94,9 @@ void QuestManager::Load(const std::string& pathFileName) {
 		const std::string stateStr = !jsonState.empty() ? jsonState.asString() : "NONE";
 		Quest::State state = StateFromString(stateStr);
 
+		Json::Value& jsonNextQuest = jsonCommand["next_quest"];
+		const std::string nextQuest = !jsonNextQuest.empty() ? jsonNextQuest.asString() : std::string();
+
 		Quest* quest = nullptr;
 
 		if (classStr == "QuestStart") {
@@ -114,12 +117,17 @@ void QuestManager::Load(const std::string& pathFileName) {
 
 			Json::Value& jsonParams = jsonCommand["commands"];
 			quest->_commands = CommandManager::Load(jsonParams);
+			quest->_nextQuest = nextQuest;
 
 			for (Command& conmmand : quest->_commands) {
 				conmmand.tag = questId;
 			}
 		}
 	}
+}
+
+void QuestManager::Clear() {
+	quests.clear();
 }
 
 void QuestManager::Update() {

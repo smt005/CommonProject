@@ -4,11 +4,25 @@
 #include "../Objects/SpaceManager.h"
 #include "Common/Help.h"
 #include "../../CUDA/Source/Wrapper.h"
+#include "../Commands/Commands.h"
+#include "../Commands/Event.h"
+#include "../MySystem.h"
 
 // QuestStart
 void QuestStart::Activete() {
 	MySystem::currentSpace.reset();
     MySystem::currentSpace = SpaceManager::Load("MAIN");
+
+    if (!_nextQuest.empty()) {
+        Event::Instance().Add(_name, [name = _name, nextQuest = _nextQuest]() {
+            if (MySystem::currentSpace) {
+                if (MySystem::currentSpace->_bodies.size() > 5) {
+                    CommandManager::Run(Command("SetActiveQuest", { nextQuest, "ACTIVE" }));
+                    Event::Instance().Remove(name);
+                }
+            }
+        });
+    }
 }
 
 // QuestSphere100

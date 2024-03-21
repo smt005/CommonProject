@@ -15,7 +15,12 @@ public:
 	static bool HasQuest(const std::string& name);
 	static Quest::State StateFromString(const std::string& stateStr);
 	static void Load(const std::string& pathFileName);
+	static void Clear();
 	static void Update();
+
+	static const std::vector<Quest::Ptr>& GetQuests() {
+		return quests;
+	}
 
 private:
 	static Quest::Ptr activeQuestPtr;

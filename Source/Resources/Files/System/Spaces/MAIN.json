@@ -1,11 +1,11 @@
 [
 	{
-		"class": "SpaceTree02",
+		"_class": "SpaceTree02",
 		"_class": "SpaceTree01",
 		"_class": "SpaceTree00",
 		"_class" : "SpaceGpuX1",
 		"_class" : "SpaceGpuX0",
-		"_class" : "BaseSpace",
+		"class" : "BaseSpace",
 		"const_gravity" : 0.01,
 		"name" : "MAIN",
 		"params":

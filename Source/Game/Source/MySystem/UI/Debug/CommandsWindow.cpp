@@ -9,8 +9,11 @@ CommandsWindow::CommandsWindow() : UI::Window(this) { }
 void CommandsWindow::OnOpen() {
     SetFlag(ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize);
 
-    float x = Engine::Screen::width() / 2.f - _width / 2.f;
-    float y = Engine::Screen::height() / 2.f - _height / 2.f;
+    //float x = Engine::Screen::width() / 2.f - _width / 2.f;
+    //float y = Engine::Screen::height() / 2.f - _height / 2.f;
+
+    float x = 20.f;
+    float y = 30.f;
 
     ImGui::SetWindowPos(Id().c_str(), { x, y });
     ImGui::SetWindowSize(Id().c_str(), { _width, _height });
@@ -36,10 +39,7 @@ void CommandsWindow::OnOpen() {
 
         if (lastPos < pointPos) {
             std::string name = filePathNames.substr(lastPos, (pointPos - lastPos));
-
-            if (name != "Main") {
-                _commands.emplace_back(name, filePathNames);
-            }
+            _commands.emplace_back(name, filePathNames);
         }
     }
 }
@@ -50,13 +50,13 @@ void CommandsWindow::Draw() {
     ImGui::Separator();
 
     for (auto&[name, filePathName] : _commands) {
-        if (ImGui::Button(name.c_str(), { 128.f, 32.f })) {
+        if (ImGui::Button(name.c_str(), { 180.f, 32.f })) {
             CommandManager::Run(filePathName);
         }
     }
 
     ImGui::Separator();
-    if (ImGui::Button("Close", { 128.f, 32.f})) {
+    if (ImGui::Button("Close", { 180.f, 32.f})) {
         Close();
     }
 }

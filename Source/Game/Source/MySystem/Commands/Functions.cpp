@@ -6,13 +6,16 @@
 #include "../Quests/QuestManager.h"
 #include "../../CUDA/Source/Wrapper.h"
 #include <iostream>
+#include <glm/vec3.hpp>
 
 // View
 #include "Draw2/Draw2.h"
+#include "Draw/Camera/Camera.h"
 
 // Windows
 #include "../UI/RewardWindow.h"
 #include "../UI/Debug/CommandsWindow.h"
+#include "../UI/Debug/QuestsWindow.h"
 
 // Space
 #include "../../MySystem/Objects/SpaceManager.h"
@@ -20,6 +23,8 @@
 
 namespace commands {
 void CommandLog(const Command& command) {
+	std::cout << "[COMMAND] ";
+
 	if (command.tag.empty()) {
 		std::cout << command.id << ": [";
 	}
@@ -109,6 +114,11 @@ void OpenWindow(const std::string& classWindow) {
 			UI::ShowWindow<CommandsWindow>();
 		}
 	}
+	else if (classWindow == "QuestsWindow") {
+		if (!UI::ShowingWindow<QuestsWindow>()) {
+			UI::ShowWindow<QuestsWindow>();
+		}
+	}
 	/*else if (classWindow == "XXX") {
 		if (!UI::ShowingWindow<XXX>()) {
 			UI::ShowWindow<XXX>();
@@ -138,26 +148,36 @@ void AddBody(const std::vector<std::string>& parameters) {
 	size_t countParams = parameters.size();
 
 	const std::string tempStr;
-	const std::string& nameMode = countParams >= 1 ? parameters[0] : tempStr;
+	const std::string& nameModel = countParams >= 1 ? parameters[0] : tempStr;
 
 	Math::Vector3 pos(0.f);
-	if (countParams >= 4) {
-		pos.x = atof(parameters[1].c_str());
-		pos.y = atof(parameters[2].c_str());
-		pos.z = atof(parameters[3].c_str());
-	}
-	
 	Math::Vector3 vel(0.f);
-	if (countParams >= 7) {
-		vel.x = atof(parameters[4].c_str());
-		vel.y = atof(parameters[5].c_str());
-		vel.z = atof(parameters[6].c_str());
+
+	if (countParams == 2 && parameters[1] == "mouse") {
+		auto posTmp = Camera::GetLink().corsorCoord();
+		pos.x = posTmp.x;
+		pos.y = posTmp.y;
+		pos.z = posTmp.z;
+
+		// vel == 0
+	} else {
+		if (countParams >= 4) {
+			pos.x = atof(parameters[1].c_str());
+			pos.y = atof(parameters[2].c_str());
+			pos.z = atof(parameters[3].c_str());
+		}
+
+		if (countParams >= 7) {
+			vel.x = atof(parameters[4].c_str());
+			vel.y = atof(parameters[5].c_str());
+			vel.z = atof(parameters[6].c_str());
+		}
 	}
 
 	float mass = countParams >= 8 ? atof(parameters[7].c_str()) : 1.f;
 
 	//...
-	SpaceManager::AddObject(nameMode, pos, vel, mass);
+	SpaceManager::AddObject(nameModel, pos, vel, mass);
 }
 
 //..................................................................
@@ -181,6 +201,10 @@ void Run(const Command& comand) {
 			CommandLog(comand);
 			QuestManager::Load(comand.parameters.front());
 		}
+	}
+	else if (comandId == "ClearQuests") {
+		CommandLog(comand);
+		QuestManager::Clear();
 	}
 	else if (comandId == "SetProcess") {
 		if (!comand.parameters.empty()) {

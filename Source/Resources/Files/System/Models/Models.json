@@ -53,5 +53,9 @@
     "shape": "Models/SkyBox/SkyBox_1000.obj",
     "texture": "Textures/SkyBox/SkyBox_orange_line.png",
     "scale": 1000
+  },
+  "Finger": {
+    "shape": "Models/Interface/Tutorial/Finger.obj",
+    "texture": "Textures/Interface/Interface/Finger.png"
   }
 }

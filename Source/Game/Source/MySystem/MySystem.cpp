@@ -172,6 +172,22 @@ void MySystem::draw() {
 		Draw2::drawPoints(points.data(), countPoints);
 	}
 
+	//...
+	if (CommonData::bool6) {
+		if (Model::Ptr& model = Model::getByName("Finger")) {
+			Camera::Set<Camera>(_camearScreen);
+			Draw2::DepthTest(false);
+
+			ShaderDefault::Instance().Use();
+
+			float color4[] = { 1.f, 1.f, 1.f, 1.f };
+			Draw2::SetColorClass<ShaderDefault>(color4);
+			Draw2::SetModelMatrix(glm::mat4x4(1.f));
+
+			Draw2::Draw(*model);
+		}
+	}
+
 	// MainUI::DrawOnSpace();
 }
 

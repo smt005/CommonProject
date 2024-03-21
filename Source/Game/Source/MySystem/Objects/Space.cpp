@@ -88,10 +88,10 @@ bool Space::Load(Json::Value& valueData) {
 
 	std::string skyBoxModel = valueData[0]["sky_box"].isString() ? valueData[0]["sky_box"].asString() : std::string();
 	if (!skyBoxModel.empty()) {
-		_skyboxObject = std::make_shared<Object>("SkyBox", skyBoxModel);
+		/*_skyboxObject = std::make_shared<Object>("SkyBox", skyBoxModel);
 		if (!_skyboxObject->ValidModel()) {
 			_skyboxObject.reset();
-		}
+		}*/
 	}
 	
 	processGPU = _params["PROCESS"] == "GPU" ? true : false;
@@ -219,6 +219,17 @@ Body::Ptr Space::HitObject(const glm::mat4x4& matCamera) {
 	}
 
 	return Body::Ptr();
+}
+
+void Space::SetSkyBoxModel(const std::string& modelName) {
+	_skyboxModel = Model::getByName(modelName);
+}
+
+Model& Space::SkyBoxMode() {
+	if (!_skyboxModel) {
+		_skyboxModel = Model::getByName("EMPTY");
+	}
+	return *_skyboxModel;
 }
 
 Body::Ptr Space::GetBody(const char* chName) {

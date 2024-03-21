@@ -1,37 +1,41 @@
 {
-   "OrangeStar": {
+  "OrangeStar": {
     "shape": "Models/GeoSphere/GeoSphere_1_5_planar.obj",
-	"texture": "Textures/star/orange_star.jpg",
+    "texture": "Textures/star/orange_star.jpg",
     "scale": 10
   },
   "BrownStone_x10": {
-	"shape": "Models/GeoSphere/GeoSphere_1_4_planar.obj",
+    "shape": "Models/GeoSphere/GeoSphere_1_4_planar.obj",
     "texture": "Textures/planet/brown_stone.jpg",
     "scale": 10
   },
   "BrownStone": {
-	"shape": "Models/GeoSphere/GeoSphere_1_4_planar.obj",
+    "shape": "Models/GeoSphere/GeoSphere_1_4_planar.obj",
     "texture": "Textures/planet/brown_stone.jpg",
-    "scale": 50
+    "scale": 10
   },
-   "PointWhite": {
-	"shape": "Models/Interface/Plane_1_1_z.obj",
-	"texture": "Textures/star/Light128.png",
+  "xyz_low": {
+    "shape": "Models/Common/xyz_low.obj",
+    "texture": "Textures/Common/metal_texture_00.jpg"
+  },
+  "PointWhite": {
+    "shape": "Models/Interface/Plane_1_1_z.obj",
+    "texture": "Textures/star/Light128.png",
     "scale": 100
   },
-    "PointTurquoise": {
-	"shape": "Models/Interface/Plane_1_1_z.obj",
-	"texture": "Textures/star/LightTurquoise128.png",
+  "PointTurquoise": {
+    "shape": "Models/Interface/Plane_1_1_z.obj",
+    "texture": "Textures/star/LightTurquoise128.png",
     "scale": 100
   },
-    "PointViolet": {
-	"shape": "Models/Interface/Plane_1_1_z.obj",
-	"texture": "Textures/star/LightViolet128.png",
+  "PointViolet": {
+    "shape": "Models/Interface/Plane_1_1_z.obj",
+    "texture": "Textures/star/LightViolet128.png",
     "scale": 100
   },
-    "PointYellow": {
-	"shape": "Models/Interface/Plane_1_1_z.obj",
-	"texture": "Textures/star/LightYellow128.png",
+  "PointYellow": {
+    "shape": "Models/Interface/Plane_1_1_z.obj",
+    "texture": "Textures/star/LightYellow128.png",
     "scale": 100
   },
   "Marker": {
@@ -41,8 +45,8 @@
     "scale": 0.0125
   },
   "SkyBox": {
-	"shape": "Models/SkyBox/SkyCylinder.obj",
-	"texture": "Textures/SkyBox/CylinderSky32.jpg",
+    "shape": "Models/SkyBox/SkyCylinder.obj",
+    "texture": "Textures/SkyBox/CylinderSky32.jpg",
     "scale": 1000
   },
   "SkyBox2": {

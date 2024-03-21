@@ -25,7 +25,7 @@ void QuestSphere100::Activete() {
     MySystem::currentSpace->_bodies.reserve(count + 1);
 
     if (MySystem::currentSpace->_bodies.empty()) {
-        SpaceManager::AddObject("OrangeStar", Math::Vector3(0.f, 0.f, 0.f), Math::Vector3(0.f, 0.f, 0.f), 100.f);
+        SpaceManager::AddObject("BrownStone", Math::Vector3(0.f, 0.f, 0.f), Math::Vector3(0.f, 0.f, 0.f), 100.f);
         MySystem::currentSpace->_focusBody = MySystem::currentSpace->_bodies.front();
     }
 
@@ -86,7 +86,7 @@ void QuestSphere::Activete() {
     MySystem::currentSpace->_bodies.reserve(count + 1);
 
     if (MySystem::currentSpace->_bodies.empty()) {
-        SpaceManager::AddObject("OrangeStar", Math::Vector3(0.f, 0.f, 0.f), Math::Vector3(0.f, 0.f, 0.f), 100.f);
+        SpaceManager::AddObject("BrownStone", Math::Vector3(0.f, 0.f, 0.f), Math::Vector3(0.f, 0.f, 0.f), 100.f);
         MySystem::currentSpace->_focusBody = MySystem::currentSpace->_bodies.front();
     }
 

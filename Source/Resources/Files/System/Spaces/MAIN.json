@@ -10,11 +10,11 @@
 		"name" : "MAIN",
 		"params":
 		{
-			"_PROCESS": "GPU",
-			"_MULTITHREAD": "true",
+			"PROCESS": "GPU",
+			"MULTITHREAD": "true",
 			"tag": "0",
 			"_COUNT": 31622,
-			"COUNT": 5000,
+			"COUNT": 1000,
 			"COUNT_IN_CLUSTER": 10,
 			"AUTO_COUNT_IN_CLUSTER": false,
 			"DIST_FACTOR": 1.1,
@@ -29,7 +29,7 @@
 		[
 			{
 				"mass" : 1000.0,
-				"model" : "OrangeStar",
+				"model" : "BrownStone",
 				"pos" : 
 				[
 					0.0,

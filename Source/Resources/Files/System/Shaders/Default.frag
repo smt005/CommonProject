@@ -8,8 +8,5 @@ in vec2 v_texCoord;
 out vec4 outColor;
 
 void main() {
-	//outColor = texture2D(s_texture, v_texCoord);
-	
-	vec4 outColorT = texture2D(s_texture, v_texCoord) * u_color;
-	outColor = outColorT;
+	outColor = texture2D(s_texture, v_texCoord) * u_color;
 }

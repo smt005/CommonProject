@@ -278,7 +278,7 @@ std::shared_ptr<Space> SpaceManager::CopySpace(const std::string& className, Spa
 	copySpace->_bodies = space->_bodies;
 
 	//SpatialGrid spatialGrid;
-	copySpace->_skyboxObject = space->_skyboxObject;
+	copySpace->_skyboxModel = space->_skyboxModel;
 
 	return copySpacePtr;
 }

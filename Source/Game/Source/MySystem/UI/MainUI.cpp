@@ -5,6 +5,7 @@
 #include "SpaceManagerUI.h"
 #include "ListHeaviestUI.h"
 #include "ComputationsUI.h"
+#include "CommonData.h"
 #include "Debug/CommandsWindow.h""
 #include "Draw/Camera/CameraControlOutside.h"
 #include "Callback/Callback.h"

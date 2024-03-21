@@ -117,6 +117,15 @@ void OpenWindow(const std::string& classWindow) {
 }
 
 // Space
+void SetSkyBox(const std::string& modelName) {
+	if (MySystem::currentSpace) {
+		if (ModelPtr& modelPtr = Model::getByName(modelName)) {
+			MySystem::currentSpace->SetSkyBoxModel(modelName);
+		}
+	}
+}
+
+
 void ClearSpace() {
 	if (MySystem::currentSpace) {
 		MySystem::currentSpace->_bodies.clear();

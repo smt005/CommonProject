@@ -1,14 +1,14 @@
 [
   {
     "id": "OpenWindow",
-    "_disable": true,
+    "disable": true,
     "params": [
       "CommandsWindow"
     ]
   },
   {
     "id": "RunCommands",
-    "_disable": true,
+    "disable": false,
     "params": [
       "Commands/EmptySpace.json"
     ]
@@ -19,5 +19,15 @@
     "params": [
       "Commands/Start.json"
     ]
+  },
+  {
+	"id": "SetClearColor",
+	"disable": false,
+	"params": [
+	  "0.333",
+	  "0.666",
+	  "0.999",
+	  "1.0"
+	]
   }
 ]

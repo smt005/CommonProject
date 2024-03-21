@@ -9,7 +9,7 @@
 #include "MyStl/shared.h"
 #include "../UI/SpatialGrid.h"
 #include "Body.h"
-#include "Object/Object.h"
+#include "Object/Model.h"
 
 class Space {
 public:
@@ -48,7 +48,9 @@ public:
 	Body::Ptr GetBody(const char* chName);
 	virtual void RemoveVelocity(bool toCenter = false);
 	Body::Ptr HitObject(const glm::mat4x4& matCamera);
-	
+	void SetSkyBoxModel(const std::string& modelName);
+	Model& SkyBoxMode();
+
 public:
 	virtual std::string GetNameClass();
 
@@ -72,7 +74,7 @@ public:
 	std::vector<Body::Ptr> _bodies;
 
 	SpatialGrid spatialGrid;
-	std::shared_ptr<Object> _skyboxObject;
+	std::shared_ptr<Model> _skyboxModel;
 	Body::Ptr _focusBody;
 	Body::Ptr _selectBody;
 	std::vector<std::pair<Body::Ptr, std::string>> _heaviestInfo;

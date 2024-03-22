@@ -31,7 +31,7 @@ void MySystem::init() {
 	InitСameras();
 	initCallback();
 	
-	MainUI::Open(this);
+	MainUI::Open();
 	CommandManager::Run("Commands/Main.json");
 }
 

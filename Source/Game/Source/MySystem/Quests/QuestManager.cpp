@@ -1,3 +1,4 @@
+// ◦ Xyz ◦
 #include "QuestManager.h"
 #include "Quests.h"
 #include "Common/Help.h"
@@ -66,35 +67,35 @@ Quest::State QuestManager::StateFromString(const std::string& stateStr) {
 }
 
 void QuestManager::Load(const std::string& pathFileName) {
-	Json::Value valueData;
+	Json::Value valueDatas;
 
-	if (!help::loadJson(pathFileName, valueData)) {
+	if (!help::loadJson(pathFileName, valueDatas)) {
 		return;
 	}
 
-	if (!valueData.isArray()) {
+	if (!valueDatas.isArray()) {
 		return;
 	}
 
-	for (auto& jsonCommand : valueData) {
-		if (!jsonCommand.isObject()) {
+	for (auto& valueData : valueDatas) {
+		if (!valueData.isObject()) {
 			continue;
 		}
 
-		Json::Value& jsonId = jsonCommand["id"];
+		Json::Value& jsonId = valueData["id"];
 		const std::string questId = !jsonId.empty() ? jsonId.asString() : std::string();
 		if (questId.empty()) {
 			continue;
 		}
 
-		Json::Value& jsonClass = jsonCommand["class"];
+		Json::Value& jsonClass = valueData["class"];
 		const std::string classStr = !jsonClass.empty() ? jsonClass.asString() : "Quest";
 		
-		Json::Value& jsonState = jsonCommand["state"];
+		Json::Value& jsonState = valueData["state"];
 		const std::string stateStr = !jsonState.empty() ? jsonState.asString() : "NONE";
 		Quest::State state = StateFromString(stateStr);
 
-		Json::Value& jsonNextQuest = jsonCommand["next_quest"];
+		Json::Value& jsonNextQuest = valueData["next_quest"];
 		const std::string nextQuest = !jsonNextQuest.empty() ? jsonNextQuest.asString() : std::string();
 
 		Quest* quest = nullptr;
@@ -115,12 +116,26 @@ void QuestManager::Load(const std::string& pathFileName) {
 		if (quest) {
 			quest->SetState(state);
 
-			Json::Value& jsonParams = jsonCommand["commands"];
-			quest->_commands = CommandManager::Load(jsonParams);
-			quest->_nextQuest = nextQuest;
+			Json::Value& jsonCommands = valueData["commands"];
+			if (!jsonCommands.empty()) {
+				quest->_commands = CommandManager::Load(jsonCommands);
+				quest->_nextQuest = nextQuest;
 
-			for (Command& conmmand : quest->_commands) {
-				conmmand.tag = questId;
+				for (Command& conmmand : quest->_commands) {
+					conmmand.tag = questId;
+				}
+			}
+
+			Json::Value& jsonParams = valueData["params"];
+			if (!jsonParams.empty() && jsonParams.isObject()) {
+				for (auto&& jsonKey : jsonParams.getMemberNames()) {
+					Json::Value& jsonParam = jsonParams[jsonKey];
+
+					if (jsonParam.isString()) {
+						std::string param = jsonParam.asString();
+						quest->_params.emplace(jsonKey, param);
+					}
+				}
 			}
 		}
 	}

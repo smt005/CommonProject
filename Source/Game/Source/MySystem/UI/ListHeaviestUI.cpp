@@ -13,15 +13,6 @@
 #include "Math/Vector.h"
 
 ListHeaviestUI::ListHeaviestUI() : UI::Window(this) {
-    SetId("ListHeaviestUI");
-    Close();
-}
-
-ListHeaviestUI::ListHeaviestUI(MySystem* mySystem)
-    : UI::Window(this)
-    , _mySystem(mySystem)
-{
-    SetId("ListHeaviestUI");
 }
 
 void ListHeaviestUI::OnOpen() {

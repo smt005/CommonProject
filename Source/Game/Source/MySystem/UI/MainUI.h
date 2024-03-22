@@ -1,10 +1,8 @@
 #pragma once
 
-class MySystem;
-
 class MainUI {
 public:
-	static void Open(MySystem* mySystem);
+	static void Open();
 	static void Hide();
 	
 	static void DrawOnSpace();
@@ -13,7 +11,4 @@ public:
 
 private:
 	static void InitCallback();
-
-private:
-	static MySystem* _mySystem;
 };

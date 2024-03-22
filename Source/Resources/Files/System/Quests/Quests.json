@@ -5,10 +5,18 @@
     "state": "ACTIVE",
     "next_quest": "Start",
     "commands": [
-		{
-			"id": "ShowImage",
-			"params": ["Logo"]
-		},
+      {
+        "id": "ShowImage",
+        "params": [
+          "Logo"
+        ]
+      },
+      {
+        "id": "ShowText",
+        "params": [
+          "Tap For next."
+        ]
+      },
       {
         "id": "SetClearColor",
         "params": [
@@ -25,6 +33,11 @@
     "class": "QuestStart",
     "state": "ACTIVE",
     "next_quest": "Second",
+    "params": {
+      "count": "3",
+      "count222": "qweqweqwe",
+      "count333333": "zcxzxczc"
+    },
     "commands": [
       {
         "id": "SetProcess",
@@ -49,6 +62,12 @@
       },
       {
         "id": "ClearSpace"
+      },
+      {
+        "id": "ShowText",
+        "params": [
+          "Create 3 bodies."
+        ]
       }
     ]
   },
@@ -57,6 +76,9 @@
     "class": "QuestStart",
     "state": "ACTIVE",
     "next_quest": "Third",
+    "params": {
+      "count": "5"
+    },
     "commands": [
       {
         "id": "SetProcess",
@@ -81,6 +103,12 @@
       },
       {
         "id": "ClearSpace"
+      },
+      {
+        "id": "ShowText",
+        "params": [
+          "Second quest. Create 5 bodies."
+        ]
       }
     ]
   },
@@ -89,6 +117,9 @@
     "class": "QuestStart",
     "state": "ACTIVE",
     "next_quest": "Start",
+    "params": {
+      "count": "7"
+    },
     "commands": [
       {
         "id": "SetProcess",
@@ -113,6 +144,9 @@
       },
       {
         "id": "ClearSpace"
+      },
+      {
+        "id": "HideText"
       }
     ]
   }

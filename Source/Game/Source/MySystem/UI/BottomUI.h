@@ -60,8 +60,7 @@ class BottomUI final : public UI::Window {
 	friend SetViewUI;
 
 public:
-	BottomUI() : UI::Window(this) { Close(); }
-	BottomUI(MySystem* _mySystem);
+	BottomUI() : UI::Window(this) { }
 	void OnOpen() override;
 	void OnClose() override;
 	void Update() override;

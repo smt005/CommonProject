@@ -17,5 +17,6 @@ struct CommonData {
 	static bool bool8;
 	static bool bool9;
 
+	static std::string textOnScreen;
 	static std::vector<std::string> nameImageList;
 };

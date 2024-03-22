@@ -11,15 +11,6 @@
 #include <glm/ext/scalar_constants.hpp>
 
 TopUI::TopUI() : UI::Window(this) {
-    SetId("TopUI");
-    Close();
-}
-
-TopUI::TopUI(MySystem* mySystem)
-    : UI::Window(this)
-    , _mySystem(mySystem)
-{
-    SetId("TopUI");
 }
 
 void TopUI::OnOpen() {
@@ -38,7 +29,7 @@ void TopUI::Update() {
 }
 
 void TopUI::Draw() {
-    if (_mySystem && MySystem::currentSpace) {
+    if (MySystem::currentSpace) {
         int time = 0;
         time = (int)MySystem::currentSpace->timePassed / 1000;
 
@@ -60,6 +51,23 @@ void TopUI::Draw() {
         ImGui::SameLine(_width - offsetSettingBtn);
         if (ImGui::Button("[:]", { 50.f, 50.f })) {
             //...
+        }
+    }
+
+    // Отобразить текст.
+    {
+        ImGuiIO& io = ImGui::GetIO();
+        ImFontAtlas* atlas = io.Fonts;
+
+        for (int i = 0; i < atlas->Fonts.Size; i++) {
+            ImFont* font = atlas->Fonts.front();
+            font->Scale = 3.f;
+
+            ImGui::Dummy(ImVec2(0.f, 0.f));
+            ImGui::PushFont(font);
+            ImGui::TextColored({ 0.f, 0.f, 0.f, 1.f }, "%s", CommonData::textOnScreen.c_str());
+            ImGui::PopFont();
+            font->Scale = 1.f;
         }
     }
 }

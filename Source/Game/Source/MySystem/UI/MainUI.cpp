@@ -30,15 +30,11 @@ namespace {
 	Object::Ptr bodyMarker;
 }
 
-MySystem* MainUI::_mySystem = nullptr;
-
-void MainUI::Open(MySystem* mySystem) {
-	_mySystem = mySystem;
-
+void MainUI::Open() {
 	InitCallback();
 
-	UI::ShowWindow<TopUI>(_mySystem);
-	UI::ShowWindow<BottomUI>(_mySystem);
+	UI::ShowWindow<TopUI>();
+	UI::ShowWindow<BottomUI>();
 }
 
 void MainUI::Hide() {
@@ -56,7 +52,7 @@ void MainUI::InitCallback() {
 				UI::CloseWindowT<ComputationsUI>();
 			}
 			else {
-				UI::ShowWindow<ComputationsUI>(MainUI::_mySystem);
+				UI::ShowWindow<ComputationsUI>();
 			}
 		}
 
@@ -65,7 +61,7 @@ void MainUI::InitCallback() {
 				UI::CloseWindowT<SpaceManagerUI>();
 			}
 			else {
-				UI::ShowWindow<SpaceManagerUI>(MainUI::_mySystem);
+				UI::ShowWindow<SpaceManagerUI>();
 			}
 		}
 
@@ -74,7 +70,7 @@ void MainUI::InitCallback() {
 				UI::CloseWindowT<ListHeaviestUI>();
 			}
 			else {
-				UI::ShowWindow<ListHeaviestUI>(MainUI::_mySystem);
+				UI::ShowWindow<ListHeaviestUI>();
 			}
 		}
 
@@ -148,7 +144,7 @@ void MainUI::InitCallback() {
 			return;
 		}
 
-		if (MySystem::currentSpace;  Engine::TapCallbackEvent * tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
+		/*if (MySystem::currentSpace;  Engine::TapCallbackEvent * tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
 			if (tapCallbackEvent->_id == Engine::VirtualTap::MIDDLE) {
 				const glm::mat4x4& matCamera = _mySystem->_camearCurrent->ProjectView();
 				MySystem::currentSpace->_focusBody = MySystem::currentSpace->HitObject(matCamera);
@@ -165,7 +161,7 @@ void MainUI::InitCallback() {
 					}
 				}
 			}
-		}
+		}*/
 	});
 }
 

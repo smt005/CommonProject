@@ -1,3 +1,4 @@
+// ◦ Xyz ◦
 #pragma once
 
 #include <string>
@@ -56,4 +57,5 @@ public:
 	State _state = State::INACTIVE;
 	Commands _commands;
 	std::string _nextQuest;
+	std::map<std::string, std::string> _params;
 };

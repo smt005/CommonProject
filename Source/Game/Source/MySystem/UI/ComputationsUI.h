@@ -10,7 +10,6 @@ class MySystem;
 class ComputationsUI final : public UI::Window {
 public:
 	ComputationsUI();
-	ComputationsUI(MySystem* mySystem);
 	void OnOpen() override;
 	void OnClose() override;
 	void Update() override;

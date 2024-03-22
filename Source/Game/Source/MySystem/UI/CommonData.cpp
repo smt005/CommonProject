@@ -14,4 +14,5 @@ bool CommonData::bool7 = false;
 bool CommonData::bool8 = false;
 bool CommonData::bool9 = false;
 
+std::string CommonData::textOnScreen;
 std::vector<std::string> CommonData::nameImageList;

@@ -19,13 +19,7 @@ namespace {
 }
 
 ComputationsUI::ComputationsUI() : UI::Window(this) {
-    Close();
 }
-
-ComputationsUI::ComputationsUI(MySystem* mySystem)
-    : UI::Window(this)
-    , _mySystem(mySystem)
-{}
 
 void ComputationsUI::OnOpen() {
     SetFlag(ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize);

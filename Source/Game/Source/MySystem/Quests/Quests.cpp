@@ -1,3 +1,4 @@
+// ◦ Xyz ◦
 #include "Quests.h"
 #include "../Objects/Space.h"
 #include "../Objects/SpaceManager.h"
@@ -21,12 +22,14 @@ void QuestStart::Activete() {
                         Event::Instance().Remove(name);
                     }
                 }
-                });
+            });
         }
         else {
-            Event::Instance().Add(_name, [name = _name, nextQuest = _nextQuest]() {
+            int count = atoi(_params["count"].c_str());
+
+            Event::Instance().Add(_name, [name = _name, nextQuest = _nextQuest, count]() {
                 if (MySystem::currentSpace) {
-                    if (MySystem::currentSpace->_bodies.size() > 5) {
+                    if (MySystem::currentSpace->_bodies.size() > count) {
                         CommandManager::Run(Command("SetActiveQuest", { nextQuest, "ACTIVE" }));
                         Event::Instance().Remove(name);
                     }

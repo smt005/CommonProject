@@ -93,11 +93,6 @@ void SetViewUI::Draw() {
 
 // BottomUI
 
-BottomUI::BottomUI(MySystem* mySystem)
-    : UI::Window(this)
-    , _mySystem(mySystem)
-{}
-
 void BottomUI::OnOpen() {
     SetFlag(ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBackground);
 

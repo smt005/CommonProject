@@ -144,6 +144,14 @@ void HideImage(const std::string& nameModel) {
 	}
 }
 
+void ShowText(const std::string& text) {
+	CommonData::textOnScreen = text;
+}
+
+void HideText() {
+	CommonData::textOnScreen.clear();
+}
+
 // Space
 void SetSkyBox(const std::string& modelName) {
 	if (MySystem::currentSpace) {
@@ -257,6 +265,16 @@ void Run(const Command& comand) {
 		if (!comand.parameters.empty()) {
 			HideImage(comand.parameters.front());
 		}
+	}
+	else if (comandId == "ShowText") {
+		CommandLog(comand);
+		if (!comand.parameters.empty()) {
+			ShowText(comand.parameters.front());
+		}
+	}
+	else if (comandId == "HideText") {
+		CommandLog(comand);
+		HideText();
 	}
 	else if (comandId == "ClearSpace") {
 		ClearSpace();

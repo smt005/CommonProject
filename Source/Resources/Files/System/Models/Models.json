@@ -55,7 +55,12 @@
     "scale": 1000
   },
   "Finger": {
-    "shape": "Models/Interface/Tutorial/Finger.obj",
-    "texture": "Textures/Interface/Interface/Finger.png"
+    "shape": "Models/Interface/Cube.obj",
+    "texture": "Textures/Interface/Tutorial/Finger.png"
+  },
+  "Logo": {
+    "shape": "Models/Interface/Cube.obj",
+    "texture": "Textures/Interface/Logo.jpg",
+	"scale": [6.5, 3.707, 1]
   }
 }

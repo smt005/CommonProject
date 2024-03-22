@@ -1,12 +1,10 @@
 #include "Quests.h"
-#include "MySystem/MySystem.h"
 #include "../Objects/Space.h"
 #include "../Objects/SpaceManager.h"
-#include "Common/Help.h"
-#include "../../CUDA/Source/Wrapper.h"
-#include "../Commands/Commands.h"
-#include "../Commands/Event.h"
-#include "../MySystem.h"
+#include <Common/Help.h>
+#include <Wrapper.h>
+#include <MyStl/Event.h>
+#include  <MySystem/MySystem.h>
 
 // QuestStart
 void QuestStart::Activete() {
@@ -14,14 +12,27 @@ void QuestStart::Activete() {
     MySystem::currentSpace = SpaceManager::Load("MAIN");
 
     if (!_nextQuest.empty()) {
-        Event::Instance().Add(_name, [name = _name, nextQuest = _nextQuest]() {
-            if (MySystem::currentSpace) {
-                if (MySystem::currentSpace->_bodies.size() > 5) {
-                    CommandManager::Run(Command("SetActiveQuest", { nextQuest, "ACTIVE" }));
-                    Event::Instance().Remove(name);
+        if (_name == "Logo") {
+            Event::Instance().Add(_name, [name = _name, nextQuest = _nextQuest]() {
+                if (MySystem::currentSpace) {
+                    if (MySystem::currentSpace->_bodies.size() > 0) {
+                        CommandManager::Run(Command("HideImage", { "Logo" }));
+                        CommandManager::Run(Command("SetActiveQuest", { nextQuest, "ACTIVE" }));
+                        Event::Instance().Remove(name);
+                    }
                 }
-            }
-        });
+                });
+        }
+        else {
+            Event::Instance().Add(_name, [name = _name, nextQuest = _nextQuest]() {
+                if (MySystem::currentSpace) {
+                    if (MySystem::currentSpace->_bodies.size() > 5) {
+                        CommandManager::Run(Command("SetActiveQuest", { nextQuest, "ACTIVE" }));
+                        Event::Instance().Remove(name);
+                    }
+                }
+            });
+        }
     }
 }
 

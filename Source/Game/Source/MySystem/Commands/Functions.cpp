@@ -16,10 +16,10 @@
 #include "../UI/RewardWindow.h"
 #include "../UI/Debug/CommandsWindow.h"
 #include "../UI/Debug/QuestsWindow.h"
+#include "../UI/CommonData.h"
 
 // Space
 #include "../../MySystem/Objects/SpaceManager.h"
-
 
 namespace commands {
 void CommandLog(const Command& command) {
@@ -126,6 +126,24 @@ void OpenWindow(const std::string& classWindow) {
 	}*/
 }
 
+void ShowImage(const std::string& nameModel) {
+	if (std::find_if(CommonData::nameImageList.begin(), CommonData::nameImageList.end(), [&nameModel](const std::string& itName) {
+			return itName == nameModel;
+		}) != CommonData::nameImageList.end()) {
+		return;
+	}
+	CommonData::nameImageList.emplace_back(nameModel);
+}
+
+void HideImage(const std::string& nameModel) {
+	auto it = std::find_if(CommonData::nameImageList.begin(), CommonData::nameImageList.end(), [&nameModel](const std::string& itName) {
+		return itName == nameModel;
+	});
+	if (it != CommonData::nameImageList.end()) {
+		CommonData::nameImageList.erase(it);
+	}
+}
+
 // Space
 void SetSkyBox(const std::string& modelName) {
 	if (MySystem::currentSpace) {
@@ -226,6 +244,18 @@ void Run(const Command& comand) {
 		CommandLog(comand);
 		if (!comand.parameters.empty()) {
 			OpenWindow(comand.parameters.front());
+		}
+	}
+	else if (comandId == "ShowImage") {
+		CommandLog(comand);
+		if (!comand.parameters.empty()) {
+			ShowImage(comand.parameters.front());
+		}
+	}
+	else if (comandId == "HideImage") {
+		CommandLog(comand);
+		if (!comand.parameters.empty()) {
+			HideImage(comand.parameters.front());
 		}
 	}
 	else if (comandId == "ClearSpace") {

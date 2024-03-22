@@ -1,4 +1,6 @@
 #pragma once
+#include <vector>
+#include <string>
 
 struct CommonData {
 	static int lockScreen;
@@ -14,4 +16,6 @@ struct CommonData {
 	static bool bool7;
 	static bool bool8;
 	static bool bool9;
+
+	static std::vector<std::string> nameImageList;
 };

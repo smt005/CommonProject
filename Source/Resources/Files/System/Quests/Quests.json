@@ -1,5 +1,26 @@
 [
   {
+    "id": "Logo",
+    "class": "QuestStart",
+    "state": "ACTIVE",
+    "next_quest": "Start",
+    "commands": [
+		{
+			"id": "ShowImage",
+			"params": ["Logo"]
+		},
+      {
+        "id": "SetClearColor",
+        "params": [
+          "0.91",
+          "0.91",
+          "0.91",
+          "1.0"
+        ]
+      }
+    ]
+  },
+  {
     "id": "Start",
     "class": "QuestStart",
     "state": "ACTIVE",
@@ -20,9 +41,9 @@
       {
         "id": "SetClearColor",
         "params": [
-          "0.1",
-          "0.1",
-          "0.1",
+          "0.91",
+          "0.91",
+          "0.91",
           "1.0"
         ]
       },

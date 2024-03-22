@@ -15,7 +15,7 @@
     "id": "SetActiveQuest",
 	"disable": false,
     "params": [
-      "Start",
+      "Logo",
       "ACTIVE"
     ]
   },

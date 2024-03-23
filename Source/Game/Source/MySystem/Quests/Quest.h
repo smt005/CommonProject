@@ -56,6 +56,5 @@ public:
 	const std::string _name;
 	State _state = State::INACTIVE;
 	Commands _commands;
-	std::string _nextQuest;
 	std::map<std::string, std::string> _params;
 };

@@ -2,8 +2,9 @@
   {
     "id": "Logo",
     "class": "QuestStart",
-    "state": "ACTIVE",
-    "next_quest": "Start",
+    "params": {
+      "next_quest": "Start"
+    },
     "commands": [
       {
         "id": "ShowImage",
@@ -31,12 +32,9 @@
   {
     "id": "Start",
     "class": "QuestStart",
-    "state": "ACTIVE",
-    "next_quest": "Second",
     "params": {
-      "count": "3",
-      "count222": "qweqweqwe",
-      "count333333": "zcxzxczc"
+      "next_quest": "Second",
+      "count": "3"
     },
     "commands": [
       {
@@ -74,9 +72,8 @@
   {
     "id": "Second",
     "class": "QuestStart",
-    "state": "ACTIVE",
-    "next_quest": "Third",
     "params": {
+      "next_quest": "Third",
       "count": "5"
     },
     "commands": [
@@ -115,9 +112,8 @@
   {
     "id": "Third",
     "class": "QuestStart",
-    "state": "ACTIVE",
-    "next_quest": "Start",
     "params": {
+      "next_quest": "Start",
       "count": "7"
     },
     "commands": [

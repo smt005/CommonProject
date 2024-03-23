@@ -12,9 +12,12 @@ void QuestStart::Activete() {
 	MySystem::currentSpace.reset();
     MySystem::currentSpace = SpaceManager::Load("MAIN");
 
-    if (!_nextQuest.empty()) {
+
+    std::string nextQuest = _params["next_quest"];
+
+    if (!nextQuest.empty()) {
         if (_name == "Logo") {
-            Event::Instance().Add(_name, [name = _name, nextQuest = _nextQuest]() {
+            Event::Instance().Add(_name, [name = _name, nextQuest]() {
                 if (MySystem::currentSpace) {
                     if (MySystem::currentSpace->_bodies.size() > 0) {
                         CommandManager::Run(Command("HideImage", { "Logo" }));
@@ -27,7 +30,7 @@ void QuestStart::Activete() {
         else {
             int count = atoi(_params["count"].c_str());
 
-            Event::Instance().Add(_name, [name = _name, nextQuest = _nextQuest, count]() {
+            Event::Instance().Add(_name, [name = _name, nextQuest, count]() {
                 if (MySystem::currentSpace) {
                     if (MySystem::currentSpace->_bodies.size() > count) {
                         CommandManager::Run(Command("SetActiveQuest", { nextQuest, "ACTIVE" }));

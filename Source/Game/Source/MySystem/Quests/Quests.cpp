@@ -1,4 +1,5 @@
 // ◦ Xyz ◦
+// ◦ Xyz ◦
 #include "Quests.h"
 #include "../Objects/Space.h"
 #include "../Objects/SpaceManager.h"
@@ -22,6 +23,19 @@ void QuestStart::Activete() {
                     if (MySystem::currentSpace->_bodies.size() > 0) {
                         CommandManager::Run(Command("HideImage", { "Logo" }));
                         CommandManager::Run(Command("SetActiveQuest", { nextQuest, "ACTIVE" }));
+                        Event::Instance().Remove(name);
+                    }
+                }
+            });
+        }
+        else if (_name == "Third") {
+            int count = atoi(_params["count"].c_str());
+            std::string rewardText = _params["reward_text"];
+
+            Event::Instance().Add(_name, [name = _name, nextQuest, rewardText, count]() {
+                if (MySystem::currentSpace) {
+                    if (MySystem::currentSpace->_bodies.size() > count) {
+                        CommandManager::Run(Command("OpenWindow", { "RewardWindow", nextQuest, rewardText }));
                         Event::Instance().Remove(name);
                     }
                 }

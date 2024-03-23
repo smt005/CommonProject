@@ -1,4 +1,5 @@
 // ◦ Xyz ◦
+// ◦ Xyz ◦
 #pragma once
 
 #include <string>
@@ -28,7 +29,7 @@ public:
 	virtual void Complete() {};
 	virtual void Update() {};
 
-	const std::string& Name() { return _name; };
+	const std::string& Name() const { return _name; };
 	void SetState(State state) {
 		_state = state;
 	}

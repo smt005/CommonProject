@@ -1,3 +1,4 @@
+// в—¦ Xyz в—¦
 #include "BodyData.h"
 
 #include "Object/Model.h"
@@ -104,12 +105,12 @@ bool BodyData::hit(const glm::mat4x4& matCamera) {
 	};
 
 	auto hintTriangle = [](float* v0, float* v1, float* v2, int xTap, int yTap) {
-		//координаты вершин треугольника
+		//РєРѕРѕСЂРґРёРЅР°С‚С‹ РІРµСЂС€РёРЅ С‚СЂРµСѓРіРѕР»СЊРЅРёРєР°
 		float x1 = v0[0], y1 = v0[1];
 		float x2 = v1[0], y2 = v1[1];
 		float x3 = v2[0], y3 = v2[1];
 
-		//координаты произвольной точки
+		//РєРѕРѕСЂРґРёРЅР°С‚С‹ РїСЂРѕРёР·РІРѕР»СЊРЅРѕР№ С‚РѕС‡РєРё
 		float x = (float)xTap, y = (float)yTap;
 
 		float a = (x1 - x) * (y2 - y1) - (x2 - x1) * (y1 - y);

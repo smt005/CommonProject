@@ -114,7 +114,8 @@
     "class": "QuestStart",
     "params": {
       "next_quest": "Start",
-      "count": "7"
+      "count": "7",
+	  "reward_text": "You finish game."
     },
     "commands": [
       {

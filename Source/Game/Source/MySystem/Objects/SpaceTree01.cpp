@@ -1,3 +1,4 @@
+// в—¦ Xyz в—¦
 #include "SpaceTree01.h"
 #include <algorithm>
 #include <stdio.h>
@@ -220,7 +221,7 @@ void SpaceTree01::GenerateClusters() {
 		for (Cluster::Ptr& cluster : *bufferPtr) {
 			size_t countBodies = cluster->bodies.size();
 
-			// Добавление
+			// Р”РѕР±Р°РІР»РµРЅРёРµ
 			if (countBodies <= maxCountBodies && countBodies > 0) {
 				float sumMass = 0;
 				Math::Vector3 sumMassPos;

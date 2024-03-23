@@ -1,7 +1,9 @@
+// ◦ Xyz ◦
 #include "QuestsWindow.h"
 #include <imgui.h>
 #include <Screen.h>
 #include <FileManager.h>
+#include <MyStl/Event.h>
 #include "../../Commands/Commands.h"
 #include "../../Quests/QuestManager.h"
 
@@ -27,6 +29,9 @@ void QuestsWindow::Draw() {
 
     for (const Quest::Ptr& questPtr : QuestManager::GetQuests()) {
         if (ImGui::Button(questPtr->Name().c_str(), { 180.f, 32.f })) {
+            for (const Quest::Ptr& questPtr : QuestManager::GetQuests()) {
+                Event::Instance().Remove(questPtr->Name());
+            }
             CommandManager::Run(Command("SetActiveQuest", { questPtr->Name(), "ACTIVE" }));
         }
     }

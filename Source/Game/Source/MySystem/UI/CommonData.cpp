@@ -1,3 +1,4 @@
+// ◦ Xyz ◦
 #include "CommonData.h"
 
 int CommonData::lockScreen = false;

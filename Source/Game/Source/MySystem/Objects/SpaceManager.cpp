@@ -1,3 +1,4 @@
+// â—¦ Xyz â—¦
 #include "SpaceManager.h"
 #include "MySystem/MySystem.h"
 #include "Draw/DrawLight.h"
@@ -83,7 +84,7 @@ void SpaceManager::AddObjects(Space* space, int count, double spaceRange, double
 	double sumMass = 0;
 	std::vector<Body::Ptr>& bodies = space->_bodies;
 
-	// Ñîçäàíèå òåë
+	// Ð¡Ð¾Ð·Ð´Ð°Ð½Ð¸Ðµ Ñ‚ÐµÐ»
 	{
 		std::string model = "BrownStone";
 		float mass = 50.f;
@@ -113,7 +114,7 @@ void SpaceManager::AddObjects(Space* space, int count, double spaceRange, double
 		space->Preparation();
 	}
 
-	// Ðàñ÷¸ò öåíòðà ìàññ
+	// Ð Ð°ÑÑ‡Ñ‘Ñ‚ Ñ†ÐµÐ½Ñ‚Ñ€Ð° Ð¼Ð°ÑÑ
 	{
 		Math::Vector3 sumMassPos(0, 0, 0);
 
@@ -128,7 +129,7 @@ void SpaceManager::AddObjects(Space* space, int count, double spaceRange, double
 		gravityPos = sumMassPos / sumMass;
 	}
 
-	// Ðàññ÷¸ò ñêîðîñòåé
+	// Ð Ð°ÑÑÑ‡Ñ‘Ñ‚ ÑÐºÐ¾Ñ€Ð¾ÑÑ‚ÐµÐ¹
 	{
 		double mainMass = conventionalMass > 0 ? conventionalMass : sumMass / std::abs(conventionalMass);
 

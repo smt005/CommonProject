@@ -1,3 +1,4 @@
+// â—¦ Xyz â—¦
 #include "BaseSpace.h"
 #include <stdio.h>
 #include <unordered_map>
@@ -142,7 +143,7 @@ void BaseSpace::Update() {
 	}
 
 	// ...
-	float longÂistanceFromStar = 150000.f;
+	float longBistanceFromStar = 150000.f;
 	size_t needDataAssociation = std::numeric_limits<double>::min();
 	std::vector<size_t> indRem;
 
@@ -158,7 +159,7 @@ void BaseSpace::Update() {
 		}
 
 		static double minForce = std::numeric_limits<double>::min();
-		if ((static_cast<BodyData*>(body.get())->_dataPtr->force.length() < minForce) && (star && (posStar - body->GetPos()).length() > longÂistanceFromStar)) {
+		if ((static_cast<BodyData*>(body.get())->_dataPtr->force.length() < minForce) && (star && (posStar - body->GetPos()).length() > longBistanceFromStar)) {
 			indRem.emplace_back(index);
 			++needDataAssociation;
 			continue;

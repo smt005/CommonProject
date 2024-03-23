@@ -1,3 +1,4 @@
+// в—¦ Xyz в—¦
 #include "MainUI.h"
 #include "imgui.h"
 #include "TopUI.h"
@@ -92,7 +93,7 @@ void MainUI::InitCallback() {
 			}
 		}
 
-		// Цифровые кнопки
+		// Р¦РёС„СЂРѕРІС‹Рµ РєРЅРѕРїРєРё
 		if (key == Engine::VirtualKey::VK_0) {
 			CommonData::bool0 = !CommonData::bool0;
 		}

@@ -1,3 +1,4 @@
+// в—¦ Xyz в—¦
 #include "SpaceTree02.h"
 #include <algorithm>
 #include <stdio.h>
@@ -211,7 +212,7 @@ void SpaceTree02::GenerateClusters() {
 		for (Cluster::Ptr& cluster : *bufferPtr) {
 			size_t countBodies = cluster->bodies.size();
 
-			// Добавление
+			// Р”РѕР±Р°РІР»РµРЅРёРµ
 			if (countBodies <= maxCountBodies && countBodies > 0) {
 				float sumMass = 0;
 				Math::Vector3 sumMassPos;
@@ -240,7 +241,7 @@ void SpaceTree02::GenerateClusters() {
 
 				}
 
-				// Создание прямоугольников
+				// РЎРѕР·РґР°РЅРёРµ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєРѕРІ
 				cluster->boxPtr = std::make_shared<Box>(cluster->min, cluster->max);
 
 				// Color

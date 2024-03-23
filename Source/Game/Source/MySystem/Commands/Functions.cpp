@@ -1,3 +1,4 @@
+// ◦ Xyz ◦
 #include "Functions.h"
 
 // Common
@@ -103,10 +104,18 @@ void SetClearColor(const std::vector<std::string>& strColors) {
 }
 
 // Windows
-void OpenWindow(const std::string& classWindow) {
+void OpenWindow(const std::vector<std::string>& parameters) {
+	if (parameters.empty()) {
+		return;
+	}
+
+	const std::string& classWindow = parameters.front();
+
 	if (classWindow == "RewardWindow") {
 		if (!UI::ShowingWindow<RewardWindow>()) {
-			UI::ShowWindow<RewardWindow>();
+			if (parameters.size() >= 3) {
+				UI::ShowWindow<RewardWindow>(parameters[1], parameters[2]);
+			}
 		}
 	}
 	else if (classWindow == "CommandsWindow") {
@@ -251,7 +260,7 @@ void Run(const Command& comand) {
 	else if (comandId == "OpenWindow") {
 		CommandLog(comand);
 		if (!comand.parameters.empty()) {
-			OpenWindow(comand.parameters.front());
+			OpenWindow(comand.parameters);
 		}
 	}
 	else if (comandId == "ShowImage") {

@@ -1,3 +1,4 @@
+// ◦ Xyz ◦
 
 #include "SpatialGrid.h"
 #include <memory>

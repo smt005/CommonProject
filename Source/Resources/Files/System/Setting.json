@@ -2,11 +2,11 @@
 	"window" : 
 	{
 		"fullscreen" : false,
-		"height" : 886.0,
-		"left" : 108.0,
+		"height" : 962.0,
+		"left" : 11.0,
 		"resizable" : true,
 		"title" : "System",
-		"top" : 91.0,
-		"width" : 1676.0
+		"top" : 42.0,
+		"width" : 1613.0
 	}
 }

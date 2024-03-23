@@ -1,3 +1,4 @@
+// в—¦ Xyz в—¦
 #include "Space.h"
 
 #include <thread>
@@ -98,7 +99,7 @@ bool Space::Load(Json::Value& valueData) {
 	multithread = _params["MULTITHREAD"] == "true" ? true : false;
 	tag = atoi(_params["TAG"].c_str());
 
-	// Загрузка тел
+	// Р—Р°РіСЂСѓР·РєР° С‚РµР»
 	_bodies.clear();
 
 	for (Json::Value& jsonObject : jsonObjects) {

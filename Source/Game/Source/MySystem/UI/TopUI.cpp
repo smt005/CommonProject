@@ -1,3 +1,4 @@
+// в—¦ Xyz в—¦
 
 #include "TopUI.h"
 #include "imgui.h"
@@ -54,7 +55,7 @@ void TopUI::Draw() {
         }
     }
 
-    // Отобразить текст.
+    // РћС‚РѕР±СЂР°Р·РёС‚СЊ С‚РµРєСЃС‚.
     {
         ImGuiIO& io = ImGui::GetIO();
         ImFontAtlas* atlas = io.Fonts;

@@ -6,12 +6,9 @@
 #include "ImGuiManager/Editor/Common/CommonUI.h"
 #include <vector>
 
-class MySystem;
-
 class SpaceManagerUI final : public UI::Window {
 public:
-	SpaceManagerUI();
-	SpaceManagerUI(MySystem* mySystem);
+	SpaceManagerUI() : UI::Window(this) {}
 	void OnOpen() override;
 	void OnClose() override;
 	void Update() override;
@@ -22,6 +19,4 @@ private:
 	float _y = 30.f;
 	float _width = 145.f;
 	float _height = 600.f;
-
-	MySystem* _mySystem = nullptr;
 };

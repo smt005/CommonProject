@@ -1,9 +1,9 @@
 // ◦ Xyz ◦
-// ◦ Xyz ◦
 #pragma once
 
 #include <string>
 #include <map>
+#include <functional>
 #include <MyStl/shared.h>
 #include "../Commands/Commands.h"
 
@@ -13,7 +13,7 @@ public:
 
 	enum class State {
 		NONE,
-		INACTIVE,
+		DEACTIVE,
 		ACTIVE,
 		COMPLETE
 	};
@@ -25,7 +25,7 @@ public:
 	virtual ~Quest() = default;
 
 	virtual void Activete() {};
-	virtual void Inactivete() {};
+	virtual void Deactivation() {};
 	virtual void Complete() {};
 	virtual void Update() {};
 
@@ -40,11 +40,12 @@ public:
 		}
 
 		if (_state == Quest::State::ACTIVE) {
-			Activete();
 			CommandManager::Run(_commands);
+			Activete();
 		}
-		else if (_state == Quest::State::INACTIVE) {
-			Inactivete();
+		else if (_state == Quest::State::DEACTIVE) {
+			//CommandManager::Run(XXX);
+			Deactivation();
 		}
 		else if (_state == Quest::State::COMPLETE) {
 			Complete();
@@ -54,8 +55,11 @@ public:
 	State GetState() { return _state; }
 
 public:
-	const std::string _name;
-	State _state = State::INACTIVE;
-	Commands _commands;
+	std::string _name;
+	State _state = State::DEACTIVE;
 	std::map<std::string, std::string> _params;
+
+	Commands _commands;
+	Commands _commandsOnTap;
+	Commands _commandsOnCondition;
 };

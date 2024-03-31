@@ -1,10 +1,11 @@
 // ◦ Xyz ◦
-// ◦ Xyz ◦
 #include "QuestManager.h"
 #include "Quests.h"
+#include  "QuestCondition.h"
 #include "Common/Help.h"
 
 std::vector<Quest::Ptr> QuestManager::quests;
+std::string QuestManager::lastPathFileName;
 Quest::Ptr QuestManager::activeQuestPtr;
 
 void QuestManager::SetState(const std::string& name, Quest::State state) {
@@ -54,8 +55,8 @@ bool QuestManager::HasQuest(const std::string& name) {
 }
 
 Quest::State QuestManager::StateFromString(const std::string& stateStr) {
-	if (stateStr == "INACTIVE") {
-		return Quest::State::INACTIVE;
+	if (stateStr == "DEACTIVETE") {
+		return Quest::State::DEACTIVE;
 	}
 	else if (stateStr == "ACTIVE") {
 		return Quest::State::ACTIVE;
@@ -77,6 +78,8 @@ void QuestManager::Load(const std::string& pathFileName) {
 	if (!valueDatas.isArray()) {
 		return;
 	}
+
+	lastPathFileName = pathFileName;
 
 	for (auto& valueData : valueDatas) {
 		if (!valueData.isObject()) {
@@ -114,12 +117,36 @@ void QuestManager::Load(const std::string& pathFileName) {
 		if (quest) {
 			quest->SetState(state);
 
-			Json::Value& jsonCommands = valueData["commands"];
-			if (!jsonCommands.empty()) {
-				quest->_commands = CommandManager::Load(jsonCommands);
+			{
+				Json::Value& jsonCommands = valueData["commands"];
+				if (!jsonCommands.empty()) {
+					quest->_commands = CommandManager::Load(jsonCommands);
 
-				for (Command& conmmand : quest->_commands) {
-					conmmand.tag = questId;
+					for (Command& conmmand : quest->_commands) {
+						conmmand.tag = questId;
+					}
+				}
+			}
+
+			{
+				Json::Value& jsonCommands = valueData["commands_on_tap"];
+				if (!jsonCommands.empty()) {
+					quest->_commandsOnTap = CommandManager::Load(jsonCommands);
+
+					for (Command& conmmand : quest->_commandsOnTap) {
+						conmmand.tag = questId;
+					}
+				}
+			}
+
+			{
+				Json::Value& jsonCommands = valueData["commands_on_condition"];
+				if (!jsonCommands.empty()) {
+					quest->_commandsOnCondition = CommandManager::Load(jsonCommands);
+
+					for (Command& conmmand : quest->_commandsOnCondition) {
+						conmmand.tag = questId;
+					}
 				}
 			}
 
@@ -138,9 +165,116 @@ void QuestManager::Load(const std::string& pathFileName) {
 	}
 }
 
+void QuestManager::Reload() {
+	if (!lastPathFileName.empty()) {
+		quests.clear();
+		Load(lastPathFileName);
+	}
+}
+
+void QuestManager::Save(const std::string& pathFileName) {
+	const std::string* pathFileNamePtr = nullptr;
+
+	if (!pathFileName.empty()) {
+		pathFileNamePtr = &pathFileName;
+	}
+	else {
+		pathFileNamePtr = &lastPathFileName;
+	}
+
+	Json::Value valueDatas; // Array
+
+	for (Quest::Ptr& questPtr : quests) {
+		Json::Value questJson;
+
+		questJson["id"] = questPtr->Name();
+
+		// Class // TODO:
+
+		if (dynamic_cast<QuestStart*>(questPtr.get())) {
+			questJson["class"] = "QuestStart";
+		}
+		else if (dynamic_cast<QuestSphere100*>(questPtr.get())) {
+			questJson["class"] = "QuestSphere100";
+		}
+		else if (dynamic_cast<QuestSphere*>(questPtr.get())) {
+			questJson["class"] = "QuestSphere";
+		}
+		else if (dynamic_cast<Quest*>(questPtr.get())) {
+			questJson["class"] = "Quest";
+		}
+
+		// Params
+		Json::Value paramsJson;
+		for (std::pair<const std::string, std::string>& pairParam : questPtr->_params) {
+			paramsJson[pairParam.first] = pairParam.second;
+		}
+		questJson["params"] = paramsJson;
+
+		// Commands
+		auto appendCommande = [&questJson](Commands& commands, const std::string& name) {
+			if (commands.empty()) {
+				return;
+			}
+
+			Json::Value commandsJson;
+			Json::Value commandJson;
+
+			for (Command& command : commands) {
+				commandJson["id"] = command.id;
+				if (command.disable) {
+					commandJson["disable"] = command.disable;
+				}
+				if (!command.tag.empty()) {
+					commandJson["tag"] = command.tag;
+				}
+
+				Json::Value paramsJson;
+
+				for (const std::string& param : command.parameters) {
+					paramsJson.append(param);
+				}
+
+				commandJson["params"] = paramsJson;
+				commandsJson.append(commandJson);
+			}
+
+			questJson[name] = commandsJson;
+		};
+
+		appendCommande(questPtr->_commands, "commands");
+		appendCommande(questPtr->_commandsOnTap, "commands_on_tap");
+		appendCommande(questPtr->_commandsOnCondition, "commands_on_condition");
+			
+		// Append quest
+		valueDatas.append(questJson);
+	}
+
+	help::saveJson(*pathFileNamePtr, valueDatas, " ");
+}
+
 void QuestManager::Clear() {
 	quests.clear();
 }
 
 void QuestManager::Update() {
+}
+
+void QuestManager::Condition(const std::vector<std::string>& params) {
+	if (params.size() < 4) {
+		return;
+	}
+
+	Quest::Ptr questPtr = QuestManager::GetQuest(params[0]);
+	if (!questPtr) {
+		return;
+	}
+
+	if (params[1] == "count_boties") {
+		int number = atoi(params[3].c_str());
+
+		if (quest::count_boties(params[2], number)) {
+			CommandManager::Run(questPtr->_commandsOnCondition);
+		}
+	}
 }

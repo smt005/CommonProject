@@ -7,8 +7,11 @@
 #include "ListHeaviestUI.h"
 #include "ComputationsUI.h"
 #include "CommonData.h"
-#include "Debug/CommandsWindow.h"
-#include "Debug/QuestsWindow.h"
+#include "Editors/CommandsWindow.h"
+#include "Editors/QuestsWindow.h"
+#include "Editors/QuestsEditorWindow.h"
+#include "Editors/EditorModel.h"
+#include "Editors/EditMap.h"
 #include "Draw/Camera/CameraControlOutside.h"
 #include "Callback/Callback.h"
 #include "Callback/CallbackEvent.h"
@@ -25,6 +28,7 @@
 
 #include "../Commands/Functions.h"
 #include <MyStl/Event.h>
+#include "../Commands/Events.h"
 
 namespace {
 	Engine::Callback callback;
@@ -93,6 +97,38 @@ void MainUI::InitCallback() {
 			}
 		}
 
+		// Editor
+		if (key == Engine::VirtualKey::F9) {
+			if (UI::ShowingWindow<Editor::ModelEditor>()) {
+				UI::CloseWindowT<Editor::ModelEditor>();
+			}
+			else {
+				UI::ShowWindow<Editor::ModelEditor>();
+			}
+		}
+
+		if (key == Engine::VirtualKey::F10) {
+			if (UI::ShowingWindow<Editor::MapEditor>()) {
+				UI::CloseWindowT<Editor::MapEditor>();
+			}
+			else {
+				UI::ShowWindow<Editor::MapEditor>();
+			}
+		}
+		
+		if (key == Engine::VirtualKey::F11) {
+			if (UI::ShowingWindow<Editor::QuestsEditorWindow>()) {
+				UI::CloseWindowT<Editor::QuestsEditorWindow>();
+			}
+			else {
+				UI::ShowWindow<Editor::QuestsEditorWindow>();
+			}
+		}
+
+		if (key == Engine::VirtualKey::F12) {
+			//...
+		}
+
 		// Цифровые кнопки
 		if (key == Engine::VirtualKey::VK_0) {
 			CommonData::bool0 = !CommonData::bool0;
@@ -134,8 +170,7 @@ void MainUI::InitCallback() {
 
 		if (Engine::TapCallbackEvent* tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
 			if (tapCallbackEvent->_id == Engine::VirtualTap::LEFT) {
-				commands::Run(Command("AddBody", { "BrownStone", "mouse" }));
-				Event::Instance().Action();
+				EventOnTap::Instance().Action();
 			}
 		}
 	});

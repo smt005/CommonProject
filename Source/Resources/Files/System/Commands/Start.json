@@ -34,5 +34,12 @@
       "QuestN",
       "ACTIVE"
     ]
+  },
+  {
+    "id": "OpenWindow",
+	"_disable": true,
+    "params": [
+      "QuestsEditorWindow"
+    ]
   }
 ]

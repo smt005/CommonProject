@@ -126,6 +126,7 @@ void BottomUI::Draw() {
         return;
     }
 
+    // #STYLE
     ImGuiStyle& style = ImGui::GetStyle();
     style.FramePadding.y = 18.f;
     style.GrabMinSize = 100;
@@ -197,9 +198,8 @@ void BottomUI::Draw() {
         _lockSetView = false;
     }
 
-    //...
+    // #STYLE
     style.FramePadding.y = 3.f;
-
     style.WindowPadding = { 8.f, 8.f };
 }
 

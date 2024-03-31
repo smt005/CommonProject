@@ -1,0 +1,305 @@
+[
+ {
+  "id": "Logo",
+  "class": "QuestStart",
+  "params": {
+   "test": "test"
+  },
+  "commands": [
+   {
+    "id": "ShowImage",
+    "params": [
+     "Logo"
+    ]
+   },
+   {
+    "id": "ShowText",
+    "params": [
+     "Tap For next."
+    ]
+   },
+   {
+    "id": "SetClearColor",
+    "params": [
+     "1.0",
+     "1.0",
+     "1.0",
+     "1.0"
+    ]
+   }
+  ],
+  "commands_on_tap": [
+   {
+    "id": "HideImage",
+    "params": [
+     "Logo"
+    ]
+   },
+   {
+    "id": "SetActiveQuest",
+    "params": [
+     "Start",
+     "ACTIVE"
+    ]
+   },
+   {
+    "id": "SetActiveQuest",
+    "params": [
+     "Logo",
+     "DEACTIVETE"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "Start",
+  "class": "QuestStart",
+  "params": {
+   "count": "0",
+   "model": "BrownStone"
+  },
+  "commands": [
+   {
+    "id": "CreateSpace",
+    "params": [
+     "MAIN"
+    ]
+   },
+   {
+    "id": "SetProcess",
+    "params": [
+     "CPU"
+    ]
+   },
+   {
+    "id": "SetMultithread",
+    "params": [
+     "false"
+    ]
+   },
+   {
+    "id": "ShowText",
+    "params": [
+     "Create one body."
+    ]
+   }
+  ],
+  "commands_on_tap": [
+   {
+    "id": "AddBody",
+    "params": [
+     "BrownStone",
+     "mouse"
+    ]
+   },
+   {
+    "id": "QuestCondition",
+    "params": [
+     "Start",
+     "count_boties",
+     "is_equal",
+     "1"
+    ]
+   }
+  ],
+  "commands_on_condition": [
+   {
+    "id": "SetActiveQuest",
+    "params": [
+     "Second",
+     "ACTIVE"
+    ]
+   },
+   {
+    "id": "SetActiveQuest",
+    "params": [
+     "Start",
+     "DEACTIVETE"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "Second",
+  "class": "QuestStart",
+  "params": {
+   "count": "2",
+   "model": "BrownStone"
+  },
+  "commands": [
+   {
+    "id": "SetProcess",
+    "params": [
+     "CPU"
+    ]
+   },
+   {
+    "id": "SetMultithread",
+    "params": [
+     "false"
+    ]
+   },
+   {
+    "id": "SetClearColor",
+    "params": [
+     "0.5",
+     "0.1",
+     "0.1",
+     "1.0"
+    ]
+   },
+   {
+    "id": "ShowText",
+    "params": [
+     "Create second bodiy."
+    ]
+   }
+  ],
+  "commands_on_tap": [
+   {
+    "id": "AddBody",
+    "params": [
+     "BrownStone",
+     "mouse"
+    ]
+   },
+   {
+    "id": "QuestCondition",
+    "params": [
+     "Start",
+     "count_boties",
+     "is_equal",
+     "2"
+    ]
+   }
+  ],
+  "commands_on_condition": [
+   {
+    "id": "SetActiveQuest",
+    "params": [
+     "Second_more",
+     "ACTIVE"
+    ]
+   },
+   {
+    "id": "SetActiveQuest",
+    "params": [
+     "Second_bodies",
+     "DEACTIVETE"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "Second_more",
+  "class": "QuestStart",
+  "params": {
+   "count": "5",
+   "model": "BrownStone"
+  },
+  "commands": [
+   {
+    "id": "SetProcess",
+    "params": [
+     "CPU"
+    ]
+   },
+   {
+    "id": "SetMultithread",
+    "params": [
+     "false"
+    ]
+   },
+   {
+    "id": "SetClearColor",
+    "params": [
+     "0.1",
+     "0.5",
+     "0.1",
+     "1.0"
+    ]
+   },
+   {
+    "id": "ClearSpace"
+   },
+   {
+    "id": "ShowText",
+    "params": [
+     "Second quest. Create 5 bodies."
+    ]
+   }
+  ],
+  "commands_on_tap": [
+   {
+    "id": "AddBody",
+    "params": [
+     "BrownStone",
+     "mouse"
+    ]
+   },
+   {
+    "id": "QuestCondition",
+    "params": [
+     "Start",
+     "count_boties",
+     "is_equal",
+     "5"
+    ]
+   }
+  ],
+  "commands_on_condition": [
+   {
+    "id": "SetActiveQuest",
+    "params": [
+     "Third",
+     "ACTIVE"
+    ]
+   },
+   {
+    "id": "SetActiveQuest",
+    "params": [
+     "Second_more",
+     "DEACTIVETE"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "Third",
+  "class": "QuestStart",
+  "params": {
+   "count": "7",
+   "reward_text": "You finish game.",
+   "model": "OrangeStar"
+  },
+  "commands": [
+   {
+    "id": "SetProcess",
+    "params": [
+     "CPU"
+    ]
+   },
+   {
+    "id": "SetMultithread",
+    "params": [
+     "false"
+    ]
+   },
+   {
+    "id": "SetClearColor",
+    "params": [
+     "0.1",
+     "0.1",
+     "0.5",
+     "1.0"
+    ]
+   },
+   {
+    "id": "ClearSpace"
+   },
+   {
+    "id": "HideText"
+   }
+  ]
+ }
+]

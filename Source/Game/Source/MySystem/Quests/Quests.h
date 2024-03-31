@@ -1,5 +1,4 @@
 // ◦ Xyz ◦
-// ◦ Xyz ◦
 #pragma once
 #include "Quest.h"
 
@@ -7,6 +6,7 @@ class QuestStart final : public Quest {
 public:
 	QuestStart(const std::string& name): Quest(name) {}
 	void Activete() override;
+	void Deactivation() override;
 };
 
 class QuestSphere100 final : public Quest {

@@ -4,7 +4,8 @@
 // Common
 #include "MySystem/MySystem.h"
 #include "../Objects/Space.h"
-#include "../Quests/QuestManager.h"
+#include "../../MySystem/Objects/SpaceManager.h"
+
 #include "../../CUDA/Source/Wrapper.h"
 #include <iostream>
 #include <glm/vec3.hpp>
@@ -15,12 +16,13 @@
 
 // Windows
 #include "../UI/RewardWindow.h"
-#include "../UI/Debug/CommandsWindow.h"
-#include "../UI/Debug/QuestsWindow.h"
+#include "../UI/Editors/CommandsWindow.h"
+#include "../UI/Editors/QuestsWindow.h"
 #include "../UI/CommonData.h"
+#include "../UI/Editors/QuestsEditorWindow.h"
 
-// Space
-#include "../../MySystem/Objects/SpaceManager.h"
+// Quest
+#include "../Quests/QuestManager.h"
 
 namespace commands {
 void CommandLog(const Command& command) {
@@ -45,10 +47,12 @@ void CommandLog(const Command& command) {
 	std::cout << ']' << std::endl;
 }
 
+/// RunCommands string
 void RunCommands(const std::string& filePathName) {
 	CommandManager::Run(filePathName);
 }
 
+/// SetProcess /CPU/GPU
 void SetProcess(const std::string stateStr) {
 	// CPU, GPU
 	if (stateStr == "CPU") {
@@ -63,6 +67,7 @@ void SetProcess(const std::string stateStr) {
 	}
 }
 
+/// SetMultithread /true/false
 void SetMultithread(const std::string stateStr) {
 	// true, false
 	if (stateStr == "true") {
@@ -77,7 +82,7 @@ void SetMultithread(const std::string stateStr) {
 	}
 }
 
-// View
+/// SetClearColor #COLOR
 void SetClearColor(const std::vector<std::string>& strColors) {
 	if (strColors.size() < 3) {
 		return;
@@ -103,7 +108,7 @@ void SetClearColor(const std::vector<std::string>& strColors) {
 	Draw2::SetClearColor(r, g, b, a);
 }
 
-// Windows
+/// OpenWindow /RewardWindow/CommandsWindow/QuestsWindow/QuestsEditorWindow
 void OpenWindow(const std::vector<std::string>& parameters) {
 	if (parameters.empty()) {
 		return;
@@ -128,6 +133,12 @@ void OpenWindow(const std::vector<std::string>& parameters) {
 			UI::ShowWindow<QuestsWindow>();
 		}
 	}
+	else if (classWindow == "QuestsEditorWindow") {
+		if (!UI::ShowingWindow<Editor::QuestsEditorWindow>()) {
+			UI::ShowWindow<Editor::QuestsEditorWindow>();
+		}
+	}
+	
 	/*else if (classWindow == "XXX") {
 		if (!UI::ShowingWindow<XXX>()) {
 			UI::ShowWindow<XXX>();
@@ -135,6 +146,7 @@ void OpenWindow(const std::vector<std::string>& parameters) {
 	}*/
 }
 
+/// ShowImage #MODEL
 void ShowImage(const std::string& nameModel) {
 	if (std::find_if(CommonData::nameImageList.begin(), CommonData::nameImageList.end(), [&nameModel](const std::string& itName) {
 			return itName == nameModel;
@@ -144,6 +156,7 @@ void ShowImage(const std::string& nameModel) {
 	CommonData::nameImageList.emplace_back(nameModel);
 }
 
+/// HideImage #MODEL
 void HideImage(const std::string& nameModel) {
 	auto it = std::find_if(CommonData::nameImageList.begin(), CommonData::nameImageList.end(), [&nameModel](const std::string& itName) {
 		return itName == nameModel;
@@ -153,15 +166,17 @@ void HideImage(const std::string& nameModel) {
 	}
 }
 
+/// ShowText string
 void ShowText(const std::string& text) {
 	CommonData::textOnScreen = text;
 }
 
+/// HideText
 void HideText() {
 	CommonData::textOnScreen.clear();
 }
 
-// Space
+/// SetSkyBox #MODEL
 void SetSkyBox(const std::string& modelName) {
 	if (MySystem::currentSpace) {
 		if (ModelPtr& modelPtr = Model::getByName(modelName)) {
@@ -170,7 +185,7 @@ void SetSkyBox(const std::string& modelName) {
 	}
 }
 
-
+/// ClearSpace
 void ClearSpace() {
 	if (MySystem::currentSpace) {
 		MySystem::currentSpace->_bodies.clear();
@@ -178,6 +193,13 @@ void ClearSpace() {
 	}
 }
 
+/// CreateSpace string
+void CreateSpace(const std::string& name) {
+	MySystem::currentSpace = SpaceManager::Load(name);
+	MySystem::currentSpace->Preparation();
+}
+
+/// AddBody #MODEL #VECTOR #VECTOR number
 void AddBody(const std::vector<std::string>& parameters) {
 	// model, pos, vel, mass
 	size_t countParams = parameters.size();
@@ -214,6 +236,9 @@ void AddBody(const std::vector<std::string>& parameters) {
 	//...
 	SpaceManager::AddObject(nameModel, pos, vel, mass);
 }
+
+
+/// SetActiveQuest #QUEST /ACTIVE/DEACTIVE
 
 //..................................................................
 void Run(const Command& comand) {
@@ -288,6 +313,12 @@ void Run(const Command& comand) {
 	else if (comandId == "ClearSpace") {
 		ClearSpace();
 	}
+	else if (comandId == "CreateSpace") {
+		CommandLog(comand);
+		if (!comand.parameters.empty()) {
+			CreateSpace(comand.parameters.front());
+		}
+	}
 	else if (comandId == "AddBody") {
 		AddBody(comand.parameters);
 	}
@@ -296,6 +327,57 @@ void Run(const Command& comand) {
 			RunCommands(comand.parameters.front());
 		}
 	}
+	else if (comandId == "QuestCondition") {
+		QuestManager::Condition(comand.parameters);
+	}
 }
+
+const std::vector<const char*>& GetListCommands() {
+	static const std::vector<const char*> listCommands = {
+		"SetActiveQuest",
+		"SetStateQuest",
+		"LoadQuests",
+		"ClearQuests",
+		"SetProcess",
+		"SetMultithread",
+		"SetClearColor",
+		"OpenWindow",
+		"ShowImage",
+		"HideImage",
+		"ShowText",
+		"HideText",
+		"ClearSpace",
+		"CreateSpace",
+		"AddBody",
+		"RunCommands",
+		"QuestCondition"
+	};
+
+	return listCommands;
+}
+
+/*const std::vector<const std::string>& GetListCommands() {
+	static std::vector<const std::string> listCommands = {
+		"SetActiveQuest",
+		"SetStateQuest",
+		"LoadQuests",
+		"ClearQuests",
+		"SetProcess",
+		"SetMultithread",
+		"SetClearColor",
+		"OpenWindow",
+		"ShowImage",
+		"HideImage",
+		"ShowText",
+		"HideText",
+		"ClearSpace",
+		"CreateSpace",
+		"AddBody",
+		"RunCommands",
+		"QuestCondition"
+	};
+
+	return listCommands;
+}*/
 
 }

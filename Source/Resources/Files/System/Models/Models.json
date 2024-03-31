@@ -1,66 +1,84 @@
 {
-  "OrangeStar": {
-    "shape": "Models/GeoSphere/GeoSphere_1_5_planar.obj",
-    "texture": "Textures/star/orange_star.jpg",
-    "scale": 10
-  },
-  "BrownStone_x10": {
-    "shape": "Models/GeoSphere/GeoSphere_1_4_planar.obj",
-    "texture": "Textures/planet/brown_stone.jpg",
-    "scale": 10
-  },
-  "BrownStone": {
-    "shape": "Models/GeoSphere/GeoSphere_1_4_planar.obj",
-    "texture": "Textures/planet/brown_stone.jpg",
-    "scale": 10
-  },
-  "xyz_low": {
-    "shape": "Models/Common/xyz_low.obj",
-    "texture": "Textures/Common/metal_texture_00.jpg"
-  },
-  "PointWhite": {
-    "shape": "Models/Interface/Plane_1_1_z.obj",
-    "texture": "Textures/star/Light128.png",
-    "scale": 100
-  },
-  "PointTurquoise": {
-    "shape": "Models/Interface/Plane_1_1_z.obj",
-    "texture": "Textures/star/LightTurquoise128.png",
-    "scale": 100
-  },
-  "PointViolet": {
-    "shape": "Models/Interface/Plane_1_1_z.obj",
-    "texture": "Textures/star/LightViolet128.png",
-    "scale": 100
-  },
-  "PointYellow": {
-    "shape": "Models/Interface/Plane_1_1_z.obj",
-    "texture": "Textures/star/LightYellow128.png",
-    "scale": 100
-  },
-  "Marker": {
-    "shape": "Models/Interface/Plane_1_1_z.obj",
-    "texture": "Textures/Interface/object_white_alpha.png",
-    "_texture": "Textures/Interface/object_white.png",
-    "scale": 0.0125
-  },
-  "SkyBox": {
-    "shape": "Models/SkyBox/SkyCylinder.obj",
-    "texture": "Textures/SkyBox/CylinderSky32.jpg",
-    "scale": 1000
-  },
-  "SkyBox2": {
-    "shape": "Models/SkyBox/SkyBox_1000.obj",
-    "texture": "Textures/SkyBox/SkyBox_orange_line.png",
-    "scale": 1000
-  },
-  "Finger": {
-    "shape": "Models/Interface/Cube.obj",
-    "texture": "Textures/Interface/Tutorial/Finger.png"
-  },
-  "Logo": {
-    "shape": "Models/Interface/Cube.obj",
-    "texture": "Textures/Interface/Logo.jpg",
-	"scale": [6.5, 3.707, 1]
-  }
+	"BrownStone" : 
+	{
+		"scale" : 10,
+		"shape" : "Models/GeoSphere/GeoSphere_1_4_planar.obj",
+		"texture" : "Textures/planet/brown_stone.jpg"
+	},
+	"BrownStone_x10" : 
+	{
+		"scale" : 10,
+		"shape" : "Models/GeoSphere/GeoSphere_1_4_planar.obj",
+		"texture" : "Textures/planet/brown_stone.jpg"
+	},
+	"Finger" : 
+	{
+		"shape" : "Models/Interface/Cube.obj",
+		"texture" : "Textures/Interface/Tutorial/Finger.png"
+	},
+	"Logo" : 
+	{
+		"scale" : 
+		[
+			3,
+			3,
+			1
+		],
+		"shape" : "Models/Interface/Cube.obj",
+		"texture" : "Textures/Interface/Logo.jpg"
+	},
+	"Marker" : 
+	{
+		"_texture" : "Textures/Interface/object_white.png",
+		"scale" : 0.012500000000000001,
+		"shape" : "Models/Interface/Plane_1_1_z.obj",
+		"texture" : "Textures/Interface/object_white_alpha.png"
+	},
+	"OrangeStar" : 
+	{
+		"scale" : 10,
+		"shape" : "Models/GeoSphere/GeoSphere_1_5_planar.obj",
+		"texture" : "Textures/star/orange_star.jpg"
+	},
+	"PointTurquoise" : 
+	{
+		"scale" : 100,
+		"shape" : "Models/Interface/Plane_1_1_z.obj",
+		"texture" : "Textures/star/LightTurquoise128.png"
+	},
+	"PointViolet" : 
+	{
+		"scale" : 100,
+		"shape" : "Models/Interface/Plane_1_1_z.obj",
+		"texture" : "Textures/star/LightViolet128.png"
+	},
+	"PointWhite" : 
+	{
+		"scale" : 100,
+		"shape" : "Models/Interface/Plane_1_1_z.obj",
+		"texture" : "Textures/star/Light128.png"
+	},
+	"PointYellow" : 
+	{
+		"scale" : 100,
+		"shape" : "Models/Interface/Plane_1_1_z.obj",
+		"texture" : "Textures/star/LightYellow128.png"
+	},
+	"SkyBox" : 
+	{
+		"scale" : 1000,
+		"shape" : "Models/SkyBox/SkyCylinder.obj",
+		"texture" : "Textures/SkyBox/CylinderSky32.jpg"
+	},
+	"SkyBox2" : 
+	{
+		"scale" : 1000,
+		"shape" : "Models/SkyBox/SkyBox_1000.obj",
+		"texture" : "Textures/SkyBox/SkyBox_orange_line.png"
+	},
+	"xyz_low" : 
+	{
+		"shape" : "Models/Common/xyz_low.obj",
+		"texture" : "Textures/Common/metal_texture_00.jpg"
+	}
 }

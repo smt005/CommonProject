@@ -1,150 +1,645 @@
 [
-  {
-    "id": "Logo",
-    "class": "QuestStart",
-    "params": {
-      "next_quest": "Start"
-    },
-    "commands": [
-      {
-        "id": "ShowImage",
-        "params": [
-          "Logo"
-        ]
-      },
-      {
-        "id": "ShowText",
-        "params": [
-          "Tap For next."
-        ]
-      },
-      {
-        "id": "SetClearColor",
-        "params": [
-          "0.91",
-          "0.91",
-          "0.91",
-          "1.0"
-        ]
-      }
+ {
+  "class" : "QuestStart",
+  "commands" : 
+  [
+   {
+    "disable" : "Logo",
+    "id" : "ShowText",
+    "params" : 
+    [
+     "Logo"
     ]
-  },
-  {
-    "id": "Start",
-    "class": "QuestStart",
-    "params": {
-      "next_quest": "Second",
-      "count": "3"
-    },
-    "commands": [
-      {
-        "id": "SetProcess",
-        "params": [
-          "CPU"
-        ]
-      },
-      {
-        "id": "SetMultithread",
-        "params": [
-          "false"
-        ]
-      },
-      {
-        "id": "SetClearColor",
-        "params": [
-          "0.91",
-          "0.91",
-          "0.91",
-          "1.0"
-        ]
-      },
-      {
-        "id": "ClearSpace"
-      },
-      {
-        "id": "ShowText",
-        "params": [
-          "Create 3 bodies."
-        ]
-      }
+   },
+   {
+    "disable" : "Logo",
+    "id" : "ShowText",
+    "params" : 
+    [
+     "Tap For next."
     ]
-  },
-  {
-    "id": "Second",
-    "class": "QuestStart",
-    "params": {
-      "next_quest": "Third",
-      "count": "5"
-    },
-    "commands": [
-      {
-        "id": "SetProcess",
-        "params": [
-          "CPU"
-        ]
-      },
-      {
-        "id": "SetMultithread",
-        "params": [
-          "false"
-        ]
-      },
-      {
-        "id": "SetClearColor",
-        "params": [
-          "0.3",
-          "0.6",
-          "0.9",
-          "1.0"
-        ]
-      },
-      {
-        "id": "ClearSpace"
-      },
-      {
-        "id": "ShowText",
-        "params": [
-          "Second quest. Create 5 bodies."
-        ]
-      }
+   },
+   {
+    "disable" : "Logo",
+    "id" : "SetClearColor",
+    "params" : 
+    [
+     "1.0",
+     "1.0",
+     "1.0",
+     "1.0"
     ]
-  },
-  {
-    "id": "Third",
-    "class": "QuestStart",
-    "params": {
-      "next_quest": "Start",
-      "count": "7",
-	  "reward_text": "You finish game."
-    },
-    "commands": [
-      {
-        "id": "SetProcess",
-        "params": [
-          "CPU"
-        ]
-      },
-      {
-        "id": "SetMultithread",
-        "params": [
-          "false"
-        ]
-      },
-      {
-        "id": "SetClearColor",
-        "params": [
-          "0.9",
-          "0.6",
-          "0.3",
-          "1.0"
-        ]
-      },
-      {
-        "id": "ClearSpace"
-      },
-      {
-        "id": "HideText"
-      }
+   }
+  ],
+  "commands_on_tap" : 
+  [
+   {
+    "disable" : "Logo",
+    "id" : "HideImage",
+    "params" : 
+    [
+     "Logo"
     ]
+   },
+   {
+    "disable" : "Logo",
+    "id" : "SetActiveQuest",
+    "params" : 
+    [
+     "Start",
+     "ACTIVE"
+    ]
+   },
+   {
+    "disable" : "Logo",
+    "id" : "SetActiveQuest",
+    "params" : 
+    [
+     "Logo",
+     "DEACTIVETE"
+    ]
+   }
+  ],
+  "id" : "Logo",
+  "params" : 
+  {
+   "test" : "test"
   }
+ },
+ {
+  "class" : "QuestStart",
+  "commands" : 
+  [
+   {
+    "disable" : "Start",
+    "id" : "CreateSpace",
+    "params" : 
+    [
+     "MAIN"
+    ]
+   },
+   {
+    "disable" : "Start",
+    "id" : "SetProcess",
+    "params" : 
+    [
+     "CPU"
+    ]
+   },
+   {
+    "disable" : "Start",
+    "id" : "SetMultithread",
+    "params" : 
+    [
+     "false"
+    ]
+   },
+   {
+    "disable" : "Start",
+    "id" : "ShowText",
+    "params" : 
+    [
+     "Create one body."
+    ]
+   }
+  ],
+  "commands_on_condition" : 
+  [
+   {
+    "disable" : "Start",
+    "id" : "SetActiveQuest",
+    "params" : 
+    [
+     "Second",
+     "ACTIVE"
+    ]
+   },
+   {
+    "disable" : "Start",
+    "id" : "SetActiveQuest",
+    "params" : 
+    [
+     "Start",
+     "DEACTIVETE"
+    ]
+   }
+  ],
+  "commands_on_tap" : 
+  [
+   {
+    "disable" : "Start",
+    "id" : "AddBody",
+    "params" : 
+    [
+     "BrownStone",
+     "mouse"
+    ]
+   },
+   {
+    "disable" : "Start",
+    "id" : "QuestCondition",
+    "params" : 
+    [
+     "Start",
+     "count_boties",
+     "is_equal",
+     "3"
+    ]
+   }
+  ],
+  "id" : "Start",
+  "params" : 
+  {
+   "count" : "0",
+   "model" : "BrownStone"
+  }
+ },
+ {
+  "class" : "QuestStart",
+  "commands" : 
+  [
+   {
+    "disable" : "Second",
+    "id" : "SetProcess",
+    "params" : 
+    [
+     "CPU"
+    ]
+   },
+   {
+    "disable" : "Second",
+    "id" : "SetMultithread",
+    "params" : 
+    [
+     "false"
+    ]
+   },
+   {
+    "disable" : "Second",
+    "id" : "SetClearColor",
+    "params" : 
+    [
+     "0.5",
+     "0.1",
+     "0.1",
+     "1.0"
+    ]
+   },
+   {
+    "disable" : "Second",
+    "id" : "ShowText",
+    "params" : 
+    [
+     "Create second bodiy."
+    ]
+   }
+  ],
+  "commands_on_condition" : 
+  [
+   {
+    "disable" : "Second",
+    "id" : "SetActiveQuest",
+    "params" : 
+    [
+     "Second_more",
+     "ACTIVE"
+    ]
+   },
+   {
+    "disable" : "Second",
+    "id" : "SetActiveQuest",
+    "params" : 
+    [
+     "Second_bodies",
+     "DEACTIVETE"
+    ]
+   }
+  ],
+  "commands_on_tap" : 
+  [
+   {
+    "disable" : "Second",
+    "id" : "AddBody",
+    "params" : 
+    [
+     "BrownStone",
+     "mouse"
+    ]
+   },
+   {
+    "disable" : "Second",
+    "id" : "QuestCondition",
+    "params" : 
+    [
+     "Start",
+     "count_boties",
+     "is_equal",
+     "2"
+    ]
+   }
+  ],
+  "id" : "Second",
+  "params" : 
+  {
+   "count" : "2",
+   "model" : "BrownStone"
+  }
+ },
+ {
+  "class" : "QuestStart",
+  "commands" : 
+  [
+   {
+    "disable" : "Second_more",
+    "id" : "SetProcess",
+    "params" : 
+    [
+     "CPU"
+    ]
+   },
+   {
+    "disable" : "Second_more",
+    "id" : "SetMultithread",
+    "params" : 
+    [
+     "false"
+    ]
+   },
+   {
+    "disable" : "Second_more",
+    "id" : "SetClearColor",
+    "params" : 
+    [
+     "0.1",
+     "0.5",
+     "0.1",
+     "1.0"
+    ]
+   },
+   {
+    "disable" : "Second_more",
+    "id" : "ClearSpace",
+    "params" : null
+   },
+   {
+    "disable" : "Second_more",
+    "id" : "ShowText",
+    "params" : 
+    [
+     "Second quest. Create 5 bodies."
+    ]
+   }
+  ],
+  "commands_on_condition" : 
+  [
+   {
+    "disable" : "Second_more",
+    "id" : "SetActiveQuest",
+    "params" : 
+    [
+     "Third",
+     "ACTIVE"
+    ]
+   },
+   {
+    "disable" : "Second_more",
+    "id" : "SetActiveQuest",
+    "params" : 
+    [
+     "Second_more",
+     "DEACTIVETE"
+    ]
+   }
+  ],
+  "commands_on_tap" : 
+  [
+   {
+    "disable" : "Second_more",
+    "id" : "AddBody",
+    "params" : 
+    [
+     "BrownStone",
+     "mouse"
+    ]
+   },
+   {
+    "disable" : "Second_more",
+    "id" : "QuestCondition",
+    "params" : 
+    [
+     "Start",
+     "count_boties",
+     "is_equal",
+     "5"
+    ]
+   }
+  ],
+  "id" : "Second_more",
+  "params" : 
+  {
+   "count" : "5",
+   "model" : "BrownStone"
+  }
+ },
+ {
+  "class" : "QuestStart",
+  "commands" : 
+  [
+   {
+    "disable" : "Third",
+    "id" : "SetProcess",
+    "params" : 
+    [
+     "CPU"
+    ]
+   },
+   {
+    "disable" : "Third",
+    "id" : "SetMultithread",
+    "params" : 
+    [
+     "false"
+    ]
+   },
+   {
+    "disable" : "Third",
+    "id" : "SetClearColor",
+    "params" : 
+    [
+     "0.1",
+     "0.1",
+     "0.5",
+     "1.0"
+    ]
+   },
+   {
+    "disable" : "Third",
+    "id" : "ClearSpace",
+    "params" : null
+   },
+   {
+    "disable" : "Third",
+    "id" : "HideText",
+    "params" : null
+   }
+  ],
+  "id" : "Third",
+  "params" : 
+  {
+   "count" : "7",
+   "model" : "OrangeStar",
+   "reward_text" : "You finish game."
+  }
+ },
+ {
+  "class" : "Quest",
+  "commands" : 
+  [
+   {
+    "disable" : "Four",
+    "id" : "SetProcess",
+    "params" : 
+    [
+     "CPU"
+    ]
+   },
+   {
+    "disable" : "Four",
+    "id" : "SetMultithread",
+    "params" : 
+    [
+     "false"
+    ]
+   },
+   {
+    "disable" : "Four",
+    "id" : "SetClearColor",
+    "params" : 
+    [
+     "0.1",
+     "0.1",
+     "0.5",
+     "1.0"
+    ]
+   },
+   {
+    "disable" : "Four",
+    "id" : "ClearSpace",
+    "params" : null
+   },
+   {
+    "disable" : "Four",
+    "id" : "HideText",
+    "params" : null
+   }
+  ],
+  "id" : "Four",
+  "params" : 
+  {
+   "count" : "7",
+   "model" : "OrangeStar",
+   "reward_text" : "You finish game."
+  }
+ },
+ {
+  "class" : "Quest",
+  "commands" : 
+  [
+   {
+    "disable" : "Logo_2",
+    "id" : "RunCommands",
+    "params" : 
+    [
+     "Logo"
+    ]
+   },
+   {
+    "disable" : "Logo_2",
+    "id" : "QuestCondition",
+    "params" : 
+    [
+     "Tap For next."
+    ]
+   },
+   {
+    "disable" : "Logo_2",
+    "id" : "SetClearColor",
+    "params" : 
+    [
+     "1.0",
+     "1.0",
+     "1.0",
+     "1.0"
+    ]
+   }
+  ],
+  "commands_on_tap" : 
+  [
+   {
+    "disable" : "Logo_2",
+    "id" : "HideImage",
+    "params" : 
+    [
+     "Logo"
+    ]
+   },
+   {
+    "disable" : "Logo_2",
+    "id" : "SetActiveQuest",
+    "params" : 
+    [
+     "Start",
+     "ACTIVE"
+    ]
+   },
+   {
+    "disable" : "Logo_2",
+    "id" : "SetActiveQuest",
+    "params" : 
+    [
+     "Logo",
+     "DEACTIVETE"
+    ]
+   }
+  ],
+  "id" : "Logo_2",
+  "params" : 
+  {
+   "test" : "test"
+  }
+ },
+ {
+  "class" : "Quest",
+  "commands" : 
+  [
+   {
+    "disable" : "Logo_3",
+    "id" : "RunCommands",
+    "params" : 
+    [
+     "Logo"
+    ]
+   },
+   {
+    "disable" : "Logo_3",
+    "id" : "QuestCondition",
+    "params" : 
+    [
+     "Tap For next."
+    ]
+   },
+   {
+    "disable" : "Logo_3",
+    "id" : "SetClearColor",
+    "params" : 
+    [
+     "1.0",
+     "1.0",
+     "1.0",
+     "1.0"
+    ]
+   }
+  ],
+  "commands_on_tap" : 
+  [
+   {
+    "disable" : "Logo_3",
+    "id" : "HideImage",
+    "params" : 
+    [
+     "Logo"
+    ]
+   },
+   {
+    "disable" : "Logo_3",
+    "id" : "SetActiveQuest",
+    "params" : 
+    [
+     "Start",
+     "ACTIVE"
+    ]
+   },
+   {
+    "disable" : "Logo_3",
+    "id" : "SetActiveQuest",
+    "params" : 
+    [
+     "Logo",
+     "DEACTIVETE"
+    ]
+   }
+  ],
+  "id" : "Logo_3",
+  "params" : 
+  {
+   "test" : "test"
+  }
+ },
+ {
+  "class" : "Quest",
+  "commands" : 
+  [
+   {
+    "disable" : "Logo_5",
+    "id" : "RunCommands",
+    "params" : 
+    [
+     "Logo"
+    ]
+   },
+   {
+    "disable" : "Logo_5",
+    "id" : "QuestCondition",
+    "params" : 
+    [
+     "Tap For next."
+    ]
+   },
+   {
+    "disable" : "Logo_5",
+    "id" : "SetClearColor",
+    "params" : 
+    [
+     "1.0",
+     "1.0",
+     "1.0",
+     "1.0"
+    ]
+   }
+  ],
+  "commands_on_tap" : 
+  [
+   {
+    "disable" : "Logo_5",
+    "id" : "HideImage",
+    "params" : 
+    [
+     "Logo"
+    ]
+   },
+   {
+    "disable" : "Logo_5",
+    "id" : "SetActiveQuest",
+    "params" : 
+    [
+     "Start",
+     "ACTIVE"
+    ]
+   },
+   {
+    "disable" : "Logo_5",
+    "id" : "SetActiveQuest",
+    "params" : 
+    [
+     "Logo",
+     "DEACTIVETE"
+    ]
+   }
+  ],
+  "id" : "Logo_5",
+  "params" : 
+  {
+   "test" : "test"
+  }
+ }
 ]

@@ -7,8 +7,6 @@
 #include "../../Commands/Commands.h"
 #include "../../Quests/QuestManager.h"
 
-QuestsWindow::QuestsWindow() : UI::Window(this) { }
-
 void QuestsWindow::OnOpen() {
     SetFlag(ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize);
 

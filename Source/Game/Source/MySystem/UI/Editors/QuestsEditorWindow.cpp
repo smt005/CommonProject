@@ -6,13 +6,14 @@
 #include "../../Quests/QuestManager.h"
 #include "../../Commands/Functions.h"
 #include <Object/Model.h>
+#include "ImGuiManager/Editor/Common/CommonPopupModal.h"
 
 namespace Editor {
     void QuestsEditorWindow::OnOpen() {
         SetFlag(ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 
         float x = 225.f;
-        float y = 30.f;
+        float y = 100.f;
 
         ImGui::SetWindowPos(Id().c_str(), { x, y });
         ImGui::SetWindowSize(Id().c_str(), { _width, _height });
@@ -22,6 +23,7 @@ namespace Editor {
     }
 
     void QuestsEditorWindow::OnClose() {
+        CommonPopupModal::Hide();
         Clear();
     }
 
@@ -42,6 +44,8 @@ namespace Editor {
         DrawQuest();
 
         ButtonDisplay();
+
+        CommonPopupModal::Draw();
     }
 
     void QuestsEditorWindow::Update() {
@@ -139,16 +143,17 @@ namespace Editor {
             ImGui::Dummy(ImVec2(0.f, 10.f));
             ImGui::PushItemWidth(_widthQuest / 2.1);
 
-            DrawCommands(_selectQuest->_commands,            "commands on init");
-            DrawCommands(_selectQuest->_commandsOnTap,       "commands on tap");
-            DrawCommands(_selectQuest->_commandsOnCondition, "commands on condition");
+            DrawCommands(_selectQuest->_commands,            observerLists.dataList[0]);
+            DrawCommands(_selectQuest->_commandsOnTap,       observerLists.dataList[1]);
+            DrawCommands(_selectQuest->_commandsOnCondition, observerLists.dataList[2]);
 
             ImGui::EndChild();
 
             // Кнопки
             QuestButtonDisplay();
-
+            
         ImGui::EndChild();
+        ImGui::Dummy(ImVec2(0.f, 5.f));
     }
 
     void QuestsEditorWindow::DrawCommands(Commands& commands, const std::string& title) {
@@ -156,10 +161,11 @@ namespace Editor {
             return;
         }
 
-        int removeIndex = -1;
+        std::function<void(void)> fun;
 
         if (ImGui::CollapsingHeader(title.c_str())) {
-            for (int index = 0; index < commands.size(); ++index) {
+            int countCommands = commands.size();
+            for (int index = 0; index < countCommands; ++index) {
                 Command& command = commands[index];
 
                 // Команда
@@ -168,16 +174,63 @@ namespace Editor {
                 ImGui::PushID(++_guiId);
                 if (ImGui::Combo("", &comboCommandIndex, _listCommands.data(), _listCommands.size())) {
                     command.id = std::string(_listCommands[comboCommandIndex]);
+                    command.parameters.clear();
                 }
                 ImGui::PopID();
 
                 // Кнопка удаления команды
                 ImGui::Dummy(ImVec2(0.f, 0.f));
                 ImGui::PushID(++_guiId);
-                if (ImGui::Button("Remove commands", { 150.f, 24.f })) {
-                    removeIndex = index;
+                if (ImGui::Button("Remove commands", { 150.f, 20.f })) {
+                    fun = [index, &commands]() {
+                        auto removeIt = commands.begin() + index;
+                        if (removeIt != commands.end()) {
+                            commands.erase(removeIt);
+                        }
+                    };
                 }
                 ImGui::PopID();
+
+                ImGui::SameLine();
+                ImGui::PushStyleColor(ImGuiCol_Button, index == 0 ? Editor::disableColor : Editor::defaultColor);
+                ImGui::PushID(++_guiId);
+                if (ImGui::ArrowButton("", ImGuiDir_Up) && index != 0) {
+                    fun = [index, &commands]() {
+                        int prewIndex = index - 1;
+                        if (prewIndex >= 0) {
+                            std::swap(*(commands.begin() + index), *(commands.begin() + prewIndex));
+                        }
+                    };
+                }
+                ImGui::PopID();
+                ImGui::PopStyleColor();
+
+                // Добавление параметра
+                ImGui::Dummy(ImVec2(0.f, 0.f));
+                ImGui::PushID(++_guiId);
+                if (ImGui::Button("Add param", { 150.f, 20.f })) {
+                    fun = [index, &commands]() {
+                        auto removeIt = commands.begin() + index;
+                        if (removeIt != commands.end()) {
+                            removeIt->parameters.emplace_back();
+                        }
+                    };
+                }
+                ImGui::PopID();
+
+                ImGui::SameLine();
+                ImGui::PushStyleColor(ImGuiCol_Button, index == (countCommands - 1) ? Editor::disableColor : Editor::defaultColor);
+                ImGui::PushID(++_guiId);
+                if (ImGui::ArrowButton("", ImGuiDir_Down) && index != (countCommands - 1)) {
+                    fun = [index, &commands]() {
+                        int prewIndex = index + 1;
+                        if (prewIndex < commands.size()) {
+                            std::swap(*(commands.begin() + index), *(commands.begin() + prewIndex));
+                        }
+                    };
+                }
+                ImGui::PopID();
+                ImGui::PopStyleColor();
 
                 ImGui::EndGroup();
 
@@ -187,17 +240,23 @@ namespace Editor {
 
                 std::vector<std::string>& parameters = command.parameters;
                 std::vector<std::string>& editorParams = GetEditorCommand(comboCommandIndex).params;
+                int countParams = 0;
 
-                int countParams = parameters.size();
-                if (editorParams.size() < countParams) {
+                if (editorParams.size() > parameters.size()) {
+                    countParams = editorParams.size();
+                    parameters.resize(countParams);
+                } else if (parameters.size() > editorParams.size()) {
+                    countParams = parameters.size();
                     editorParams.resize(countParams);
+                }
+                else {
+                    countParams = editorParams.size();
                 }
 
                 for (size_t iParam = 0; iParam < countParams; ++iParam) {
                     std::string& parameter = parameters[iParam];
                     const std::string& editorParam = editorParams[iParam];
 
-                    ImGui::Dummy(ImVec2(0.f, 0.f));
                     if (editorParams[iParam].empty()) {
                         ImGui::PushID(++_guiId);
                         help::CopyToArrayChar(_textBuffer, parameter);
@@ -217,24 +276,26 @@ namespace Editor {
                 }
 
                 ImGui::EndGroup();
+                ImGui::Dummy(ImVec2(0.f, 20.f));
                 ImGui::Separator();
             }
 
             ImGui::Dummy(ImVec2(0.f, 5.f));
+            if (ImGui::Button("Add command.", { 200.f, 24.f })) {
+                commands.emplace_back();
+            }
+
+            /*ImGui::SameLine();
             if (ImGui::Button("Remove observer for event.", { 200.f, 24.f })) {
                 //...
-            }
-            ImGui::Dummy(ImVec2(0.f, 10.f));
+            }*/
+
+            ImGui::Dummy(ImVec2(0.f, 20.f));
             ImGui::Separator();
         }
 
-        if (removeIndex != -1) {
-            auto removeIt = commands.begin() + removeIndex;
-
-            if (removeIt != commands.end()) {
-                commands.erase(removeIt);
-                Clear();
-            }
+        if (fun) {
+            fun();
         }
     }
 
@@ -257,6 +318,49 @@ namespace Editor {
         }
     }
 
+    void QuestsEditorWindow::AddObserver() {
+        Editor::CommonPopupModal::Show(GetSharedWndPtr(), [this, indexPtr = std::make_shared<int>(-1)]() {
+            if (!_selectQuest) {
+                CommonPopupModal::Hide();
+                return;
+            }
+
+            ImGui::PushID(++_guiId);
+            ImGui::Combo("", indexPtr.get(), observerLists.viewList.data(), observerLists.viewList.size());
+            ImGui::PopID();
+
+            Commands* commands = nullptr;
+
+            switch (*indexPtr)
+            {
+            case 0: {
+                commands = &_selectQuest->_commands;
+            } break;
+            case 1: {
+                commands = &_selectQuest->_commandsOnCondition;
+            } break;
+            case 2: {
+                commands = &_selectQuest->_commandsOnTap;
+            } break;
+            default:
+                break;
+            };
+
+            ImGui::Dummy(ImVec2(0.f, 0.f));
+            ImGui::PushStyleColor(ImGuiCol_Button, commands && commands->empty() ? Editor::greenColor : Editor::disableColor);
+            if (ImGui::Button("Add##add_obs_btn", { 100.f, 26.f }) && commands && commands->empty()) {
+                commands->emplace_back();
+                CommonPopupModal::Hide();
+            }
+            ImGui::PopStyleColor();
+
+            ImGui::SameLine();
+            if (ImGui::Button("Close##close_obs_btn", { 100.f, 26.f })) {
+                CommonPopupModal::Hide();
+            }
+        }, "Add observer.");
+    }
+
     void QuestsEditorWindow::QuestListButtonDisplay() {
         volatile static float listButtonWidth = 0;
         volatile static float listButtonHeight = 28.f;
@@ -272,15 +376,18 @@ namespace Editor {
             AddQuest();
         }
 
+        ImGui::PushStyleColor(ImGuiCol_Button, _selectQuest ? Editor::defaultColor : Editor::disableColor);
         ImGui::SameLine();
-        if (ImGui::Button("Copy", { buttonWidth, buttonHeight })) {
+        if (ImGui::Button("Copy", { buttonWidth, buttonHeight }) && _selectQuest) {
             CopyQuest(_selectQuest);
         }
 
         ImGui::SameLine();
-        if (ImGui::Button("Remove", { buttonWidth, buttonHeight })) {
+        if (ImGui::Button("Remove", { buttonWidth, buttonHeight }) && _selectQuest) {
             RemoveQuest(_selectQuest);
+            _selectQuest.reset();
         }
+        ImGui::PopStyleColor();
 
         ImGui::EndChild();
     }
@@ -297,7 +404,7 @@ namespace Editor {
 
         //...
         if (ImGui::Button("Add observer of event", { buttonWidth, buttonHeight })) {
-            //AddQuest();
+            AddObserver();
         }
 
         ImGui::EndChild();
@@ -476,6 +583,12 @@ namespace Editor {
                 _listCommands.emplace_back(newEditorCommand.name.data());
             }
         }
+
+        // Observers
+        observerLists.Add("Commands on init");
+        observerLists.Add("commands on tap");
+        observerLists.Add("commands on condition");
+        observerLists.MakeViewData();
     }
 
     std::pair<int, const std::vector<const char*>&> QuestsEditorWindow::GetIndexOfListByName(const std::string& text, const std::string& nameList) {
@@ -489,7 +602,6 @@ namespace Editor {
     int QuestsEditorWindow::GetIndexOfList(const std::string& text, const std::vector<const char*>& listTexts)
     {
         int index = -1;
-
         for (const char* chars : listTexts) {
             ++index;
 
@@ -497,7 +609,6 @@ namespace Editor {
                 return index;
             }
         }
-
         return -1;
     }
 
@@ -506,11 +617,9 @@ namespace Editor {
         if (index >= 0 && index < _editorCommands.size()) {
             return _editorCommands[index];
         }
-
         auto itDefault = std::find_if(_editorCommands.begin(), _editorCommands.end(), [](const EditorCommand& command) {
             return command.name == "DEFAULT";
         });
-        
         return itDefault != _editorCommands.end() ? *itDefault : _editorCommands.emplace_back("DEFAULT");
     }
 }

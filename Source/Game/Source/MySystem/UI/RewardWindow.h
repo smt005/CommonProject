@@ -12,7 +12,7 @@ public:
 
 private:
 	float _width = 200.f;
-	float _height = 100.f;
+	float _height = 150.f;
 	std::string _nextQuest;
 	std::string _rewardText;
 };

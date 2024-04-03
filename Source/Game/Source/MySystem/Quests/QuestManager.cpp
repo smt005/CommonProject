@@ -99,7 +99,7 @@ bool QuestManager::HasQuest(const std::string& name)
 
 Quest::State QuestManager::StateFromString(const std::string& stateStr)
 {
-	if (stateStr == "DEACTIVETE") {
+	if (stateStr == "DEACTIVE") {
 		return Quest::State::DEACTIVE;
 	}
 	else if (stateStr == "ACTIVE") {
@@ -232,13 +232,17 @@ void QuestManager::Save(const std::string& pathFileName)
 		questJson["class"] = GetClassName(questPtr);
 
 		// Params
-		Json::Value paramsJson;
-		for (std::pair<const std::string, std::string>& pairParam : questPtr->_params) {
-			paramsJson[pairParam.first] = pairParam.second;
+		if (!questPtr->_params.empty()) {
+			Json::Value paramsJson;
+			for (std::pair<const std::string, std::string>& pairParam : questPtr->_params) {
+				paramsJson[pairParam.first] = pairParam.second;
+			}
+			questJson["params"] = paramsJson;
 		}
-		questJson["params"] = paramsJson;
 
-		questJson["description"] = questPtr->_description;
+		if (!questPtr->_description.empty()) {
+			questJson["description"] = questPtr->_description;
+		}
 
 		// Commands
 		auto appendCommande = [&questJson](Commands& commands, const std::string& name) {
@@ -252,6 +256,7 @@ void QuestManager::Save(const std::string& pathFileName)
 				Json::Value commandJson;
 
 				commandJson["id"] = command.id;
+
 				if (command.disable) {
 					commandJson["disable"] = command.disable;
 				}
@@ -259,13 +264,16 @@ void QuestManager::Save(const std::string& pathFileName)
 					commandJson["tag"] = command.tag;
 				}
 
-				Json::Value paramsJson;
+				if (!command.parameters.empty()) {
+					Json::Value paramsJson;
 
-				for (const std::string& param : command.parameters) {
-					paramsJson.append(param);
+					for (const std::string& param : command.parameters) {
+						paramsJson.append(param);
+					}
+
+					commandJson["params"] = paramsJson;
 				}
 
-				commandJson["params"] = paramsJson;
 				commandsJson.append(commandJson);
 			}
 
@@ -292,7 +300,7 @@ void QuestManager::Update()
 {
 }
 
-/// Compare #QUEST /count_boties/temp_number /==/>/>=/==/</<=/is_more/is_equal/is_more_or_equal/is_less/is_less_or_equal number
+/// QuestCondition #QUEST /count_boties/temp_number /==/>/>=/==/</<=/is_more/is_equal/is_more_or_equal/is_less/is_less_or_equal number
 void QuestManager::Condition(const std::vector<std::string>& params)
 {
 	if (params.size() < 4) {

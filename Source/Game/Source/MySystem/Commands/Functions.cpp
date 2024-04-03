@@ -56,7 +56,7 @@ namespace commands
 	}
 
 	/// SetProcess /CPU/GPU
-	void SetProcess(const std::string stateStr)
+	void SetProcess(const std::string& stateStr)
 	{
 		// CPU, GPU
 		if (stateStr == "CPU") {
@@ -68,6 +68,17 @@ namespace commands
 
 		if (MySystem::currentSpace) {
 			MySystem::currentSpace->processGPU = CUDA::processGPU;
+		}
+	}
+
+	/// CountOfIteration number
+	void SetCountOfIteration(const std::string& countStr)
+	{
+		if (MySystem::currentSpace) {
+			int count = atoi(countStr.c_str());
+			if (count >= 0) {
+				MySystem::currentSpace->countOfIteration = (size_t)count;
+			}
 		}
 	}
 
@@ -149,10 +160,31 @@ namespace commands
 		}
 
 		/*else if (classWindow == "XXX") {
-		if (!UI::ShowingWindow<XXX>()) {
-			UI::ShowWindow<XXX>();
+			if (!UI::ShowingWindow<XXX>()) {
+				ShowWindow<XXX>();
+			}
+		}*/
+	}
+
+	/// CloseWindow /QuestsEditorWindow/RewardWindow/CommandsWindow/QuestsWindow
+	void CloseWindow(const std::string& classWindow)
+	{
+		if (classWindow == "RewardWindow") {
+			UI::CloseWindowT<RewardWindow>();
 		}
-	}*/
+		else if (classWindow == "CommandsWindow") {
+			UI::CloseWindowT<CommandsWindow>();
+		}
+		else if (classWindow == "QuestsWindow") {
+			UI::CloseWindowT<QuestsWindow>();
+		}
+		else if (classWindow == "QuestsEditorWindow") {
+			UI::CloseWindowT<Editor::QuestsEditorWindow>();
+		}
+
+		/*else if (classWindow == "XXX") {
+			CloseWindowT<XXX>();
+		}*/
 	}
 
 	/// ShowImage #MODEL
@@ -258,14 +290,14 @@ namespace commands
 		Math::Vector3 pos(0.f); // ToCenterSpace
 		Math::Vector3 vel(0.f);
 
-		if (countParams == 2 && parameters[1] == "ToMousePos") {
+		if (countParams >= 2 && parameters[1] == "ToMousePos") {
 			auto posTmp = Camera::GetLink().corsorCoord();
 			pos.x = posTmp.x;
 			pos.y = posTmp.y;
 			pos.z = posTmp.z;
 		}
 
-		if (countParams >= 7) {
+		if (countParams >= 5) {
 			vel.x = atof(parameters[2].c_str());
 			vel.y = atof(parameters[3].c_str());
 			vel.z = atof(parameters[4].c_str());
@@ -328,6 +360,12 @@ namespace commands
 				OpenWindow(comand.parameters);
 			}
 		}
+		else if (comandId == "CloseWindow") {
+			CommandLog(comand);
+			if (!comand.parameters.empty()) {
+				CloseWindow(comand.parameters.front());
+			}
+		}
 		else if (comandId == "ShowImage") {
 			CommandLog(comand);
 			if (!comand.parameters.empty()) {
@@ -372,6 +410,11 @@ namespace commands
 		}
 		else if (comandId == "QuestCondition") {
 			QuestManager::Condition(comand.parameters);
+		}
+		else if (comandId == "CountOfIteration") {
+			if (!comand.parameters.empty()) {
+				SetCountOfIteration(comand.parameters.front());
+			}
 		}
 	}
 }

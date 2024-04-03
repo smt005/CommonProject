@@ -7,121 +7,125 @@
 #include <Common/Help.h>
 #include <Wrapper.h>
 #include <MyStl/Event.h>
-#include  <MySystem/MySystem.h>
+#include <MySystem/MySystem.h>
 
 // QuestStart
-void QuestStart::Activete() {
-    if (!_commandsOnTap.empty()) {
-        EventOnTap::Instance().Add(_name, [commandsOnTap = _commandsOnTap]() {
-            CommandManager::Run(commandsOnTap);
-        });
-    }
+void QuestStart::Activete()
+{
+	if (!_commandsOnTap.empty()) {
+		EventOnTap::Instance().Add(_name, [commandsOnTap = _commandsOnTap]() {
+			CommandManager::Run(commandsOnTap);
+		});
+	}
 }
 
-void QuestStart::Deactivation() {
-    EventOnTap::Instance().Remove(_name);
+void QuestStart::Deactivation()
+{
+	EventOnTap::Instance().Remove(_name);
 }
 
 // QuestSphere100
-void QuestSphere100::Activete() {
-    if (!MySystem::currentSpace) {
-        MySystem::currentSpace = SpaceManager::Load("MAIN");
-    }
-
-    //...
-    int count = 1000;
-    float minSpaceRange = 100;
-    float spaceRange = 5000;
-
-    MySystem::currentSpace->_bodies.reserve(count + 1);
-
-    if (MySystem::currentSpace->_bodies.empty()) {
-        SpaceManager::AddObject("BrownStone", Math::Vector3(0.f, 0.f, 0.f), Math::Vector3(0.f, 0.f, 0.f), 100.f);
-        MySystem::currentSpace->_focusBody = MySystem::currentSpace->_bodies.front();
-    }
-
-    Math::Vector3 pos;
-
-    int i = 0;
-    while (i < count) {
-        pos.x = help::random(-spaceRange, spaceRange);
-        pos.y = help::random(-spaceRange, spaceRange);
-        pos.z = help::random(-spaceRange, spaceRange);
-
-        double radius = pos.length();
-
-        if (radius > spaceRange) {
-            continue;
-        }
-
-        if (radius < minSpaceRange) {
-            continue;
-        }
-        ++i;
-
-        SpaceManager::AddObjectOnOrbit(MySystem::currentSpace.get(), pos, false);
-    }
-
-    MySystem::currentSpace->Preparation();
-}
-
-// QuestSphere
-void QuestSphere::Activete() {
+void QuestSphere100::Activete()
+{
 	if (!MySystem::currentSpace) {
 		MySystem::currentSpace = SpaceManager::Load("MAIN");
 	}
 
-    // TODO:
-    //CUDA::multithread = true;
-    
-    //...
-    int count = 1000;
-    float minSpaceRange = 1000;
-    float spaceRange = 5000;
+	//...
+	int count = 1000;
+	float minSpaceRange = 100;
+	float spaceRange = 5000;
 
-    std::string countStr = MySystem::currentSpace->_params["COUNT"];
-    if (!countStr.empty()) {
-        count = std::stoi(countStr);
-    }
+	MySystem::currentSpace->_bodies.reserve(count + 1);
 
-    std::string minSpaceRangeStr = MySystem::currentSpace->_params["MIN_RADIUS"];
-    if (!minSpaceRangeStr.empty()) {
-        minSpaceRange = std::stoi(minSpaceRangeStr);
-    }
+	if (MySystem::currentSpace->_bodies.empty()) {
+		SpaceManager::AddObject("BrownStone", Math::Vector3(0.f, 0.f, 0.f), Math::Vector3(0.f, 0.f, 0.f), 100.f);
+		MySystem::currentSpace->_focusBody = MySystem::currentSpace->_bodies.front();
+	}
 
-    std::string spaceRangeStr = MySystem::currentSpace->_params["MAX_RADIUS"];
-    if (!spaceRangeStr.empty()) {
-        spaceRange = std::stoi(spaceRangeStr);
-    }
+	Math::Vector3 pos;
 
-    MySystem::currentSpace->_bodies.reserve(count + 1);
+	int i = 0;
+	while (i < count) {
+		pos.x = help::random(-spaceRange, spaceRange);
+		pos.y = help::random(-spaceRange, spaceRange);
+		pos.z = help::random(-spaceRange, spaceRange);
 
-    if (MySystem::currentSpace->_bodies.empty()) {
-        SpaceManager::AddObject("BrownStone", Math::Vector3(0.f, 0.f, 0.f), Math::Vector3(0.f, 0.f, 0.f), 100.f);
-        MySystem::currentSpace->_focusBody = MySystem::currentSpace->_bodies.front();
-    }
+		double radius = pos.length();
 
-    Math::Vector3 pos;
+		if (radius > spaceRange) {
+			continue;
+		}
 
-    int i = 0;
-    while (i < count) {
-        pos.x = help::random(-spaceRange, spaceRange);
-        pos.y = help::random(-spaceRange, spaceRange);
-        pos.z = help::random(-spaceRange, spaceRange);
+		if (radius < minSpaceRange) {
+			continue;
+		}
+		++i;
 
-        double radius = pos.length();
+		SpaceManager::AddObjectOnOrbit(MySystem::currentSpace.get(), pos, false);
+	}
 
-        if (radius > spaceRange) {
-            continue;
-        }
+	MySystem::currentSpace->Preparation();
+}
 
-        if (radius < minSpaceRange) {
-            continue;
-        }
-        ++i;
+// QuestSphere
+void QuestSphere::Activete()
+{
+	if (!MySystem::currentSpace) {
+		MySystem::currentSpace = SpaceManager::Load("MAIN");
+	}
 
-        SpaceManager::AddObjectOnOrbit(MySystem::currentSpace.get(), pos, false);
-    }
+	// TODO:
+	//CUDA::multithread = true;
 
-    MySystem::currentSpace->Preparation();
+	//...
+	int count = 1000;
+	float minSpaceRange = 1000;
+	float spaceRange = 5000;
+
+	std::string countStr = MySystem::currentSpace->_params["COUNT"];
+	if (!countStr.empty()) {
+		count = std::stoi(countStr);
+	}
+
+	std::string minSpaceRangeStr = MySystem::currentSpace->_params["MIN_RADIUS"];
+	if (!minSpaceRangeStr.empty()) {
+		minSpaceRange = std::stoi(minSpaceRangeStr);
+	}
+
+	std::string spaceRangeStr = MySystem::currentSpace->_params["MAX_RADIUS"];
+	if (!spaceRangeStr.empty()) {
+		spaceRange = std::stoi(spaceRangeStr);
+	}
+
+	MySystem::currentSpace->_bodies.reserve(count + 1);
+
+	if (MySystem::currentSpace->_bodies.empty()) {
+		SpaceManager::AddObject("BrownStone", Math::Vector3(0.f, 0.f, 0.f), Math::Vector3(0.f, 0.f, 0.f), 100.f);
+		MySystem::currentSpace->_focusBody = MySystem::currentSpace->_bodies.front();
+	}
+
+	Math::Vector3 pos;
+
+	int i = 0;
+	while (i < count) {
+		pos.x = help::random(-spaceRange, spaceRange);
+		pos.y = help::random(-spaceRange, spaceRange);
+		pos.z = help::random(-spaceRange, spaceRange);
+
+		double radius = pos.length();
+
+		if (radius > spaceRange) {
+			continue;
+		}
+
+		if (radius < minSpaceRange) {
+			continue;
+		}
+		++i;
+
+		SpaceManager::AddObjectOnOrbit(MySystem::currentSpace.get(), pos, false);
+	}
+
+	MySystem::currentSpace->Preparation();
 }

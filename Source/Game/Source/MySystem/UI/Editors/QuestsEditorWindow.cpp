@@ -1,8 +1,10 @@
+//‚ó¶ Playrix ‚ó¶
 #include "QuestsEditorWindow.h"
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <Screen.h>
 #include <FileManager.h>
+#include "../../Quests/Quests.h"
 #include "../../Quests/QuestManager.h"
 #include "../../Commands/Functions.h"
 #include <Object/Model.h>
@@ -125,8 +127,8 @@ namespace Editor {
 
         ImGui::BeginChild("quest", { _widthQuest, _topHeight }, true);
             ImGui::BeginChild("quest_com", { _widthQuest, _topHeight - 48.f }, false);
-            // œ‡‡ÏÂÚ˚ Í‚ÂÒÚ‡
-            ImGui::SameLine(30.f);
+            // –ü–∞—Ä–∞–º–µ—Ç—Ä—ã –∫–≤–µ—Å—Ç–∞
+            ImGui::SameLine(35.f);
             ImGui::Text("Name");
 
             ImGui::SameLine(100.f);
@@ -139,8 +141,39 @@ namespace Editor {
             ImGui::PopID();
             ImGui::PopItemWidth();
 
-            //  ÓÏ‡Ì‰˚
             ImGui::Dummy(ImVec2(0.f, 10.f));
+            if (ImGui::CollapsingHeader("Copmmons params")) {
+                // –ö–ª–∞—Å—Å
+                ImGui::Dummy(ImVec2(0.f, 0.f));
+                ImGui::SameLine(35.f);
+                ImGui::Text("Class");
+
+                auto [indexListParam, listParam] = GetIndexOfListByName(QuestManager::GetClassName(_selectQuest), "QuestClass");
+                ImGui::SameLine(100.f);
+                ImGui::PushID(++_guiId);
+                if (ImGui::Combo("", &indexListParam, listParam.data(), listParam.size())) {
+                    //...
+                }
+                ImGui::PopID();
+
+                // –û–ø–∏—Å–∞–Ω–∏–µ
+                ImGui::Dummy(ImVec2(0.f, 0.f));
+                ImGui::SameLine(18.f);
+                ImGui::Text("Description");
+
+                ImGui::SameLine(100.f);
+                ImGui::PushItemWidth(_widthQuest - 130.f);
+                help::CopyToArrayChar(_textBuffer, _selectQuest->_description);
+                ImGui::PushID(++_guiId);
+                if (ImGui::InputTextMultiline("", _textBuffer.data(), _textBuffer.size(), { _widthQuest - 130.f, 35.f })) {
+                    _selectQuest->_description = _textBuffer.data();
+                }
+                ImGui::PopID();
+                ImGui::PopItemWidth();
+            }
+
+            // –ö–æ–º–∞–Ω–¥—ã
+            ImGui::Dummy(ImVec2(0.f, 5.f));
             ImGui::PushItemWidth(_widthQuest / 2.1);
 
             DrawCommands(_selectQuest->_commands,            observerLists.dataList[0]);
@@ -149,7 +182,7 @@ namespace Editor {
 
             ImGui::EndChild();
 
-            //  ÌÓÔÍË
+            // –ö–Ω–æ–ø–∫–∏
             QuestButtonDisplay();
             
         ImGui::EndChild();
@@ -168,7 +201,7 @@ namespace Editor {
             for (int index = 0; index < countCommands; ++index) {
                 Command& command = commands[index];
 
-                //  ÓÏ‡Ì‰‡
+                // –ö–æ–º–∞–Ω–¥–∞
                 ImGui::BeginGroup();
                 int comboCommandIndex = GetIndexOfList(command.id, _listCommands);
                 ImGui::PushID(++_guiId);
@@ -178,14 +211,14 @@ namespace Editor {
                 }
                 ImGui::PopID();
 
-                //  ÌÓÔÍ‡ Û‰‡ÎÂÌËˇ ÍÓÏ‡Ì‰˚
+                // –î–æ–±–∞–≤–ª–µ–Ω–∏–µ –ø–∞—Ä–∞–º–µ—Ç—Ä–∞
                 ImGui::Dummy(ImVec2(0.f, 0.f));
                 ImGui::PushID(++_guiId);
-                if (ImGui::Button("Remove commands", { 150.f, 20.f })) {
+                if (ImGui::Button("Add param", { 150.f, 20.f })) {
                     fun = [index, &commands]() {
                         auto removeIt = commands.begin() + index;
                         if (removeIt != commands.end()) {
-                            commands.erase(removeIt);
+                            removeIt->parameters.emplace_back();
                         }
                     };
                 }
@@ -205,14 +238,14 @@ namespace Editor {
                 ImGui::PopID();
                 ImGui::PopStyleColor();
 
-                // ƒÓ·‡‚ÎÂÌËÂ Ô‡‡ÏÂÚ‡
+                // –ö–Ω–æ–ø–∫–∞ —É–¥–∞–ª–µ–Ω–∏—è –∫–æ–º–∞–Ω–¥—ã
                 ImGui::Dummy(ImVec2(0.f, 0.f));
                 ImGui::PushID(++_guiId);
-                if (ImGui::Button("Add param", { 150.f, 20.f })) {
+                if (ImGui::Button("Remove command", { 150.f, 20.f })) {
                     fun = [index, &commands]() {
                         auto removeIt = commands.begin() + index;
                         if (removeIt != commands.end()) {
-                            removeIt->parameters.emplace_back();
+                            commands.erase(removeIt);
                         }
                     };
                 }
@@ -232,9 +265,14 @@ namespace Editor {
                 ImGui::PopID();
                 ImGui::PopStyleColor();
 
+                //...................
+                ImGui::PushID(++_guiId);
+                ImGui::Checkbox("disable", &command.disable);
+                ImGui::PopID();
+
                 ImGui::EndGroup();
 
-                // œ‡‡ÏÂÚ˚ ÍÓÏ‡Ì‰˚
+                // –ü–∞—Ä–∞–º–µ—Ç—Ä—ã –∫–æ–º–∞–Ω–¥—ã
                 ImGui::SameLine();
                 ImGui::BeginGroup();
 
@@ -300,15 +338,13 @@ namespace Editor {
     }
 
     void QuestsEditorWindow::AddQuest() {
-        Quest::Ptr newQuestPtr(new Quest("EMPTY"));
+        Quest::Ptr newQuestPtr(new QuestStart("EMPTY")); // TODO:
         QuestManager::GetQuests().emplace_back(newQuestPtr);
     }
 
     void QuestsEditorWindow::CopyQuest(Quest::Ptr& questPtr) {
         if (questPtr) {
-            Quest::Ptr newQuestPtr(new Quest(*questPtr));
-            newQuestPtr->_name = questPtr->Name() + "_copy";
-            QuestManager::GetQuests().emplace_back(newQuestPtr);
+            //...
         }
     }
     
@@ -337,10 +373,10 @@ namespace Editor {
                 commands = &_selectQuest->_commands;
             } break;
             case 1: {
-                commands = &_selectQuest->_commandsOnCondition;
+                commands = &_selectQuest->_commandsOnTap;
             } break;
             case 2: {
-                commands = &_selectQuest->_commandsOnTap;
+                commands = &_selectQuest->_commandsOnCondition;
             } break;
             default:
                 break;
@@ -449,7 +485,7 @@ namespace Editor {
     }
 
     void QuestsEditorWindow::Clear() {
-        //_listCommands, ‰‡ÌÌ˚Â ı‡ÌˇÚÒˇ ‚ _editorCommands
+        //_listCommands, –¥–∞–Ω–Ω—ã–µ —Ö—Ä–∞–Ω—è—Ç—Å—è –≤ _editorCommands
 
         for (const auto& pairList : _mapLists) {
             for (const char* chars : pairList.second) {
@@ -493,7 +529,44 @@ namespace Editor {
     void QuestsEditorWindow::LoadEditorDatas() {
         // C:\Work\My\System\Source\Resources\Files\System
         // C:\Work\My\System\Source\Game\Source\MySystem\Commands\Functions.cpp
-        std::string fileText = Engine::FileManager::readTextFile("..\\..\\..\\Game\\Source\\MySystem\\Commands\\Functions.cpp");
+        // C:\Work\My\System\Source\Game\Source\MySystem\Quests/QuestManager.cpp
+
+        EditorDatasParceFile("..\\..\\..\\Game\\Source\\MySystem\\Commands\\Functions.cpp");
+        EditorDatasParceFile("..\\..\\..\\Game\\Source\\MySystem\\Quests\\QuestManager.cpp");
+
+        //...
+        if (int size = _editorCommands.size(); size > 0) {
+            _listCommands.reserve(size);
+
+            for (const EditorCommand& newEditorCommand : _editorCommands) {
+                _listCommands.emplace_back(newEditorCommand.name.data());
+            }
+        }
+
+        // TODO:
+        /// QuestClass /QuestStart/Quest/QuestSphere100/QuestSphere
+        std::vector<const char*>& listClass = _mapLists["QuestClass"];
+        auto addChars = [&listClass](const std::string& text) {
+            size_t len = text.length();
+            char* chs = new char[len + 1];
+            memcpy(chs, text.c_str(), len);
+            chs[len] = '\0';
+            listClass.emplace_back(chs);
+        };
+        for (const std::string& nameClass :QuestManager::GetListClasses()) {
+            addChars(nameClass);
+        }
+
+        // Observers
+        observerLists.Add("Commands on init");
+        observerLists.Add("commands on tap");
+        observerLists.Add("commands on condition");
+        observerLists.MakeViewData();
+    }
+
+    void QuestsEditorWindow::EditorDatasParceFile(const std::string& filePathHame)
+    {
+        std::string fileText = Engine::FileManager::readTextFile(filePathHame);
         if (fileText.empty()) {
             return;
         }
@@ -525,23 +598,35 @@ namespace Editor {
                 for (size_t index = 1; index < size; ++index) {
                     const std::string& paramWord = words[index];
 
-                    // —ÔËÒÓÍ
+                    // –°–ø–∏—Å–æ–∫
                     if (paramWord.front() == '/') {
-                        std::vector<std::string> paramWords = SeparateString(paramWord, "/");
-                        std::string nameParam = newEditorCommand.name + std::to_string(index);
-
-                        std::vector<const char*>& listParams =_mapLists[nameParam];
-                        listParams.reserve(paramWords.size());
-
-                        for (const std::string& pWord :paramWords) {
-                            size_t len = pWord.length();
-                            char* chs = new char[len + 1];
-                            memcpy(chs, pWord.c_str(), len);
-                            chs[len] = '\0';
-                            listParams.emplace_back(chs);
+                        std::string hashName = "/";
+                        size_t lenParamWord = paramWord.size();
+                        if (lenParamWord <= 10) {
+                            hashName = paramWord;
+                        }
+                        else {
+                            hashName += paramWord.substr(0, 4);
+                            hashName += paramWord.substr((lenParamWord - 4), 4);
+                            hashName += std::to_string(lenParamWord);
                         }
 
-                        newEditorCommand.params.emplace_back(nameParam);
+                        if (_mapLists.find(hashName) == _mapLists.end()) {
+                            std::vector<std::string> paramWords = SeparateString(paramWord, "/");
+
+                            std::vector<const char*>& listParams = _mapLists[hashName];
+                            listParams.reserve(paramWords.size());
+
+                            for (const std::string& pWord : paramWords) {
+                                size_t len = pWord.length();
+                                char* chs = new char[len + 1];
+                                memcpy(chs, pWord.c_str(), len);
+                                chs[len] = '\0';
+                                listParams.emplace_back(chs);
+                            }
+
+                            newEditorCommand.params.emplace_back(hashName);
+                        }
                     }
                     else if (paramWord.front() == '#') {
                         if (paramWord == "#MODEL") {
@@ -554,6 +639,24 @@ namespace Editor {
                                     size_t len = nameModel.length();
                                     char* chs = new char[len + 1];
                                     memcpy(chs, nameModel.c_str(), len);
+                                    chs[len] = '\0';
+                                    listParams.emplace_back(chs);
+                                }
+                            }
+
+                            newEditorCommand.params.emplace_back(paramWord);
+                        } else if (paramWord == "#QUEST") {
+                            if (_mapLists.find(paramWord) == _mapLists.end()) {
+                                std::vector<Quest::Ptr>& quests = QuestManager::GetQuests();
+                                std::vector<const char*>& listParams = _mapLists[paramWord];
+                                listParams.reserve(quests.size());
+
+                                for (const Quest::Ptr& questPtr : quests) {
+                                    const std::string& nameQuest = questPtr->Name();
+
+                                    size_t len = nameQuest.length();
+                                    char* chs = new char[len + 1];
+                                    memcpy(chs, nameQuest.c_str(), len);
                                     chs[len] = '\0';
                                     listParams.emplace_back(chs);
                                 }
@@ -574,21 +677,6 @@ namespace Editor {
                 beginPos += 3;
             }
         }
-
-        //...
-        if (int size = _editorCommands.size(); size > 0) {
-            _listCommands.reserve(size);
-
-            for (const EditorCommand& newEditorCommand : _editorCommands) {
-                _listCommands.emplace_back(newEditorCommand.name.data());
-            }
-        }
-
-        // Observers
-        observerLists.Add("Commands on init");
-        observerLists.Add("commands on tap");
-        observerLists.Add("commands on condition");
-        observerLists.MakeViewData();
     }
 
     std::pair<int, const std::vector<const char*>&> QuestsEditorWindow::GetIndexOfListByName(const std::string& text, const std::string& nameList) {

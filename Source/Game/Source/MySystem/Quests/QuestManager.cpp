@@ -1,14 +1,15 @@
 // ◦ Xyz ◦
 #include "QuestManager.h"
 #include "Quests.h"
-#include  "QuestCondition.h"
+#include "QuestCondition.h"
 #include "Common/Help.h"
 
 std::vector<Quest::Ptr> QuestManager::quests;
 std::string QuestManager::lastPathFileName;
 Quest::Ptr QuestManager::activeQuestPtr;
 
-void QuestManager::SetState(const std::string& name, Quest::State state) {
+void QuestManager::SetState(const std::string& name, Quest::State state)
+{
 	auto it = std::find_if(quests.begin(), quests.end(), [&name](const Quest::Ptr& questPtr) { return questPtr->Name() == name; });
 	if (it != quests.end()) {
 		activeQuestPtr = *it;
@@ -16,7 +17,8 @@ void QuestManager::SetState(const std::string& name, Quest::State state) {
 	}
 }
 
-Quest::State QuestManager::GetState(const std::string& name) {
+Quest::State QuestManager::GetState(const std::string& name)
+{
 	auto it = std::find_if(quests.begin(), quests.end(), [&name](const Quest::Ptr& questPtr) { return questPtr->Name() == name; });
 	if (it != quests.end()) {
 		return (*it)->GetState();
@@ -24,24 +26,43 @@ Quest::State QuestManager::GetState(const std::string& name) {
 	return Quest::State::NONE;
 }
 
-void QuestManager::ActivateState(const std::string& name, Quest::State state) {
+void QuestManager::ActivateState(const std::string& name, Quest::State state)
+{
 	if (Quest::Ptr questPtr = QuestManager::GetQuest(name)) {
 		questPtr->ActivateState(state);
 	}
 }
 
-void QuestManager::Add(const Quest::Ptr& questPtr) {
+Quest::Ptr& QuestManager::Add(const std::string& classQuest, const std::string& nameQuest)
+{
+	if (classQuest == "QuestStart") {
+		return quests.emplace_back(new QuestStart(nameQuest));
+	}
+	else if (classQuest == "QuestSphere100") {
+		return quests.emplace_back(new QuestSphere100(nameQuest));
+	}
+	else if (classQuest == "QuestSphere") {
+		return quests.emplace_back(new QuestSphere(nameQuest));
+	}
+	
+	return quests.emplace_back(new Quest(nameQuest));
+}
+
+void QuestManager::Add(const Quest::Ptr& questPtr)
+{
 	quests.emplace_back(questPtr);
 }
 
-void QuestManager::Remove(const std::string& name) {
+void QuestManager::Remove(const std::string& name)
+{
 	auto it = std::find_if(quests.begin(), quests.end(), [&name](const Quest::Ptr& questPtr) { return questPtr->Name() == name; });
 	if (it != quests.end()) {
 		quests.erase(it);
 	}
 }
 
-Quest::Ptr QuestManager::GetQuest(const std::string& name) {
+Quest::Ptr QuestManager::GetQuest(const std::string& name)
+{
 	auto it = std::find_if(quests.begin(), quests.end(), [&name](const Quest::Ptr& questPtr) { return questPtr->Name() == name; });
 	if (it != quests.end()) {
 		return *it;
@@ -50,11 +71,34 @@ Quest::Ptr QuestManager::GetQuest(const std::string& name) {
 	return Quest::Ptr();
 }
 
-bool QuestManager::HasQuest(const std::string& name) {
+const std::vector<std::string>& QuestManager::GetListClasses()
+{
+	static const std::vector<std::string> listClasses = { "Quest", "QuestStart", "QuestSphere", "QuestSphere100" };
+	return listClasses;
+}
+
+std::string QuestManager::GetClassName(Quest::Ptr& questPtr)
+{
+	if (dynamic_cast<QuestStart*>(questPtr.get())) {
+		return "QuestStart";
+	}
+	else if (dynamic_cast<QuestSphere100*>(questPtr.get())) {
+		return "QuestSphere100";
+	}
+	else if (dynamic_cast<QuestSphere*>(questPtr.get())) {
+		return "QuestSphere";
+	}
+	
+	return "Quest";
+}
+
+bool QuestManager::HasQuest(const std::string& name)
+{
 	return quests.end() == std::find_if(quests.begin(), quests.end(), [&name](const Quest::Ptr& questPtr) { return questPtr->Name() == name; });
 }
 
-Quest::State QuestManager::StateFromString(const std::string& stateStr) {
+Quest::State QuestManager::StateFromString(const std::string& stateStr)
+{
 	if (stateStr == "DEACTIVETE") {
 		return Quest::State::DEACTIVE;
 	}
@@ -68,7 +112,8 @@ Quest::State QuestManager::StateFromString(const std::string& stateStr) {
 	return Quest::State::NONE;
 }
 
-void QuestManager::Load(const std::string& pathFileName) {
+void QuestManager::Load(const std::string& pathFileName)
+{
 	Json::Value valueDatas;
 
 	if (!help::loadJson(pathFileName, valueDatas)) {
@@ -94,29 +139,18 @@ void QuestManager::Load(const std::string& pathFileName) {
 
 		Json::Value& jsonClass = valueData["class"];
 		const std::string classStr = !jsonClass.empty() ? jsonClass.asString() : "Quest";
-		
+
 		Json::Value& jsonState = valueData["state"];
 		const std::string stateStr = !jsonState.empty() ? jsonState.asString() : "NONE";
 		Quest::State state = StateFromString(stateStr);
 
-		Quest* quest = nullptr;
-
-		if (classStr == "QuestStart") {
-			quest = quests.emplace_back(new QuestStart(questId)).get();
-
-		} else if (classStr == "QuestSphere100") {
-			quest = quests.emplace_back(new QuestSphere100(questId)).get();
-		}
-		else if (classStr == "QuestSphere") {
-			quest = quests.emplace_back(new QuestSphere(questId)).get();
-		}
-		else {
-			quest = quests.emplace_back(new Quest(questId)).get();
-		}
+		Quest::Ptr& questPtr = Add(classStr, questId);
+		Quest* quest = questPtr.get();
 
 		if (quest) {
 			quest->SetState(state);
 
+			// TODO:
 			{
 				Json::Value& jsonCommands = valueData["commands"];
 				if (!jsonCommands.empty()) {
@@ -161,18 +195,25 @@ void QuestManager::Load(const std::string& pathFileName) {
 					}
 				}
 			}
+
+			Json::Value& jsonDescription = valueData["description"];
+			if (jsonDescription.isString()) {
+				questPtr->_description = jsonDescription.asString();
+			}
 		}
 	}
 }
 
-void QuestManager::Reload() {
+void QuestManager::Reload()
+{
 	if (!lastPathFileName.empty()) {
 		quests.clear();
 		Load(lastPathFileName);
 	}
 }
 
-void QuestManager::Save(const std::string& pathFileName) {
+void QuestManager::Save(const std::string& pathFileName)
+{
 	const std::string* pathFileNamePtr = nullptr;
 
 	if (!pathFileName.empty()) {
@@ -188,21 +229,7 @@ void QuestManager::Save(const std::string& pathFileName) {
 		Json::Value questJson;
 
 		questJson["id"] = questPtr->Name();
-
-		// Class // TODO:
-
-		if (dynamic_cast<QuestStart*>(questPtr.get())) {
-			questJson["class"] = "QuestStart";
-		}
-		else if (dynamic_cast<QuestSphere100*>(questPtr.get())) {
-			questJson["class"] = "QuestSphere100";
-		}
-		else if (dynamic_cast<QuestSphere*>(questPtr.get())) {
-			questJson["class"] = "QuestSphere";
-		}
-		else if (dynamic_cast<Quest*>(questPtr.get())) {
-			questJson["class"] = "Quest";
-		}
+		questJson["class"] = GetClassName(questPtr);
 
 		// Params
 		Json::Value paramsJson;
@@ -211,6 +238,8 @@ void QuestManager::Save(const std::string& pathFileName) {
 		}
 		questJson["params"] = paramsJson;
 
+		questJson["description"] = questPtr->_description;
+
 		// Commands
 		auto appendCommande = [&questJson](Commands& commands, const std::string& name) {
 			if (commands.empty()) {
@@ -218,9 +247,10 @@ void QuestManager::Save(const std::string& pathFileName) {
 			}
 
 			Json::Value commandsJson;
-			Json::Value commandJson;
-
+		
 			for (Command& command : commands) {
+				Json::Value commandJson;
+
 				commandJson["id"] = command.id;
 				if (command.disable) {
 					commandJson["disable"] = command.disable;
@@ -245,7 +275,7 @@ void QuestManager::Save(const std::string& pathFileName) {
 		appendCommande(questPtr->_commands, "commands");
 		appendCommande(questPtr->_commandsOnTap, "commands_on_tap");
 		appendCommande(questPtr->_commandsOnCondition, "commands_on_condition");
-			
+
 		// Append quest
 		valueDatas.append(questJson);
 	}
@@ -253,14 +283,18 @@ void QuestManager::Save(const std::string& pathFileName) {
 	help::saveJson(*pathFileNamePtr, valueDatas, " ");
 }
 
-void QuestManager::Clear() {
+void QuestManager::Clear()
+{
 	quests.clear();
 }
 
-void QuestManager::Update() {
+void QuestManager::Update()
+{
 }
 
-void QuestManager::Condition(const std::vector<std::string>& params) {
+/// Compare #QUEST /count_boties/temp_number /==/>/>=/==/</<=/is_more/is_equal/is_more_or_equal/is_less/is_less_or_equal number
+void QuestManager::Condition(const std::vector<std::string>& params)
+{
 	if (params.size() < 4) {
 		return;
 	}
@@ -272,6 +306,18 @@ void QuestManager::Condition(const std::vector<std::string>& params) {
 
 	if (params[1] == "count_boties") {
 		int number = atoi(params[3].c_str());
+
+		if (quest::count_boties(params[2], number)) {
+			CommandManager::Run(questPtr->_commandsOnCondition);
+		}
+	}
+	else {
+		auto itNumber = questPtr->_params.find("temp_number");
+		if (itNumber == questPtr->_params.end() && itNumber->second.empty()) {
+			return;
+		}
+
+		int number = atoi(itNumber->second.c_str());
 
 		if (quest::count_boties(params[2], number)) {
 			CommandManager::Run(questPtr->_commandsOnCondition);

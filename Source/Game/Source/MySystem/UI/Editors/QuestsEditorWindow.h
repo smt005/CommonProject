@@ -61,6 +61,7 @@ namespace Editor {
 		void Clear();
 
 		void LoadEditorDatas();
+		void EditorDatasParceFile(const std::string& filePathHame);
 
 		std::pair<int, const std::vector<const char*>&> GetIndexOfListByName(const std::string& text, const std::string& nameList);
 		int GetIndexOfList(const std::string& text, const std::vector<const char*>& listTexts);

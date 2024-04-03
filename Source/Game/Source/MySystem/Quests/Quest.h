@@ -7,11 +7,13 @@
 #include <MyStl/shared.h>
 #include "../Commands/Commands.h"
 
-class Quest {
+class Quest
+{
 public:
 	using Ptr = mystd::shared<Quest>;
 
-	enum class State {
+	enum class State
+	{
 		NONE,
 		DEACTIVE,
 		ACTIVE,
@@ -20,7 +22,9 @@ public:
 
 public:
 	Quest() = delete;
-	Quest(const std::string& name): _name(name) {}
+	Quest(const std::string& name)
+		: _name(name)
+	{}
 
 	virtual ~Quest() = default;
 
@@ -30,11 +34,13 @@ public:
 	virtual void Update() {};
 
 	const std::string& Name() const { return _name; };
-	void SetState(State state) {
+	void SetState(State state)
+	{
 		_state = state;
 	}
 
-	void ActivateState(State state = State::NONE) {
+	void ActivateState(State state = State::NONE)
+	{
 		if (state != State::NONE) {
 			SetState(state);
 		}
@@ -58,6 +64,7 @@ public:
 	std::string _name;
 	State _state = State::DEACTIVE;
 	std::map<std::string, std::string> _params;
+	std::string _description;
 
 	Commands _commands;
 	Commands _commandsOnTap;

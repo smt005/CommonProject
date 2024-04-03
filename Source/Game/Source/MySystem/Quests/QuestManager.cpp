@@ -260,9 +260,6 @@ void QuestManager::Save(const std::string& pathFileName)
 				if (command.disable) {
 					commandJson["disable"] = command.disable;
 				}
-				if (!command.tag.empty()) {
-					commandJson["tag"] = command.tag;
-				}
 
 				if (!command.parameters.empty()) {
 					Json::Value paramsJson;

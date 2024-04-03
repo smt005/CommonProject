@@ -11,24 +11,21 @@
      "1",
      "1",
      "1"
-    ],
-    "tag" : "Logo"
+    ]
    },
    {
     "id" : "ShowImage",
     "params" : 
     [
      "Logo"
-    ],
-    "tag" : "Logo"
+    ]
    },
    {
     "id" : "ShowText",
     "params" : 
     [
      "Tap to next!"
-    ],
-    "tag" : "Logo"
+    ]
    }
   ],
   "commands_on_tap" : 
@@ -38,12 +35,10 @@
     "params" : 
     [
      "Logo"
-    ],
-    "tag" : "Logo"
+    ]
    },
    {
-    "id" : "HideText",
-    "tag" : "Logo"
+    "id" : "HideText"
    },
    {
     "id" : "SetActiveQuest",
@@ -51,8 +46,7 @@
     [
      "FirstBody",
      "ACTIVE"
-    ],
-    "tag" : "Logo"
+    ]
    },
    {
     "id" : "SetActiveQuest",
@@ -60,8 +54,7 @@
     [
      "Logo",
      "DEACTIVE"
-    ],
-    "tag" : "Logo"
+    ]
    }
   ],
   "description" : "First quest on start game.",
@@ -79,48 +72,42 @@
      "0.2",
      "0.3",
      "1"
-    ],
-    "tag" : "FirstBody"
+    ]
    },
    {
     "id" : "SetProcess",
     "params" : 
     [
      "CPU"
-    ],
-    "tag" : "FirstBody"
+    ]
    },
    {
     "id" : "SetMultithread",
     "params" : 
     [
      "false"
-    ],
-    "tag" : "FirstBody"
+    ]
    },
    {
     "id" : "CreateSpace",
     "params" : 
     [
      "MAIN"
-    ],
-    "tag" : "FirstBody"
+    ]
    },
    {
     "id" : "CountOfIteration",
     "params" : 
     [
      "100"
-    ],
-    "tag" : "FirstBody"
+    ]
    },
    {
     "id" : "ShowText",
     "params" : 
     [
      "Create first body."
-    ],
-    "tag" : "FirstBody"
+    ]
    }
   ],
   "commands_on_condition" : 
@@ -131,8 +118,7 @@
     [
      "ThreeBody",
      "ACTIVE"
-    ],
-    "tag" : "FirstBody"
+    ]
    },
    {
     "id" : "SetActiveQuest",
@@ -140,8 +126,7 @@
     [
      "FirstBody",
      "DEACTIVE"
-    ],
-    "tag" : "FirstBody"
+    ]
    }
   ],
   "commands_on_tap" : 
@@ -156,8 +141,7 @@
      "0",
      "0",
      "10"
-    ],
-    "tag" : "FirstBody"
+    ]
    },
    {
     "id" : "QuestCondition",
@@ -167,12 +151,10 @@
      "count_boties",
      ">=",
      "1"
-    ],
-    "tag" : "FirstBody"
+    ]
    },
    {
-    "id" : "HideText",
-    "tag" : "FirstBody"
+    "id" : "HideText"
    }
   ],
   "description" : "Create first body.",
@@ -190,23 +172,20 @@
      "0.4",
      "0.6",
      "1"
-    ],
-    "tag" : "ThreeBody"
+    ]
    },
    {
     "id" : "ShowText",
     "params" : 
     [
      "Create 10 bodies."
-    ],
-    "tag" : "ThreeBody"
+    ]
    }
   ],
   "commands_on_condition" : 
   [
    {
-    "id" : "ClearSpace",
-    "tag" : "ThreeBody"
+    "id" : "ClearSpace"
    },
    {
     "id" : "OpenWindow",
@@ -215,8 +194,7 @@
      "RewardWindow",
      "",
      "10 bodies createt.\nReset & repeate quest."
-    ],
-    "tag" : "ThreeBody"
+    ]
    }
   ],
   "commands_on_tap" : 
@@ -231,8 +209,7 @@
      "0",
      "0",
      "10"
-    ],
-    "tag" : "ThreeBody"
+    ]
    },
    {
     "id" : "QuestCondition",
@@ -242,8 +219,7 @@
      "count_boties",
      ">=",
      "10"
-    ],
-    "tag" : "ThreeBody"
+    ]
    }
   ],
   "id" : "ThreeBody"

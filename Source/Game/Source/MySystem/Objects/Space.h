@@ -52,6 +52,8 @@ public:
 	void SetSkyBoxModel(const std::string& modelName);
 	Model& SkyBoxMode();
 
+	Math::Vector3& GetMaxSpeed();
+
 public:
 	virtual std::string GetNameClass();
 
@@ -70,7 +72,7 @@ public:
 	bool processGPU = false;
 	bool multithread = false;
 	int tag = 0;
-
+	
 	std::map<std::string, std::string> _params;
 	std::vector<Body::Ptr> _bodies;
 
@@ -79,4 +81,6 @@ public:
 	Body::Ptr _focusBody;
 	Body::Ptr _selectBody;
 	std::vector<std::pair<Body::Ptr, std::string>> _heaviestInfo;
+
+	Math::Vector3 _maxSpeed;
 };

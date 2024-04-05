@@ -256,6 +256,7 @@ namespace commands
 			const std::string& questName = questPtr->Name();
 
 			EventOnTap::Instance().Remove(questName);
+			EventOnUpdate::Instance().Remove(questName);
 		}
 	}
 

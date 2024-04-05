@@ -20,6 +20,7 @@
 #include "Objects/SpaceTree02.h"
 #include "Quests/QuestManager.h"
 #include "Commands/Commands.h"
+#include "Commands/Events.h"
 
 std::shared_ptr<Space> MySystem::currentSpace;
 const std::string saveFileName("../../../Executable/Save.json");
@@ -42,7 +43,7 @@ void MySystem::close() {
 }
 
 void MySystem::update() {
-	QuestManager::Update();
+	EventOnUpdate::Instance().Action();
 
 	if (!currentSpace) {
 		return;

@@ -10,6 +10,9 @@
   "commands_on_init" : 
   [
    {
+    "id" : "ClearAll"
+   },
+   {
     "id" : "SetClearColor",
     "params" : 
     [
@@ -161,7 +164,7 @@
     "params" : 
     [
      "FirstBody",
-     "count_boties",
+     "count_bodies",
      ">=",
      "1"
     ]
@@ -203,15 +206,11 @@
   "commands_on_condition" : 
   [
    {
-    "id" : "ClearSpace"
-   },
-   {
-    "id" : "OpenWindow",
+    "id" : "SetActiveQuest",
     "params" : 
     [
-     "RewardWindow",
-     "Logo",
-     "10 bodies createt.\nReset & repeate quest."
+     "FastSpeedBody",
+     "ACTIVE"
     ]
    },
    {
@@ -239,7 +238,7 @@
     "id" : "ShowText",
     "params" : 
     [
-     "Try to create 10 bodies simultaneously in space."
+     "Try to create 7 bodies simultaneously in space."
     ]
    }
   ],
@@ -249,7 +248,7 @@
     "id" : "AddBodyToMousePos",
     "params" : 
     [
-     "BrownStone_x10",
+     "BrownStone",
      "ToMousePos",
      "0",
      "0",
@@ -262,13 +261,107 @@
     "params" : 
     [
      "FirstTenBodies",
-     "count_boties",
+     "count_bodies",
      ">=",
-     "10"
+     "7"
     ]
    }
   ],
   "description" : "Create 10 bodies. For it, need zoom out.",
   "id" : "FirstTenBodies"
+ },
+ {
+  "class" : "QuestStart",
+  "commands_debug" : 
+  [
+   {
+    "id" : "CreateSpace",
+    "params" : 
+    [
+     "MAIN",
+     "Try"
+    ]
+   }
+  ],
+  "commands_on_condition" : 
+  [
+   {
+    "id" : "SetClearColor",
+    "params" : 
+    [
+     "0.333",
+     "0.666",
+     "0.999",
+     "1"
+    ]
+   },
+   {
+    "id" : "OpenWindow",
+    "params" : 
+    [
+     "RewardWindow",
+     "Logo",
+     "FINISH! Repeat game."
+    ]
+   },
+   {
+    "id" : "SetActiveQuest",
+    "params" : 
+    [
+     "FastSpeedBody",
+     "DEACTIVE"
+    ]
+   }
+  ],
+  "commands_on_init" : 
+  [
+   {
+    "id" : "SetClearColor",
+    "params" : 
+    [
+     "0.3",
+     "0.6",
+     "0.9",
+     "1.0"
+    ]
+   },
+   {
+    "id" : "ShowText",
+    "params" : 
+    [
+     "Make fast speed more then 10."
+    ]
+   }
+  ],
+  "commands_on_tap" : 
+  [
+   {
+    "id" : "AddBodyToMousePos",
+    "params" : 
+    [
+     "BrownStone",
+     "ToMousePos",
+     "0",
+     "0",
+     "0",
+     "10"
+    ]
+   }
+  ],
+  "commands_on_update" : 
+  [
+   {
+    "id" : "QuestCondition",
+    "params" : 
+    [
+     "FastSpeedBody",
+     "max_speed_body",
+     ">=",
+     "0.05"
+    ]
+   }
+  ],
+  "description" : "Make it so that the maximum speed of the body is greater than 0.1. For test 0.05",
+  "id" : "FastSpeedBody"
  }
 ]

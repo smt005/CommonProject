@@ -4,5 +4,6 @@
 #include <string>
 
 namespace quest {
-	bool count_boties(const std::string& expressions, int number);
+	bool count_bodies(const std::string& expressions, int number);
+	bool max_speed_body(const std::string& expressions, float speed);
 }

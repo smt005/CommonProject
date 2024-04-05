@@ -67,6 +67,7 @@ public:
 
 	Commands _commandsOnInit;
 	Commands _commandsOnTap;
+	Commands _commandsOnUpdate;
 	Commands _commandsOnCondition;
 	Commands _commandsDebug;
 };

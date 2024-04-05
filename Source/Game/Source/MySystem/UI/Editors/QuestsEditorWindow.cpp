@@ -180,8 +180,9 @@ namespace Editor {
 
             DrawCommands(_selectQuest->_commandsOnInit,      observerLists.dataList[0]);
             DrawCommands(_selectQuest->_commandsOnTap,       observerLists.dataList[1]);
-            DrawCommands(_selectQuest->_commandsOnCondition, observerLists.dataList[2]);
-            DrawCommands(_selectQuest->_commandsDebug,       observerLists.dataList[3]);
+            DrawCommands(_selectQuest->_commandsOnUpdate,    observerLists.dataList[2]);
+            DrawCommands(_selectQuest->_commandsOnCondition, observerLists.dataList[3]);
+            DrawCommands(_selectQuest->_commandsDebug,       observerLists.dataList[4]);
 
             ImGui::EndChild();
 
@@ -197,10 +198,10 @@ namespace Editor {
             return;
         }
 
+        int countCommands = commands.size();
         std::function<void(void)> fun;
 
-        if (ImGui::CollapsingHeader(title.c_str())) {
-            int countCommands = commands.size();
+        if (ImGui::CollapsingHeader((title + " (" + std::to_string(countCommands) + ")").c_str())) {
             for (int index = 0; index < countCommands; ++index) {
                 Command& command = commands[index];
 
@@ -381,9 +382,12 @@ namespace Editor {
                 commands = &_selectQuest->_commandsOnTap;
             } break;
             case 2: {
-                commands = &_selectQuest->_commandsOnCondition;
+                commands = &_selectQuest->_commandsOnUpdate;
             } break;
             case 3: {
+                commands = &_selectQuest->_commandsOnCondition;
+            } break;
+            case 4: {
                 commands = &_selectQuest->_commandsDebug;
             } break;
             default:
@@ -453,18 +457,6 @@ namespace Editor {
 
         ImGui::SameLine();
         if (ImGui::Button("Start this quest.", { buttonWidth, buttonHeight })) {
-            /*Commands commands;
-            commands.reserve(2 + _selectQuest->_commandsDebug.size()); // +3 для ClearAll, CreateSpace, SetActiveQuest
-
-            commands.emplace_back("ClearAll");
-            //commands.emplace_back("CreateSpace", Parameters{ _selectQuest->Name() });
-
-            commands.insert(commands.end(), _selectQuest->_commandsDebug.begin(), _selectQuest->_commandsDebug.end());
-
-            commands.emplace_back("SetActiveQuest", Parameters{ _selectQuest->Name(), "ACTIVE" });
-
-            CommandManager::Run(std::forward<Commands>(commands));*/
-
             CommandManager::Run(Command{ "StartQuest", { _selectQuest->Name() } });
             Close();
         }
@@ -588,6 +580,7 @@ namespace Editor {
         // Observers
         observerLists.Add("Commands on init");
         observerLists.Add("commands on tap");
+        observerLists.Add("commands on update");
         observerLists.Add("commands on condition");
         observerLists.Add("commands debug");
         observerLists.MakeViewData();

@@ -13,8 +13,11 @@
 void QuestStart::Activete()
 {
 	if (!_commandsOnTap.empty()) {
-		EventOnTap::Instance().Add(_name, [commandsOnTap = _commandsOnTap]() {
-			CommandManager::Run(commandsOnTap);
+		EventOnTap::Instance().Add(_name, [commands = _commandsOnTap]() {
+			CommandManager::Run(commands);
+		});
+		EventOnUpdate::Instance().Add(_name, [commands = _commandsOnUpdate]() {
+			CommandManager::Run(commands);
 		});
 	}
 }
@@ -22,6 +25,7 @@ void QuestStart::Activete()
 void QuestStart::Deactivation()
 {
 	EventOnTap::Instance().Remove(_name);
+	EventOnUpdate::Instance().Remove(_name);
 }
 
 // QuestSphere100

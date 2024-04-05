@@ -150,49 +150,23 @@ void QuestManager::Load(const std::string& pathFileName)
 		if (quest) {
 			quest->SetState(state);
 
-			// TODO:
-			{
-				Json::Value& jsonCommands = valueData["commands_on_init"];
+			// Commands
+			auto parceCommande = [&valueData, &questId](Commands& commands, const std::string& name) {
+				Json::Value& jsonCommands = valueData[name];
 				if (!jsonCommands.empty()) {
-					quest->_commandsOnInit = CommandManager::Load(jsonCommands);
+					commands = CommandManager::Load(jsonCommands);
 
-					for (Command& conmmand : quest->_commandsOnInit) {
+					for (Command& conmmand : commands) {
 						conmmand.tag = questId;
 					}
 				}
-			}
+			};
 
-			{
-				Json::Value& jsonCommands = valueData["commands_on_tap"];
-				if (!jsonCommands.empty()) {
-					quest->_commandsOnTap = CommandManager::Load(jsonCommands);
-
-					for (Command& conmmand : quest->_commandsOnTap) {
-						conmmand.tag = questId;
-					}
-				}
-			}
-
-			{
-				Json::Value& jsonCommands = valueData["commands_on_condition"];
-				if (!jsonCommands.empty()) {
-					quest->_commandsOnCondition = CommandManager::Load(jsonCommands);
-
-					for (Command& conmmand : quest->_commandsOnCondition) {
-						conmmand.tag = questId;
-					}
-				}
-			}
-			{
-				Json::Value& jsonCommands = valueData["commands_debug"];
-				if (!jsonCommands.empty()) {
-					quest->_commandsDebug = CommandManager::Load(jsonCommands);
-
-					for (Command& conmmand : quest->_commandsDebug) {
-						conmmand.tag = questId;
-					}
-				}
-			}
+			parceCommande(quest->_commandsOnInit, "commands_on_init");
+			parceCommande(quest->_commandsOnTap, "commands_on_tap");
+			parceCommande(quest->_commandsOnUpdate, "commands_on_update");
+			parceCommande(quest->_commandsOnCondition, "commands_on_condition");
+			parceCommande(quest->_commandsDebug, "commands_debug");
 
 			Json::Value& jsonParams = valueData["params"];
 			if (!jsonParams.empty() && jsonParams.isObject()) {
@@ -289,6 +263,7 @@ void QuestManager::Save(const std::string& pathFileName)
 
 		appendCommande(questPtr->_commandsOnInit, "commands_on_init");
 		appendCommande(questPtr->_commandsOnTap, "commands_on_tap");
+		appendCommande(questPtr->_commandsOnUpdate, "commands_on_update");
 		appendCommande(questPtr->_commandsOnCondition, "commands_on_condition");
 		appendCommande(questPtr->_commandsDebug, "commands_debug");
 
@@ -308,7 +283,7 @@ void QuestManager::Update()
 {
 }
 
-/// QuestCondition #QUEST /count_boties/temp_number /==/>/>=/==/</<=/is_more/is_equal/is_more_or_equal/is_less/is_less_or_equal number
+/// QuestCondition #QUEST /count_boties/max_speed_body/temp_number /==/>/>=/==/</<=/is_more/is_equal/is_more_or_equal/is_less/is_less_or_equal number
 void QuestManager::Condition(const std::vector<std::string>& params)
 {
 	if (params.size() < 4) {
@@ -320,22 +295,30 @@ void QuestManager::Condition(const std::vector<std::string>& params)
 		return;
 	}
 
-	if (params[1] == "count_boties") {
+	// TODO:
+	if (params[1] == "count_bodies") {
 		int number = atoi(params[3].c_str());
 
-		if (quest::count_boties(params[2], number)) {
+		if (quest::count_bodies(params[2], number)) {
+			CommandManager::Run(questPtr->_commandsOnCondition);
+		}
+	}
+	else if (params[1] == "max_speed_body") {
+		float speed = atof(params[3].c_str());
+
+		if (quest::max_speed_body(params[2], speed)) {
 			CommandManager::Run(questPtr->_commandsOnCondition);
 		}
 	}
 	else {
-		auto itNumber = questPtr->_params.find("temp_number");
+		auto itNumber = questPtr->_params.find("temp_value");
 		if (itNumber == questPtr->_params.end() && itNumber->second.empty()) {
 			return;
 		}
 
 		int number = atoi(itNumber->second.c_str());
 
-		if (quest::count_boties(params[2], number)) {
+		if (quest::count_bodies(params[2], number)) {
 			CommandManager::Run(questPtr->_commandsOnCondition);
 		}
 	}

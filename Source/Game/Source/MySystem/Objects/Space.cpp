@@ -268,6 +268,23 @@ std::pair<bool, Body&> Space::RefFocusBody() {
 	return {false, defaultBody};
 }
 
+Math::Vector3& Space::GetMaxSpeed()
+{
+	_maxSpeed = 0.f;
+	float maxSpeed = 0.f;
+	float speed = 0.f;
+
+	for (const Body::Ptr& bodyPtr : _bodies) {
+		speed = bodyPtr->Velocity().length();
+
+		if (speed > maxSpeed) {
+			_maxSpeed = bodyPtr->Velocity();
+		}
+	}
+
+	return _maxSpeed;
+}
+
 std::string Space::GetNameClass() {
 	return Engine::GetClassName(this);
 }

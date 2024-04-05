@@ -1,6 +1,7 @@
 // ◦ Xyz ◦
 #include "RewardWindow.h"
 #include <imgui.h>
+#include <imgui_internal.h>
 #include <Screen.h>
 #include "../Commands/Commands.h"
 
@@ -13,15 +14,31 @@ RewardWindow::RewardWindow(const std::string& nextQuest, const std::string& rewa
 void RewardWindow::OnOpen() {
     SetFlag(ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
 
-    float x = Engine::Screen::width() / 2.f - _width / 2.f;
-    float y = Engine::Screen::height() / 2.f - _height / 2.f;
-
+    float x = 100.f;
+    float y = 100.f;
     ImGui::SetWindowPos(Id().c_str(), { x, y });
-    ImGui::SetWindowSize(Id().c_str(), { _width, _height });
+
+    _screenWidth = Engine::Screen::width();
+    OnResize();
 }
 
 void RewardWindow::OnClose() {
     CommandManager::Run(Command("SetActiveQuest", { _nextQuest, "ACTIVE" }));
+}
+
+void RewardWindow::Update()
+{
+    float screenWidth = Engine::Screen::width();
+    if (screenWidth != _screenWidth) {
+        _screenWidth = screenWidth;
+        OnResize();
+    }
+}
+
+void RewardWindow::OnResize()
+{
+    _width = _screenWidth - 200.f;
+    ImGui::SetWindowSize(Id().c_str(), { _width, _height });
 }
 
 void RewardWindow::Draw() {
@@ -29,11 +46,24 @@ void RewardWindow::Draw() {
 
     ImGui::Text(_rewardText.c_str());
 
-    ImGui::Dummy(ImVec2(0.f, 5.f));
+    ImGui::Dummy(ImVec2(0.f, 50.f));
     ImGui::Separator();
-    ImGui::Dummy(ImVec2(0.f, 5.f));
 
-    if (ImGui::Button("Next", { 180.f, 32.f})) {
+    //ImGui::BeginGroup();
+    //ImGui::SameLine(_width - 200.f);
+    //ImGui::Dummy(ImVec2(0.f, 4.f));
+    //ImGui::SameLine(_width - 200.f);
+    //ImGui::Dummy(ImVec2(0.f, 5.f));
+    //ImGui::BeginChild("buttons", { _width, 40.f }, false);
+    
+    ImGui::Dummy(ImVec2(0.f, 1.f));
+    //
+    ImGui::Text("Complete quest.");
+
+    ImGui::SameLine(_width - 200.f);
+    if (ImGui::Button("Next", { 180.f, 32.f })) {
         Close();
     }
+    //ImGui::EndChild();
+    //ImGui::EndGroup();
 }

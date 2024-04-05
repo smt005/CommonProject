@@ -1,7 +1,13 @@
 [
  {
   "class" : "QuestStart",
-  "commands" : 
+  "commands_debug" : 
+  [
+   {
+    "id" : "ClearAll"
+   }
+  ],
+  "commands_on_init" : 
   [
    {
     "id" : "SetClearColor",
@@ -62,7 +68,32 @@
  },
  {
   "class" : "QuestStart",
-  "commands" : 
+  "commands_debug" : 
+  [
+   {
+    "id" : "ClearAll"
+   }
+  ],
+  "commands_on_condition" : 
+  [
+   {
+    "id" : "SetActiveQuest",
+    "params" : 
+    [
+     "FirstTenBodies",
+     "ACTIVE"
+    ]
+   },
+   {
+    "id" : "SetActiveQuest",
+    "params" : 
+    [
+     "FirstBody",
+     "DEACTIVE"
+    ]
+   }
+  ],
+  "commands_on_init" : 
   [
    {
     "id" : "SetClearColor",
@@ -92,7 +123,8 @@
     "id" : "CreateSpace",
     "params" : 
     [
-     "MAIN"
+     "MAIN",
+     ""
     ]
    },
    {
@@ -107,25 +139,6 @@
     "params" : 
     [
      "Create first body."
-    ]
-   }
-  ],
-  "commands_on_condition" : 
-  [
-   {
-    "id" : "SetActiveQuest",
-    "params" : 
-    [
-     "ThreeBody",
-     "ACTIVE"
-    ]
-   },
-   {
-    "id" : "SetActiveQuest",
-    "params" : 
-    [
-     "FirstBody",
-     "DEACTIVE"
     ]
    }
   ],
@@ -162,7 +175,55 @@
  },
  {
   "class" : "QuestStart",
-  "commands" : 
+  "commands_debug" : 
+  [
+   {
+    "id" : "CreateSpace",
+    "params" : 
+    [
+     "MAIN",
+     "Try"
+    ]
+   },
+   {
+    "id" : "AddBodyToPos",
+    "params" : 
+    [
+     "BrownStone",
+     "0",
+     "0",
+     "0",
+     "0",
+     "0",
+     "0",
+     "10"
+    ]
+   }
+  ],
+  "commands_on_condition" : 
+  [
+   {
+    "id" : "ClearSpace"
+   },
+   {
+    "id" : "OpenWindow",
+    "params" : 
+    [
+     "RewardWindow",
+     "Logo",
+     "10 bodies createt.\nReset & repeate quest."
+    ]
+   },
+   {
+    "id" : "SetActiveQuest",
+    "params" : 
+    [
+     "FirstTenBodies",
+     "DEACTIVE"
+    ]
+   }
+  ],
+  "commands_on_init" : 
   [
    {
     "id" : "SetClearColor",
@@ -178,22 +239,7 @@
     "id" : "ShowText",
     "params" : 
     [
-     "Create 10 bodies."
-    ]
-   }
-  ],
-  "commands_on_condition" : 
-  [
-   {
-    "id" : "ClearSpace"
-   },
-   {
-    "id" : "OpenWindow",
-    "params" : 
-    [
-     "RewardWindow",
-     "",
-     "10 bodies createt.\nReset & repeate quest."
+     "Try to create 10 bodies simultaneously in space."
     ]
    }
   ],
@@ -215,13 +261,14 @@
     "id" : "QuestCondition",
     "params" : 
     [
-     "ThreeBody",
+     "FirstTenBodies",
      "count_boties",
      ">=",
      "10"
     ]
    }
   ],
-  "id" : "ThreeBody"
+  "description" : "Create 10 bodies. For it, need zoom out.",
+  "id" : "FirstTenBodies"
  }
 ]

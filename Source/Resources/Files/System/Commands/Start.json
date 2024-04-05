@@ -1,8 +1,5 @@
 [
   {
-    "id": "ClearSpace"
-  },
-  {
     "id": "ClearQuests"
   },
   {
@@ -12,34 +9,9 @@
     ]
   },
   {
-    "id": "SetActiveQuest",
-	"disable": false,
+    "id": "StartQuest",
     "params": [
-      "Logo",
-      "ACTIVE"
-    ]
-  },
-  {
-    "id": "SetActiveQuest",
-	"disable": true,
-    "params": [
-      "Quest100",
-      "ACTIVE"
-    ]
-  },
-  {
-    "id": "SetActiveQuest",
-	"disable": true,
-    "params": [
-      "QuestN",
-      "ACTIVE"
-    ]
-  },
-  {
-    "id": "OpenWindow",
-	"_disable": true,
-    "params": [
-      "QuestsEditorWindow"
+      "Logo"
     ]
   }
 ]

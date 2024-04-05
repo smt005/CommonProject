@@ -24,7 +24,6 @@ public:
 	static void Save(const std::string& pathFileName = std::string());
 	static void Clear();
 	static void Update();
-
 	static void Condition(const std::vector<std::string>& params);
 
 	static std::vector<Quest::Ptr>& GetQuests()

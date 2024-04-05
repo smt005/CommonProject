@@ -30,7 +30,7 @@ void QuestsWindow::Draw() {
             for (const Quest::Ptr& questPtr : QuestManager::GetQuests()) {
                 Event::Instance().Remove(questPtr->Name());
             }
-            CommandManager::Run(Command("SetActiveQuest", { questPtr->Name(), "ACTIVE" }));
+            CommandManager::Run(Command("StartQuest", { questPtr->Name() }));
         }
     }
 

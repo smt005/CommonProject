@@ -68,7 +68,7 @@ Quest::Ptr QuestManager::GetQuest(const std::string& name)
 		return *it;
 	}
 
-	return Quest::Ptr();
+	return Quest::Ptr(new Quest("EMPTY"));
 }
 
 const std::vector<std::string>& QuestManager::GetListClasses()
@@ -152,11 +152,11 @@ void QuestManager::Load(const std::string& pathFileName)
 
 			// TODO:
 			{
-				Json::Value& jsonCommands = valueData["commands"];
+				Json::Value& jsonCommands = valueData["commands_on_init"];
 				if (!jsonCommands.empty()) {
-					quest->_commands = CommandManager::Load(jsonCommands);
+					quest->_commandsOnInit = CommandManager::Load(jsonCommands);
 
-					for (Command& conmmand : quest->_commands) {
+					for (Command& conmmand : quest->_commandsOnInit) {
 						conmmand.tag = questId;
 					}
 				}
@@ -179,6 +179,16 @@ void QuestManager::Load(const std::string& pathFileName)
 					quest->_commandsOnCondition = CommandManager::Load(jsonCommands);
 
 					for (Command& conmmand : quest->_commandsOnCondition) {
+						conmmand.tag = questId;
+					}
+				}
+			}
+			{
+				Json::Value& jsonCommands = valueData["commands_debug"];
+				if (!jsonCommands.empty()) {
+					quest->_commandsDebug = CommandManager::Load(jsonCommands);
+
+					for (Command& conmmand : quest->_commandsDebug) {
 						conmmand.tag = questId;
 					}
 				}
@@ -277,9 +287,10 @@ void QuestManager::Save(const std::string& pathFileName)
 			questJson[name] = commandsJson;
 		};
 
-		appendCommande(questPtr->_commands, "commands");
+		appendCommande(questPtr->_commandsOnInit, "commands_on_init");
 		appendCommande(questPtr->_commandsOnTap, "commands_on_tap");
 		appendCommande(questPtr->_commandsOnCondition, "commands_on_condition");
+		appendCommande(questPtr->_commandsDebug, "commands_debug");
 
 		// Append quest
 		valueDatas.append(questJson);

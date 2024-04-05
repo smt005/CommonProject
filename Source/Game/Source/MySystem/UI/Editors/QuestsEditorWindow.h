@@ -17,7 +17,9 @@ namespace Editor {
 			std::string name;
 			std::vector<std::string> params;
 			EditorCommand() = default;
-			EditorCommand(const std::string& _name) :name(_name) {}
+			EditorCommand(const std::string& _name) : name(_name) {}
+
+			static std::string emptyName;
 		};
 
 		struct EditorList {
@@ -25,7 +27,7 @@ namespace Editor {
 			std::vector<const char*> viewList;
 
 			void Add(const std::string& text) {
-				std::string newText = dataList.emplace_back(text);
+				dataList.emplace_back(text);
 			}
 			void MakeViewData() {
 				viewList.clear();

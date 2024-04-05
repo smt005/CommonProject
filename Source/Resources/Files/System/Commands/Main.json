@@ -1,26 +1,14 @@
 [
   {
-    "id": "ClearQuests"
+    "id": "RunCommands",
+    "params": [
+      "Commands/Start.json"
+    ]
   },
   {
     "id": "OpenWindow",
-    "disable": true,
     "params": [
-      "CommandsWindow"
-    ]
-  },
-  {
-    "id": "RunCommands",
-    "disable": true,
-    "params": [
-      "Commands/EmptySpace.json"
-    ]
-  },
-  {
-    "id": "RunCommands",
-    "disable": false,
-    "params": [
-      "Commands/Start.json"
+      "QuestsEditorWindow"
     ]
   }
 ]

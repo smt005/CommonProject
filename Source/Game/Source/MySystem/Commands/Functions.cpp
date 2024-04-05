@@ -2,9 +2,11 @@
 #include "Functions.h"
 
 // Common
+#include <MyStl/Event.h>
 #include "MySystem/MySystem.h"
 #include "../Objects/Space.h"
 #include "../../MySystem/Objects/SpaceManager.h"
+#include "../Commands/Events.h"
 
 #include "../../CUDA/Source/Wrapper.h"
 #include <iostream>
@@ -22,6 +24,7 @@
 #include "../UI/Editors/QuestsEditorWindow.h"
 
 // Quest
+#include "../Quests/Quest.h"
 #include "../Quests/QuestManager.h"
 
 namespace commands
@@ -241,11 +244,39 @@ namespace commands
 		}
 	}
 
-	/// CreateSpace string
-	void CreateSpace(const std::string& name)
+	/// ClearAll
+	void ClearAll()
 	{
-		MySystem::currentSpace = SpaceManager::Load(name);
-		MySystem::currentSpace->Preparation();
+		MySystem::currentSpace.reset();
+		CommonData::textOnScreen.clear();
+		CommonData::nameImageList.clear();
+
+		for (Quest::Ptr& questPtr : QuestManager::GetQuests()) {
+			questPtr->SetState(Quest::State::NONE);
+			const std::string& questName = questPtr->Name();
+
+			EventOnTap::Instance().Remove(questName);
+		}
+	}
+
+	/// CreateSpace string /Try/Force
+	void CreateSpace(const std::vector<std::string>& params)
+	{
+		const std::string& name = params[0];
+
+		bool createForce = true;
+		if (params.size() >= 2) {
+			createForce = params[0] == "Force";
+		}
+
+		if (createForce) {
+			MySystem::currentSpace.reset();
+		}
+
+		if (!MySystem::currentSpace) {
+			MySystem::currentSpace = SpaceManager::Load(name);
+			MySystem::currentSpace->Preparation();
+		}
 	}
 
 	/// AddBodyToPos #MODEL number number number number number number number
@@ -309,6 +340,21 @@ namespace commands
 		SpaceManager::AddObject(nameModel, pos, vel, mass);
 	}
 
+	/// StartQuest #QUEST
+	void StartQuest(const std::string& name) {
+		if (Quest::Ptr questPtr = QuestManager::GetQuest(name)) {
+			Commands& commandsDebug = questPtr->_commandsDebug;
+			Commands commands;
+
+			commands.reserve(2 + questPtr->_commandsDebug.size()); // +2 для ClearAll, SetActiveQuest
+			commands.emplace_back("ClearAll");
+			commands.insert(commands.end(), commandsDebug.begin(), commandsDebug.end());
+			commands.emplace_back("SetActiveQuest", Parameters{ questPtr->Name(), "ACTIVE" });
+
+			CommandManager::Run(std::forward<Commands>(commands));
+		}
+	}
+
 	/// SetActiveQuest #QUEST /ACTIVE/DEACTIVE
 
 	//..................................................................
@@ -326,6 +372,12 @@ namespace commands
 			if (comand.parameters.size() >= 2) {
 				CommandLog(comand);
 				QuestManager::SetState(comand.parameters[0], QuestManager::StateFromString(comand.parameters[1]));
+			}
+		}
+		else if (comandId == "StartQuest") {
+			if (!comand.parameters.empty()) {
+				CommandLog(comand);
+				StartQuest(comand.parameters.front());
 			}
 		}
 		else if (comandId == "LoadQuests") {
@@ -391,10 +443,13 @@ namespace commands
 		else if (comandId == "ClearSpace") {
 			ClearSpace();
 		}
+		else if (comandId == "ClearAll") {
+			ClearAll();
+		}
 		else if (comandId == "CreateSpace") {
 			CommandLog(comand);
 			if (!comand.parameters.empty()) {
-				CreateSpace(comand.parameters.front());
+				CreateSpace(comand.parameters);
 			}
 		}
 		else if (comandId == "AddBodyToPos") {

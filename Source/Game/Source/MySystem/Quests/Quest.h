@@ -46,11 +46,10 @@ public:
 		}
 
 		if (_state == Quest::State::ACTIVE) {
-			CommandManager::Run(_commands);
+			CommandManager::Run(_commandsOnInit);
 			Activete();
 		}
 		else if (_state == Quest::State::DEACTIVE) {
-			//CommandManager::Run(XXX);
 			Deactivation();
 		}
 		else if (_state == Quest::State::COMPLETE) {
@@ -66,7 +65,8 @@ public:
 	std::map<std::string, std::string> _params;
 	std::string _description;
 
-	Commands _commands;
+	Commands _commandsOnInit;
 	Commands _commandsOnTap;
 	Commands _commandsOnCondition;
+	Commands _commandsDebug;
 };

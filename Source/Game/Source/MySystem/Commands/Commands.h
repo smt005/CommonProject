@@ -26,6 +26,8 @@ struct Command final {
 };
 
 using Commands = std::vector<Command>;
+using Parameters = std::vector<std::string>;
+using Parameter = std::string;
 
 class CommandManager final {
 public:

@@ -11,6 +11,8 @@
 #include "ImGuiManager/Editor/Common/CommonPopupModal.h"
 
 namespace Editor {
+    std::string QuestsEditorWindow::EditorCommand::emptyName = "EMPTY";
+
     void QuestsEditorWindow::OnOpen() {
         SetFlag(ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 
@@ -176,9 +178,10 @@ namespace Editor {
             ImGui::Dummy(ImVec2(0.f, 5.f));
             ImGui::PushItemWidth(_widthQuest / 2.1);
 
-            DrawCommands(_selectQuest->_commands,            observerLists.dataList[0]);
+            DrawCommands(_selectQuest->_commandsOnInit,      observerLists.dataList[0]);
             DrawCommands(_selectQuest->_commandsOnTap,       observerLists.dataList[1]);
             DrawCommands(_selectQuest->_commandsOnCondition, observerLists.dataList[2]);
+            DrawCommands(_selectQuest->_commandsDebug,       observerLists.dataList[3]);
 
             ImGui::EndChild();
 
@@ -319,9 +322,11 @@ namespace Editor {
             }
 
             ImGui::Dummy(ImVec2(0.f, 5.f));
+            ImGui::PushID(++_guiId);
             if (ImGui::Button("Add command.", { 200.f, 24.f })) {
                 commands.emplace_back();
             }
+            ImGui::PopID();
 
             /*ImGui::SameLine();
             if (ImGui::Button("Remove observer for event.", { 200.f, 24.f })) {
@@ -370,13 +375,16 @@ namespace Editor {
             switch (*indexPtr)
             {
             case 0: {
-                commands = &_selectQuest->_commands;
+                commands = &_selectQuest->_commandsOnInit;
             } break;
             case 1: {
                 commands = &_selectQuest->_commandsOnTap;
             } break;
             case 2: {
                 commands = &_selectQuest->_commandsOnCondition;
+            } break;
+            case 3: {
+                commands = &_selectQuest->_commandsDebug;
             } break;
             default:
                 break;
@@ -385,7 +393,7 @@ namespace Editor {
             ImGui::Dummy(ImVec2(0.f, 0.f));
             ImGui::PushStyleColor(ImGuiCol_Button, commands && commands->empty() ? Editor::greenColor : Editor::disableColor);
             if (ImGui::Button("Add##add_obs_btn", { 100.f, 26.f }) && commands && commands->empty()) {
-                commands->emplace_back();
+                commands->emplace_back(EditorCommand::emptyName);
                 CommonPopupModal::Hide();
             }
             ImGui::PopStyleColor();
@@ -441,6 +449,24 @@ namespace Editor {
         //...
         if (ImGui::Button("Add observer of event", { buttonWidth, buttonHeight })) {
             AddObserver();
+        }
+
+        ImGui::SameLine();
+        if (ImGui::Button("Start this quest.", { buttonWidth, buttonHeight })) {
+            /*Commands commands;
+            commands.reserve(2 + _selectQuest->_commandsDebug.size()); // +3 для ClearAll, CreateSpace, SetActiveQuest
+
+            commands.emplace_back("ClearAll");
+            //commands.emplace_back("CreateSpace", Parameters{ _selectQuest->Name() });
+
+            commands.insert(commands.end(), _selectQuest->_commandsDebug.begin(), _selectQuest->_commandsDebug.end());
+
+            commands.emplace_back("SetActiveQuest", Parameters{ _selectQuest->Name(), "ACTIVE" });
+
+            CommandManager::Run(std::forward<Commands>(commands));*/
+
+            CommandManager::Run(Command{ "StartQuest", { _selectQuest->Name() } });
+            Close();
         }
 
         ImGui::EndChild();
@@ -531,6 +557,8 @@ namespace Editor {
         // C:\Work\My\System\Source\Game\Source\MySystem\Commands\Functions.cpp
         // C:\Work\My\System\Source\Game\Source\MySystem\Quests/QuestManager.cpp
 
+        EditorCommand& emptyEditorCommand = _editorCommands.emplace_back(EditorCommand::emptyName);
+
         EditorDatasParceFile("..\\..\\..\\Game\\Source\\MySystem\\Commands\\Functions.cpp");
         EditorDatasParceFile("..\\..\\..\\Game\\Source\\MySystem\\Quests\\QuestManager.cpp");
 
@@ -561,6 +589,7 @@ namespace Editor {
         observerLists.Add("Commands on init");
         observerLists.Add("commands on tap");
         observerLists.Add("commands on condition");
+        observerLists.Add("commands debug");
         observerLists.MakeViewData();
     }
 

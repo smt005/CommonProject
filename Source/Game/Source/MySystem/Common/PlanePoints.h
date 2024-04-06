@@ -3,11 +3,7 @@
 #include <vector>
 #include <memory>
 #include "Math/Vector.h"
-
-//class Body;
-//using BodyPtr = std::shared_ptr<Body>;
 #include "../Objects/Body.h"
-#include <glm/mat4x4.hpp>
 
 class PlanePoints final {
 public:
@@ -21,4 +17,6 @@ private:
 	float _offset = 10.f;
 	float _space = 1000.f;
 	float _factor = 1.f;
+	float _constGravity = -1.f;
+	float _mass = 5.f;
 };

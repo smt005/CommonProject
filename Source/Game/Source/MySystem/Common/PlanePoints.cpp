@@ -2,9 +2,10 @@
 
 #include "PlanePoints.h"
 #include <cmath>
-//#include <glm/mat3x3.hpp>
+#include <glm/mat4x4.hpp>
 #include <Draw2/Draw2.h>
 #include <Draw2/Shader/ShaderLine.h>
+#include <Common/Help.h>
 
 void PlanePoints::Init(float space, float offset)
 {
@@ -15,9 +16,18 @@ void PlanePoints::Init(float space, float offset)
 	_points.reserve(countPoints);
 	float z = 0.f;
 
-	for (float x = -_space; x <= _space; x += _offset) {
+	/*for (float x = -_space; x <= _space; x += _offset) {
 		for (float y = -_space; y <= _space; y += _offset) {
 			_points.emplace_back(x, y, z);
+		}
+	}*/
+
+	for (float x = -_space; x <= _space; x += _offset) {
+		for (float y = -_space; y <= _space; y += _offset) {
+			Math::Vector3 vec(x, y, 0.f);
+			if (vec.length() < _space) {
+				_points.emplace_back(vec);
+			}
 		}
 	}
 
@@ -28,9 +38,6 @@ void PlanePoints::Init(float space, float offset)
 
 void PlanePoints::Update(std::vector<Body::Ptr>& objects)
 {
-	float constGravity = -100.f;
-	float mass = 100.f;
-
 	for (Math::Vector3& point : _points) {
 		point.z = 0.f;
 	}
@@ -41,7 +48,7 @@ void PlanePoints::Update(std::vector<Body::Ptr>& objects)
 		for (Math::Vector3& point : _points) {
 			Math::Vector3 dV = pos - point; // TODO: не работает с const
 			float dist = std::abs(dV.length());
-			double force = constGravity * (mass * bodyPtr) / (dist * dist);
+			double force = _constGravity * (_mass * bodyPtr->Mass()) / (dist * dist);
 
 			point.z += force;
 		}

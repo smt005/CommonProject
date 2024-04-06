@@ -20,7 +20,7 @@ void BaseSpace::Update() {
 		return;
 	}
 
-	double mergeDistFactor = 10.f;
+	double mergeDistFactor = 1.f;
 	using Indices = std::list<int>;
 	std::unordered_map<int, Indices> mergeList;
 

@@ -134,7 +134,7 @@
     "id" : "CountOfIteration",
     "params" : 
     [
-     "100"
+     "1"
     ]
    },
    {
@@ -239,6 +239,13 @@
     "params" : 
     [
      "Try to create 7 bodies simultaneously in space."
+    ]
+   },
+   {
+    "id" : "GravityPoints",
+    "params" : 
+    [
+     "Enable"
     ]
    }
   ],
@@ -357,7 +364,7 @@
      "FastSpeedBody",
      "max_speed_body",
      ">=",
-     "0.05"
+     "0.5"
     ]
    }
   ],

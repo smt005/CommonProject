@@ -1,5 +1,4 @@
 // ◦ Xyz ◦
-// ◦ Xyz ◦
 #pragma once
 
 #include "Game.h"
@@ -41,4 +40,5 @@ private:
 
 public:
 	static std::shared_ptr<Space> currentSpace;
+	static bool gravitypoints;
 };

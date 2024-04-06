@@ -235,6 +235,11 @@ namespace commands
 		}
 	}
 
+	/// GravityPoints /Enable/Disable
+	void GravityPoints(const std::string& param) {
+		MySystem::gravitypoints = param == "Enable";
+	}
+
 	/// ClearSpace
 	void ClearSpace()
 	{
@@ -362,84 +367,76 @@ namespace commands
 	void Run(const Command& comand)
 	{
 		const std::string& comandId = comand.id;
+		CommandLog(comand);
 
 		if (comandId == "SetActiveQuest") {
 			if (comand.parameters.size() >= 2) {
-				CommandLog(comand);
 				QuestManager::ActivateState(comand.parameters[0], QuestManager::StateFromString(comand.parameters[1]));
 			}
 		}
 		else if (comandId == "SetStateQuest") {
 			if (comand.parameters.size() >= 2) {
-				CommandLog(comand);
 				QuestManager::SetState(comand.parameters[0], QuestManager::StateFromString(comand.parameters[1]));
 			}
 		}
 		else if (comandId == "StartQuest") {
 			if (!comand.parameters.empty()) {
-				CommandLog(comand);
 				StartQuest(comand.parameters.front());
 			}
 		}
 		else if (comandId == "LoadQuests") {
 			if (!comand.parameters.empty()) {
-				CommandLog(comand);
 				QuestManager::Load(comand.parameters.front());
 			}
 		}
 		else if (comandId == "ClearQuests") {
-			CommandLog(comand);
 			QuestManager::Clear();
 		}
 		else if (comandId == "SetProcess") {
 			if (!comand.parameters.empty()) {
-				CommandLog(comand);
 				SetProcess(comand.parameters.front());
 			}
 		}
 		else if (comandId == "SetMultithread") {
 			if (!comand.parameters.empty()) {
-				CommandLog(comand);
 				SetMultithread(comand.parameters.front());
 			}
 		}
 		else if (comandId == "SetClearColor") {
-			CommandLog(comand);
 			SetClearColor(comand.parameters);
 		}
 		else if (comandId == "OpenWindow") {
-			CommandLog(comand);
 			if (!comand.parameters.empty()) {
 				OpenWindow(comand.parameters);
 			}
 		}
 		else if (comandId == "CloseWindow") {
-			CommandLog(comand);
 			if (!comand.parameters.empty()) {
 				CloseWindow(comand.parameters.front());
 			}
 		}
 		else if (comandId == "ShowImage") {
-			CommandLog(comand);
 			if (!comand.parameters.empty()) {
 				ShowImage(comand.parameters.front());
 			}
 		}
 		else if (comandId == "HideImage") {
-			CommandLog(comand);
 			if (!comand.parameters.empty()) {
 				HideImage(comand.parameters.front());
 			}
 		}
 		else if (comandId == "ShowText") {
-			CommandLog(comand);
 			if (!comand.parameters.empty()) {
 				ShowText(comand.parameters.front());
 			}
 		}
 		else if (comandId == "HideText") {
-			CommandLog(comand);
 			HideText();
+		}
+		else if (comandId == "GravityPoints") {
+			if (!comand.parameters.empty()) {
+				GravityPoints(comand.parameters.front());
+			}
 		}
 		else if (comandId == "ClearSpace") {
 			ClearSpace();
@@ -448,7 +445,6 @@ namespace commands
 			ClearAll();
 		}
 		else if (comandId == "CreateSpace") {
-			CommandLog(comand);
 			if (!comand.parameters.empty()) {
 				CreateSpace(comand.parameters);
 			}

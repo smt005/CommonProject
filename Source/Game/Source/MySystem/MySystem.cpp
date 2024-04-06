@@ -1,5 +1,4 @@
 // ◦ Xyz ◦
-// ◦ Xyz ◦
 
 #include "MySystem.h"
 #include "Core.h"
@@ -21,9 +20,14 @@
 #include "Quests/QuestManager.h"
 #include "Commands/Commands.h"
 #include "Commands/Events.h"
+#include "Common/PlanePoints.h"
 
 std::shared_ptr<Space> MySystem::currentSpace;
+bool MySystem::gravitypoints = false;
+
 const std::string saveFileName("../../../Executable/Save.json");
+
+PlanePoints planePoints;
 
 void MySystem::init() {
 	CUDA::GetProperty();
@@ -35,6 +39,8 @@ void MySystem::init() {
 	
 	MainUI::Open();
 	CommandManager::Run("Commands/Main.json");
+
+	planePoints.Init(1000.f, 5.f);
 }
 
 void MySystem::close() {
@@ -170,6 +176,12 @@ void MySystem::draw() {
 
 			Draw2::drawPoints(points.data(), countPoints);
 		}
+	}
+
+	//...
+	if (gravitypoints && currentSpace) {
+		planePoints.Update(currentSpace->_bodies);
+		planePoints.Draw();
 	}
 
 	if (!CommonData::nameImageList.empty()) {

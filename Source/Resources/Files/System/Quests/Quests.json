@@ -102,9 +102,9 @@
     "id" : "SetClearColor",
     "params" : 
     [
-     "0.1",
-     "0.2",
-     "0.3",
+     "1",
+     "1",
+     "1",
      "1"
     ]
    },
@@ -151,12 +151,12 @@
     "id" : "AddBodyToMousePos",
     "params" : 
     [
-     "BrownStone",
+     "BlackStone",
      "ToMousePos",
      "0",
      "0",
      "0",
-     "10"
+     "100"
     ]
    },
    {
@@ -228,9 +228,9 @@
     "id" : "SetClearColor",
     "params" : 
     [
-     "0.2",
-     "0.4",
-     "0.6",
+     "1",
+     "1",
+     "1",
      "1"
     ]
    },
@@ -248,12 +248,12 @@
     "id" : "AddBodyToMousePos",
     "params" : 
     [
-     "BrownStone",
+     "BlackStone",
      "ToMousePos",
      "0",
      "0",
      "0",
-     "10"
+     "100"
     ]
    },
    {
@@ -319,10 +319,10 @@
     "id" : "SetClearColor",
     "params" : 
     [
-     "0.3",
-     "0.6",
-     "0.9",
-     "1.0"
+     "1",
+     "1",
+     "1",
+     "1"
     ]
    },
    {
@@ -339,12 +339,12 @@
     "id" : "AddBodyToMousePos",
     "params" : 
     [
-     "BrownStone",
+     "BlackStone",
      "ToMousePos",
      "0",
      "0",
      "0",
-     "10"
+     "100"
     ]
    }
   ],

@@ -1,4 +1,10 @@
 {
+	"BlackStone" : 
+	{
+		"shape" : "Models/GeoSphere/GeoSphere_1_4_planar.obj",
+		"texture" : "Textures/Colors/Black.png",
+		"scale" : 10
+	},
 	"BrownStone" : 
 	{
 		"scale" : 10,

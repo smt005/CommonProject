@@ -7,12 +7,12 @@ uniform float u_range;
 uniform float u_rangeZ;
 
 in vec3 positionPV;
-in vec3 position;
+in float positionZ;
 
-void main() {
-	vec4 color = u_color;
+float GetValue(float range, float dist)
+{
+	float a = (range - dist) / range;
 	
-	float a = (u_range - length(positionPV)) / u_range;
 	if (a < 0.0) {
 		a = 0.0;
 	} 
@@ -20,13 +20,11 @@ void main() {
 		a = 1.0;
 	}
 	
-	float aZ = (u_rangeZ + position.z) / u_rangeZ;
-	if (aZ < 0.0) {
-		aZ = 0.0;
-	} 
-	else if (aZ > 1.0) {
-		aZ = 1.0;
-	}
-	
-	gl_FragColor.a = a * aZ * u_factor;
+	return a;
+}
+
+void main() {
+	vec4 color = u_color;
+	color.a = GetValue(u_range, length(positionPV)) * GetValue(u_rangeZ, -positionZ) * u_factor;
+	gl_FragColor = color;
 }

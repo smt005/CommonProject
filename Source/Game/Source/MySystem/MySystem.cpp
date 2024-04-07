@@ -40,7 +40,8 @@ void MySystem::init() {
 	MainUI::Open();
 	CommandManager::Run("Commands/Main.json");
 
-	planePoints.Init(1000.f, 5.f);
+	//planePoints.Init(1000.f, 5.f);
+	planePoints.Init(500.f, 2.f);
 }
 
 void MySystem::close() {

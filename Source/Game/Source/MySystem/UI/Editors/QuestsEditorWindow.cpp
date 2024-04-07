@@ -548,11 +548,13 @@ namespace Editor {
         // C:\Work\My\System\Source\Resources\Files\System
         // C:\Work\My\System\Source\Game\Source\MySystem\Commands\Functions.cpp
         // C:\Work\My\System\Source\Game\Source\MySystem\Quests/QuestManager.cpp
+        // C:\Work\My\System\Source\Game\Source\MySystem\Commands\Functions/Actions.h
 
         EditorCommand& emptyEditorCommand = _editorCommands.emplace_back(EditorCommand::emptyName);
 
         EditorDatasParceFile("..\\..\\..\\Game\\Source\\MySystem\\Commands\\Functions.cpp");
         EditorDatasParceFile("..\\..\\..\\Game\\Source\\MySystem\\Quests\\QuestManager.cpp");
+        EditorDatasParceFile("..\\..\\..\\Game\\Source\\MySystem\\Commands\\Functions\\Actions.h");
 
         //...
         if (int size = _editorCommands.size(); size > 0) {

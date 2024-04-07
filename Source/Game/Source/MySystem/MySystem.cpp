@@ -107,6 +107,7 @@ void MySystem::draw() {
 
 		//...
 		if (CommonData::bool1) {
+			Camera::Set<Camera>(_camearSide);
 			ShaderDefault::Instance().Use();
 			Draw2::DepthTest(true);
 
@@ -149,6 +150,7 @@ void MySystem::draw() {
 
 		//...
 		if (CommonData::bool2) {
+			Camera::Set<Camera>(_camearSide);
 			ShaderLineP::Instance().Use();
 
 			static float sizePoint = 1.f;
@@ -182,6 +184,8 @@ void MySystem::draw() {
 		if (currentSpace && !currentSpace->_bodies.empty()) {
 			planePoints.Update(currentSpace->_bodies);
 		}
+
+		Camera::Set<Camera>(_camearSide);
 		planePoints.Draw();
 	}
 

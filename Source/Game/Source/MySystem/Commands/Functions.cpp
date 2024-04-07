@@ -1,5 +1,6 @@
 // ◦ Xyz ◦
 #include "Functions.h"
+#include "Functions/Actions.h"
 
 // Common
 #include <MyStl/Event.h>
@@ -53,7 +54,7 @@ namespace commands
 		std::cout << ']' << std::endl;
 	}
 
-	float StrToFloat(const std::string& valueStr, float min = 0.f, float max = 1.f)
+	float StrToFloat(const std::string& valueStr, float min, float max)
 	{
 		float value = atof(valueStr.c_str());
 		value = value < min ? min : value;
@@ -62,7 +63,7 @@ namespace commands
 
 	}
 
-	int StrToInt(const std::string& valueStr, int min = std::numeric_limits<int>::min(), int max = std::numeric_limits<int>::max())
+	int StrToInt(const std::string& valueStr, int min, int max)
 	{
 		int value = atoi(valueStr.c_str());
 		value = value < min ? min : value;
@@ -561,6 +562,11 @@ namespace commands
 		else if (comandId == "CountOfIteration") {
 			if (!comand.parameters.empty()) {
 				SetCountOfIteration(comand.parameters.front());
+			}
+		}
+		else if (comandId == "FadeModel") {
+			if (comand.parameters.size() >= 2) {
+				FadeModel(comand.parameters[0], StrToFloat(comand.parameters[1], 1.f, 10000.0f));
 			}
 		}
 	}

@@ -42,24 +42,10 @@
     [
      "Tap to next!"
     ]
-   },
-   {
-    "id" : "GravityPoints",
-    "params" : 
-    [
-     "Enable"
-    ]
    }
   ],
   "commands_on_tap" : 
   [
-   {
-    "id" : "HideImage",
-    "params" : 
-    [
-     "Logo"
-    ]
-   },
    {
     "id" : "HideText"
    },
@@ -69,6 +55,31 @@
     [
      "FirstBody",
      "ACTIVE"
+    ]
+   },
+   {
+    "id" : "GravityPoints",
+    "params" : 
+    [
+     "Enable"
+    ]
+   },
+   {
+    "id" : "FadeModel",
+    "params" : 
+    [
+     "Logo_name_back",
+     "10",
+     ""
+    ]
+   },
+   {
+    "id" : "FadeModel",
+    "params" : 
+    [
+     "Logo_name",
+     "400",
+     ""
     ]
    },
    {

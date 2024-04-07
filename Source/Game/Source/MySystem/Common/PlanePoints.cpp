@@ -135,11 +135,11 @@ void PlanePoints::Draw()
 	Draw2::SetUniform3fv(ShaderGravityPoint::u_body_position, bodyPos);
 	Draw2::SetUniform4fv(ShaderGravityPoint::u_body_color, _bodyColor.getDataPtr());
 
-	Draw2::SetPointSize(2.f);
-	Draw2::SetUniform1f(ShaderGravityPoint::u_factor, 0.5f);
+	Draw2::SetPointSize(2.5f);
+	Draw2::SetUniform1f(ShaderGravityPoint::u_factor, 0.75f);
 	Draw2::drawPoints((float*)_points.data(), _points.size());
 
 	Draw2::SetPointSize(1.f);
-	Draw2::SetUniform1f(ShaderGravityPoint::u_factor, 0.1f);
+	Draw2::SetUniform1f(ShaderGravityPoint::u_factor, 0.125f);
 	Draw2::drawLines((float*)_line.data(), _line.size());
 }

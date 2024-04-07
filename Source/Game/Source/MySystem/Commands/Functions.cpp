@@ -62,7 +62,7 @@ namespace commands
 
 	}
 
-	int StrToInf(const std::string& valueStr, int min = std::numeric_limits<int>::min(), int max = std::numeric_limits<int>::max())
+	int StrToInt(const std::string& valueStr, int min = std::numeric_limits<int>::min(), int max = std::numeric_limits<int>::max())
 	{
 		int value = atoi(valueStr.c_str());
 		value = value < min ? min : value;
@@ -334,7 +334,7 @@ namespace commands
 		SpaceManager::AddObject(nameModel, pos, vel, mass);
 	}
 
-	/// AddBodyToMousePos #MODEL /ToMousePos/ToCenterSpace number number number number /Default/Random/RED/GREEN/BLUE/WHITE/BLACK/Custom
+	/// AddBodyToMousePos #MODEL /ToMousePos/ToCenterSpace number number number number /Default/ContrastRandom/Random/RED/GREEN/BLUE/WHITE/BLACK/Custom
 	void AddBodyToMousePos(const std::vector<std::string>& parameters)
 	{
 		// model, pos(mouse), vel, mass
@@ -370,10 +370,46 @@ namespace commands
 			if (typeColor.empty()) {
 				//...
 			}
+			else if (typeColor == "ContrastRandom") {
+				int componentColor = help::random_i(0, 2);
+				float min = 0.f;
+				float max = 0.5f;
+
+				switch (componentColor) {
+				{
+				case 0: {
+					color.setRed(1.f);
+					color.setGreen(help::random(min, max));
+					color.setBlue(help::random(min, max));
+				} break;
+				case 1: {
+					color.setRed(help::random(min, max));
+					color.setGreen(1.f);
+					color.setBlue(help::random(min, max));
+				} break;
+				case 2: {
+					color.setRed(help::random(min, max));
+					color.setGreen(help::random(min, max));
+					color.setBlue(1.f);
+				} break;
+				default:
+					break; }
+				}
+			}
 			else if (typeColor == "Random") {
-				color.setRed(help::random(0.f, 1.f));
-				color.setGreen(help::random(0.f, 1.f));
-				color.setBlue(help::random(0.f, 1.f));
+				if (countParams >= 9) {
+					float min = StrToFloat(parameters[7]);
+					float max = StrToFloat(parameters[8]);
+
+					color.setRed(help::random(min, max));
+					color.setGreen(help::random(min, max));
+					color.setBlue(help::random(min, max));
+				}
+				else {
+					color.setRed(help::random(0.f, 0.5f));
+					color.setGreen(help::random(0.f, 0.5f));
+					color.setBlue(help::random(0.f, 0.5f));
+				}
 			}
 			else if (typeColor == "RED") {
 				color.setRed(1.f);

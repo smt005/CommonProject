@@ -26,7 +26,14 @@
     "id" : "ShowImage",
     "params" : 
     [
-     "Logo"
+     "Logo_name_back"
+    ]
+   },
+   {
+    "id" : "ShowImage",
+    "params" : 
+    [
+     "Logo_name"
     ]
    },
    {
@@ -34,6 +41,13 @@
     "params" : 
     [
      "Tap to next!"
+    ]
+   },
+   {
+    "id" : "GravityPoints",
+    "params" : 
+    [
+     "Enable"
     ]
    }
   ],
@@ -269,7 +283,7 @@
      "0",
      "0",
      "100",
-     "Random"
+     "ContrastRandom"
     ]
    },
    {

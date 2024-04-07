@@ -178,8 +178,10 @@ void MySystem::draw() {
 	}
 
 	//...
-	if (gravitypoints && currentSpace) {
-		planePoints.Update(currentSpace->_bodies);
+	if (gravitypoints) {
+		if (currentSpace && !currentSpace->_bodies.empty()) {
+			planePoints.Update(currentSpace->_bodies);
+		}
 		planePoints.Draw();
 	}
 
@@ -189,12 +191,11 @@ void MySystem::draw() {
 
 		ShaderDefault::Instance().Use();
 
-		float color4[] = { 1.f, 1.f, 1.f, 1.f };
-		Draw2::SetColorClass<ShaderDefault>(color4);
 		Draw2::SetModelMatrix(glm::mat4x4(1.f));
 
 		for (const std::string& nameModel : CommonData::nameImageList) {
 			if (Model::Ptr& model = Model::getByName(nameModel)) {
+				Draw2::SetColorClass<ShaderDefault>(model->getDataPtr());
 				Draw2::Draw(*model);
 			}
 		}
@@ -292,10 +293,11 @@ void MySystem::InitСameras() {
 	_camearSide = std::make_shared<CameraControlOutside>();
 	if (CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(_camearSide.get())) {
 		cameraPtr->SetPerspective(10000000.f, 1.f, 45.f);
-		cameraPtr->SetPos({ 0, 0, 0 });
-		cameraPtr->SetDirect({ -0.440075815f, -0.717726171f, -0.539631844f });
+		cameraPtr->SetPos({ 180.f, 278.f, 112.f });
+		cameraPtr->SetDirect({ -0.309f, -0.587f, -0.749f });
+
 		cameraPtr->SetSpeed(1.0);
-		cameraPtr->SetDistanceOutside(500.f);
+		//cameraPtr->SetDistanceOutside(500.f);
 		cameraPtr->Enable(true);
 	}
 

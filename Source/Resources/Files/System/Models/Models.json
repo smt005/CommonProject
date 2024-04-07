@@ -1,7 +1,6 @@
 {
 	"BlackStone" : 
 	{
-		"scale" : null,
 		"shape" : "Models/GeoSphere/GeoSphere_1_4_planar.obj",
 		"texture" : "Textures/Colors/White.png"
 	},
@@ -32,6 +31,35 @@
 		],
 		"shape" : "Models/Interface/Cube.obj",
 		"texture" : "Textures/Interface/Logo.jpg"
+	},
+	"Logo_name" : 
+	{
+		"scale" : 
+		[
+			10,
+			5,
+			1
+		],
+		"shape" : "Models/Interface/Cube.obj",
+		"texture" : "Textures/Interface/Logo/Logo_name.png"
+	},
+	"Logo_name_back" : 
+	{
+		"shape" : "Models/Interface/Cube.obj",
+		"texture" : "Textures/Colors/White.png",
+		"scale" : 
+		[
+			8,
+			4,
+			1
+		],
+		"color" : 
+		[
+			0.333,
+			0.666,
+			0.999,
+			1.0
+		]
 	},
 	"Marker" : 
 	{

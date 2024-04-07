@@ -14,14 +14,12 @@ in vec3 position;
 float GetValue(float range, float dist)
 {
 	float a = (range - dist) / range;
-	
 	if (a < 0.0) {
 		a = 0.0;
 	} 
 	else if (a > 1.0) {
 		a = 1.0;
 	}
-	
 	return a;
 }
 

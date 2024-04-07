@@ -17,3 +17,9 @@ bool CommonData::bool9 = false;
 
 std::string CommonData::textOnScreen;
 std::vector<std::string> CommonData::nameImageList;
+
+float* CommonData::Color4()
+{
+	static float color4[4] = { 1.f, 1.f, 1.f, 1.f };
+	return color4;
+}

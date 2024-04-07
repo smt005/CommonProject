@@ -110,16 +110,14 @@ void MySystem::draw() {
 			ShaderDefault::Instance().Use();
 			Draw2::DepthTest(true);
 
-			float color4[] = { 1.f, 1.f, 1.f, 1.f };
-			Draw2::SetColorClass<ShaderDefault>(color4);
-
 			for (Body::Ptr& bodyPtr : currentSpace->_bodies) {
 				if (!bodyPtr->visible) {
 					continue;
 				}
 
 				Draw2::SetModelMatrixClass<ShaderDefault>(bodyPtr->getMatrix());
-				//Draw2::SetColorClass<ShaderDefault>(bodyPtr->getModel().getDataPtr());
+				Draw2::SetColorClass<ShaderDefault>(bodyPtr->color.getDataPtr());
+
 				Draw2::Draw(bodyPtr->getModel());
 			}
 		}

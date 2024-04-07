@@ -11,6 +11,7 @@
 #include "../../CUDA/Source/Wrapper.h"
 #include <iostream>
 #include <glm/vec3.hpp>
+#include <Object/Color.h>
 
 // View
 #include "Draw2/Draw2.h"
@@ -50,6 +51,24 @@ namespace commands
 		}
 
 		std::cout << ']' << std::endl;
+	}
+
+	float StrToFloat(const std::string& valueStr, float min = 0.f, float max = 1.f)
+	{
+		float value = atof(valueStr.c_str());
+		value = value < min ? min : value;
+		value = value > max ? max : value;
+		return value;
+
+	}
+
+	int StrToInf(const std::string& valueStr, int min = std::numeric_limits<int>::min(), int max = std::numeric_limits<int>::max())
+	{
+		int value = atoi(valueStr.c_str());
+		value = value < min ? min : value;
+		value = value > max ? max : value;
+		return value;
+
 	}
 
 	/// RunCommands string
@@ -315,7 +334,7 @@ namespace commands
 		SpaceManager::AddObject(nameModel, pos, vel, mass);
 	}
 
-	/// AddBodyToMousePos #MODEL /ToMousePos/ToCenterSpace number number number number
+	/// AddBodyToMousePos #MODEL /ToMousePos/ToCenterSpace number number number number /Default/Random/RED/GREEN/BLUE/WHITE/BLACK/Custom
 	void AddBodyToMousePos(const std::vector<std::string>& parameters)
 	{
 		// model, pos(mouse), vel, mass
@@ -343,7 +362,47 @@ namespace commands
 		float mass = countParams >= 6 ? atof(parameters[5].c_str()) : 1.f;
 
 		//...
-		SpaceManager::AddObject(nameModel, pos, vel, mass);
+
+		Color color = countParams < 7 ? (1.f, 1.f, 1.f, 1.f) : (0.f, 0.f, 0.f, 1.f);
+
+		if (countParams >= 7) {
+			const std::string& typeColor = parameters[6];
+			if (typeColor.empty()) {
+				//...
+			}
+			else if (typeColor == "Random") {
+				color.setRed(help::random(0.f, 1.f));
+				color.setGreen(help::random(0.f, 1.f));
+				color.setBlue(help::random(0.f, 1.f));
+			}
+			else if (typeColor == "RED") {
+				color.setRed(1.f);
+			}
+			else if (typeColor == "GREEN") {
+				color.setGreen(1.f);
+			}
+			else if (typeColor == "BLUE") {
+				color.setBlue(1.f);
+			}
+			else if (typeColor == "WHITE") {
+				color.setRed(1.f);
+				color.setGreen(1.f);
+				color.setBlue(1.f);
+			}
+			else if (typeColor == "BLACK") {
+				color.setRed(0.f);
+				color.setGreen(0.f);
+				color.setBlue(0.f);
+			}
+			else if (countParams >= 12 && typeColor == "Custom") {
+				color.setRed(StrToFloat(parameters[7]));
+				color.setGreen(StrToFloat(parameters[8]));
+				color.setBlue(StrToFloat(parameters[9]));
+			}
+		}
+
+		//...
+		SpaceManager::AddObject(nameModel, pos, vel, mass, color);
 	}
 
 	/// StartQuest #QUEST

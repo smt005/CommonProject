@@ -7,6 +7,7 @@
 #include "MyStl/shared.h"
 #include "Math/Vector.h"
 #include "../../Engine/Source/Object/Model.h"
+#include <Object/Color.h>
 
 class Model;
 
@@ -50,4 +51,6 @@ public:
 public:
 	bool visible = true;
 	char* _name = nullptr;
+
+	Color color;
 };

@@ -122,8 +122,8 @@ void BaseSpace::Update() {
 					Math::Vector3 _pos_ = _bodies[index]->GetPos();
 					std::string nameMode = _bodies[index]->HasModel() ? _bodies[index]->getModel().getName() : "BrownStone";
 
-					//newBody = std::make_shared<BodyData>(nameMode);
 					newBody = Body::Ptr(new BodyData(nameMode));
+					newBody->color = _bodies[index]->color;
 					newBodies.emplace_back(newBody);
 					static_cast<BodyData*>(newBody.get())->_dataPtr = &newDatas.emplace_back(sumMass, Math::Vector3(0, 0, 0), sumForce);
 				}

@@ -20,4 +20,6 @@ struct CommonData {
 
 	static std::string textOnScreen;
 	static std::vector<std::string> nameImageList;
+
+	float* Color4();
 };

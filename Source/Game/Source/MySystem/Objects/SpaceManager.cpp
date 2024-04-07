@@ -158,14 +158,16 @@ void SpaceManager::AddObjects(Space* space, int count, double spaceRange, double
 	space->Preparation();
 }
 
-void SpaceManager::AddObject(const std::string& nameModel, const Math::Vector3& pos, const Math::Vector3& vel, float mass) {
+void SpaceManager::AddObject(const std::string& nameModel, const Math::Vector3& pos, const Math::Vector3& vel, float mass, const Color& color) {
 	if (!MySystem::currentSpace) {
 		return;
 	}
 
 	const std::string& model = !nameModel.empty() ? nameModel : "BrownStone";
 
-	MySystem::currentSpace->Add<BodyData>(nameModel, pos, vel, mass, "");
+	Body& body = MySystem::currentSpace->Add<BodyData>(nameModel, pos, vel, mass, "");
+	body.color = color;
+
 	MySystem::currentSpace->Preparation();
 }
 

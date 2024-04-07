@@ -7,6 +7,10 @@
 #include <Draw2/Shader/ShaderLine.h>
 #include <Common/Help.h>
 
+#include <MySystem/MySystem.h>
+#include <MySystem/Objects/Body.h>
+#include <MySystem/Objects/Space.h>
+
 void PlanePoints::Init(float spaceRange, float offset)
 {
 	_spaceRange = spaceRange;
@@ -111,6 +115,11 @@ void PlanePoints::Update(std::vector<Body::Ptr>& objects)
 			point.z += force;
 		}
 	}
+
+	if (MySystem::currentSpace; Body::Ptr bodyPtr = MySystem::currentSpace->GetHeaviestBody()) {
+		_bodyPos = bodyPtr->GetPos();
+		_bodyColor = bodyPtr->color;
+	}
 }
 
 void PlanePoints::Draw()
@@ -119,13 +128,15 @@ void PlanePoints::Draw()
 	Draw2::SetUniform1f(ShaderGravityPoint::u_rangeZ, 75.f);
 	Draw2::SetUniform1f(ShaderGravityPoint::u_range, _spaceRange);
 
-	static float sizePoint = 2.f;
-	Draw2::SetPointSize(sizePoint);
-
-	static float color4[] = { 0.f, 0.f, 0.0f, 0.25f };
-	Draw2::SetUniform1f(ShaderGravityPoint::u_factor, 0.5f);
+	float color4[] = { 1.f, 1.f, 1.0f, 1.f };
 	Draw2::SetColorClass<ShaderGravityPoint>(color4);
 
+	float bodyPos[] = { _bodyPos.x, _bodyPos.y, _bodyPos.z };
+	Draw2::SetUniform3fv(ShaderGravityPoint::u_body_position, bodyPos);
+	Draw2::SetUniform4fv(ShaderGravityPoint::u_body_color, _bodyColor.getDataPtr());
+
+	Draw2::SetPointSize(2.f);
+	Draw2::SetUniform1f(ShaderGravityPoint::u_factor, 0.5f);
 	Draw2::drawPoints((float*)_points.data(), _points.size());
 
 	Draw2::SetPointSize(1.f);

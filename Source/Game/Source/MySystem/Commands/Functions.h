@@ -6,7 +6,7 @@ namespace commands {
 	float StrToFloat(const std::string& valueStr, float min = 0.f, float max = 1.f);
 	int StrToInt(const std::string& valueStr, int min = std::numeric_limits<int>::min(), int max = std::numeric_limits<int>::max());
 
-	void RunCommands(const std::string& filePathName);
+	void RunCommandsFromFile(const std::string& filePathName);
 	void SetProcess(const std::string& stateStr);
 	void SetCountOfIteration(const std::string& countStr);
 	void SetMultithread(const std::string stateStr);

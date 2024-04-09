@@ -150,9 +150,8 @@ void QuestManager::Load(const std::string& pathFileName)
 		if (quest) {
 			quest->SetState(state);
 
-			// Commands
-			auto parceCommande = [&valueData, &questId](Commands& commands, const std::string& name) {
-				Json::Value& jsonCommands = valueData[name];
+			auto parceCommande = [&questId](Commands& commands, const std::string& name, const Json::Value& valueData) {
+				const Json::Value& jsonCommands = valueData[name];
 				if (!jsonCommands.empty()) {
 					commands = CommandManager::Load(jsonCommands);
 
@@ -162,27 +161,43 @@ void QuestManager::Load(const std::string& pathFileName)
 				}
 			};
 
-			parceCommande(quest->_commandsOnInit, "commands_on_init");
-			parceCommande(quest->_commandsOnTap, "commands_on_tap");
-			parceCommande(quest->_commandsOnUpdate, "commands_on_update");
-			parceCommande(quest->_commandsOnCondition, "commands_on_condition");
-			parceCommande(quest->_commandsDebug, "commands_debug");
+			// Commands
+			{
+				parceCommande(quest->_commandsOnInit, "commands_on_init", valueData);
+				parceCommande(quest->_commandsOnTap, "commands_on_tap", valueData);
+				parceCommande(quest->_commandsOnUpdate, "commands_on_update", valueData);
+				parceCommande(quest->_commandsOnCondition, "commands_on_condition", valueData);
+				parceCommande(quest->_commandsDebug, "commands_debug", valueData);
 
-			Json::Value& jsonParams = valueData["params"];
-			if (!jsonParams.empty() && jsonParams.isObject()) {
-				for (auto&& jsonKey : jsonParams.getMemberNames()) {
-					Json::Value& jsonParam = jsonParams[jsonKey];
+				Json::Value& jsonParams = valueData["params"];
+				if (!jsonParams.empty() && jsonParams.isObject()) {
+					for (auto&& jsonKey : jsonParams.getMemberNames()) {
+						Json::Value& jsonParam = jsonParams[jsonKey];
 
-					if (jsonParam.isString()) {
-						std::string param = jsonParam.asString();
-						quest->_params.emplace(jsonKey, param);
+						if (jsonParam.isString()) {
+							std::string param = jsonParam.asString();
+							quest->_params.emplace(jsonKey, param);
+						}
 					}
+				}
+
+				Json::Value& jsonDescription = valueData["description"];
+				if (jsonDescription.isString()) {
+					questPtr->_description = jsonDescription.asString();
 				}
 			}
 
-			Json::Value& jsonDescription = valueData["description"];
-			if (jsonDescription.isString()) {
-				questPtr->_description = jsonDescription.asString();
+			// Commands
+			{
+				Json::Value& jsonCommonCommands = valueData["commands"];
+				if (!jsonCommonCommands.empty() && jsonCommonCommands.isObject()) {
+					for (auto&& jsonKey : jsonCommonCommands.getMemberNames()) {
+						Json::Value& jsonCommands = jsonCommonCommands[jsonKey];
+
+						Commands& commands = quest->_commandMap[jsonKey];
+						parceCommande(commands, jsonKey, jsonCommonCommands);
+					}
+				}
 			}
 		}
 	}
@@ -320,6 +335,18 @@ void QuestManager::Condition(const std::vector<std::string>& params)
 
 		if (quest::count_bodies(params[2], number)) {
 			CommandManager::Run(questPtr->_commandsOnCondition);
+		}
+	}
+}
+
+/// RunCommands !COMMANDS
+void QuestManager::RunCommands(const std::string& questName, const std::string& commandName)
+{
+	if (Quest::Ptr questPtr = QuestManager::GetQuest(questName)) {
+		auto it = questPtr->_commandMap.find(commandName);
+
+		if (it != questPtr->_commandMap.end()) {
+			CommandManager::Run(it->second);
 		}
 	}
 }

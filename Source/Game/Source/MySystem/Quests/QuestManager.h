@@ -24,12 +24,13 @@ public:
 	static void Save(const std::string& pathFileName = std::string());
 	static void Clear();
 	static void Update();
-	static void Condition(const std::vector<std::string>& params);
 
-	static std::vector<Quest::Ptr>& GetQuests()
-	{
+	static std::vector<Quest::Ptr>& GetQuests() {
 		return quests;
 	}
+
+	static void Condition(const std::vector<std::string>& params);
+	static void RunCommands(const std::string& questName, const std::string& commandName);
 
 private:
 	static Quest::Ptr activeQuestPtr;

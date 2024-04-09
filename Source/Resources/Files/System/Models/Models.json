@@ -45,21 +45,21 @@
 	},
 	"Logo_name_back" : 
 	{
-		"shape" : "Models/Interface/Cube.obj",
-		"texture" : "Textures/Colors/White.png",
+		"color" : 
+		[
+			0.33300000000000002,
+			0.66600000000000004,
+			0.999,
+			0.5
+		],
 		"scale" : 
 		[
 			8,
 			4,
 			1
 		],
-		"color" : 
-		[
-			0.333,
-			0.666,
-			0.999,
-			1.0
-		]
+		"shape" : "Models/Interface/Cube.obj",
+		"texture" : "Textures/Colors/White.png"
 	},
 	"Marker" : 
 	{

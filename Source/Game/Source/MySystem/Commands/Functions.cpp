@@ -72,8 +72,8 @@ namespace commands
 
 	}
 
-	/// RunCommands string
-	void RunCommands(const std::string& filePathName)
+	/// RunCommandsFromFile string
+	void RunCommandsFromFile(const std::string& filePathName)
 	{
 		CommandManager::Run(filePathName);
 	}
@@ -557,9 +557,9 @@ namespace commands
 		else if (comandId == "AddBodyToMousePos") {
 			AddBodyToMousePos(comand.parameters);
 		}
-		else if (comandId == "RunCommands") {
+		else if (comandId == "RunCommandsFromFile") {
 			if (!comand.parameters.empty()) {
-				RunCommands(comand.parameters.front());
+				RunCommandsFromFile(comand.parameters.front());
 			}
 		}
 		else if (comandId == "QuestCondition") {
@@ -573,6 +573,11 @@ namespace commands
 		else if (comandId == "FadeModel") {
 			if (comand.parameters.size() >= 2) {
 				FadeModel(comand.parameters[0], StrToFloat(comand.parameters[1], 1.f, 10000.0f));
+			}
+		}
+		else if (comandId == "RunCommands") {
+			if (comand.parameters.size() >= 2) {
+				QuestManager::RunCommands(comand.parameters[1], comand.parameters[0]);
 			}
 		}
 	}

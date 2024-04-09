@@ -70,4 +70,5 @@ public:
 	Commands _commandsOnUpdate;
 	Commands _commandsOnCondition;
 	Commands _commandsDebug;
+	std::map<std::string, Commands> _commandMap;
 };

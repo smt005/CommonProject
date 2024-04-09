@@ -1,6 +1,6 @@
 [
   {
-    "id": "RunCommands",
+    "id": "RunCommandsFromFile",
     "params": [
       "Commands/Start.json"
     ]

@@ -19,9 +19,9 @@ private:
 	Math::Vector3 _bodyPos;
 	Color _bodyColor;
 
-	float _offset = 10.f;
-	float _spaceRange = 1000.f;
+	float _offset = 0.5f;
+	float _spaceRange = 100.f;
 	float _factor = 1.f;
-	float _constGravity = -1.f;
-	float _mass = 5.f;
+	float _constGravity = -0.2f;
+	float _mass = 1.f;
 };

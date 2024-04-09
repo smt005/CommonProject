@@ -414,11 +414,17 @@ namespace commands
 			}
 			else if (typeColor == "RED") {
 				color.setRed(1.f);
+					color.setGreen(0.f);
+					color.setBlue(0.f);
 			}
 			else if (typeColor == "GREEN") {
+					color.setRed(0.f);
 				color.setGreen(1.f);
+					color.setBlue(0.f);
 			}
 			else if (typeColor == "BLUE") {
+					color.setRed(1.f);
+					color.setGreen(0.f);
 				color.setBlue(1.f);
 			}
 			else if (typeColor == "WHITE") {

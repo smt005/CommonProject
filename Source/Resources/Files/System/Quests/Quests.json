@@ -1,61 +1,52 @@
 [
  {
-  "class" : "QuestStart",
-  "commands" : 
-  {
-   "Logo_comands" : 
-   [
+  "class": "QuestStart",
+  "commands": {
+   "Logo_comands": [
     {
-     "id" : "FadeModel",
-     "params" : 
-     [
+     "id": "FadeModel",
+     "params": [
       "Logo_name_back",
       "100"
      ]
     },
     {
-     "id" : "RunCommands",
-     "params" : 
-     [
+     "id": "DelayActionCommand",
+     "params": [
       "Logo_commands_second",
-      "Logo"
+      "Logo",
+      "2000"
      ]
     }
    ],
-   "Logo_commands_second" : 
-   [
+   "Logo_commands_second": [
     {
-     "id" : "FadeModel",
-     "params" : 
-     [
+     "id": "FadeModel",
+     "params": [
       "Logo_name",
       "200"
      ]
     },
     {
-     "id" : "GravityPoints",
-     "params" : 
-     [
+     "id": "GravityPoints",
+     "params": [
       "Enable"
      ]
     }
    ]
   },
-  "commands_debug" : 
-  [
+  "commands_debug": [
    {
-    "id" : "ClearAll"
+    "id": "ClearAll"
    }
   ],
-  "commands_on_init" : 
-  [
+  "commands_on_init": [
    {
-    "id" : "ClearAll"
+    "id": "ClearAll"
    },
    {
-    "id" : "SetClearColor",
-    "params" : 
-    [
+    "id": "SetClearColor",
+    "params": [
      "1",
      "1",
      "1",
@@ -63,102 +54,88 @@
     ]
    },
    {
-    "id" : "ShowImage",
-    "params" : 
-    [
+    "id": "ShowImage",
+    "params": [
      "Logo_name_back"
     ]
    },
    {
-    "id" : "ShowImage",
-    "params" : 
-    [
+    "id": "ShowImage",
+    "params": [
      "Logo_name"
     ]
    },
    {
-    "id" : "ShowText",
-    "params" : 
-    [
+    "id": "ShowText",
+    "params": [
      "Tap to next!"
     ]
    }
   ],
-  "commands_on_tap" : 
-  [
+  "commands_on_tap": [
    {
-    "id" : "HideText"
+    "id": "HideText"
    },
    {
-    "id" : "SetActiveQuest",
-    "params" : 
-    [
+    "id": "SetActiveQuest",
+    "params": [
      "FirstBody",
      "ACTIVE"
     ]
    },
    {
-    "disable" : true,
-    "id" : "GravityPoints",
-    "params" : 
-    [
+    "disable": true,
+    "id": "GravityPoints",
+    "params": [
      "Enable"
     ]
    },
    {
-    "id" : "SetActiveQuest",
-    "params" : 
-    [
+    "id": "SetActiveQuest",
+    "params": [
      "Logo",
      "DEACTIVE"
     ]
    },
    {
-    "id" : "RunCommands",
-    "params" : 
-    [
+    "id": "RunCommands",
+    "params": [
      "Logo_comands",
      "Logo"
     ]
    }
   ],
-  "description" : "First quest on start game.",
-  "id" : "Logo"
+  "description": "First quest on start game.",
+  "id": "Logo"
  },
  {
-  "class" : "QuestStart",
-  "commands" : null,
-  "commands_debug" : 
-  [
+  "class": "QuestStart",
+  "commands": null,
+  "commands_debug": [
    {
-    "id" : "ClearAll"
+    "id": "ClearAll"
    }
   ],
-  "commands_on_condition" : 
-  [
+  "commands_on_condition": [
    {
-    "id" : "SetActiveQuest",
-    "params" : 
-    [
+    "id": "SetActiveQuest",
+    "params": [
      "FirstTenBodies",
      "ACTIVE"
     ]
    },
    {
-    "id" : "SetActiveQuest",
-    "params" : 
-    [
+    "id": "SetActiveQuest",
+    "params": [
      "FirstBody",
      "DEACTIVE"
     ]
    }
   ],
-  "commands_on_init" : 
-  [
+  "commands_on_init": [
    {
-    "id" : "SetClearColor",
-    "params" : 
-    [
+    "id": "SetClearColor",
+    "params": [
      "1",
      "1",
      "1",
@@ -166,56 +143,48 @@
     ]
    },
    {
-    "id" : "SetProcess",
-    "params" : 
-    [
+    "id": "SetProcess",
+    "params": [
      "CPU"
     ]
    },
    {
-    "id" : "SetMultithread",
-    "params" : 
-    [
+    "id": "SetMultithread",
+    "params": [
      "false"
     ]
    },
    {
-    "id" : "CreateSpace",
-    "params" : 
-    [
+    "id": "CreateSpace",
+    "params": [
      "MAIN",
      ""
     ]
    },
    {
-    "id" : "CountOfIteration",
-    "params" : 
-    [
+    "id": "CountOfIteration",
+    "params": [
      "1"
     ]
    },
    {
-    "id" : "ShowText",
-    "params" : 
-    [
+    "id": "ShowText",
+    "params": [
      "Create first body."
     ]
    },
    {
-    "disable" : true,
-    "id" : "GravityPoints",
-    "params" : 
-    [
+    "disable": true,
+    "id": "GravityPoints",
+    "params": [
      "Enable"
     ]
    }
   ],
-  "commands_on_tap" : 
-  [
+  "commands_on_tap": [
    {
-    "id" : "AddBodyToMousePos",
-    "params" : 
-    [
+    "id": "AddBodyToMousePos",
+    "params": [
      "BlackStone",
      "ToMousePos",
      "0",
@@ -226,9 +195,8 @@
     ]
    },
    {
-    "id" : "QuestCondition",
-    "params" : 
-    [
+    "id": "QuestCondition",
+    "params": [
      "FirstBody",
      "count_bodies",
      ">=",
@@ -236,29 +204,26 @@
     ]
    },
    {
-    "id" : "HideText"
+    "id": "HideText"
    }
   ],
-  "description" : "Create first body.",
-  "id" : "FirstBody"
+  "description": "Create first body.",
+  "id": "FirstBody"
  },
  {
-  "class" : "QuestStart",
-  "commands" : null,
-  "commands_debug" : 
-  [
+  "class": "QuestStart",
+  "commands": null,
+  "commands_debug": [
    {
-    "id" : "CreateSpace",
-    "params" : 
-    [
+    "id": "CreateSpace",
+    "params": [
      "MAIN",
      "Try"
     ]
    },
    {
-    "id" : "AddBodyToPos",
-    "params" : 
-    [
+    "id": "AddBodyToPos",
+    "params": [
      "BrownStone",
      "0",
      "0",
@@ -270,31 +235,26 @@
     ]
    }
   ],
-  "commands_on_condition" : 
-  [
+  "commands_on_condition": [
    {
-    "id" : "SetActiveQuest",
-    "params" : 
-    [
+    "id": "SetActiveQuest",
+    "params": [
      "FastSpeedBody",
      "ACTIVE"
     ]
    },
    {
-    "id" : "SetActiveQuest",
-    "params" : 
-    [
+    "id": "SetActiveQuest",
+    "params": [
      "FirstTenBodies",
      "DEACTIVE"
     ]
    }
   ],
-  "commands_on_init" : 
-  [
+  "commands_on_init": [
    {
-    "id" : "SetClearColor",
-    "params" : 
-    [
+    "id": "SetClearColor",
+    "params": [
      "1",
      "1",
      "1",
@@ -302,27 +262,23 @@
     ]
    },
    {
-    "id" : "ShowText",
-    "params" : 
-    [
+    "id": "ShowText",
+    "params": [
      "Try to create 7 bodies simultaneously in space."
     ]
    },
    {
-    "disable" : true,
-    "id" : "GravityPoints",
-    "params" : 
-    [
+    "disable": true,
+    "id": "GravityPoints",
+    "params": [
      "Enable"
     ]
    }
   ],
-  "commands_on_tap" : 
-  [
+  "commands_on_tap": [
    {
-    "id" : "AddBodyToMousePos",
-    "params" : 
-    [
+    "id": "AddBodyToMousePos",
+    "params": [
      "BlackStone",
      "ToMousePos",
      "0",
@@ -333,9 +289,8 @@
     ]
    },
    {
-    "id" : "QuestCondition",
-    "params" : 
-    [
+    "id": "QuestCondition",
+    "params": [
      "FirstTenBodies",
      "count_bodies",
      ">=",
@@ -343,29 +298,25 @@
     ]
    }
   ],
-  "description" : "Create 10 bodies. For it, need zoom out.",
-  "id" : "FirstTenBodies"
+  "description": "Create 10 bodies. For it, need zoom out.",
+  "id": "FirstTenBodies"
  },
  {
-  "class" : "QuestStart",
-  "commands" : null,
-  "commands_debug" : 
-  [
+  "class": "QuestStart",
+  "commands": null,
+  "commands_debug": [
    {
-    "id" : "CreateSpace",
-    "params" : 
-    [
+    "id": "CreateSpace",
+    "params": [
      "MAIN",
      "Try"
     ]
    }
   ],
-  "commands_on_condition" : 
-  [
+  "commands_on_condition": [
    {
-    "id" : "SetClearColor",
-    "params" : 
-    [
+    "id": "SetClearColor",
+    "params": [
      "0.333",
      "0.666",
      "0.999",
@@ -373,29 +324,25 @@
     ]
    },
    {
-    "id" : "OpenWindow",
-    "params" : 
-    [
+    "id": "OpenWindow",
+    "params": [
      "RewardWindow",
      "Logo",
      "FINISH! Repeat game."
     ]
    },
    {
-    "id" : "SetActiveQuest",
-    "params" : 
-    [
+    "id": "SetActiveQuest",
+    "params": [
      "FastSpeedBody",
      "DEACTIVE"
     ]
    }
   ],
-  "commands_on_init" : 
-  [
+  "commands_on_init": [
    {
-    "id" : "SetClearColor",
-    "params" : 
-    [
+    "id": "SetClearColor",
+    "params": [
      "1",
      "1",
      "1",
@@ -403,19 +350,16 @@
     ]
    },
    {
-    "id" : "ShowText",
-    "params" : 
-    [
+    "id": "ShowText",
+    "params": [
      "Make fast speed more then 10."
     ]
    }
   ],
-  "commands_on_tap" : 
-  [
+  "commands_on_tap": [
    {
-    "id" : "AddBodyToMousePos",
-    "params" : 
-    [
+    "id": "AddBodyToMousePos",
+    "params": [
      "BlackStone",
      "ToMousePos",
      "0",
@@ -426,12 +370,10 @@
     ]
    }
   ],
-  "commands_on_update" : 
-  [
+  "commands_on_update": [
    {
-    "id" : "QuestCondition",
-    "params" : 
-    [
+    "id": "QuestCondition",
+    "params": [
      "FastSpeedBody",
      "max_speed_body",
      ">=",
@@ -439,7 +381,7 @@
     ]
    }
   ],
-  "description" : "Make it so that the maximum speed of the body is greater than 0.1. For test 0.05",
-  "id" : "FastSpeedBody"
+  "description": "Make it so that the maximum speed of the body is greater than 0.1. For test 0.05",
+  "id": "FastSpeedBody"
  }
 ]

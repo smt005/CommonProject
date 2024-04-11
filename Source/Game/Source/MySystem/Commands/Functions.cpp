@@ -575,6 +575,11 @@ namespace commands
 				FadeModel(comand.parameters[0], StrToFloat(comand.parameters[1], 1.f, 10000.0f));
 			}
 		}
+		else if (comandId == "DelayActionCommand") {
+			if (comand.parameters.size() >= 3) {
+				DelayActionCommand(comand.parameters[1], comand.parameters[0], StrToFloat(comand.parameters[2], 0.f, 10000.0f));
+			}
+		}
 		else if (comandId == "RunCommands") {
 			if (comand.parameters.size() >= 2) {
 				QuestManager::RunCommands(comand.parameters[1], comand.parameters[0]);

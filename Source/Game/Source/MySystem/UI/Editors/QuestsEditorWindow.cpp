@@ -9,11 +9,14 @@
 #include "../../Commands/Functions.h"
 #include <Object/Model.h>
 #include "ImGuiManager/Editor/Common/CommonPopupModal.h"
+#include "../../UI/CommonData.h"
 
 namespace Editor {
     std::string QuestsEditorWindow::EditorCommand::emptyName = "EMPTY";
 
     void QuestsEditorWindow::OnOpen() {
+        CommonData::PushLockScreen();
+
         SetFlag(ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 
         float x = 225.f;
@@ -29,6 +32,7 @@ namespace Editor {
     void QuestsEditorWindow::OnClose() {
         CommonPopupModal::Hide();
         Clear();
+        CommonData::PopLockScreen();
     }
 
     void QuestsEditorWindow::Draw() {
@@ -43,12 +47,9 @@ namespace Editor {
         _guiId = 0;
 
         DrawList();
-
-        ImGui::SameLine();
         DrawQuest();
-
         ButtonDisplay();
-
+        
         CommonPopupModal::Draw();
     }
 
@@ -121,6 +122,8 @@ namespace Editor {
     }
 
     void QuestsEditorWindow::DrawQuest() {
+        ImGui::SameLine();
+
         if (!_selectQuest) {
             ImGui::BeginChild("quest", { _widthQuest, _topHeight }, true);
             ImGui::EndChild();
@@ -176,14 +179,15 @@ namespace Editor {
 
             // Команды
             ImGui::Dummy(ImVec2(0.f, 5.f));
-            ImGui::PushItemWidth(_widthQuest / 2.1);
+            
 
-            DrawCommands(_selectQuest->_commandsOnInit,      observerLists.dataList[0]);
-            DrawCommands(_selectQuest->_commandsOnTap,       observerLists.dataList[1]);
-            DrawCommands(_selectQuest->_commandsOnUpdate,    observerLists.dataList[2]);
-            DrawCommands(_selectQuest->_commandsOnCondition, observerLists.dataList[3]);
-            DrawCommands(_selectQuest->_commandsDebug,       observerLists.dataList[4]);
-
+            std::pair<float, float> offset(2.f, 0.1f);
+            DrawCommands(_selectQuest->_commandsOnInit,      observerLists.dataList[0], offset);
+            DrawCommands(_selectQuest->_commandsOnTap,       observerLists.dataList[1], offset);
+            DrawCommands(_selectQuest->_commandsOnUpdate,    observerLists.dataList[2], offset);
+            DrawCommands(_selectQuest->_commandsOnCondition, observerLists.dataList[3], offset);
+            DrawCommands(_selectQuest->_commandsDebug,       observerLists.dataList[4], offset);
+            
             ImGui::EndChild();
 
             // Кнопки
@@ -193,15 +197,17 @@ namespace Editor {
         ImGui::Dummy(ImVec2(0.f, 5.f));
     }
 
-    void QuestsEditorWindow::DrawCommands(Commands& commands, const std::string& title) {
+    void QuestsEditorWindow::DrawCommands(Commands& commands, const std::string& title, const std::pair<float, float>& offset) {
         if (commands.empty()) {
             return;
         }
 
+        ImGui::PushItemWidth(_widthQuest / (offset.first + offset.second));
         int countCommands = commands.size();
         std::function<void(void)> fun;
 
         if (ImGui::CollapsingHeader((title + " (" + std::to_string(countCommands) + ")").c_str())) {
+
             for (int index = 0; index < countCommands; ++index) {
                 Command& command = commands[index];
 
@@ -295,7 +301,7 @@ namespace Editor {
                     countParams = editorParams.size();
                 }
 
-                std::string* subCommand = nullptr;
+                std::vector<std::string>* subCommandParam = nullptr;
 
                 for (size_t iParam = 0; iParam < countParams; ++iParam) {
                     std::string& parameter = parameters[iParam];
@@ -310,7 +316,13 @@ namespace Editor {
                         ImGui::PopID();
                     }
                     else if (editorParam == "!COMMANDS") {
-                        subCommand = &parameter;
+                        subCommandParam = &parameters;
+                        if (parameters.size() >= 2) {
+                            subCommandParam = &parameters;
+                            std::string text = parameters[1] + ":" + parameters[0];
+                            ImGui::Text(text.c_str());
+                            break;
+                        }
                     }
                     else {
                         auto [indexListParam, listParam] = GetIndexOfListByName(parameter, editorParam);
@@ -327,27 +339,33 @@ namespace Editor {
                 ImGui::Separator();
                 
                 // Под-команды
-                if (subCommand) {
-                    auto it = _selectQuest->_commandMap.find(*subCommand);
+                if (subCommandParam) {
+                    auto it = _selectQuest->_commandMap.find((*subCommandParam)[0]);
                     if (it == _selectQuest->_commandMap.end()) {
                         ImGui::PushID(++_guiId);
-                        help::CopyToArrayChar(_textBuffer, *subCommand);
+                        help::CopyToArrayChar(_textBuffer, (*subCommandParam)[0]);
                         if (ImGui::InputText("", _textBuffer.data(), _textBuffer.size())) {
-                            *subCommand = _textBuffer.data();
+                            (*subCommandParam)[0] = _textBuffer.data();
+                            (*subCommandParam)[1] = _selectQuest->Name();
                         }
                         ImGui::PopID();
 
                         ImGui::SameLine();
                         ImGui::PushID(++_guiId);
                         if (ImGui::Button("Add sub commands.", { 200.f, 24.f })) {
-                            Commands& commands = _selectQuest->_commandMap[*subCommand];
+                            const std::string& key = (*subCommandParam)[0];
+                            Commands& commands = _selectQuest->_commandMap[key];
                             commands.emplace_back();
                         }
                         ImGui::PopID();
                     }
                     else {
-                        ImGui::Dummy(ImVec2(0.f, 10.f));
-                        DrawCommands(_selectQuest->_commandMap[*subCommand], *subCommand);
+                        ImGui::SameLine((_widthQuest - (2.f * _widthQuest / (offset.first + offset.second))) / 2.f);
+                        ImGui::BeginGroup();
+                        ImGui::Text("Sub commands");
+                        ImGui::PushItemWidth(_widthQuest / 2.4);
+                        DrawCommands(_selectQuest->_commandMap[(*subCommandParam)[0]], (*subCommandParam)[0], { offset.first + offset.second, offset.second } );
+                        ImGui::EndGroup();
                     }
                 }
 
@@ -365,6 +383,8 @@ namespace Editor {
             ImGui::Dummy(ImVec2(0.f, 20.f));
             ImGui::Separator();
         }
+
+        ImGui::PopItemWidth();
 
         if (fun) {
             fun();

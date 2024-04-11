@@ -244,7 +244,7 @@ void QuestManager::Save(const std::string& pathFileName)
 		}
 
 		// Commands
-		auto appendCommande = [&questJson](Commands& commands, const std::string& name) {
+		auto appendCommande = [](Commands& commands, const std::string& name, Json::Value& commandsQuestJson) {
 			if (commands.empty()) {
 				return;
 			}
@@ -273,14 +273,20 @@ void QuestManager::Save(const std::string& pathFileName)
 				commandsJson.append(commandJson);
 			}
 
-			questJson[name] = commandsJson;
+			commandsQuestJson[name] = commandsJson;
 		};
 
-		appendCommande(questPtr->_commandsOnInit, "commands_on_init");
-		appendCommande(questPtr->_commandsOnTap, "commands_on_tap");
-		appendCommande(questPtr->_commandsOnUpdate, "commands_on_update");
-		appendCommande(questPtr->_commandsOnCondition, "commands_on_condition");
-		appendCommande(questPtr->_commandsDebug, "commands_debug");
+		appendCommande(questPtr->_commandsOnInit, "commands_on_init", questJson);
+		appendCommande(questPtr->_commandsOnTap, "commands_on_tap", questJson);
+		appendCommande(questPtr->_commandsOnUpdate, "commands_on_update", questJson);
+		appendCommande(questPtr->_commandsOnCondition, "commands_on_condition", questJson);
+		appendCommande(questPtr->_commandsDebug, "commands_debug", questJson);
+
+		Json::Value& commonCommandsJson = questJson["commands"];
+
+		for (auto& pairCommands : questPtr->_commandMap) {
+			appendCommande(pairCommands.second, pairCommands.first, commonCommandsJson);
+		}
 
 		// Append quest
 		valueDatas.append(questJson);

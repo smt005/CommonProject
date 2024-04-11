@@ -164,6 +164,9 @@ void MainUI::InitCallback() {
 	});
 
 	callback.add(Engine::CallbackType::PRESS_TAP, [](const Engine::CallbackEventPtr& callbackEventPtr) {
+		if (CommonData::IsLockScreen()) {
+			return;
+		}
 		if (IsLockAction()) {
 			return;
 		}

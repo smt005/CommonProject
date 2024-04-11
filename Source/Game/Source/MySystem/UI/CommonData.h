@@ -22,4 +22,13 @@ struct CommonData {
 	static std::vector<std::string> nameImageList;
 
 	float* Color4();
+
+	// Lock screen
+public:
+	static void PushLockScreen();
+	static void PopLockScreen();
+	static bool IsLockScreen();
+private:
+	static int lockScreenCounter;
+
 };

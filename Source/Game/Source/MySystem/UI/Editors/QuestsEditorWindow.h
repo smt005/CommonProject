@@ -52,7 +52,7 @@ namespace Editor {
 		void QuestButtonDisplay();
 		void QuestListButtonDisplay();
 
-		void DrawCommands(Commands& commands, const std::string& title);
+		void DrawCommands(Commands& commands, const std::string& title, const std::pair<float, float>& offset);
 		void ButtonDisplay();
 		void PrepareDraw(Quest::Ptr& selectQuest);
 
@@ -78,7 +78,7 @@ namespace Editor {
 
 	private:
 		float _width = 1000.f;
-		float _height = 500.f;
+		float _height = 700.f;
 		float _widthList = 263.f;
 		float _widthQuest = 500.f;
 		float _topHeight = 100.f;

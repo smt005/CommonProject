@@ -23,3 +23,17 @@ float* CommonData::Color4()
 	static float color4[4] = { 1.f, 1.f, 1.f, 1.f };
 	return color4;
 }
+
+
+// Lock screen
+
+void CommonData::PushLockScreen() {
+	++lockScreenCounter;
+}
+void CommonData::PopLockScreen() {
+	--lockScreenCounter;
+}
+bool CommonData::IsLockScreen() {
+	return lockScreenCounter > 0;
+}
+int CommonData::lockScreenCounter = 0;

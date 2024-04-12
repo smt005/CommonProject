@@ -69,7 +69,6 @@ namespace commands
 		value = value < min ? min : value;
 		value = value > max ? max : value;
 		return value;
-
 	}
 
 	/// RunCommandsFromFile string
@@ -210,7 +209,7 @@ namespace commands
 		}*/
 	}
 
-	/// ShowImage #MODEL
+	/// ShowImage #MODELS
 	void ShowImage(const std::string& nameModel)
 	{
 		if (std::find_if(CommonData::nameImageList.begin(), CommonData::nameImageList.end(), [&nameModel](const std::string& itName) {
@@ -222,7 +221,7 @@ namespace commands
 		CommonData::nameImageList.emplace_back(nameModel);
 	}
 
-	/// HideImage #MODEL
+	/// HideImage #MODELS
 	void HideImage(const std::string& nameModel)
 	{
 		auto it = std::find_if(CommonData::nameImageList.begin(), CommonData::nameImageList.end(), [&nameModel](const std::string& itName) {
@@ -245,7 +244,7 @@ namespace commands
 		CommonData::textOnScreen.clear();
 	}
 
-	/// SetSkyBox #MODEL
+	/// SetSkyBox #MODELS
 	void SetSkyBox(const std::string& modelName)
 	{
 		if (MySystem::currentSpace) {
@@ -305,7 +304,7 @@ namespace commands
 		}
 	}
 
-	/// AddBodyToPos #MODEL number number number number number number number
+	/// AddBodyToPos #MODELS number number number number number number number
 	void AddBodyToPos(const std::vector<std::string>& parameters)
 	{
 		// model, pos, vel, mass
@@ -335,7 +334,7 @@ namespace commands
 		SpaceManager::AddObject(nameModel, pos, vel, mass);
 	}
 
-	/// AddBodyToMousePos #MODEL /ToMousePos/ToCenterSpace number number number number /Default/ContrastRandom/Random/RED/GREEN/BLUE/WHITE/BLACK/Custom
+	/// AddBodyToMousePos #MODELS /ToMousePos/ToCenterSpace number number number number /Default/ContrastRandom/Random/RED/GREEN/BLUE/WHITE/BLACK/Custom
 	void AddBodyToMousePos(const std::vector<std::string>& parameters)
 	{
 		// model, pos(mouse), vel, mass
@@ -448,7 +447,7 @@ namespace commands
 		SpaceManager::AddObject(nameModel, pos, vel, mass, color);
 	}
 
-	/// StartQuest #QUEST
+	/// StartQuest #QUESTS
 	void StartQuest(const std::string& name) {
 		if (Quest::Ptr questPtr = QuestManager::GetQuest(name)) {
 			Commands& commandsDebug = questPtr->_commandsDebug;
@@ -463,7 +462,7 @@ namespace commands
 		}
 	}
 
-	/// SetActiveQuest #QUEST /ACTIVE/DEACTIVE
+	/// SetActiveQuest #QUESTS /ACTIVE/DEACTIVE#EXPRESSIONS
 
 	//..................................................................
 	void Run(const Command& comand)

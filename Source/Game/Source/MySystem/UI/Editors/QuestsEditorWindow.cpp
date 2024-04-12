@@ -147,7 +147,7 @@ namespace Editor {
             ImGui::PopItemWidth();
 
             ImGui::Dummy(ImVec2(0.f, 10.f));
-            if (ImGui::CollapsingHeader("Copmmons params")) {
+            if (ImGui::CollapsingHeader("Common params")) {
                 // Класс
                 ImGui::Dummy(ImVec2(0.f, 0.f));
                 ImGui::SameLine(35.f);
@@ -597,12 +597,14 @@ namespace Editor {
         // C:\Work\My\System\Source\Game\Source\MySystem\Commands\Functions.cpp
         // C:\Work\My\System\Source\Game\Source\MySystem\Quests/QuestManager.cpp
         // C:\Work\My\System\Source\Game\Source\MySystem\Commands\Functions/Actions.h
+        // C:\Work\My\System\Source\Game\Source\MySystem\Quests/QuestCondition.h
 
         EditorCommand& emptyEditorCommand = _editorCommands.emplace_back(EditorCommand::emptyName);
 
         EditorDatasParceFile("..\\..\\..\\Game\\Source\\MySystem\\Commands\\Functions.cpp");
         EditorDatasParceFile("..\\..\\..\\Game\\Source\\MySystem\\Quests\\QuestManager.cpp");
         EditorDatasParceFile("..\\..\\..\\Game\\Source\\MySystem\\Commands\\Functions\\Actions.h");
+        EditorDatasParceFile("..\\..\\..\\Game\\Source\\MySystem\\Quests\\QuestCondition.h");
 
         //...
         if (int size = _editorCommands.size(); size > 0) {
@@ -648,6 +650,10 @@ namespace Editor {
 
         size_t beginPos = 0;
         beginPos = fileText.find("///", beginPos); // /// = 3
+        if (beginPos == fileText.npos) {
+            return;
+        }
+
         beginPos += 3;
 
         while (beginPos != fileText.npos) {
@@ -716,8 +722,26 @@ namespace Editor {
                             newEditorCommand.params.emplace_back(paramWord);
                         }
                     }
+                    else if (paramWord.front() == '!') {
+                        if (paramWord == "!PARAMS") {
+                            if (_mapLists.find(paramWord) == _mapLists.end()) {
+                                std::vector<Quest::Ptr>& quests = QuestManager::GetQuests();
+                                for (const Quest::Ptr& questPtr : quests) {
+                                    if (!questPtr->_params.empty()) {
+                                        std::string nameQuest = questPtr->Name();
+                                        std::vector<const char*>& listParams = _mapLists[nameQuest + paramWord];
+                                        listParams.reserve(questPtr->_params.size());
+
+                                        for (auto& paramPair : questPtr->_params) {
+                                            listParams.emplace_back(help::CopyToCharsPtr<char, std::string>(paramPair.first));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                     else if (paramWord.front() == '#') {
-                        if (paramWord == "#MODEL") {
+                        if (paramWord == "#MODELS") {
                             if (_mapLists.find(paramWord) == _mapLists.end()) {
                                 std::vector<const char*>& listParams = _mapLists[paramWord];
                                 std::vector<std::string> listModels = Model::GetListModels();
@@ -734,7 +758,7 @@ namespace Editor {
 
                             newEditorCommand.params.emplace_back(paramWord);
                         }
-                        else if (paramWord == "#QUEST") {
+                        else if (paramWord == "#QUESTS") {
                             if (_mapLists.find(paramWord) == _mapLists.end()) {
                                 std::vector<Quest::Ptr>& quests = QuestManager::GetQuests();
                                 std::vector<const char*>& listParams = _mapLists[paramWord];
@@ -752,6 +776,26 @@ namespace Editor {
                             }
 
                             newEditorCommand.params.emplace_back(paramWord);
+                        }
+                        else if (paramWord == "#EXPRESSIONS") {
+                            if (_mapLists.find(paramWord) == _mapLists.end()) {
+                                std::vector<Quest::Ptr>& quests = QuestManager::GetQuests();
+                                std::vector<const char*>& listParams = _mapLists[paramWord];
+                                listParams.reserve(12);
+
+                                listParams.emplace_back(help::CopyToCharsPtr<char, std::string>(">"));
+                                listParams.emplace_back(help::CopyToCharsPtr<char, std::string>(">="));
+                                listParams.emplace_back(help::CopyToCharsPtr<char, std::string>("=="));
+                                listParams.emplace_back(help::CopyToCharsPtr<char, std::string>("!="));
+                                listParams.emplace_back(help::CopyToCharsPtr<char, std::string>("<"));
+                                listParams.emplace_back(help::CopyToCharsPtr<char, std::string>("<="));
+                                listParams.emplace_back(help::CopyToCharsPtr<char, std::string>("is_more"));
+                                listParams.emplace_back(help::CopyToCharsPtr<char, std::string>("is_more_or_equal"));
+                                listParams.emplace_back(help::CopyToCharsPtr<char, std::string>("is_equal"));
+                                listParams.emplace_back(help::CopyToCharsPtr<char, std::string>("is_not_equal"));
+                                listParams.emplace_back(help::CopyToCharsPtr<char, std::string>("is_less"));
+                                listParams.emplace_back(help::CopyToCharsPtr<char, std::string>("is_less_or_equal"));
+                            }
                         }
                     }
                     else {

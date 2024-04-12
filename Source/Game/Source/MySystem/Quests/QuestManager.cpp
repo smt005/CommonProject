@@ -304,7 +304,7 @@ void QuestManager::Update()
 {
 }
 
-/// QuestCondition #QUEST /count_boties/max_speed_body/temp_number /==/>/>=/==/</<=/is_more/is_equal/is_more_or_equal/is_less/is_less_or_equal number
+/// QuestCondition #QUESTS /count_boties/max_speed_body/temp_number /==/>/>=/==/</<=/is_more/is_equal/is_more_or_equal/is_less/is_less_or_equal number
 void QuestManager::Condition(const std::vector<std::string>& params)
 {
 	if (params.size() < 4) {
@@ -355,4 +355,18 @@ void QuestManager::RunCommands(const std::string& questName, const std::string& 
 			CommandManager::Run(it->second);
 		}
 	}
+}
+
+/// SetParamValue #QUESTS name value
+void QuestManager::SetParamValue(const std::string& questName, const std::string& nameValue, const std::string& valueStr)
+{
+	if (Quest::Ptr questPtr = QuestManager::GetQuest(questName)) {
+		questPtr->_params.emplace(nameValue, valueStr);
+	}
+}
+
+/// SetGlobalParamValue name value
+void QuestManager::SetGlobalParamValue(const std::string& nameValue, const std::string& valueStr)
+{
+	Quest::globalParams.emplace(nameValue, valueStr);
 }

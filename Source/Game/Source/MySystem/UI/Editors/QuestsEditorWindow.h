@@ -53,6 +53,7 @@ namespace Editor {
 		void QuestListButtonDisplay();
 
 		void DrawCommands(Commands& commands, const std::string& title, const std::pair<float, float>& offset);
+		//void DrawSubCommands();
 		void ButtonDisplay();
 		void PrepareDraw(Quest::Ptr& selectQuest);
 

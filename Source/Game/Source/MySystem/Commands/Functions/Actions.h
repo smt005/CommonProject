@@ -3,7 +3,7 @@
 #include <string>
 
 namespace commands {
-	/// FadeModel #MODEL float
+	/// FadeModel #MODELS float
 	void FadeModel(const std::string& model, float fadeTime);
 
 	/// DelayActionCommand !COMMANDS quest float

@@ -106,6 +106,7 @@ namespace Editor {
 
 		void LoadEditorDatas();
 		void EditorDatasParceFile(const std::string& filePathHame);
+		void PrepareCommand(const std::vector<std::string>& words);
 
 		inline std::shared_ptr<bool> GetSharedWndPtr() {
 			if (!_sharedWndPtr) {

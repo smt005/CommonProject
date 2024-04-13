@@ -757,113 +757,113 @@ namespace Editor {
             }
 
             std::string subText = fileText.substr(beginPos, (endPos - beginPos));
-            std::vector<std::string> words = SeparateString(subText, " ");
-            size_t size = words.size();
-
-            if (size > 0) {
-                EditorCommand& newEditorCommandT = _editorCommands.Add(words.front());
-
-                //...
-                newEditorCommandT.name = words.front();
-
-                //...
-                for (size_t index = 1; index < size; ++index) {
-                    const std::string& paramWord = words[index];
-
-                    // Список
-                    if (paramWord.front() == '/') {
-                        std::string hashName = "/";
-                        size_t lenParamWord = paramWord.size();
-                        if (lenParamWord <= 10) {
-                            hashName = paramWord;
-                        }
-                        else {
-                            hashName += paramWord.substr(0, 4);
-                            hashName += paramWord.substr((lenParamWord - 4), 4);
-                            hashName += std::to_string(lenParamWord);
-                        }
-
-                        if (_mapLists.find(hashName) == _mapLists.end()) {
-                            std::vector<std::string> paramWords = SeparateString(paramWord, "/");
-                            EditorListT<std::string>& listParams = _mapLists[hashName];
-                            listParams.Reserve(paramWords.size());
-
-                            for (const std::string& pWord : paramWords) {
-                                listParams.Add(pWord.c_str());
-                            }
-
-                            newEditorCommandT.params.emplace_back(hashName);
-                        }
-                    }
-                    else if (paramWord.front() == '#') {
-                        if (paramWord == "#COMMANDS") {
-                            if (_mapLists.find(paramWord) == _mapLists.end()) {
-                                auto& listParams = _mapLists[paramWord];
-                                listParams.Add(paramWord.c_str());
-                            }
-
-                            newEditorCommandT.params.emplace_back(paramWord);
-                        }
-                        else if (paramWord == "#PARAMS") {
-                            if (_mapLists.find(paramWord) == _mapLists.end()) {
-                                std::vector<Quest::Ptr>& quests = QuestManager::GetQuests();
-                                for (const Quest::Ptr& questPtr : quests) {
-                                    if (!questPtr->_params.empty()) {
-                                        std::string nameQuest = questPtr->Name();
-                                        auto& listParams = _mapLists[nameQuest + paramWord];
-                                        listParams.Reserve(questPtr->_params.size());
-
-                                        for (auto& paramPair : questPtr->_params) {
-                                            listParams.Add(paramPair.first.c_str());
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        else if (paramWord == "#MODELS") {
-                            if (_mapLists.find(paramWord) == _mapLists.end()) {
-                                auto& listParams = _mapLists[paramWord];
-                                std::vector<std::string> listModels = Model::GetListModels();
-                                listParams.Reserve(listModels.size());
-
-                                for (const std::string& nameModel : listModels) {
-                                    listParams.Add(nameModel.c_str());
-                                }
-                            }
-
-                            newEditorCommandT.params.emplace_back(paramWord);
-                        }
-                        else if (paramWord == "#QUESTS") {
-                            if (_mapLists.find(paramWord) == _mapLists.end()) {
-                                std::vector<Quest::Ptr>& quests = QuestManager::GetQuests();
-                                auto& listParams = _mapLists[paramWord];
-                                listParams.Reserve(quests.size());
-
-                                for (const Quest::Ptr& questPtr : quests) {
-                                    listParams.Add(questPtr->Name().c_str());
-                                }
-                            }
-
-                            newEditorCommandT.params.emplace_back(paramWord);
-                        }
-                        else if (paramWord == "#EXPRESSIONS") {
-                            if (_mapLists.find(paramWord) == _mapLists.end()) {
-                                std::vector<Quest::Ptr>& quests = QuestManager::GetQuests();
-                                auto& listParams = _mapLists[paramWord];
-                                listParams.Add({ ">", ">=", "==", "!=", "<", "<=", "is_more", "is_more_or_equal", "is_equal", "is_not_equal", "is_less", "is_less_or_equal" });
-                                newEditorCommandT.params.emplace_back(paramWord);
-                            }
-                        }
-                    }
-                    else {
-                        newEditorCommandT.params.emplace_back();
-                    }
-                }
-            }
+            PrepareCommand(SeparateString(subText, " "));
 
             beginPos = fileText.find("///", endPos);
             if (beginPos != fileText.npos) {
                 beginPos += 3;
+            }
+        }
+    }
+
+    void QuestsEditorWindow::PrepareCommand(const std::vector<std::string>& words)
+    {
+        size_t size = words.size();
+        if (size == 0) {
+            return;
+        }
+
+        EditorCommand& newEditorCommandT = _editorCommands.Add(words.front());
+
+        for (size_t index = 1; index < size; ++index) {
+            const std::string& paramWord = words[index];
+
+            // Список
+            if (paramWord.front() == '/') {
+                std::string hashName = "/";
+                size_t lenParamWord = paramWord.size();
+                if (lenParamWord <= 10) {
+                    hashName = paramWord;
+                }
+                else {
+                    hashName += paramWord.substr(0, 4);
+                    hashName += paramWord.substr((lenParamWord - 4), 4);
+                    hashName += std::to_string(lenParamWord);
+                }
+
+                if (_mapLists.find(hashName) == _mapLists.end()) {
+                    std::vector<std::string> paramWords = SeparateString(paramWord, "/");
+                    EditorListT<std::string>& listParams = _mapLists[hashName];
+                    listParams.Reserve(paramWords.size());
+
+                    for (const std::string& pWord : paramWords) {
+                        listParams.Add(pWord.c_str());
+                    }
+                }
+                newEditorCommandT.params.emplace_back(hashName);
+            }
+            else if (paramWord.front() == '#') {
+                if (paramWord == "#COMMANDS") {
+                    if (_mapLists.find(paramWord) == _mapLists.end()) {
+                        auto& listParams = _mapLists[paramWord];
+                        listParams.Add(paramWord.c_str());
+                    }
+                    newEditorCommandT.params.emplace_back(paramWord);
+                }
+                else if (paramWord == "#PARAMS") {
+                    if (_mapLists.find(paramWord) == _mapLists.end()) {
+                        std::vector<Quest::Ptr>& quests = QuestManager::GetQuests();
+
+                        for (const Quest::Ptr& questPtr : quests) {
+                            if (!questPtr->_params.empty()) {
+                                std::string nameQuest = questPtr->Name();
+                                auto& listParams = _mapLists[nameQuest + paramWord];
+                                listParams.Reserve(questPtr->_params.size());
+
+                                for (auto& paramPair : questPtr->_params) {
+                                    listParams.Add(paramPair.first.c_str());
+                                }
+                            }
+                        }
+                    }
+                    newEditorCommandT.params.emplace_back(paramWord);
+                }
+                else if (paramWord == "#MODELS") {
+                    if (_mapLists.find(paramWord) == _mapLists.end()) {
+                        auto& listParams = _mapLists[paramWord];
+                        std::vector<std::string> listModels = Model::GetListModels();
+                        listParams.Reserve(listModels.size());
+
+                        for (const std::string& nameModel : listModels) {
+                            listParams.Add(nameModel.c_str());
+                        }
+                    }
+                    newEditorCommandT.params.emplace_back(paramWord);
+                }
+                else if (paramWord == "#QUESTS") {
+                    if (_mapLists.find(paramWord) == _mapLists.end()) {
+                        std::vector<Quest::Ptr>& quests = QuestManager::GetQuests();
+                        auto& listParams = _mapLists[paramWord];
+                        listParams.Reserve(quests.size());
+
+                        for (const Quest::Ptr& questPtr : quests) {
+                            listParams.Add(questPtr->Name().c_str());
+                        }
+                    }
+                    newEditorCommandT.params.emplace_back(paramWord);
+                }
+                else if (paramWord == "#EXPRESSIONS") {
+                    if (_mapLists.find(paramWord) == _mapLists.end()) {
+                        std::vector<Quest::Ptr>& quests = QuestManager::GetQuests();
+                        auto& listParams = _mapLists[paramWord];
+                        listParams.Add({ ">", ">=", "==", "!=", "<", "<=", "is_more", "is_more_or_equal", "is_equal", "is_not_equal", "is_less", "is_less_or_equal" });
+                        
+                    }
+                    newEditorCommandT.params.emplace_back(paramWord);
+                }
+            }
+            else {
+                newEditorCommandT.params.emplace_back();
             }
         }
     }

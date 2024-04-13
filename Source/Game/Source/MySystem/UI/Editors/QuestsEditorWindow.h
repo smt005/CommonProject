@@ -33,6 +33,10 @@ namespace Editor {
 			T& Add(T&& text) {
 				return dataList.emplace_back(text);
 			}
+			void Add(std::initializer_list<T>&& texts) {
+				dataList.reserve(dataList.size() + texts.size());
+				dataList.insert(dataList.end(), texts.begin(), texts.end());
+			}
 			void MakeViewData() {
 				viewList.clear();
 				for (T& text : dataList) {
@@ -85,6 +89,8 @@ namespace Editor {
 
 		void DrawList();
 		void DrawQuest();
+		void DrawParams(std::map<std::string, std::string>& paramMap, const std::string& title);
+		void ChangeParamDisplay(std::map<std::string, std::string>& paramMap, const std::string& name);
 		void QuestButtonDisplay();
 		void QuestListButtonDisplay();
 

@@ -131,6 +131,19 @@ void QuestManager::Load(const std::string& pathFileName)
 			continue;
 		}
 
+		Json::Value& jsonGlobalParams = valueData["global_params"];
+		if (!jsonGlobalParams.empty() && jsonGlobalParams.isObject()) {
+			for (auto&& jsonKey : jsonGlobalParams.getMemberNames()) {
+				Json::Value& jsonParam = jsonGlobalParams[jsonKey];
+
+				if (jsonParam.isString()) {
+					std::string paramValue = jsonParam.asString();
+					Quest::globalParams.emplace(jsonKey, paramValue);
+				}			
+			}
+			continue;
+		}
+
 		Json::Value& jsonId = valueData["id"];
 		const std::string questId = !jsonId.empty() ? jsonId.asString() : std::string();
 		if (questId.empty()) {
@@ -292,6 +305,13 @@ void QuestManager::Save(const std::string& pathFileName)
 		valueDatas.append(questJson);
 	}
 
+	// global_params
+	Json::Value& jsonGlobalParams = valueDatas["global_params"];
+	for (std::pair<const std::string, std::string>& paramPair : Quest::globalParams) {
+		jsonGlobalParams[paramPair.first] = paramPair.second;
+	}
+
+	// Сохранение
 	help::saveJson(*pathFileNamePtr, valueDatas, " ");
 }
 
@@ -304,7 +324,7 @@ void QuestManager::Update()
 {
 }
 
-/// QuestCondition #QUESTS /count_boties/max_speed_body/temp_number /==/>/>=/==/</<=/is_more/is_equal/is_more_or_equal/is_less/is_less_or_equal number
+/// QuestCondition #QUESTS /count_boties/max_speed_body/temp_number #EXPRESSIONS number
 void QuestManager::Condition(const std::vector<std::string>& params)
 {
 	if (params.size() < 4) {
@@ -345,7 +365,7 @@ void QuestManager::Condition(const std::vector<std::string>& params)
 	}
 }
 
-/// RunCommands !COMMANDS
+/// RunCommands #COMMANDS
 void QuestManager::RunCommands(const std::string& questName, const std::string& commandName)
 {
 	if (Quest::Ptr questPtr = QuestManager::GetQuest(questName)) {

@@ -209,12 +209,14 @@ namespace Editor {
                 }
                 ImGui::PopID();
                 ImGui::PopItemWidth();
+
+                DrawParams(_selectQuest->_params, "Params");
+                DrawParams(Quest::globalParams, "Global params");
             }
 
             // Команды
             ImGui::Dummy(ImVec2(0.f, 5.f));
             
-
             std::pair<float, float> offset(2.f, 0.1f);
             EditorListT<std::string>& observerLists = _mapLists[observesType];
             DrawCommands(_selectQuest->_commandsOnInit,      observerLists.dataList[0], offset);
@@ -230,6 +232,39 @@ namespace Editor {
             
         ImGui::EndChild();
         ImGui::Dummy(ImVec2(0.f, 5.f));
+    }
+
+    void QuestsEditorWindow::DrawParams(std::map<std::string, std::string>& paramMap, const std::string& title)
+    {
+        if (ImGui::CollapsingHeader((title + " (" + std::to_string(paramMap.size()) + ")").c_str())) {
+            for (std::pair<const std::string, std::string>& paramPair : paramMap) {
+                ImGui::Text(paramPair.first.c_str());
+                ImGui::SameLine();
+
+                ImGui::SameLine(_widthQuest / 2.4f);
+                ImGui::PushID(++_guiId);
+                if (ImGui::Button(":", ImVec2(20.f, 20.f))) {
+                    ChangeParamDisplay(paramMap, paramPair.first);
+                }
+                ImGui::PopID();
+
+                ImGui::SameLine();
+                ImGui::PushItemWidth(_widthQuest / 2.3f);
+                ImGui::PushID(++_guiId);
+                help::CopyToArrayChar(_textBuffer, paramPair.second);
+                if (ImGui::InputText("", _textBuffer.data(), _textBuffer.size())) {
+                    paramPair.second = _textBuffer.data();
+                }
+                ImGui::PopID();
+            }
+
+            ImGui::Dummy(ImVec2(0.f, 0.f));
+            ImGui::PushID(++_guiId);
+            if (ImGui::Button("Add param", ImVec2(200.f, 20.f))) {
+                ChangeParamDisplay(paramMap, "");
+            }
+            ImGui::PopID();
+        }
     }
 
     void QuestsEditorWindow::DrawCommands(Commands& commands, const std::string& title, const std::pair<float, float>& offset) {
@@ -351,7 +386,7 @@ namespace Editor {
                         }
                         ImGui::PopID();
                     }
-                    else if (editorParam == "!COMMANDS") {
+                    else if (editorParam == "#COMMANDS") {
                         subCommandParam = &parameters;
                         if (parameters.size() >= 2) {
                             subCommandParam = &parameters;
@@ -451,7 +486,6 @@ namespace Editor {
                 return;
             }
 
-        
             EditorListT<std::string>& observerLists = _mapLists[observesType];
 
             ImGui::PushID(++_guiId);
@@ -525,6 +559,45 @@ namespace Editor {
         ImGui::PopStyleColor();
 
         ImGui::EndChild();
+    }
+
+    void QuestsEditorWindow::ChangeParamDisplay(std::map<std::string, std::string>& paramMap, const std::string& name)
+    {
+        std::shared_ptr<std::string> namePtr = std::make_shared<std::string>(name);
+
+        Editor::CommonPopupModal::Show(GetSharedWndPtr(), [this, &paramMap, name, namePtr]() {
+            ImGui::PushItemWidth(200.f);
+
+            ImGui::PushID(++_guiId);
+            help::CopyToArrayChar(_textBuffer, *namePtr);
+            if (ImGui::InputText("", _textBuffer.data(), _textBuffer.size())) {
+                *namePtr = _textBuffer.data();
+            }
+            ImGui::PopID();
+
+            ImGui::Dummy(ImVec2(0.f, 0.f));
+            bool enable = (name != *namePtr) || !namePtr->empty();
+            ImGui::PushStyleColor(ImGuiCol_Button, enable ? Editor::greenColor : Editor::disableColor);
+            if (ImGui::Button("Change##change_name_param_btn", { 100.f, 26.f }) && enable) {
+                if (!name.empty()) {
+                    auto it = paramMap.find(name);
+                    if (it != paramMap.end()) {
+                        paramMap.emplace(*namePtr, it->second);
+                        paramMap.erase(it);
+                    }
+                }
+                else {
+                    paramMap.emplace(*namePtr, "");
+                }
+                CommonPopupModal::Hide();
+            }
+            ImGui::PopStyleColor();
+
+            ImGui::SameLine();
+            if (ImGui::Button("Close##close_name_param_btn", { 100.f, 26.f })) {
+                CommonPopupModal::Hide();
+            }
+        }, "Change name param.");
     }
 
     void QuestsEditorWindow::QuestButtonDisplay() {
@@ -722,8 +795,8 @@ namespace Editor {
                             newEditorCommandT.params.emplace_back(hashName);
                         }
                     }
-                    else if (paramWord.front() == '!') {
-                        if (paramWord == "!COMMANDS") {
+                    else if (paramWord.front() == '#') {
+                        if (paramWord == "#COMMANDS") {
                             if (_mapLists.find(paramWord) == _mapLists.end()) {
                                 auto& listParams = _mapLists[paramWord];
                                 listParams.Add(paramWord.c_str());
@@ -731,7 +804,7 @@ namespace Editor {
 
                             newEditorCommandT.params.emplace_back(paramWord);
                         }
-                        else if (paramWord == "!PARAMS") {
+                        else if (paramWord == "#PARAMS") {
                             if (_mapLists.find(paramWord) == _mapLists.end()) {
                                 std::vector<Quest::Ptr>& quests = QuestManager::GetQuests();
                                 for (const Quest::Ptr& questPtr : quests) {
@@ -747,9 +820,7 @@ namespace Editor {
                                 }
                             }
                         }
-                    }
-                    else if (paramWord.front() == '#') {
-                        if (paramWord == "#MODELS") {
+                        else if (paramWord == "#MODELS") {
                             if (_mapLists.find(paramWord) == _mapLists.end()) {
                                 auto& listParams = _mapLists[paramWord];
                                 std::vector<std::string> listModels = Model::GetListModels();
@@ -779,20 +850,8 @@ namespace Editor {
                             if (_mapLists.find(paramWord) == _mapLists.end()) {
                                 std::vector<Quest::Ptr>& quests = QuestManager::GetQuests();
                                 auto& listParams = _mapLists[paramWord];
-                                listParams.Reserve(12);
-
-                                listParams.Add(">");
-                                listParams.Add(">=");
-                                listParams.Add("==");
-                                listParams.Add("!=");
-                                listParams.Add("<");
-                                listParams.Add("<=");
-                                listParams.Add("is_more");
-                                listParams.Add("is_more_or_equal");
-                                listParams.Add("is_equal");
-                                listParams.Add("is_not_equal");
-                                listParams.Add("is_less");
-                                listParams.Add("is_less_or_equal");
+                                listParams.Add({ ">", ">=", "==", "!=", "<", "<=", "is_more", "is_more_or_equal", "is_equal", "is_not_equal", "is_less", "is_less_or_equal" });
+                                newEditorCommandT.params.emplace_back(paramWord);
                             }
                         }
                     }

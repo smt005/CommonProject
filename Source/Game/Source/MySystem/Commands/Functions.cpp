@@ -463,7 +463,7 @@ namespace commands
 		}
 	}
 
-	/// SetActiveQuest #QUESTS /ACTIVE/DEACTIVE#EXPRESSIONS
+	/// SetActiveQuest #QUESTS /ACTIVE/DEACTIVE
 
 	//..................................................................
 	void Run(const Command& comand)
@@ -577,12 +577,12 @@ namespace commands
 		}
 		else if (comandId == "DelayActionCommand") {
 			if (comand.parameters.size() >= 3) {
-				DelayActionCommand(comand.parameters[1], comand.parameters[0], StrToFloat(comand.parameters[2], 0.f, 10000.0f));
+				DelayActionCommand(comand.parameters[0], comand.parameters[1], StrToFloat(comand.parameters[2], 0.f, 10000.0f));
 			}
 		}
 		else if (comandId == "RunCommands") {
 			if (comand.parameters.size() >= 2) {
-				QuestManager::RunCommands(comand.parameters[1], comand.parameters[0]);
+				QuestManager::RunCommands(comand.parameters[0], comand.parameters[1]);
 			}
 		}
 		else if (comandId == "RunCommandIf") {

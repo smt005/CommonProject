@@ -311,8 +311,6 @@ namespace Editor {
 
                     if (_mapLists.find(editorQuestParam) == _mapLists.end()) {
                         editorQuestParam = editorParam;
-                    }
-                    else {
                         editorQuestName.clear();
                     }
                 }
@@ -703,6 +701,8 @@ namespace Editor {
     }
 
     void QuestsEditorWindow::LoadEditorDatas() {
+        Clear();
+
         // C:\Work\My\System\Source\Resources\Files\System
         // C:\Work\My\System\Source\Game\Source\MySystem\Commands\Functions.cpp
         // C:\Work\My\System\Source\Game\Source\MySystem\Quests/QuestManager.cpp
@@ -809,16 +809,16 @@ namespace Editor {
                             return;
                         }
 
-                        std::string nameParam = paramWord;
+                        std::string nameCommands = paramWord;
                         if (!questName.empty()) {
-                            nameParam += ":" + questName;
+                            nameCommands += ":" + questName;
                         }
 
-                        if (_mapLists.find(paramWord) == _mapLists.end()) {
-                            auto& listParams = _mapLists[nameParam];
+                        if (_mapLists.find(nameCommands) == _mapLists.end()) {
+                            auto& listParams = _mapLists[nameCommands];
 
                             listParams.Reserve(comands.size());
-                            std::string questNameCommand = nameParam + ":";
+                            std::string questNameCommand = nameCommands + ":";
 
                             for (auto& paramPair : comands) {
                                 listParams.Add(paramPair.first.c_str());
@@ -844,7 +844,7 @@ namespace Editor {
                             nameParam += ":" + questName;
                         }
 
-                        if (_mapLists.find(paramWord) == _mapLists.end()) {
+                        if (_mapLists.find(nameParam) == _mapLists.end()) {
                             auto& listParams = _mapLists[nameParam];
 
                             listParams.Reserve(params.size());

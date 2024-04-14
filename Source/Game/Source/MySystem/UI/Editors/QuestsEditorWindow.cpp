@@ -210,7 +210,7 @@ namespace Editor {
                 ImGui::PopID();
                 ImGui::PopItemWidth();
 
-                DrawQuestParams(_selectQuest->_params, "Params");
+                DrawQuestParams(_selectQuest->_params, "Params", _selectQuest->Name());
                 DrawQuestParams(Quest::globalParams, "Global params");
             }
 
@@ -234,8 +234,10 @@ namespace Editor {
         ImGui::Dummy(ImVec2(0.f, 5.f));
     }
 
-    void QuestsEditorWindow::DrawQuestParams(std::map<std::string, std::string>& paramMap, const std::string& title)
+    void QuestsEditorWindow::DrawQuestParams(std::map<std::string, std::string>& paramMap, const std::string& title, const std::string& questName)
     {
+        std::function<void(void)> reloadParams = 0;
+
         if (ImGui::CollapsingHeader((title + " (" + std::to_string(paramMap.size()) + ")").c_str())) {
             for (std::pair<const std::string, std::string>& paramPair : paramMap) {
                 ImGui::Text(paramPair.first.c_str());
@@ -244,7 +246,7 @@ namespace Editor {
                 ImGui::SameLine(_widthQuest / 2.4f);
                 ImGui::PushID(++_guiId);
                 if (ImGui::Button(":", ImVec2(20.f, 20.f))) {
-                    ChangeParamDisplay(paramMap, paramPair.first);
+                    ChangeParamDisplay(paramMap, paramPair.first, questName);
                 }
                 ImGui::PopID();
 
@@ -261,7 +263,7 @@ namespace Editor {
             ImGui::Dummy(ImVec2(0.f, 0.f));
             ImGui::PushID(++_guiId);
             if (ImGui::Button("Add param", ImVec2(200.f, 20.f))) {
-                ChangeParamDisplay(paramMap, "");
+                ChangeParamDisplay(paramMap, "", questName);
             }
             ImGui::PopID();
         }
@@ -561,11 +563,11 @@ namespace Editor {
         ImGui::EndChild();
     }
 
-    void QuestsEditorWindow::ChangeParamDisplay(std::map<std::string, std::string>& paramMap, const std::string& name)
+    void QuestsEditorWindow::ChangeParamDisplay(std::map<std::string, std::string>& paramMap, const std::string& name, const std::string& questName)
     {
         std::shared_ptr<std::string> namePtr = std::make_shared<std::string>(name);
 
-        Editor::CommonPopupModal::Show(GetSharedWndPtr(), [this, &paramMap, name, namePtr]() {
+        Editor::CommonPopupModal::Show(GetSharedWndPtr(), [this, &paramMap, questName, name, namePtr]() {
             ImGui::PushItemWidth(200.f);
 
             ImGui::PushID(++_guiId);
@@ -589,6 +591,25 @@ namespace Editor {
                 else {
                     paramMap.emplace(*namePtr, "");
                 }
+
+                std::string param = "!PARAMS";
+                if (!questName.empty()) {
+                    param += (":" + questName);
+                }
+
+                auto itParam = _mapLists.find(param);
+
+                if (itParam != _mapLists.end()) {
+                    EditorListT<std::string>& listParams = itParam->second;
+                    listParams.Clear();
+                    listParams.Reserve(paramMap.size());
+
+                    for (auto& paramPair : paramMap) {
+                        listParams.Add(paramPair.first.c_str());
+                        listParams.MakeViewData();
+                    }
+                }
+
                 CommonPopupModal::Hide();
             }
             ImGui::PopStyleColor();
@@ -816,9 +837,7 @@ namespace Editor {
 
                         if (_mapLists.find(nameCommands) == _mapLists.end()) {
                             auto& listParams = _mapLists[nameCommands];
-
                             listParams.Reserve(comands.size());
-                            std::string questNameCommand = nameCommands + ":";
 
                             for (auto& paramPair : comands) {
                                 listParams.Add(paramPair.first.c_str());
@@ -846,9 +865,7 @@ namespace Editor {
 
                         if (_mapLists.find(nameParam) == _mapLists.end()) {
                             auto& listParams = _mapLists[nameParam];
-
                             listParams.Reserve(params.size());
-                            std::string questNameParam = nameParam + ":";
 
                             for (auto& paramPair : params) {
                                 listParams.Add(paramPair.first.c_str());

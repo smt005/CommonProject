@@ -89,8 +89,8 @@ namespace Editor {
 
 		void DrawList();
 		void DrawQuest();
-		void DrawQuestParams(std::map<std::string, std::string>& paramMap, const std::string& title);
-		void ChangeParamDisplay(std::map<std::string, std::string>& paramMap, const std::string& name);
+		void DrawQuestParams(std::map<std::string, std::string>& paramMap, const std::string& title, const std::string& questName = "");
+		void ChangeParamDisplay(std::map<std::string, std::string>& paramMap, const std::string& name, const std::string& questName);
 		void QuestButtonDisplay();
 		void QuestListButtonDisplay();
 

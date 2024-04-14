@@ -125,7 +125,7 @@
      "CountTaps",
      "==",
      "Logo",
-     "MaxCountTaps",
+     "MaxCountThreeTaps",
      "Logo",
      "Logo_comands"
     ]
@@ -136,7 +136,8 @@
   "params" : 
   {
    "CountTaps" : "0",
-   "MaxCountTaps" : "5"
+   "MaxCountTaps" : "10",
+   "MaxCountThreeTaps" : "3"
   }
  },
  {

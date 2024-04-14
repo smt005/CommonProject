@@ -68,7 +68,7 @@ Quest::Ptr QuestManager::GetQuest(const std::string& name)
 		return *it;
 	}
 
-	return Quest::Ptr(new Quest("EMPTY"));
+	return nullptr;// Quest::Ptr(new Quest("EMPTY"));
 }
 
 const std::vector<std::string>& QuestManager::GetListClasses()
@@ -306,10 +306,11 @@ void QuestManager::Save(const std::string& pathFileName)
 	}
 
 	// global_params
-	Json::Value& jsonGlobalParams = valueDatas["global_params"];
+	Json::Value jsonGlobalParams;
 	for (std::pair<const std::string, std::string>& paramPair : Quest::globalParams) {
-		jsonGlobalParams[paramPair.first] = paramPair.second;
+		jsonGlobalParams["global_params"][paramPair.first] = paramPair.second;
 	}
+	valueDatas.append(jsonGlobalParams);
 
 	// Сохранение
 	help::saveJson(*pathFileNamePtr, valueDatas, " ");

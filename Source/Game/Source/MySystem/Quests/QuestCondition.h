@@ -14,6 +14,15 @@ namespace quest {
 		is_not_equal
 	};
 
+	enum class Operation {
+		is_error,
+		is_addition,
+		is_subtraction,
+		is_division,
+		is_multiplication/*,
+		is_remainder*/
+	};
+
 	bool count_bodies(const std::string& expressions, int number);
 	bool max_speed_body(const std::string& expressions, float speed);
 
@@ -22,4 +31,10 @@ namespace quest {
 					const std::string& expressionStr,
 					const std::string& questNameRight, const std::string& paramRight,
 					const std::string& questName, const std::string& commandName);
+
+	/// ValueOperation #QUESTS !PARAMS #OPERATIONS #QUESTS !PARAMS #QUESTS !PARAMS
+	void ValueOperation(const std::string& questNameLeft, const std::string& paramLeft,
+					const std::string& operationStr,
+					const std::string& questNameRight, const std::string& paramRight,
+					const std::string& questNameResult, const std::string& paramResult);
 }

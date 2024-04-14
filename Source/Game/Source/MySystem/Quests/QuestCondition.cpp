@@ -35,7 +35,6 @@ namespace quest
 		return value;
 	}
 
-
 	Expression ExpressionFormStr(const std::string& expressionStr)
 	{
 		if (expressionStr == "is_more" || expressionStr == ">") {
@@ -58,6 +57,27 @@ namespace quest
 		}
 
 		return Expression::is_error;
+	}
+
+	Operation OperationFormStr(const std::string& expressionStr)
+	{
+		if (expressionStr == "+") {
+			return Operation::is_addition;
+		}
+		if (expressionStr == "-") {
+			return Operation::is_subtraction;
+		}
+		else if (expressionStr == "*") {
+			return Operation::is_division;
+		}
+		else if (expressionStr == "/") {
+			return Operation::is_division;
+		}
+		/*else if (expressionStr == "%") {
+			return Operation::is_remainder;
+		}*/
+
+		return Operation::is_error;
 	}
 
 	// ///////////////////////////////////////////////////////////////////////////////////////
@@ -119,7 +139,7 @@ namespace quest
 
 		// TODO:
 		// LEFT
-		if (!questNameLeft.empty(); Quest::Ptr questPtr = QuestManager::GetQuest(questNameLeft)) {
+		if (Quest::Ptr questPtr = QuestManager::GetQuest(questNameLeft)) {
 			auto it = questPtr->_params.find(paramLeft);
 			if (it != questPtr->_params.end()) {
 				valuLeft = StrToDouble((it->second));
@@ -130,10 +150,13 @@ namespace quest
 			if (it != Quest::globalParams.end()) {
 				valuLeft = StrToDouble((it->second));
 			}
+			else {
+				valuLeft = StrToDouble(paramLeft);
+			}
 		}
 
 		// RIGHT
-		if (!questNameRight.empty(); Quest::Ptr questPtr = QuestManager::GetQuest(questNameRight)) {
+		if (Quest::Ptr questPtr = QuestManager::GetQuest(questNameRight)) {
 			auto it = questPtr->_params.find(paramRight);
 			if (it != questPtr->_params.end()) {
 				valuRight = StrToDouble((it->second));
@@ -143,6 +166,9 @@ namespace quest
 			auto it = Quest::globalParams.find(paramRight);
 			if (it != Quest::globalParams.end()) {
 				valuRight = StrToDouble((it->second));
+			}
+			else {
+				valuLeft = StrToDouble(paramRight);
 			}
 		}
 
@@ -179,7 +205,7 @@ namespace quest
 		if (needRun) {
 			Commands* commandsPtr = nullptr;
 
-			if (!questName.empty(); Quest::Ptr questPtr = QuestManager::GetQuest(questName)) {
+			if (Quest::Ptr questPtr = QuestManager::GetQuest(questName)) {
 				auto it = questPtr->_commandMap.find(commandName);
 				if (it != questPtr->_commandMap.end()) {
 					commandsPtr = &it->second;
@@ -194,6 +220,118 @@ namespace quest
 
 			if (commandsPtr) {
 				CommandManager::Run(*commandsPtr);
+			}
+		}
+	}
+
+	void ValueOperation(const std::string& questNameLeft, const std::string& paramLeft,
+					const std::string& operationStr,
+					const std::string& questNameRight, const std::string& paramRight,
+					const std::string& questNameResult, const std::string& paramResult)
+	{
+		double valuLeft = 0.0;
+		double valuRight = 0.0;
+		double valuResult = 0.0;
+
+		// TODO:
+		// LEFT
+		if (Quest::Ptr questPtr = QuestManager::GetQuest(questNameLeft)) {
+			auto it = questPtr->_params.find(paramLeft);
+			if (it != questPtr->_params.end()) {
+				valuLeft = StrToDouble((it->second));
+			}
+		}
+		else {
+			auto it = Quest::globalParams.find(paramLeft);
+			if (it != Quest::globalParams.end()) {
+				valuLeft = StrToDouble((it->second));
+			}
+			else {
+				valuLeft = StrToDouble(paramLeft);
+			}
+		}
+
+		// RIGHT
+		if (Quest::Ptr questPtr = QuestManager::GetQuest(questNameRight)) {
+			auto it = questPtr->_params.find(paramRight);
+			if (it != questPtr->_params.end()) {
+				valuRight = StrToDouble((it->second));
+			}
+		}
+		else {
+			auto it = Quest::globalParams.find(paramRight);
+			if (it != Quest::globalParams.end()) {
+				valuRight = StrToDouble((it->second));
+			}
+			else {
+				valuLeft = StrToDouble(paramRight);
+			}
+		}
+
+		// RESULT
+		if (Quest::Ptr questPtr = QuestManager::GetQuest(questNameResult)) {
+			auto it = questPtr->_params.find(paramResult);
+			if (it != questPtr->_params.end()) {
+				valuResult = StrToDouble((it->second));
+			}
+		}
+		else {
+			auto it = Quest::globalParams.find(paramResult);
+			if (it != Quest::globalParams.end()) {
+				valuResult = StrToDouble((it->second));
+			}
+			else {
+
+				// ASSERT
+				return;
+			}
+		}
+
+		Operation operation = OperationFormStr(operationStr);
+		bool hasResult = false;
+
+		switch (operation)
+		{
+		case quest::Operation::is_error:
+			// TODO: ASSERT
+			break;
+		case quest::Operation::is_addition:
+			valuResult = valuLeft + valuRight;
+			hasResult = true;
+			break;
+		case quest::Operation::is_subtraction:
+			valuResult = valuLeft - valuRight;
+			hasResult = true;
+			break;
+		case quest::Operation::is_division:
+			valuResult = valuLeft / valuRight;
+			hasResult = true;
+			break;
+		case quest::Operation::is_multiplication:
+			valuResult = valuLeft * valuRight;
+			hasResult = true;
+			break;
+		/*case quest::Operation::is_remainder:
+			break;*/
+		default:
+			break;
+		}
+
+		if (hasResult) {
+			// RESULT
+			if (Quest::Ptr questPtr = QuestManager::GetQuest(questNameResult)) {
+				auto it = questPtr->_params.find(paramResult);
+				if (it != questPtr->_params.end()) {
+					it->second = std::to_string(valuResult);
+					return;
+				}
+			}
+			else {
+				auto it = Quest::globalParams.find(paramResult);
+				if (it != Quest::globalParams.end()) {
+					it->second = std::to_string(valuResult);
+					return;
+				}
 			}
 		}
 	}

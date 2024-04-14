@@ -308,8 +308,12 @@ namespace Editor {
                 if (int previParam = iParam - 1; previParam >= 0) {
                     editorQuestName = parameters[previParam];
                     editorQuestParam = editorParam + ':' + parameters[previParam];
+
                     if (_mapLists.find(editorQuestParam) == _mapLists.end()) {
                         editorQuestParam = editorParam;
+                    }
+                    else {
+                        editorQuestName.clear();
                     }
                 }
 
@@ -892,6 +896,14 @@ namespace Editor {
                         auto& listParams = _mapLists[paramWord];
                         listParams.Add({ ">", ">=", "==", "!=", "<", "<=", "is_more", "is_more_or_equal", "is_equal", "is_not_equal", "is_less", "is_less_or_equal" });
                         
+                    }
+                }
+                else if (paramWord == "#OPERATIONS") {
+                    if (_mapLists.find(paramWord) == _mapLists.end()) {
+                        std::vector<Quest::Ptr>& quests = QuestManager::GetQuests();
+                        auto& listParams = _mapLists[paramWord];
+                        listParams.Add({ "+", "-", "*", "/" });
+
                     }
                 }
 

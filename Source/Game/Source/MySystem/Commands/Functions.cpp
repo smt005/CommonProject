@@ -28,6 +28,7 @@
 // Quest
 #include "../Quests/Quest.h"
 #include "../Quests/QuestManager.h"
+#include "../Quests/QuestCondition.h"
 
 namespace commands
 {
@@ -582,6 +583,28 @@ namespace commands
 		else if (comandId == "RunCommands") {
 			if (comand.parameters.size() >= 2) {
 				QuestManager::RunCommands(comand.parameters[1], comand.parameters[0]);
+			}
+		}
+		else if (comandId == "RunCommandIf") {
+			if (comand.parameters.size() >= 7) {
+				quest::RunCommandIf(comand.parameters[0],
+					                comand.parameters[1],
+									comand.parameters[2],
+									comand.parameters[3],
+									comand.parameters[4],
+									comand.parameters[5],
+									comand.parameters[6]);
+			}
+		}
+		else if (comandId == "ValueOperation") {
+			if (comand.parameters.size() >= 2) {
+				quest::ValueOperation(comand.parameters[0],
+									  comand.parameters[1],
+									  comand.parameters[2],
+									  comand.parameters[3],
+									  comand.parameters[4],
+									  comand.parameters[5],
+									  comand.parameters[6]);
 			}
 		}
 	}

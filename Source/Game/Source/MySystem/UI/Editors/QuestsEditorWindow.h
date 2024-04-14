@@ -89,12 +89,13 @@ namespace Editor {
 
 		void DrawList();
 		void DrawQuest();
-		void DrawParams(std::map<std::string, std::string>& paramMap, const std::string& title);
+		void DrawQuestParams(std::map<std::string, std::string>& paramMap, const std::string& title);
 		void ChangeParamDisplay(std::map<std::string, std::string>& paramMap, const std::string& name);
 		void QuestButtonDisplay();
 		void QuestListButtonDisplay();
 
 		void DrawCommands(Commands& commands, const std::string& title, const std::pair<float, float>& offset);
+		void DrawParams(std::vector<std::string>& parameters);
 		void ButtonDisplay();
 		void PrepareDraw(Quest::Ptr& selectQuest);
 

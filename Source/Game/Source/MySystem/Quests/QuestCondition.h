@@ -17,7 +17,7 @@ namespace quest {
 	bool count_bodies(const std::string& expressions, int number);
 	bool max_speed_body(const std::string& expressions, float speed);
 
-	/// RunCommandIf #QUESTS #PARAMS #EXPRESSIONS #QUEST #PARAMS #QUEST #COMMANDS
+	/// RunCommandIf #QUESTS !PARAMS #EXPRESSIONS #QUESTS !PARAMS #QUESTS !COMMANDS
 	void RunCommandIf(const std::string& questNameLeft, const std::string& paramLeft,
 					const std::string& expressionStr,
 					const std::string& questNameRight, const std::string& paramRight,

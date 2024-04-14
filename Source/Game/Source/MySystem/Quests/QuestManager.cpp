@@ -365,7 +365,7 @@ void QuestManager::Condition(const std::vector<std::string>& params)
 	}
 }
 
-/// RunCommands #COMMANDS
+/// RunCommands !COMMANDS
 void QuestManager::RunCommands(const std::string& questName, const std::string& commandName)
 {
 	if (Quest::Ptr questPtr = QuestManager::GetQuest(questName)) {

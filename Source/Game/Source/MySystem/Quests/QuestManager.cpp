@@ -265,6 +265,9 @@ void QuestManager::Save(const std::string& pathFileName)
 			Json::Value commandsJson;
 		
 			for (Command& command : commands) {
+				if (command.id.empty()) {
+				}
+
 				Json::Value commandJson;
 
 				commandJson["id"] = command.id;
@@ -277,7 +280,9 @@ void QuestManager::Save(const std::string& pathFileName)
 					Json::Value paramsJson;
 
 					for (const std::string& param : command.parameters) {
-						paramsJson.append(param);
+						if (!param.empty()) {
+							paramsJson.append(param);
+						}
 					}
 
 					commandJson["params"] = paramsJson;

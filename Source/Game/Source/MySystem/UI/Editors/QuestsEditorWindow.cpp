@@ -901,7 +901,7 @@ namespace Editor {
                         auto& listParams = _mapLists[paramWord];
                         listParams.Reserve(quests.size());
 
-                        listParams.Add("");
+                        listParams.Add("...");
                         for (const Quest::Ptr& questPtr : quests) {
                             listParams.Add(questPtr->Name().c_str());
                         }

@@ -13,11 +13,10 @@ namespace commands{
 	{
 		if (Model::Ptr& model = Model::getByName(modelName)) {
 			std::string idObserver = std::string("FadeModel:" + modelName);
-			float dAlpha = 1.f / fadeTime;
 
-			EventOnUpdate::Instance().Add(idObserver, [idObserver, model, dAlpha]() {
+			EventOnUpdate::Instance().Add(idObserver, [idObserver, model, kAlpha = float(1000.f/fadeTime)]() {
 				float alpha = model->getAlpha();
-				alpha -= dAlpha;
+				alpha -= kAlpha * (float)Engine::Core::deltaTime();
 				alpha = alpha < 0.f ? 0.f : alpha;
 				model->setAlpha(alpha);
 

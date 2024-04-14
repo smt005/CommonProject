@@ -587,7 +587,7 @@ namespace commands
 		}
 		else if (comandId == "DelayActionCommand") {
 			if (comand.parameters.size() >= 3) {
-				DelayActionCommand(comand.parameters[0], comand.parameters[1], StrToFloat(comand.parameters[2], 0.f, 10000.0f));
+				DelayActionCommand(comand.parameters[0], comand.parameters[1], StrToFloat(comand.parameters[2], 0.f, 1000000.0f));
 			}
 		}
 		else if (comandId == "RunCommands") {
@@ -607,7 +607,7 @@ namespace commands
 			}
 		}
 		else if (comandId == "ValueOperation") {
-			if (comand.parameters.size() >= 2) {
+			if (comand.parameters.size() >= 7) {
 				quest::ValueOperation(comand.parameters[0],
 									  comand.parameters[1],
 									  comand.parameters[2],

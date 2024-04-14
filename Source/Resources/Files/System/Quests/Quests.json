@@ -10,7 +10,7 @@
      "params" : 
      [
       "Logo_name_back",
-      "100"
+      "1000"
      ]
     },
     {
@@ -19,8 +19,7 @@
      [
       "Logo",
       "Logo_commands_second",
-      "200",
-      "1"
+      "1000"
      ]
     }
    ],
@@ -31,14 +30,7 @@
      "params" : 
      [
       "Logo_name",
-      "100"
-     ]
-    },
-    {
-     "id" : "GravityPoints",
-     "params" : 
-     [
-      "Enable"
+      "1000"
      ]
     },
     {
@@ -100,6 +92,13 @@
     [
      "Tap to next!"
     ]
+   },
+   {
+    "id" : "GravityPoints",
+    "params" : 
+    [
+     "Enable"
+    ]
    }
   ],
   "commands_on_tap" : 
@@ -111,7 +110,7 @@
      "Logo",
      "CountTaps",
      "+",
-     "",
+     "...",
      "ValueOne",
      "Logo",
      "CountTaps"
@@ -125,7 +124,7 @@
      "CountTaps",
      "==",
      "Logo",
-     "MaxCountThreeTaps",
+     "MaxCountTaps",
      "Logo",
      "Logo_comands"
     ]
@@ -136,13 +135,11 @@
   "params" : 
   {
    "CountTaps" : "0",
-   "MaxCountTaps" : "10",
-   "MaxCountThreeTaps" : "3"
+   "MaxCountTaps" : "1"
   }
  },
  {
   "class" : "QuestStart",
-  "commands" : null,
   "commands_debug" : 
   [
    {
@@ -198,8 +195,7 @@
     "id" : "CreateSpace",
     "params" : 
     [
-     "MAIN",
-     ""
+     "MAIN"
     ]
    },
    {
@@ -259,7 +255,6 @@
  },
  {
   "class" : "QuestStart",
-  "commands" : null,
   "commands_debug" : 
   [
    {
@@ -363,7 +358,6 @@
  },
  {
   "class" : "QuestStart",
-  "commands" : null,
   "commands_debug" : 
   [
    {

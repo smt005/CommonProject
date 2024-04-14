@@ -463,6 +463,16 @@ namespace commands
 		}
 	}
 
+	void LockAction(const std::string& enableStr)
+	{
+		if (enableStr == "Enadle") {
+			CommonData::PushLockScreen();
+		}
+		else {
+			CommonData::PopLockScreen();
+		}
+	}
+
 	/// SetActiveQuest #QUESTS /ACTIVE/DEACTIVE
 
 	//..................................................................
@@ -605,6 +615,11 @@ namespace commands
 									  comand.parameters[4],
 									  comand.parameters[5],
 									  comand.parameters[6]);
+			}
+		}
+		else if (comandId == "LockAction") {
+			if (!comand.parameters.empty()) {
+				LockAction(comand.parameters.front());
 			}
 		}
 	}

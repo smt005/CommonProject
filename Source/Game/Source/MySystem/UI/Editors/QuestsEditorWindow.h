@@ -94,8 +94,8 @@ namespace Editor {
 		void QuestButtonDisplay();
 		void QuestListButtonDisplay();
 
-		void DrawCommands(Commands& commands, const std::string& title, const std::pair<float, float>& offset);
-		void DrawParams(std::vector<std::string>& parameters);
+		void DrawCommands(Commands& commands, const std::string& title, float level = 0.f);
+		void DrawParams(std::vector<std::string>& parameters, float level = 0.f);
 		void ButtonDisplay();
 		void PrepareDraw(Quest::Ptr& selectQuest);
 

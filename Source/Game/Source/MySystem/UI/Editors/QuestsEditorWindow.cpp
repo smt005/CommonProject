@@ -216,14 +216,14 @@ namespace Editor {
 
             // Команды
             ImGui::Dummy(ImVec2(0.f, 5.f));
-            
-            std::pair<float, float> offset(2.f, 0.1f);
+
             EditorListT<std::string>& observerLists = _mapLists[observesType];
-            DrawCommands(_selectQuest->_commandsOnInit,      observerLists.dataList[0], offset);
-            DrawCommands(_selectQuest->_commandsOnTap,       observerLists.dataList[1], offset);
-            DrawCommands(_selectQuest->_commandsOnUpdate,    observerLists.dataList[2], offset);
-            DrawCommands(_selectQuest->_commandsOnCondition, observerLists.dataList[3], offset);
-            DrawCommands(_selectQuest->_commandsDebug,       observerLists.dataList[4], offset);
+
+            DrawCommands(_selectQuest->_commandsOnInit,      observerLists.dataList[0]);
+            DrawCommands(_selectQuest->_commandsOnTap,       observerLists.dataList[1]);
+            DrawCommands(_selectQuest->_commandsOnUpdate,    observerLists.dataList[2]);
+            DrawCommands(_selectQuest->_commandsOnCondition, observerLists.dataList[3]);
+            DrawCommands(_selectQuest->_commandsDebug,       observerLists.dataList[4]);
             
             ImGui::EndChild();
 
@@ -267,7 +267,7 @@ namespace Editor {
         }
     }
 
-    void QuestsEditorWindow::DrawParams(std::vector<std::string>& parameters)
+    void QuestsEditorWindow::DrawParams(std::vector<std::string>& parameters, float level)
     {
         ImGui::BeginGroup();
 
@@ -323,12 +323,13 @@ namespace Editor {
                 ImGui::PopID();
 
                 if (editorParam == "!COMMANDS" ) {
-                    additionView = [this, editorQuestName, parameter = listParam.Get()]() {
+                    additionView = [this, editorQuestName, parameter = listParam.Get(), newlevel = level + 1.f]() {
                         if (Quest::Ptr questPtr = QuestManager::GetQuest(editorQuestName)) {
+                            ImGui::SameLine();
                             ImGui::BeginGroup();
+                            
                             ImGui::Text("Sub commands");
-                            std::pair<float, float> offset(2.f, 0.1f);
-                            DrawCommands(questPtr->_commandMap[parameter], parameter, offset);
+                            DrawCommands(questPtr->_commandMap[parameter], parameter, newlevel);
                             ImGui::EndGroup();
                         }
                     };
@@ -345,20 +346,21 @@ namespace Editor {
         }
 
         ImGui::EndGroup();
+        ImGui::Dummy(ImVec2(0.f, 0.f));
 
-        ImGui::Separator();
         //...
         if (additionView) {
             additionView();
         }
     }
 
-    void QuestsEditorWindow::DrawCommands(Commands& commands, const std::string& title, const std::pair<float, float>& offset) {
+    void QuestsEditorWindow::DrawCommands(Commands& commands, const std::string& title, float level) {
         if (commands.empty()) {
             return;
         }
 
-        ImGui::PushItemWidth(_widthQuest / (offset.first + offset.second));
+        ImGui::PushItemWidth((_widthQuest - (level * 10.f) - 30.f) / 2.f);
+
         int countCommands = commands.size();
         std::function<void(void)> fun;
 
@@ -440,21 +442,17 @@ namespace Editor {
                 ImGui::EndGroup();
 
                 ImGui::SameLine();
-                DrawParams(command.parameters);
+                DrawParams(command.parameters, level);
 
                 ImGui::Dummy(ImVec2(0.f, 20.f));
                 ImGui::Separator();
             }
 
-            ImGui::Dummy(ImVec2(0.f, 5.f));
             ImGui::PushID(++_guiId);
             if (ImGui::Button("Add command.", { 200.f, 24.f })) {
                 commands.emplace_back();
             }
             ImGui::PopID();
-
-            ImGui::Dummy(ImVec2(0.f, 20.f));
-            ImGui::Separator();
         }
 
         ImGui::PopItemWidth();
@@ -704,6 +702,7 @@ namespace Editor {
         Clear();
 
         // C:\Work\My\System\Source\Resources\Files\System
+        // C:\Work\My\System\Source\Game\Source\MySystem\Commands\Functions.h
         // C:\Work\My\System\Source\Game\Source\MySystem\Commands\Functions.cpp
         // C:\Work\My\System\Source\Game\Source\MySystem\Quests/QuestManager.cpp
         // C:\Work\My\System\Source\Game\Source\MySystem\Commands\Functions/Actions.h
@@ -711,6 +710,7 @@ namespace Editor {
 
         EditorCommand& emptyEditorCommandT = _editorCommands.Add(EditorCommand::emptyName);
 
+        EditorDatasParceFile("..\\..\\..\\Game\\Source\\MySystem\\Commands\\Functions.h");
         EditorDatasParceFile("..\\..\\..\\Game\\Source\\MySystem\\Commands\\Functions.cpp");
         EditorDatasParceFile("..\\..\\..\\Game\\Source\\MySystem\\Quests\\QuestManager.cpp");
         EditorDatasParceFile("..\\..\\..\\Game\\Source\\MySystem\\Commands\\Functions\\Actions.h");

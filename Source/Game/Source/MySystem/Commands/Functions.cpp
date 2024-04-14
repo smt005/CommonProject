@@ -28,6 +28,7 @@
 // Quest
 #include "../Quests/Quest.h"
 #include "../Quests/QuestManager.h"
+#include "../Quests/QuestCondition.h"
 
 namespace commands
 {
@@ -69,7 +70,6 @@ namespace commands
 		value = value < min ? min : value;
 		value = value > max ? max : value;
 		return value;
-
 	}
 
 	/// RunCommandsFromFile string
@@ -210,7 +210,7 @@ namespace commands
 		}*/
 	}
 
-	/// ShowImage #MODEL
+	/// ShowImage #MODELS
 	void ShowImage(const std::string& nameModel)
 	{
 		if (std::find_if(CommonData::nameImageList.begin(), CommonData::nameImageList.end(), [&nameModel](const std::string& itName) {
@@ -222,7 +222,7 @@ namespace commands
 		CommonData::nameImageList.emplace_back(nameModel);
 	}
 
-	/// HideImage #MODEL
+	/// HideImage #MODELS
 	void HideImage(const std::string& nameModel)
 	{
 		auto it = std::find_if(CommonData::nameImageList.begin(), CommonData::nameImageList.end(), [&nameModel](const std::string& itName) {
@@ -245,7 +245,7 @@ namespace commands
 		CommonData::textOnScreen.clear();
 	}
 
-	/// SetSkyBox #MODEL
+	/// SetSkyBox #MODELS
 	void SetSkyBox(const std::string& modelName)
 	{
 		if (MySystem::currentSpace) {
@@ -305,7 +305,7 @@ namespace commands
 		}
 	}
 
-	/// AddBodyToPos #MODEL number number number number number number number
+	/// AddBodyToPos #MODELS number number number number number number number
 	void AddBodyToPos(const std::vector<std::string>& parameters)
 	{
 		// model, pos, vel, mass
@@ -335,7 +335,7 @@ namespace commands
 		SpaceManager::AddObject(nameModel, pos, vel, mass);
 	}
 
-	/// AddBodyToMousePos #MODEL /ToMousePos/ToCenterSpace number number number number /Default/ContrastRandom/Random/RED/GREEN/BLUE/WHITE/BLACK/Custom
+	/// AddBodyToMousePos #MODELS /ToMousePos/ToCenterSpace number number number number /Default/ContrastRandom/Random/RED/GREEN/BLUE/WHITE/BLACK/Custom
 	void AddBodyToMousePos(const std::vector<std::string>& parameters)
 	{
 		// model, pos(mouse), vel, mass
@@ -448,7 +448,7 @@ namespace commands
 		SpaceManager::AddObject(nameModel, pos, vel, mass, color);
 	}
 
-	/// StartQuest #QUEST
+	/// StartQuest #QUESTS
 	void StartQuest(const std::string& name) {
 		if (Quest::Ptr questPtr = QuestManager::GetQuest(name)) {
 			Commands& commandsDebug = questPtr->_commandsDebug;
@@ -463,7 +463,17 @@ namespace commands
 		}
 	}
 
-	/// SetActiveQuest #QUEST /ACTIVE/DEACTIVE
+	void LockAction(const std::string& enableStr)
+	{
+		if (enableStr == "Enadle") {
+			CommonData::PushLockScreen();
+		}
+		else {
+			CommonData::PopLockScreen();
+		}
+	}
+
+	/// SetActiveQuest #QUESTS /ACTIVE/DEACTIVE
 
 	//..................................................................
 	void Run(const Command& comand)
@@ -577,12 +587,39 @@ namespace commands
 		}
 		else if (comandId == "DelayActionCommand") {
 			if (comand.parameters.size() >= 3) {
-				DelayActionCommand(comand.parameters[1], comand.parameters[0], StrToFloat(comand.parameters[2], 0.f, 10000.0f));
+				DelayActionCommand(comand.parameters[0], comand.parameters[1], StrToFloat(comand.parameters[2], 0.f, 10000.0f));
 			}
 		}
 		else if (comandId == "RunCommands") {
 			if (comand.parameters.size() >= 2) {
-				QuestManager::RunCommands(comand.parameters[1], comand.parameters[0]);
+				QuestManager::RunCommands(comand.parameters[0], comand.parameters[1]);
+			}
+		}
+		else if (comandId == "RunCommandIf") {
+			if (comand.parameters.size() >= 7) {
+				quest::RunCommandIf(comand.parameters[0],
+					                comand.parameters[1],
+									comand.parameters[2],
+									comand.parameters[3],
+									comand.parameters[4],
+									comand.parameters[5],
+									comand.parameters[6]);
+			}
+		}
+		else if (comandId == "ValueOperation") {
+			if (comand.parameters.size() >= 2) {
+				quest::ValueOperation(comand.parameters[0],
+									  comand.parameters[1],
+									  comand.parameters[2],
+									  comand.parameters[3],
+									  comand.parameters[4],
+									  comand.parameters[5],
+									  comand.parameters[6]);
+			}
+		}
+		else if (comandId == "LockAction") {
+			if (!comand.parameters.empty()) {
+				LockAction(comand.parameters.front());
 			}
 		}
 	}

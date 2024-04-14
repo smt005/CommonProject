@@ -68,7 +68,7 @@ Quest::Ptr QuestManager::GetQuest(const std::string& name)
 		return *it;
 	}
 
-	return Quest::Ptr(new Quest("EMPTY"));
+	return nullptr;// Quest::Ptr(new Quest("EMPTY"));
 }
 
 const std::vector<std::string>& QuestManager::GetListClasses()
@@ -128,6 +128,19 @@ void QuestManager::Load(const std::string& pathFileName)
 
 	for (auto& valueData : valueDatas) {
 		if (!valueData.isObject()) {
+			continue;
+		}
+
+		Json::Value& jsonGlobalParams = valueData["global_params"];
+		if (!jsonGlobalParams.empty() && jsonGlobalParams.isObject()) {
+			for (auto&& jsonKey : jsonGlobalParams.getMemberNames()) {
+				Json::Value& jsonParam = jsonGlobalParams[jsonKey];
+
+				if (jsonParam.isString()) {
+					std::string paramValue = jsonParam.asString();
+					Quest::globalParams.emplace(jsonKey, paramValue);
+				}			
+			}
 			continue;
 		}
 
@@ -292,6 +305,14 @@ void QuestManager::Save(const std::string& pathFileName)
 		valueDatas.append(questJson);
 	}
 
+	// global_params
+	Json::Value jsonGlobalParams;
+	for (std::pair<const std::string, std::string>& paramPair : Quest::globalParams) {
+		jsonGlobalParams["global_params"][paramPair.first] = paramPair.second;
+	}
+	valueDatas.append(jsonGlobalParams);
+
+	// Сохранение
 	help::saveJson(*pathFileNamePtr, valueDatas, " ");
 }
 
@@ -304,7 +325,7 @@ void QuestManager::Update()
 {
 }
 
-/// QuestCondition #QUEST /count_boties/max_speed_body/temp_number /==/>/>=/==/</<=/is_more/is_equal/is_more_or_equal/is_less/is_less_or_equal number
+/// QuestCondition #QUESTS /count_boties/max_speed_body/temp_number #EXPRESSIONS number
 void QuestManager::Condition(const std::vector<std::string>& params)
 {
 	if (params.size() < 4) {
@@ -355,4 +376,18 @@ void QuestManager::RunCommands(const std::string& questName, const std::string& 
 			CommandManager::Run(it->second);
 		}
 	}
+}
+
+/// SetParamValue #QUESTS name value
+void QuestManager::SetParamValue(const std::string& questName, const std::string& nameValue, const std::string& valueStr)
+{
+	if (Quest::Ptr questPtr = QuestManager::GetQuest(questName)) {
+		questPtr->_params.emplace(nameValue, valueStr);
+	}
+}
+
+/// SetGlobalParamValue name value
+void QuestManager::SetGlobalParamValue(const std::string& nameValue, const std::string& valueStr)
+{
+	Quest::globalParams.emplace(nameValue, valueStr);
 }

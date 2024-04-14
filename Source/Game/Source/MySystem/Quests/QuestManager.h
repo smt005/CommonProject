@@ -31,7 +31,8 @@ public:
 
 	static void Condition(const std::vector<std::string>& params);
 	static void RunCommands(const std::string& questName, const std::string& commandName);
-
+	static void SetParamValue(const std::string& questName, const std::string& nameValue, const std::string& valueStr);
+	static void SetGlobalParamValue(const std::string& nameValue, const std::string& valueStr);
 private:
 	static Quest::Ptr activeQuestPtr;
 	static std::string lastPathFileName; // TODO:

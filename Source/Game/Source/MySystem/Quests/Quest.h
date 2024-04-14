@@ -71,4 +71,8 @@ public:
 	Commands _commandsOnCondition;
 	Commands _commandsDebug;
 	std::map<std::string, Commands> _commandMap;
+
+public:
+	static std::map<std::string, std::string> globalParams;
+	static std::map<std::string, Commands> globalCommandsMap;
 };

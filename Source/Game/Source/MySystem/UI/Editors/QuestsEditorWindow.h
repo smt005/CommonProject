@@ -18,22 +18,62 @@ namespace Editor {
 			std::vector<std::string> params;
 			EditorCommand() = default;
 			EditorCommand(const std::string& _name) : name(_name) {}
-
+			char* data() {
+				return name.data();
+			}
 			static std::string emptyName;
 		};
 
-		struct EditorList {
-			std::vector<std::string> dataList;
+		template<typename T>
+		struct EditorListT {
+			std::vector<T> dataList;
 			std::vector<const char*> viewList;
+			int currentIndex = -1;
 
-			void Add(const std::string& text) {
-				dataList.emplace_back(text);
+			T& Add(T&& text) {
+				return dataList.emplace_back(text);
+			}
+			void Add(std::initializer_list<T>&& texts) {
+				dataList.reserve(dataList.size() + texts.size());
+				dataList.insert(dataList.end(), texts.begin(), texts.end());
 			}
 			void MakeViewData() {
 				viewList.clear();
-				for (std::string& text : dataList) {
+				for (T& text : dataList) {
 					viewList.emplace_back(text.data());
 				}
+			}
+			void Reserve(int reserveSize) {
+				dataList.reserve(reserveSize);
+				viewList.clear();
+			}
+			T& Get() {
+				return GetByIndex(currentIndex);
+			}
+			T& GetByIndex(const int index) {
+				if (index < 0 || index >= dataList.size()) {
+					static T empty;
+					return empty;
+				}
+				return dataList[index];
+			}
+			int& GetIndex(const std::string& text)
+			{
+				currentIndex = -1;
+				for (auto&& item : dataList) {
+					++currentIndex;
+
+					if (text == item.data()) {
+						return currentIndex;
+					}
+				}
+				
+				currentIndex = -1;
+				return currentIndex;
+			}
+			void Clear() {
+				dataList.clear();
+				viewList.clear();
 			}
 		};
 
@@ -49,10 +89,13 @@ namespace Editor {
 
 		void DrawList();
 		void DrawQuest();
+		void DrawQuestParams(std::map<std::string, std::string>& paramMap, const std::string& title, const std::string& questName = "");
+		void ChangeParamDisplay(std::map<std::string, std::string>& paramMap, const std::string& name, const std::string& questName);
 		void QuestButtonDisplay();
 		void QuestListButtonDisplay();
 
-		void DrawCommands(Commands& commands, const std::string& title, const std::pair<float, float>& offset);
+		void DrawCommands(Commands& commands, const std::string& title, float level = 0.f);
+		void DrawParams(std::vector<std::string>& parameters, float level = 0.f);
 		void ButtonDisplay();
 		void PrepareDraw(Quest::Ptr& selectQuest);
 
@@ -64,10 +107,7 @@ namespace Editor {
 
 		void LoadEditorDatas();
 		void EditorDatasParceFile(const std::string& filePathHame);
-
-		std::pair<int, const std::vector<const char*>&> GetIndexOfListByName(const std::string& text, const std::string& nameList);
-		int GetIndexOfList(const std::string& text, const std::vector<const char*>& listTexts);
-		EditorCommand& GetEditorCommand(int index);
+		void PrepareCommand(const std::vector<std::string>& words);
 
 		inline std::shared_ptr<bool> GetSharedWndPtr() {
 			if (!_sharedWndPtr) {
@@ -90,12 +130,11 @@ namespace Editor {
 		TextChar _textBuffer;
 		Quest::Ptr _selectQuest;
 
-		//...
-		std::vector<EditorCommand> _editorCommands;
-		std::vector<const char*> _listCommands;
-		//...
-		std::unordered_map<std::string, std::vector<const char*>> _mapLists;
-		//...
-		EditorList observerLists;
+		EditorListT<EditorCommand> _editorCommands;
+		std::unordered_map<std::string, EditorListT<std::string>> _mapLists;
+
+		private:
+			static std::string questClassesType;
+			static std::string observesType;
 	};
 }

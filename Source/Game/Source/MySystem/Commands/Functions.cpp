@@ -28,7 +28,7 @@
 // Quest
 #include "../Quests/Quest.h"
 #include "../Quests/QuestManager.h"
-#include "../Quests/QuestCondition.h"
+#include "../Commands/Functions/QuestCondition.h"
 
 namespace commands
 {

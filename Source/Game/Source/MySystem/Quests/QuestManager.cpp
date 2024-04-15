@@ -1,7 +1,7 @@
 // ◦ Xyz ◦
 #include "QuestManager.h"
 #include "Quests.h"
-#include "QuestCondition.h"
+#include "../Commands/Functions/QuestCondition.h"
 #include "Common/Help.h"
 
 std::vector<Quest::Ptr> QuestManager::quests;

@@ -40,8 +40,11 @@ void MySystem::init() {
 	MainUI::Open();
 	CommandManager::Run("Commands/Main.json");
 
-	//planePoints.Init(1000.f, 5.f);
-	planePoints.Init(500.f, 2.f);
+#if _DEBUG
+	planePoints.Init(1000.f, 5.f);
+#else
+	planePoints.Init(500.f, 1.f);
+#endif
 }
 
 void MySystem::close() {
@@ -277,16 +280,24 @@ void MySystem::initCallback() {
 			}
 
 			float dist = cameraPtr->GetDistanceOutside();
+			float d = 25.f;
+
+			if (Engine::Callback::pressKey(Engine::VirtualKey::SHIFT)) {
+				d *= 10.f;
+			}
+			else if (Engine::Callback::pressKey(Engine::VirtualKey::CONTROL)) {
+				d /= 10.f;
+			}
 
 			if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_UP) {
-				dist -= Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 5000.f : 100.f;
+				dist -= d;
 			}
 			else if (tapCallbackEvent->_id == Engine::VirtualTap::SCROLL_BOTTOM) {
-				dist += Engine::Callback::pressKey(Engine::VirtualKey::SHIFT) ? 5000.f : 100.f;
+				dist += d;
 			}
 
-			if (dist < 10.f) {
-				dist = 10.f;
+			if (dist < 5.f) {
+				dist = 5.f;
 			}
 			cameraPtr->SetDistanceOutside(dist);
 		}

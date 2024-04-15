@@ -140,29 +140,11 @@
  },
  {
   "class" : "QuestStart",
+  "commands" : null,
   "commands_debug" : 
   [
    {
     "id" : "ClearAll"
-   }
-  ],
-  "commands_on_condition" : 
-  [
-   {
-    "id" : "SetActiveQuest",
-    "params" : 
-    [
-     "FirstTenBodies",
-     "ACTIVE"
-    ]
-   },
-   {
-    "id" : "SetActiveQuest",
-    "params" : 
-    [
-     "FirstBody",
-     "DEACTIVE"
-    ]
    }
   ],
   "commands_on_init" : 
@@ -195,14 +177,8 @@
     "id" : "CreateSpace",
     "params" : 
     [
-     "MAIN"
-    ]
-   },
-   {
-    "id" : "CountOfIteration",
-    "params" : 
-    [
-     "1"
+     "MAIN",
+     "Try"
     ]
    },
    {
@@ -233,21 +209,24 @@
      "0",
      "0",
      "100",
-     "RED"
+     "BLACK"
     ]
    },
    {
-    "id" : "QuestCondition",
+    "id" : "SetActiveQuest",
+    "params" : 
+    [
+     "FirstTenBodies",
+     "ACTIVE"
+    ]
+   },
+   {
+    "id" : "SetActiveQuest",
     "params" : 
     [
      "FirstBody",
-     "count_bodies",
-     ">=",
-     "1"
+     "DEACTIVE"
     ]
-   },
-   {
-    "id" : "HideText"
    }
   ],
   "description" : "Create first body.",
@@ -255,6 +234,7 @@
  },
  {
   "class" : "QuestStart",
+  "commands" : null,
   "commands_debug" : 
   [
    {
@@ -277,25 +257,6 @@
      "0",
      "0",
      "10"
-    ]
-   }
-  ],
-  "commands_on_condition" : 
-  [
-   {
-    "id" : "SetActiveQuest",
-    "params" : 
-    [
-     "FastSpeedBody",
-     "ACTIVE"
-    ]
-   },
-   {
-    "id" : "SetActiveQuest",
-    "params" : 
-    [
-     "FirstTenBodies",
-     "DEACTIVE"
     ]
    }
   ],
@@ -323,7 +284,21 @@
     "id" : "GravityPoints",
     "params" : 
     [
-     "Enable"
+     "Disable"
+    ]
+   },
+   {
+    "id" : "SetProcess",
+    "params" : 
+    [
+     "CPU"
+    ]
+   },
+   {
+    "id" : "CountOfIteration",
+    "params" : 
+    [
+     "10"
     ]
    }
   ],
@@ -341,16 +316,6 @@
      "100",
      "ContrastRandom"
     ]
-   },
-   {
-    "id" : "QuestCondition",
-    "params" : 
-    [
-     "FirstTenBodies",
-     "count_bodies",
-     ">=",
-     "33"
-    ]
    }
   ],
   "description" : "Create 10 bodies. For it, need zoom out.",
@@ -358,6 +323,7 @@
  },
  {
   "class" : "QuestStart",
+  "commands" : null,
   "commands_debug" : 
   [
    {

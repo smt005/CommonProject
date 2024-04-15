@@ -1,11 +1,11 @@
 // ◦ Xyz ◦
 #include "QuestCondition.h"
 #include <MySystem/MySystem.h>
-#include "../Commands/Commands.h"
-#include "../Objects/Space.h"
+#include "../../Commands/Commands.h"
+#include "../../Objects/Space.h"
+#include "../../Quests/Quest.h"
+#include "../../Quests/QuestManager.h"
 #include "Common/Help.h"
-#include "Quest.h"
-#include "QuestManager.h"
 
 namespace quest
 {

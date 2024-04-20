@@ -463,13 +463,16 @@ namespace commands
 		}
 	}
 
-	void LockAction(const std::string& enableStr)
+	void LockAction(const std::string& stateStr)
 	{
-		if (enableStr == "Enadle") {
+		if (stateStr == "Push") {
 			CommonData::PushLockScreen();
 		}
-		else {
+		else if (stateStr == "Pop") {
 			CommonData::PopLockScreen();
+		}
+		else if (stateStr == "Unlock") {
+			CommonData::UnlockScreen();
 		}
 	}
 

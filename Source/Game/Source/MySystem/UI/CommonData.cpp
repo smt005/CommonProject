@@ -33,6 +33,9 @@ void CommonData::PushLockScreen() {
 void CommonData::PopLockScreen() {
 	--lockScreenCounter;
 }
+void CommonData::UnlockScreen() {
+	lockScreenCounter = 0;
+}
 bool CommonData::IsLockScreen() {
 	return lockScreenCounter > 0;
 }

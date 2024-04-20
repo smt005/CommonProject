@@ -101,7 +101,6 @@ namespace quest
 	{
 		if (MySystem::currentSpace) {
 			Math::Vector3& maxSpeed = MySystem::currentSpace->GetMaxSpeed();
-			help::log(maxSpeed.length());
 			return maxSpeed.length();
 		}
 		return 0;

@@ -10,7 +10,7 @@
      "params" : 
      [
       "Logo_name",
-      "1000"
+      "100"
      ]
     },
     {
@@ -19,7 +19,7 @@
      [
       "Logo_quest",
       "Logo_commands_second",
-      "1000"
+      "100"
      ]
     }
    ],
@@ -103,7 +103,7 @@
     "params" : 
     [
      "Logo_name_back",
-     "1000"
+     "100"
     ]
    },
    {
@@ -112,7 +112,7 @@
     [
      "Logo_quest",
      "Logo_comands",
-     "1000"
+     "100"
     ]
    }
   ],
@@ -240,6 +240,16 @@
       "DEACTIVE"
      ]
     }
+   ],
+   "UnlockAddBody" : 
+   [
+    {
+     "id" : "LockAction",
+     "params" : 
+     [
+      "Pop"
+     ]
+    }
    ]
   },
   "commands_debug" : 
@@ -335,6 +345,22 @@
      "10",
      "FirstTenBodies_quest",
      "TEST"
+    ]
+   },
+   {
+    "id" : "LockAction",
+    "params" : 
+    [
+     "Push"
+    ]
+   },
+   {
+    "id" : "DelayActionCommand",
+    "params" : 
+    [
+     "FirstTenBodies_quest",
+     "UnlockAddBody",
+     "500"
     ]
    }
   ],
@@ -435,7 +461,7 @@
      "MaxVelocityBody",
      ">=",
      "CUSTOMER",
-     "2",
+     "3",
      "FastSpeedBody_quest",
      "End_game_quest"
     ]

@@ -27,6 +27,7 @@ struct CommonData {
 public:
 	static void PushLockScreen();
 	static void PopLockScreen();
+	static void UnlockScreen();
 	static bool IsLockScreen();
 private:
 	static int lockScreenCounter;

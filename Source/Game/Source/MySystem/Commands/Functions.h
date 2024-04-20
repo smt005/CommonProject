@@ -26,7 +26,7 @@ namespace commands {
 	void AddBodyToMousePos(const std::vector<std::string>& parameters);
 	void StartQuest(const std::string& name);
 
-	/// LockAction /Enable/Disable
+	/// LockAction /Push/Pop/Unlock
 	void LockAction(const std::string& enableStr);
 
 

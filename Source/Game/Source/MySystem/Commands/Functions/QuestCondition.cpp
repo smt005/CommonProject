@@ -80,54 +80,35 @@ namespace quest
 		return Operation::is_error;
 	}
 
+	int CountBodies()
+	{
+		if (MySystem::currentSpace) {
+			return MySystem::currentSpace->_bodies.size();
+		}
+		return 0;
+	}
+
+	float MaxWeightBody()
+	{
+		if (MySystem::currentSpace) {
+			Body::Ptr odyPtr = MySystem::currentSpace->GetHeaviestBody();
+			return odyPtr->Mass();
+		}
+		return 0.f;
+	}
+
+	float MaxVelocityBody()
+	{
+		if (MySystem::currentSpace) {
+			Math::Vector3& maxSpeed = MySystem::currentSpace->GetMaxSpeed();
+			help::log(maxSpeed.length());
+			return maxSpeed.length();
+		}
+		return 0;
+	}
+
 	// ///////////////////////////////////////////////////////////////////////////////////////
 
-	bool count_bodies(const std::string& expressions, int number)
-	{
-		int countBodies = MySystem::currentSpace ? MySystem::currentSpace->_bodies.size() : 0;
-
-		if (expressions == "is_more" || expressions == ">") {
-			return countBodies > number;
-		}
-		if (expressions == "is_more_or_equal" || expressions == ">=") {
-			return countBodies >= number;
-		}
-		else if (expressions == "is_less" || expressions == "<") {
-			return countBodies < number;
-		}
-		else if (expressions == "is_less_or_equal" || expressions == "<=") {
-			return countBodies <= number;
-		}
-		else if (expressions == "is_equal" || expressions == "==") {
-			return countBodies == number;
-		}
-
-		return false;
-	}
-
-	bool max_speed_body(const std::string& expressions, float speed)
-	{
-		float maxSpeed = MySystem::currentSpace ? MySystem::currentSpace->GetMaxSpeed().length() : 0;
-		help::Log("MAX_SPEED: " + std::to_string(maxSpeed) + " > " + std::to_string(speed));
-
-		if (expressions == "is_more" || expressions == ">") {
-			return maxSpeed > speed;
-		}
-		if (expressions == "is_more_or_equal" || expressions == ">=") {
-			return maxSpeed >= speed;
-		}
-		else if (expressions == "is_less" || expressions == "<") {
-			return maxSpeed < speed;
-		}
-		else if (expressions == "is_less_or_equal" || expressions == "<=") {
-			return maxSpeed <= speed;
-		}
-		else if (expressions == "is_equal" || expressions == "==") {
-			return maxSpeed == speed;
-		}
-
-		return false;
-	}
 
 	void RunCommandIf(const std::string& questNameLeft, const std::string& paramLeft,
 						const std::string& expressionStr,
@@ -139,36 +120,58 @@ namespace quest
 
 		// TODO:
 		// LEFT
-		if (Quest::Ptr questPtr = QuestManager::GetQuest(questNameLeft)) {
+		if (questNameLeft == "GLOBAL") {
+			auto it = Quest::globalParams.find(paramLeft);
+			if (it != Quest::globalParams.end()) {
+				valuLeft = StrToDouble((it->second));
+			}
+		}
+		else if (questNameLeft == "GAME") {
+			if (paramLeft == "CountBodies") {
+				valuLeft = CountBodies();
+			}
+			else if (paramLeft == "MaxWeightBody") {
+				valuLeft = MaxWeightBody();
+			}
+			else if (paramLeft == "MaxVelocityBody") {
+				valuLeft = MaxVelocityBody();
+			}
+		}
+		else if (questNameLeft == "CUSTOMER") {
+			valuLeft = StrToDouble(paramLeft);
+		}
+		else if (Quest::Ptr questPtr = QuestManager::GetQuest(questNameLeft)) {
 			auto it = questPtr->_params.find(paramLeft);
 			if (it != questPtr->_params.end()) {
 				valuLeft = StrToDouble((it->second));
 			}
 		}
-		else {
-			auto it = Quest::globalParams.find(paramLeft);
-			if (it != Quest::globalParams.end()) {
-				valuLeft = StrToDouble((it->second));
-			}
-			else {
-				valuLeft = StrToDouble(paramLeft);
-			}
-		}
 
 		// RIGHT
-		if (Quest::Ptr questPtr = QuestManager::GetQuest(questNameRight)) {
-			auto it = questPtr->_params.find(paramRight);
-			if (it != questPtr->_params.end()) {
-				valuRight = StrToDouble((it->second));
-			}
-		}
-		else {
+		if (questNameRight == "GLOBAL") {
 			auto it = Quest::globalParams.find(paramRight);
 			if (it != Quest::globalParams.end()) {
 				valuRight = StrToDouble((it->second));
 			}
-			else {
-				valuLeft = StrToDouble(paramRight);
+		}
+		else if (questNameRight == "GAME") {
+			if (paramLeft == "CountBodies") {
+				valuRight = CountBodies();
+			}
+			else if (paramLeft == "MaxWeightBody") {
+				valuRight = MaxWeightBody();
+			}
+			else if (paramLeft == "MaxVelocityBody") {
+				valuRight = MaxVelocityBody();
+			}
+		}
+		else if (questNameRight == "CUSTOMER") {
+			valuRight = StrToDouble(paramRight);
+		}
+		else if (Quest::Ptr questPtr = QuestManager::GetQuest(questNameRight)) {
+			auto it = questPtr->_params.find(paramRight);
+			if (it != questPtr->_params.end()) {
+				valuRight = StrToDouble((it->second));
 			}
 		}
 
@@ -235,55 +238,86 @@ namespace quest
 
 		// TODO:
 		// LEFT
-		if (Quest::Ptr questPtr = QuestManager::GetQuest(questNameLeft)) {
+		if (questNameLeft == "GLOBAL") {
+			auto it = Quest::globalParams.find(paramLeft);
+			if (it != Quest::globalParams.end()) {
+				valuLeft = StrToDouble((it->second));
+			}
+		}
+		else if (questNameLeft == "GAME") {
+			if (paramLeft == "CountBodies") {
+				valuLeft = CountBodies();
+			}
+			else if (paramLeft == "MaxWeightBody") {
+				valuLeft = MaxWeightBody();
+			}
+			else if (paramLeft == "MaxVelocityBody") {
+				valuLeft = MaxVelocityBody();
+			}
+		}
+		else if (questNameLeft == "CUSTOMER") {
+			valuLeft = StrToDouble(paramLeft);
+		}
+		else if (Quest::Ptr questPtr = QuestManager::GetQuest(questNameLeft)) {
 			auto it = questPtr->_params.find(paramLeft);
 			if (it != questPtr->_params.end()) {
 				valuLeft = StrToDouble((it->second));
 			}
 		}
-		else {
-			auto it = Quest::globalParams.find(paramLeft);
-			if (it != Quest::globalParams.end()) {
-				valuLeft = StrToDouble((it->second));
-			}
-			else {
-				valuLeft = StrToDouble(paramLeft);
-			}
-		}
 
 		// RIGHT
-		if (Quest::Ptr questPtr = QuestManager::GetQuest(questNameRight)) {
+		if (questNameRight == "GLOBAL") {
+			auto it = Quest::globalParams.find(paramRight);
+			if (it != Quest::globalParams.end()) {
+				valuRight = StrToDouble((it->second));
+			}
+		}
+		else if (questNameRight == "GAME") {
+			if (paramRight == "CountBodies") {
+				valuRight = CountBodies();
+			}
+			else if (paramRight == "MaxWeightBody") {
+				valuRight = MaxWeightBody();
+			}
+			else if (paramRight == "MaxVelocityBody") {
+				valuRight = MaxVelocityBody();
+			}
+		}
+		else if (questNameRight == "CUSTOMER") {
+			valuRight = StrToDouble(paramRight);
+		}
+		else if (Quest::Ptr questPtr = QuestManager::GetQuest(questNameRight)) {
 			auto it = questPtr->_params.find(paramRight);
 			if (it != questPtr->_params.end()) {
 				valuRight = StrToDouble((it->second));
 			}
 		}
-		else {
-			auto it = Quest::globalParams.find(paramRight);
-			if (it != Quest::globalParams.end()) {
-				valuRight = StrToDouble((it->second));
-			}
-			else {
-				valuLeft = StrToDouble(paramRight);
-			}
-		}
 
 		// RESULT
-		if (Quest::Ptr questPtr = QuestManager::GetQuest(questNameResult)) {
-			auto it = questPtr->_params.find(paramResult);
-			if (it != questPtr->_params.end()) {
-				valuResult = StrToDouble((it->second));
-			}
-		}
-		else {
+		if (questNameResult == "GLOBAL") {
 			auto it = Quest::globalParams.find(paramResult);
 			if (it != Quest::globalParams.end()) {
 				valuResult = StrToDouble((it->second));
 			}
-			else {
-
-				// ASSERT
-				return;
+		}
+		else if (questNameResult == "GAME") {
+			if (paramResult == "CountBodies") {
+				valuResult = CountBodies();
+			}
+			else if (paramResult == "MaxWeightBody") {
+				valuResult = MaxWeightBody();
+			}
+			else if (paramResult == "MaxVelocityBody") {
+				valuResult = MaxVelocityBody();
+			}
+		}
+		else if (questNameResult == "CUSTOMER") {
+			valuResult = StrToDouble(paramResult);
+		}
+		else if (Quest::Ptr questPtr = QuestManager::GetQuest(questNameResult)) {
+			auto it = questPtr->_params.find(paramResult);
+			if (it != questPtr->_params.end()) {
+				valuResult = StrToDouble((it->second));
 			}
 		}
 
@@ -319,20 +353,30 @@ namespace quest
 
 		if (hasResult) {
 			// RESULT
-			if (Quest::Ptr questPtr = QuestManager::GetQuest(questNameResult)) {
-				auto it = questPtr->_params.find(paramResult);
-				if (it != questPtr->_params.end()) {
-					it->second = std::to_string(valuResult);
-					return;
-				}
-			}
-			else {
+			if (questNameResult == "GLOBAL") {
 				auto it = Quest::globalParams.find(paramResult);
 				if (it != Quest::globalParams.end()) {
 					it->second = std::to_string(valuResult);
-					return;
+				}
+			}
+			else if (Quest::Ptr questPtr = QuestManager::GetQuest(questNameResult)) {
+				auto it = questPtr->_params.find(paramResult);
+				if (it != questPtr->_params.end()) {
+					it->second = std::to_string(valuResult);
 				}
 			}
 		}
 	}
+
+	//...
+	const std::map<std::string, std::string>& GetMapGameParams()
+	{
+		static std::map<std::string, std::string> mapGameParams;
+		mapGameParams.emplace("CountBodies", "");
+		mapGameParams.emplace("MaxWeightBody", "");
+		mapGameParams.emplace("MaxVelocityBody", "");
+		return mapGameParams;
+	}
+
+
 }

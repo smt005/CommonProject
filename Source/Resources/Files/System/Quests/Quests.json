@@ -9,7 +9,7 @@
      "id" : "FadeModel",
      "params" : 
      [
-      "Logo_name_back",
+      "Logo_name",
       "1000"
      ]
     },
@@ -25,14 +25,6 @@
    ],
    "Logo_commands_second" : 
    [
-    {
-     "id" : "FadeModel",
-     "params" : 
-     [
-      "Logo_name",
-      "1000"
-     ]
-    },
     {
      "id" : "SetActiveQuest",
      "params" : 
@@ -104,29 +96,23 @@
   "commands_on_tap" : 
   [
    {
-    "id" : "ValueOperation",
+    "id" : "HideText"
+   },
+   {
+    "id" : "FadeModel",
     "params" : 
     [
-     "Logo",
-     "CountTaps",
-     "+",
-     "...",
-     "ValueOne",
-     "Logo",
-     "CountTaps"
+     "Logo_name_back",
+     "1000"
     ]
    },
    {
-    "id" : "RunCommandIf",
+    "id" : "DelayActionCommand",
     "params" : 
     [
      "Logo",
-     "CountTaps",
-     "==",
-     "Logo",
-     "MaxCountTaps",
-     "Logo",
-     "Logo_comands"
+     "Logo_comands",
+     "1000"
     ]
    }
   ],
@@ -153,8 +139,8 @@
     "id" : "SetClearColor",
     "params" : 
     [
-     "1",
-     "1",
+     "0.9",
+     "0.95",
      "1",
      "1"
     ]
@@ -234,7 +220,28 @@
  },
  {
   "class" : "QuestStart",
-  "commands" : null,
+  "commands" : 
+  {
+   "TEST" : 
+   [
+    {
+     "id" : "SetActiveQuest",
+     "params" : 
+     [
+      "FastSpeedBody",
+      "ACTIVE"
+     ]
+    },
+    {
+     "id" : "SetActiveQuest",
+     "params" : 
+     [
+      "FirstTenBodies",
+      "DEACTIVE"
+     ]
+    }
+   ]
+  },
   "commands_debug" : 
   [
    {
@@ -266,8 +273,8 @@
     "id" : "SetClearColor",
     "params" : 
     [
-     "1",
-     "1",
+     "0.85",
+     "0.9",
      "1",
      "1"
     ]
@@ -276,7 +283,7 @@
     "id" : "ShowText",
     "params" : 
     [
-     "Try to create 7 bodies simultaneously in space."
+     "Try to create 10 bodies simultaneously in space."
     ]
    },
    {
@@ -316,14 +323,54 @@
      "100",
      "ContrastRandom"
     ]
+   },
+   {
+    "id" : "RunCommandIf",
+    "params" : 
+    [
+     "GAME",
+     "CountBodies",
+     "==",
+     "CUSTOMER",
+     "10",
+     "FirstTenBodies",
+     "TEST"
+    ]
    }
   ],
   "description" : "Create 10 bodies. For it, need zoom out.",
-  "id" : "FirstTenBodies"
+  "id" : "FirstTenBodies",
+  "params" : 
+  {
+   "CountBodies" : "0",
+   "NeedCountBosies" : "17"
+  }
  },
  {
   "class" : "QuestStart",
-  "commands" : null,
+  "commands" : 
+  {
+   "End_game_quest" : 
+   [
+    {
+     "id" : "CountOfIteration",
+     "params" : 
+     [
+      "0"
+     ]
+    },
+    {
+     "id" : "OpenWindow",
+     "params" : 
+     [
+      "RewardWindow",
+      "FastSpeedBody",
+      "Logo",
+      "End game. Repeate game."
+     ]
+    }
+   ]
+  },
   "commands_debug" : 
   [
    {
@@ -335,45 +382,15 @@
     ]
    }
   ],
-  "commands_on_condition" : 
-  [
-   {
-    "id" : "SetClearColor",
-    "params" : 
-    [
-     "0.333",
-     "0.666",
-     "0.999",
-     "1"
-    ]
-   },
-   {
-    "id" : "OpenWindow",
-    "params" : 
-    [
-     "RewardWindow",
-     "Logo",
-     "FINISH! Repeat game."
-    ]
-   },
-   {
-    "id" : "SetActiveQuest",
-    "params" : 
-    [
-     "FastSpeedBody",
-     "DEACTIVE"
-    ]
-   }
-  ],
   "commands_on_init" : 
   [
    {
     "id" : "SetClearColor",
     "params" : 
     [
-     "1",
-     "1",
-     "1",
+     "0.8",
+     "0.85",
+     "0.9",
      "1"
     ]
    },
@@ -382,6 +399,13 @@
     "params" : 
     [
      "Make fast speed more then 10."
+    ]
+   },
+   {
+    "id" : "GravityPoints",
+    "params" : 
+    [
+     "Disable"
     ]
    }
   ],
@@ -397,20 +421,23 @@
      "0",
      "0",
      "100",
-     "BLACK"
+     "ContrastRandom"
     ]
    }
   ],
   "commands_on_update" : 
   [
    {
-    "id" : "QuestCondition",
+    "id" : "RunCommandIf",
     "params" : 
     [
-     "FastSpeedBody",
-     "max_speed_body",
+     "GAME",
+     "MaxVelocityBody",
      ">=",
-     "0.5"
+     "CUSTOMER",
+     "1",
+     "FastSpeedBody",
+     "End_game_quest"
     ]
    }
   ],

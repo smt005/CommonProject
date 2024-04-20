@@ -2,6 +2,7 @@
 #pragma once
 
 #include <string>
+#include <map>
 
 namespace quest {
 	enum class Expression {
@@ -23,9 +24,6 @@ namespace quest {
 		is_remainder*/
 	};
 
-	bool count_bodies(const std::string& expressions, int number);
-	bool max_speed_body(const std::string& expressions, float speed);
-
 	/// RunCommandIf #QUESTS !PARAMS #EXPRESSIONS #QUESTS !PARAMS #QUESTS !COMMANDS
 	void RunCommandIf(const std::string& questNameLeft, const std::string& paramLeft,
 					const std::string& expressionStr,
@@ -37,4 +35,7 @@ namespace quest {
 					const std::string& operationStr,
 					const std::string& questNameRight, const std::string& paramRight,
 					const std::string& questNameResult, const std::string& paramResult);
+
+	// 
+	const std::map<std::string, std::string>& GetMapGameParams();
 }

@@ -330,47 +330,6 @@ void QuestManager::Update()
 {
 }
 
-/// QuestCondition #QUESTS /count_boties/max_speed_body/temp_number #EXPRESSIONS number
-void QuestManager::Condition(const std::vector<std::string>& params)
-{
-	if (params.size() < 4) {
-		return;
-	}
-
-	Quest::Ptr questPtr = QuestManager::GetQuest(params[0]);
-	if (!questPtr) {
-		return;
-	}
-
-	// TODO:
-	if (params[1] == "count_bodies") {
-		int number = atoi(params[3].c_str());
-
-		if (quest::count_bodies(params[2], number)) {
-			CommandManager::Run(questPtr->_commandsOnCondition);
-		}
-	}
-	else if (params[1] == "max_speed_body") {
-		float speed = atof(params[3].c_str());
-
-		if (quest::max_speed_body(params[2], speed)) {
-			CommandManager::Run(questPtr->_commandsOnCondition);
-		}
-	}
-	else {
-		auto itNumber = questPtr->_params.find("temp_value");
-		if (itNumber == questPtr->_params.end() && itNumber->second.empty()) {
-			return;
-		}
-
-		int number = atoi(itNumber->second.c_str());
-
-		if (quest::count_bodies(params[2], number)) {
-			CommandManager::Run(questPtr->_commandsOnCondition);
-		}
-	}
-}
-
 /// RunCommands !COMMANDS
 void QuestManager::RunCommands(const std::string& questName, const std::string& commandName)
 {

@@ -150,7 +150,7 @@ namespace commands
 		Draw2::SetClearColor(r, g, b, a);
 	}
 
-	/// OpenWindow /RewardWindow/CommandsWindow/QuestsWindow/QuestsEditorWindow
+	/// OpenWindow /RewardWindow/CommandsWindow/QuestsWindow/QuestsEditorWindow #QUESTS #QUESTS Text
 	void OpenWindow(const std::vector<std::string>& parameters)
 	{
 		if (parameters.empty()) {
@@ -161,8 +161,8 @@ namespace commands
 
 		if (classWindow == "RewardWindow") {
 			if (!UI::ShowingWindow<RewardWindow>()) {
-				if (parameters.size() >= 3) {
-					UI::ShowWindow<RewardWindow>(parameters[1], parameters[2]);
+				if (parameters.size() >= 4) {
+					UI::ShowWindow<RewardWindow>(parameters[1], parameters[2], parameters[3]);
 				}
 			}
 		}
@@ -571,9 +571,6 @@ namespace commands
 			if (!comand.parameters.empty()) {
 				RunCommandsFromFile(comand.parameters.front());
 			}
-		}
-		else if (comandId == "QuestCondition") {
-			QuestManager::Condition(comand.parameters);
 		}
 		else if (comandId == "CountOfIteration") {
 			if (!comand.parameters.empty()) {

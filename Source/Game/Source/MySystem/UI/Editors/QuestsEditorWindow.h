@@ -78,7 +78,9 @@ namespace Editor {
 		};
 
 	public:
-		QuestsEditorWindow() : UI::Window(this) {};
+		QuestsEditorWindow() : UI::Window(this) {
+			_newTextBuffer[0] = '\0';
+		};
 		void OnOpen() override;
 		void OnClose() override;
 		void Draw() override;
@@ -128,6 +130,7 @@ namespace Editor {
 		int _guiId = 0;
 		std::shared_ptr<bool> _sharedWndPtr;
 		TextChar _textBuffer;
+		TextChar _newTextBuffer;
 		Quest::Ptr _selectQuest;
 
 		EditorListT<EditorCommand> _editorCommands;

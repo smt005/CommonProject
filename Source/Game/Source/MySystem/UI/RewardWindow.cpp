@@ -5,8 +5,9 @@
 #include <Screen.h>
 #include "../Commands/Commands.h"
 
-RewardWindow::RewardWindow(const std::string& nextQuest, const std::string& rewardText)
+RewardWindow::RewardWindow(const std::string& currentQuest, const std::string& nextQuest, const std::string& rewardText)
     : UI::Window(this)
+    , _currentQuest(currentQuest)
     , _nextQuest(nextQuest)
     , _rewardText(rewardText)
 {}
@@ -23,6 +24,7 @@ void RewardWindow::OnOpen() {
 }
 
 void RewardWindow::OnClose() {
+    CommandManager::Run(Command("SetActiveQuest", { _currentQuest, "DEACTIVE" }));
     CommandManager::Run(Command("SetActiveQuest", { _nextQuest, "ACTIVE" }));
 }
 

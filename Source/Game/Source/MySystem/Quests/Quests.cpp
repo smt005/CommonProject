@@ -16,6 +16,8 @@ void QuestStart::Activete()
 		EventOnTap::Instance().Add(_name, [commands = _commandsOnTap]() {
 			CommandManager::Run(commands);
 		});
+	}
+	if (!_commandsOnUpdate.empty()) {
 		EventOnUpdate::Instance().Add(_name, [commands = _commandsOnUpdate]() {
 			CommandManager::Run(commands);
 		});

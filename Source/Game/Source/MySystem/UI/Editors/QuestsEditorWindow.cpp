@@ -7,6 +7,7 @@
 #include "../../Quests/Quests.h"
 #include "../../Quests/QuestManager.h"
 #include "../../Commands/Functions.h"
+#include "../../Commands/Functions/QuestCondition.h"
 #include <Object/Model.h>
 #include "ImGuiManager/Editor/Common/CommonPopupModal.h"
 #include "../../UI/CommonData.h"
@@ -291,7 +292,7 @@ namespace Editor {
         std::vector<std::string>* subCommandParam = nullptr;
         std::function<void()> additionView = 0;
 
-        for (size_t iParam = 0; iParam < countParams; ++iParam) {            
+        for (size_t iParam = 0; iParam < countParams; ++iParam) {         
             std::string& parameter = parameters[iParam];
             const std::string& editorParam = editorParams[iParam];
 
@@ -317,24 +318,71 @@ namespace Editor {
                     }
                 }
 
-                EditorListT<std::string>& listParam = _mapLists[editorQuestParam];
-                ImGui::PushID(++_guiId);
-                if (ImGui::Combo("", &listParam.GetIndex(parameter), listParam.viewList.data(), listParam.viewList.size())) {
-                    parameter = listParam.Get();
+                if (editorQuestParam == "!PARAMS:CUSTOMER") {
+                    ImGui::PushID(++_guiId);
+                    help::CopyToArrayChar(_textBuffer, parameter);
+                    if (ImGui::InputText("", _textBuffer.data(), _textBuffer.size())) {
+                        parameter = _textBuffer.data();
+                    }
+                    ImGui::PopID();
                 }
-                ImGui::PopID();
+                else {
+                    EditorListT<std::string>& listParam = _mapLists[editorQuestParam];
+                    ImGui::PushID(++_guiId);
+                    if (ImGui::Combo("", &listParam.GetIndex(parameter), listParam.viewList.data(), listParam.viewList.size())) {
+                        parameter = listParam.Get();
+                    }
+                    ImGui::PopID();
 
-                if (editorParam == "!COMMANDS" ) {
-                    additionView = [this, editorQuestName, parameter = listParam.Get(), newlevel = level + 1.f]() {
-                        if (Quest::Ptr questPtr = QuestManager::GetQuest(editorQuestName)) {
-                            ImGui::SameLine();
-                            ImGui::BeginGroup();
-                            
-                            ImGui::Text("Sub commands");
-                            DrawCommands(questPtr->_commandMap[parameter], parameter, newlevel);
-                            ImGui::EndGroup();
+                    if (editorParam == "!COMMANDS") {
+                        if (parameter.empty()) {
+                            additionView = [this, iParam, &parameters, &parameter, editorParam]() {
+                                ImGui::PushItemWidth(_widthQuest / 2.f - 130.f);
+                                ImGui::PushID(++_guiId);
+                                ImGui::InputText("", _newTextBuffer.data(), _newTextBuffer.size());
+                                ImGui::PopID();
+
+                                ImGui::SameLine();
+                                if (ImGui::Button("Add sub commands##add_sub_commandslabel_btn", ImVec2(120.f, 20.f)) && _newTextBuffer[0] != '\0') {
+                                    int previParam = iParam - 1;
+                                    std::string editorQuestName;
+                                    if (previParam >= 0) {
+                                        editorQuestName = parameters[previParam];
+                                    }
+                                    if (Quest::Ptr questPtr = QuestManager::GetQuest(editorQuestName)) {
+                                        parameter = _newTextBuffer.data();
+                                        _newTextBuffer[0] = '\0';
+
+                                        questPtr->_commandMap.emplace(parameter, Commands());
+
+                                        std::string editorQuestParam = editorParam + ':' + editorQuestName;
+                                        if (_mapLists.find(editorQuestParam) == _mapLists.end()) {
+                                            _mapLists.emplace(editorQuestParam, EditorListT<std::string>());
+                                        }
+                                        EditorListT<std::string>& editListParam = _mapLists[editorQuestParam];
+                                        editListParam.Add(parameter.data());
+                                        editListParam.MakeViewData();
+                                    }
+                                }
+                            };
                         }
-                    };
+                        else {
+                            additionView = [this, editorQuestName, parameter = listParam.Get(), newlevel = level + 1.f]() {
+                                if (Quest::Ptr questPtr = QuestManager::GetQuest(editorQuestName)) {
+                                    ImGui::SameLine();
+                                    ImGui::BeginGroup();
+
+                                    ImGui::Text("Sub commands");
+                                    DrawCommands(questPtr->_commandMap[parameter], parameter, newlevel);
+                                    ImGui::EndGroup();
+
+                                    if (questPtr->_commandMap[parameter].empty()) {
+                                        questPtr->_commandMap[parameter].emplace_back();
+                                    }
+                                }
+                            };
+                        }
+                    }
                 }
             }
             else {
@@ -727,7 +775,7 @@ namespace Editor {
         // C:\Work\My\System\Source\Game\Source\MySystem\Commands\Functions.cpp
         // C:\Work\My\System\Source\Game\Source\MySystem\Quests/QuestManager.cpp
         // C:\Work\My\System\Source\Game\Source\MySystem\Commands\Functions/Actions.h
-        // C:\Work\My\System\Source\Game\Source\MySystem\Quests/QuestCondition.h
+        // C:\Work\My\System\Source\Game\Source\MySystem\Commands\Functions/QuestCondition.h
 
         EditorCommand& emptyEditorCommandT = _editorCommands.Add(EditorCommand::emptyName);
 
@@ -735,7 +783,7 @@ namespace Editor {
         EditorDatasParceFile("..\\..\\..\\Game\\Source\\MySystem\\Commands\\Functions.cpp");
         EditorDatasParceFile("..\\..\\..\\Game\\Source\\MySystem\\Quests\\QuestManager.cpp");
         EditorDatasParceFile("..\\..\\..\\Game\\Source\\MySystem\\Commands\\Functions\\Actions.h");
-        EditorDatasParceFile("..\\..\\..\\Game\\Source\\MySystem\\Quests\\QuestCondition.h");
+        EditorDatasParceFile("..\\..\\..\\Game\\Source\\MySystem\\Commands\\Functions\\QuestCondition.h");
 
         _editorCommands.MakeViewData();
 
@@ -878,7 +926,9 @@ namespace Editor {
                     for (const Quest::Ptr& questPtr : quests) {
                         appendParams(questPtr->Name(), questPtr->_params);
                     }
-                    appendParams("", Quest::globalParams); // Глобальные переменные
+                    appendParams("GLOBAL", Quest::globalParams); // Глобальные переменные
+                    appendParams("GAME", quest::GetMapGameParams()); // Глобальные переменные
+                    appendParams("CUSTOMER", {{"", ""}}); // Глобальные переменные
                 }
 
                 newEditorCommandT.params.emplace_back(paramWord);
@@ -901,7 +951,10 @@ namespace Editor {
                         auto& listParams = _mapLists[paramWord];
                         listParams.Reserve(quests.size());
 
-                        listParams.Add("...");
+                        listParams.Add("GLOBAL");
+                        listParams.Add("GAME");
+                        listParams.Add("CUSTOMER");
+
                         for (const Quest::Ptr& questPtr : quests) {
                             listParams.Add(questPtr->Name().c_str());
                         }

@@ -195,7 +195,7 @@
      "0",
      "0",
      "100",
-     "BLACK"
+     "RED"
     ]
    },
    {
@@ -315,7 +315,7 @@
     "id" : "CountOfIteration",
     "params" : 
     [
-     "10"
+     "1"
     ]
    }
   ],
@@ -342,7 +342,7 @@
      "CountBodies",
      "==",
      "CUSTOMER",
-     "10",
+     "100",
      "FirstTenBodies_quest",
      "TEST"
     ]
@@ -360,7 +360,7 @@
     [
      "FirstTenBodies_quest",
      "UnlockAddBody",
-     "500"
+     "100"
     ]
    }
   ],
@@ -428,6 +428,7 @@
     ]
    },
    {
+    "disable" : true,
     "id" : "GravityPoints",
     "params" : 
     [

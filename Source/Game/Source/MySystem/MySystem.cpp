@@ -21,13 +21,15 @@
 #include "Commands/Commands.h"
 #include "Commands/Events.h"
 #include "Common/PlanePoints.h"
+#include "Common/GravityGrid.h"
 
 std::shared_ptr<Space> MySystem::currentSpace;
 bool MySystem::gravitypoints = false;
 
 const std::string saveFileName("../../../Executable/Save.json");
 
-PlanePoints planePoints;
+//PlanePoints gravityGrid;
+GravityGrid gravityGrid;
 
 void MySystem::init() {
 	CUDA::GetProperty();
@@ -41,9 +43,9 @@ void MySystem::init() {
 	CommandManager::Run("Commands/Main.json");
 
 #if _DEBUG
-	planePoints.Init(1000.f, 5.f);
+	gravityGrid.Init(500.f, 1.f);
 #else
-	planePoints.Init(500.f, 1.f);
+	gravityGrid.Init(500.f, 1.f);
 #endif
 }
 
@@ -185,11 +187,11 @@ void MySystem::draw() {
 	//...
 	if (gravitypoints) {
 		if (currentSpace && !currentSpace->_bodies.empty()) {
-			planePoints.Update(currentSpace->_bodies);
+			gravityGrid.Update(currentSpace->_bodies);
 		}
 
 		Camera::Set<Camera>(_camearSide);
-		planePoints.Draw();
+		gravityGrid.Draw();
 	}
 
 	if (!CommonData::nameImageList.empty()) {

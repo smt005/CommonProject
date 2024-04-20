@@ -17,7 +17,7 @@
      "id" : "DelayActionCommand",
      "params" : 
      [
-      "Logo",
+      "Logo_quest",
       "Logo_commands_second",
       "1000"
      ]
@@ -29,7 +29,7 @@
      "id" : "SetActiveQuest",
      "params" : 
      [
-      "FirstBody",
+      "FirstBody_quest",
       "ACTIVE"
      ]
     },
@@ -37,7 +37,7 @@
      "id" : "SetActiveQuest",
      "params" : 
      [
-      "Logo",
+      "Logo_quest",
       "DEACTIVE"
      ]
     }
@@ -110,14 +110,14 @@
     "id" : "DelayActionCommand",
     "params" : 
     [
-     "Logo",
+     "Logo_quest",
      "Logo_comands",
      "1000"
     ]
    }
   ],
   "description" : "First quest on start game.",
-  "id" : "Logo",
+  "id" : "Logo_quest",
   "params" : 
   {
    "CountTaps" : "0",
@@ -202,7 +202,7 @@
     "id" : "SetActiveQuest",
     "params" : 
     [
-     "FirstTenBodies",
+     "FirstTenBodies_quest",
      "ACTIVE"
     ]
    },
@@ -210,13 +210,13 @@
     "id" : "SetActiveQuest",
     "params" : 
     [
-     "FirstBody",
+     "FirstBody_quest",
      "DEACTIVE"
     ]
    }
   ],
   "description" : "Create first body.",
-  "id" : "FirstBody"
+  "id" : "FirstBody_quest"
  },
  {
   "class" : "QuestStart",
@@ -228,7 +228,7 @@
      "id" : "SetActiveQuest",
      "params" : 
      [
-      "FastSpeedBody",
+      "FastSpeedBody_quest",
       "ACTIVE"
      ]
     },
@@ -236,7 +236,7 @@
      "id" : "SetActiveQuest",
      "params" : 
      [
-      "FirstTenBodies",
+      "FirstTenBodies_quest",
       "DEACTIVE"
      ]
     }
@@ -333,13 +333,13 @@
      "==",
      "CUSTOMER",
      "10",
-     "FirstTenBodies",
+     "FirstTenBodies_quest",
      "TEST"
     ]
    }
   ],
   "description" : "Create 10 bodies. For it, need zoom out.",
-  "id" : "FirstTenBodies",
+  "id" : "FirstTenBodies_quest",
   "params" : 
   {
    "CountBodies" : "0",
@@ -364,8 +364,8 @@
      "params" : 
      [
       "RewardWindow",
-      "FastSpeedBody",
-      "Logo",
+      "FastSpeedBody_quest",
+      "Logo_quest",
       "End game. Repeate game."
      ]
     }
@@ -435,14 +435,14 @@
      "MaxVelocityBody",
      ">=",
      "CUSTOMER",
-     "1",
-     "FastSpeedBody",
+     "2",
+     "FastSpeedBody_quest",
      "End_game_quest"
     ]
    }
   ],
   "description" : "Make it so that the maximum speed of the body is greater than 0.1. For test 0.05",
-  "id" : "FastSpeedBody"
+  "id" : "FastSpeedBody_quest"
  },
  {
   "global_params" : 

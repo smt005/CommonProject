@@ -11,7 +11,7 @@
   {
     "id": "StartQuest",
     "params": [
-      "Logo"
+      "Logo_quest"
     ]
   }
 ]

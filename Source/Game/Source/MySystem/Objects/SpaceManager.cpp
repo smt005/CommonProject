@@ -172,7 +172,11 @@ void SpaceManager::AddObject(const std::string& nameModel, const Math::Vector3& 
 }
 
 unsigned int SpaceManager::SetView(MySystem* systemMy) {
-	if (systemMy->_camearCurrent == systemMy->_camearSide) {
+	if (!systemMy) {
+		return 0;
+	}
+
+	if (systemMy->_camearCurrent && systemMy->_camearCurrent == systemMy->_camearSide) {
 		systemMy->_camearCurrent = systemMy->_camearTop;
 		DrawLight::setClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 		return 1;

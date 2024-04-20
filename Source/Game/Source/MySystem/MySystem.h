@@ -31,7 +31,7 @@ public:
 public:
 	std::shared_ptr<Engine::Callback> _callbackPtr;
 	std::shared_ptr<Camera> _camearCurrent;
-	std::shared_ptr<Camera> _camearSide;
+	static std::shared_ptr<Camera> _camearSide;
 	std::shared_ptr<Camera> _camearTop;
 	std::shared_ptr<Camera> _camearScreen;
 

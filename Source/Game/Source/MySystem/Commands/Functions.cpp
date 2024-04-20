@@ -24,6 +24,7 @@
 #include "../UI/Editors/QuestsWindow.h"
 #include "../UI/CommonData.h"
 #include "../UI/Editors/QuestsEditorWindow.h"
+#include "../UI/MainUI.h"
 
 // Quest
 #include "../Quests/Quest.h"
@@ -476,6 +477,16 @@ namespace commands
 		}
 	}
 
+	void ShowCursor(const std::string& state, const std::string& model)
+	{
+		if (state == "SHOW") {
+			MainUI::SetCursorModel(model);
+		}
+		else if (state == "HIDE") {
+			MainUI::SetCursorModel("");
+		}
+	}
+
 	/// SetActiveQuest #QUESTS /ACTIVE/DEACTIVE
 
 	//..................................................................
@@ -620,6 +631,14 @@ namespace commands
 		else if (comandId == "LockAction") {
 			if (!comand.parameters.empty()) {
 				LockAction(comand.parameters.front());
+			}
+		}
+		else if (comandId == "ShowCursor") {
+			if (comand.parameters.size() == 1) {
+				ShowCursor(comand.parameters[0]);
+			}
+			else if (comand.parameters.size() >= 1) {
+				ShowCursor(comand.parameters[0], comand.parameters[1]);
 			}
 		}
 	}

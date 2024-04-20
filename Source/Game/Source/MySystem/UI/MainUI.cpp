@@ -12,6 +12,7 @@
 #include "Editors/QuestsEditorWindow.h"
 #include "Editors/EditorModel.h"
 #include "Editors/EditMap.h"
+#include "Draw/Camera/Camera.h"
 #include "Draw/Camera/CameraControlOutside.h"
 #include "Callback/Callback.h"
 #include "Callback/CallbackEvent.h"
@@ -33,6 +34,7 @@
 namespace {
 	Engine::Callback callback;
 	Object::Ptr bodyMarker;
+	Model::Ptr cursorModel;
 }
 
 void MainUI::Open() {
@@ -223,6 +225,25 @@ void MainUI::DrawOnSpace() {
 		Draw2::SetModelMatrix(bodyMarker->getMatrix());
 		Draw2::Draw(bodyMarker->getModel());
 	}*/
+
+	// Курсор
+	if (cursorModel && MySystem::_camearSide) {
+		Camera::Set<Camera>(MySystem::_camearSide);
+		Draw2::DepthTest(false);
+		ShaderDefault::Instance().Use();
+
+		float color4[] = { 1.f, 1.f, 1.f, 1.f };
+		Draw2::SetColorClass<ShaderDefault>(color4);
+
+		auto mousePos = MySystem::_camearSide->corsorCoord();
+		glm::mat4x4 mouseMat(1.f);
+		mouseMat[3][0] = mousePos.x;
+		mouseMat[3][1] = mousePos.y;
+		mouseMat[3][2] = mousePos.z;
+		Draw2::SetModelMatrixClass<ShaderDefault>(mouseMat);
+
+		Draw2::Draw(*cursorModel);
+	}
 }
 
 bool MainUI::IsLockAction() {
@@ -233,4 +254,14 @@ unsigned int MainUI::GetViewType() {
 	if (BottomUI* bottomUI = dynamic_cast<BottomUI*>(UI::GetWindow<BottomUI>().get())) {
 		return (unsigned int)bottomUI->_viewType;
 	}
+}
+
+void MainUI::SetCursorModel(const std::string& nameModel)
+{
+	if (!nameModel.empty()) {
+		cursorModel = Model::getByName(nameModel);
+	}
+	else {
+		cursorModel.reset();		
+	}	
 }

@@ -21,6 +21,18 @@
 		"shape" : "Models/Interface/Cube.obj",
 		"texture" : "Textures/Interface/Tutorial/Finger.png"
 	},
+	"Aim" : 
+	{
+		"scale" : [20, 20, 1],
+		"shape" : "Models/Interface/Cube.obj",
+		"texture" : "Textures/Interface/aim_red.png"
+	},
+	"Aim3D" : 
+	{
+		"scale" : [20, 20, 1],
+		"shape" : "Models/Interface/Aim_3d.obj",
+		"texture" : "Textures/Colors/Red.png"
+	},
 	"Logo" : 
 	{
 		"scale" : 

@@ -24,6 +24,7 @@
 #include "Common/GravityGrid.h"
 
 std::shared_ptr<Space> MySystem::currentSpace;
+std::shared_ptr<Camera> MySystem::_camearSide;
 bool MySystem::gravitypoints = false;
 
 const std::string saveFileName("../../../Executable/Save.json");
@@ -228,21 +229,27 @@ void MySystem::draw() {
 
 	//...
 	if (CommonData::bool7) {
-		if (Model::Ptr& model = Model::getByName("Logo")) {
-			Camera::Set<Camera>(_camearScreen);
+		if (Model::Ptr& model = Model::getByName("Aim")) {
+			Camera::Set<Camera>(_camearSide);
 			Draw2::DepthTest(false);
-
 			ShaderDefault::Instance().Use();
 
 			float color4[] = { 1.f, 1.f, 1.f, 1.f };
 			Draw2::SetColorClass<ShaderDefault>(color4);
-			Draw2::SetModelMatrix(glm::mat4x4(1.f));
+			
+			//Draw2::SetModelMatrixClass<ShaderDefault>(glm::mat4x4(1.f));
+			auto mousePos = _camearSide->corsorCoord();
+			glm::mat4x4 mouseMat(1.f);
+			mouseMat[3][0] = mousePos.x;
+			mouseMat[3][1] = mousePos.y;
+			mouseMat[3][2] = mousePos.z;
+			Draw2::SetModelMatrixClass<ShaderDefault>(mouseMat);
 
 			Draw2::Draw(*model);
 		}
 	}
 
-	// MainUI::DrawOnSpace();
+	MainUI::DrawOnSpace();
 }
 
 void MySystem::resize() {

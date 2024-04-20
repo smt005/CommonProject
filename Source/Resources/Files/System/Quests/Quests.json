@@ -181,6 +181,14 @@
     [
      "Enable"
     ]
+   },
+   {
+    "id" : "ShowCursor",
+    "params" : 
+    [
+     "SHOW",
+     "Aim"
+    ]
    }
   ],
   "commands_on_tap" : 
@@ -285,7 +293,7 @@
     [
      "0.85",
      "0.9",
-     "1",
+     "0.95",
      "1"
     ]
    },
@@ -317,6 +325,13 @@
     [
      "1"
     ]
+   },
+   {
+    "id" : "ShowCursor",
+    "params" : 
+    [
+     "HIDE"
+    ]
    }
   ],
   "commands_on_tap" : 
@@ -342,7 +357,7 @@
      "CountBodies",
      "==",
      "CUSTOMER",
-     "100",
+     "10",
      "FirstTenBodies_quest",
      "TEST"
     ]
@@ -433,6 +448,14 @@
     "params" : 
     [
      "Disable"
+    ]
+   },
+   {
+    "id" : "ShowCursor",
+    "params" : 
+    [
+     "SHOW",
+     "Aim3D"
     ]
    }
   ],

@@ -29,6 +29,8 @@ namespace commands {
 	/// LockAction /Push/Pop/Unlock
 	void LockAction(const std::string& enableStr);
 
+	/// ShowCursor /SHOW/HIDE #MODELS
+	void ShowCursor(const std::string& state, const std::string& model = "Aim");
 
 	void Run(const Command& comand);
 }

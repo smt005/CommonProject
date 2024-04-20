@@ -8,8 +8,6 @@ unsigned int ShaderGravityGrid::u_color = 0;
 unsigned int ShaderGravityGrid::u_factor = 0;
 unsigned int ShaderGravityGrid::u_range = 0;
 unsigned int ShaderGravityGrid::u_rangeZ = 0;
-unsigned int ShaderGravityGrid::u_body_position = 0;
-unsigned int ShaderGravityGrid::u_body_color = 0;
 unsigned int ShaderGravityGrid::u_body_count = 0;
 unsigned int ShaderGravityGrid::u_body_positions = 0;
 unsigned int ShaderGravityGrid::u_body_massess = 0;
@@ -43,9 +41,6 @@ void ShaderGravityGrid::GetLocation() {
 	u_factor = glGetUniformLocation(_program, "u_factor");
 	u_range = glGetUniformLocation(_program, "u_range");
 	u_rangeZ = glGetUniformLocation(_program, "u_rangeZ");
-
-	u_body_position = glGetUniformLocation(_program, "u_body_position");
-	u_body_color = glGetUniformLocation(_program, "u_body_color");
 
 	u_body_count = glGetUniformLocation(_program, "u_body_count");
 	u_body_positions = glGetUniformLocation(_program, "u_body_positions");

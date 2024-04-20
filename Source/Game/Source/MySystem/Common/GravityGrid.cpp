@@ -87,41 +87,6 @@ void GravityGrid::Init(float spaceRange, float offset)
 	}
 }
 
-void GravityGrid::Update(std::vector<Body::Ptr>& objects)
-{
-	/*for (Math::Vector3& point : _points) {
-		point.z = 0.f;
-	}
-	for (Math::Vector3& point : _line) {
-		point.z = 0.f;
-	}
-
-	for (const Body::Ptr& bodyPtr : objects) {
-		Math::Vector3 pos = bodyPtr->GetPos();
-
-		for (Math::Vector3& point : _points) {
-			Math::Vector3 dV = pos - point; // TODO: не работает с const
-			float dist = std::abs(dV.length());
-			double force = _constGravity * (_mass * bodyPtr->Mass()) / (dist * dist);
-
-			point.z += force;
-		}
-
-		for (Math::Vector3& point : _line) {
-			Math::Vector3 dV = pos - point; // TODO: не работает с const
-			float dist = std::abs(dV.length());
-			double force = _constGravity * (_mass * bodyPtr->Mass()) / (dist * dist);
-
-			point.z += force;
-		}
-	}
-
-	if (MySystem::currentSpace; Body::Ptr bodyPtr = MySystem::currentSpace->GetHeaviestBody()) {
-		_bodyPos = bodyPtr->GetPos();
-		_bodyColor = bodyPtr->color;
-	}*/
-}
-
 void GravityGrid::Draw()
 {
 	ShaderGravityGrid::Instance().Use();
@@ -131,17 +96,16 @@ void GravityGrid::Draw()
 	float color4[] = { 1.f, 1.f, 1.0f, 1.f };
 	Draw2::SetColorClass<ShaderGravityGrid>(color4);
 
-	float bodyPos[] = { _bodyPos.x, _bodyPos.y, _bodyPos.z };
-	Draw2::SetUniform3fv(ShaderGravityGrid::u_body_position, bodyPos);
-	Draw2::SetUniform4fv(ShaderGravityGrid::u_body_color, _bodyColor.getDataPtr());
-
 	const int countBodies = MySystem::currentSpace ? MySystem::currentSpace->_bodies.size() : 0;
 	Draw2::SetUniform1i(ShaderGravityGrid::u_body_count, countBodies);
 
 	if (countBodies) {
 		float* bodiesPos = new float[countBodies * 3];
+		float* bodiesColor = new float[countBodies * 3];
 		float* bodiesMass = new float[countBodies];
+
 		int indexBodies = 0;
+		int indexColors = 0;
 		int indexMasses = 0;
 
 		for (auto& bodyPtr : MySystem::currentSpace->_bodies) {
@@ -150,12 +114,19 @@ void GravityGrid::Draw()
 			bodiesPos[indexBodies++] = pos.y;
 			bodiesPos[indexBodies++] = pos.z;
 
+			bodiesColor[indexColors++] = bodyPtr->color.getRed();
+			bodiesColor[indexColors++] = bodyPtr->color.getGreen();
+			bodiesColor[indexColors++] = bodyPtr->color.getBlue();
+
 			bodiesMass[indexMasses++] = bodyPtr->Mass();
 		}
+
 		Draw2::SetUniform3fv(ShaderGravityGrid::u_body_positions, bodiesPos, countBodies);
 		Draw2::SetUniform1fv(ShaderGravityGrid::u_body_massess, bodiesMass, countBodies);
+		Draw2::SetUniform3fv(ShaderGravityGrid::u_body_colors, bodiesColor, countBodies);
 		
 		delete[] bodiesPos;
+		delete[] bodiesColor;
 		delete[] bodiesMass;
 	}
 

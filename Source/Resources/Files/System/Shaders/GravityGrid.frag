@@ -1,18 +1,13 @@
 #version 330 core
 precision mediump float;
 
-uniform vec4 u_color;
-uniform vec3 u_body_position;
-uniform vec4 u_body_color;
 uniform float u_factor;
 uniform float u_range;
 uniform float u_rangeZ;
 
-uniform int u_body_count;
-uniform vec3[] u_body_positions;
-
 in vec3 positionPV;
 in vec3 position;
+in vec3 oColor;
 
 float GetValue(float range, float dist)
 {
@@ -27,8 +22,7 @@ float GetValue(float range, float dist)
 }
 
 void main() {
-	vec4 color = u_color * u_body_color * GetValue(50, length(position - u_body_position));
+	vec4 color = vec4(oColor, 1.0);
 	color.a = GetValue(u_range, length(positionPV)) * GetValue(u_rangeZ, -position.z) * u_factor;
-	
 	gl_FragColor = color;
 }

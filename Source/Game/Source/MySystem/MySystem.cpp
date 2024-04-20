@@ -187,10 +187,6 @@ void MySystem::draw() {
 
 	//...
 	if (gravitypoints) {
-		if (currentSpace && !currentSpace->_bodies.empty()) {
-			gravityGrid.Update(currentSpace->_bodies);
-		}
-
 		Camera::Set<Camera>(_camearSide);
 		gravityGrid.Draw();
 	}
@@ -208,44 +204,6 @@ void MySystem::draw() {
 				Draw2::SetColorClass<ShaderDefault>(model->getDataPtr());
 				Draw2::Draw(*model);
 			}
-		}
-	}
-
-	//...
-	if (CommonData::bool6) {
-		if (Model::Ptr& model = Model::getByName("Finger")) {
-			Camera::Set<Camera>(_camearScreen);
-			Draw2::DepthTest(false);
-
-			ShaderDefault::Instance().Use();
-
-			float color4[] = { 1.f, 1.f, 1.f, 1.f };
-			Draw2::SetColorClass<ShaderDefault>(color4);
-			Draw2::SetModelMatrix(glm::mat4x4(1.f));
-
-			Draw2::Draw(*model);
-		}
-	}
-
-	//...
-	if (CommonData::bool7) {
-		if (Model::Ptr& model = Model::getByName("Aim")) {
-			Camera::Set<Camera>(_camearSide);
-			Draw2::DepthTest(false);
-			ShaderDefault::Instance().Use();
-
-			float color4[] = { 1.f, 1.f, 1.f, 1.f };
-			Draw2::SetColorClass<ShaderDefault>(color4);
-			
-			//Draw2::SetModelMatrixClass<ShaderDefault>(glm::mat4x4(1.f));
-			auto mousePos = _camearSide->corsorCoord();
-			glm::mat4x4 mouseMat(1.f);
-			mouseMat[3][0] = mousePos.x;
-			mouseMat[3][1] = mousePos.y;
-			mouseMat[3][2] = mousePos.z;
-			Draw2::SetModelMatrixClass<ShaderDefault>(mouseMat);
-
-			Draw2::Draw(*model);
 		}
 	}
 

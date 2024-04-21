@@ -17,6 +17,9 @@ private:
 	float _width = 0.f;
 	float _height = 130.f; // 65.f;
 
+	bool _showFps = false;
+	float _fpsColor[4];
+
 	int minFPS = -1;
 	int FPS = 0;
 	int maxFPS = -1;

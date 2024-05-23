@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include "../../Quests/Quest.h"
+#include "../../Quests/QuestManager.h"
 #include "../../Commands/Commands.h"
 #include "Common/Help.h"
 #include "ImGuiManager/Editor/Common/CommonUI.h"
@@ -132,12 +133,13 @@ namespace Editor {
 		TextChar _textBuffer;
 		TextChar _newTextBuffer;
 		Quest::Ptr _selectQuest;
+		QuestManagerImpl _questManager;
 
 		EditorListT<EditorCommand> _editorCommands;
 		std::unordered_map<std::string, EditorListT<std::string>> _mapLists;
 
-		private:
-			static std::string questClassesType;
-			static std::string observesType;
+	private:
+		static std::string questClassesType;
+		static std::string observesType;
 	};
 }

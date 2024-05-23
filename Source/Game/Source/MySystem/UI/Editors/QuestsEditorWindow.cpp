@@ -5,7 +5,6 @@
 #include <Screen.h>
 #include <FileManager.h>
 #include "../../Quests/Quests.h"
-#include "../../Quests/QuestManager.h"
 #include "../../Commands/Functions.h"
 #include "../../Commands/Functions/QuestCondition.h"
 #include <Object/Model.h>
@@ -30,6 +29,9 @@ namespace Editor {
 
         UpdateSizes(_width, _height);
         LoadEditorDatas();
+
+        const std::string& pathFileName = QuestManager::Instance().PathFileName();
+        _questManager.Load(pathFileName);
     }
 
     void QuestsEditorWindow::OnClose() {
@@ -91,7 +93,7 @@ namespace Editor {
         ImGui::BeginChild("quest_list", { _widthList, _topHeight }, true);
             ImGui::BeginChild("list", { _widthList, (_topHeight - listButtonHeight) }, false);
 
-            for (Quest::Ptr& questPtr : QuestManager::GetQuests()) {
+            for (Quest::Ptr& questPtr : _questManager.GetQuests()) {
                 ImGui::PushStyleColor(ImGuiCol_Button, _selectQuest == questPtr ? Editor::greenColor : Editor::defaultColor);
 
                 ImGui::PushID(++_guiId);
@@ -103,7 +105,7 @@ namespace Editor {
                 ImGui::SameLine();
                 ImGui::PushID(++_guiId);
                 if (ImGui::ArrowButton("", ImGuiDir_Up)) {
-                    std::vector<Quest::Ptr>& quests = QuestManager::GetQuests();
+                    std::vector<Quest::Ptr>& quests = _questManager.GetQuests();
 
                     if (quests.size() > 1) {
                         auto itFirst = std::find_if(quests.rbegin(), quests.rend(), [questPtr](const Quest::Ptr& itQuestPtr) {
@@ -126,7 +128,7 @@ namespace Editor {
                 ImGui::SameLine();
                 ImGui::PushID(++_guiId);
                 if (ImGui::ArrowButton("", ImGuiDir_Down)) {
-                    std::vector<Quest::Ptr>& quests = QuestManager::GetQuests();
+                    std::vector<Quest::Ptr>& quests = _questManager.GetQuests();
 
                     if (quests.size() > 1) {
                         auto itFirst = std::find_if(quests.begin(), quests.end(), [questPtr](const Quest::Ptr& itQuestPtr) {
@@ -191,7 +193,7 @@ namespace Editor {
                 EditorListT<std::string>& listParam = _mapLists[questClassesType];
                 ImGui::SameLine(100.f);
                 ImGui::PushID(++_guiId);
-                if (ImGui::Combo("", &listParam.GetIndex(QuestManager::GetClassName(_selectQuest)), listParam.viewList.data(), listParam.viewList.size())) {
+                if (ImGui::Combo("", &listParam.GetIndex(_questManager.GetClassName(_selectQuest)), listParam.viewList.data(), listParam.viewList.size())) {
                     //...
                 }
                 ImGui::PopID();
@@ -349,7 +351,7 @@ namespace Editor {
                                     if (previParam >= 0) {
                                         editorQuestName = parameters[previParam];
                                     }
-                                    if (Quest::Ptr questPtr = QuestManager::GetQuest(editorQuestName)) {
+                                    if (Quest::Ptr questPtr = _questManager.GetQuest(editorQuestName)) {
                                         parameter = _newTextBuffer.data();
                                         _newTextBuffer[0] = '\0';
 
@@ -368,7 +370,7 @@ namespace Editor {
                         }
                         else {
                             additionView = [this, editorQuestName, parameter = listParam.Get(), newlevel = level + 1.f]() {
-                                if (Quest::Ptr questPtr = QuestManager::GetQuest(editorQuestName)) {
+                                if (Quest::Ptr questPtr = _questManager.GetQuest(editorQuestName)) {
                                     ImGui::SameLine();
                                     ImGui::BeginGroup();
 
@@ -514,7 +516,7 @@ namespace Editor {
 
     void QuestsEditorWindow::AddQuest() {
         Quest::Ptr newQuestPtr(new QuestStart("EMPTY")); // TODO:
-        QuestManager::GetQuests().emplace_back(newQuestPtr);
+        _questManager.GetQuests().emplace_back(newQuestPtr);
     }
 
     void QuestsEditorWindow::CopyQuest(Quest::Ptr& questPtr) {
@@ -525,7 +527,7 @@ namespace Editor {
     
     void QuestsEditorWindow::RemoveQuest(Quest::Ptr& questPtr) {
         if (questPtr) {
-            QuestManager::Remove(questPtr->Name());
+            _questManager.Remove(questPtr->Name());
         }
     }
 
@@ -706,13 +708,14 @@ namespace Editor {
         if (ImGui::Button("Reset", { buttonWidth, buttonHeight })) {
             _selectQuest.reset();
             Clear();
-            QuestManager::Reload();
+            _questManager.Reload();
         }
 
         //...
         ImGui::SameLine();
         if (ImGui::Button("Save", { buttonWidth, buttonHeight })) {
-            QuestManager::Save();
+            _questManager.Save();
+            QuestManager::Instance().Reload();
         }
 
         ImGui::SameLine();
@@ -788,7 +791,7 @@ namespace Editor {
         _editorCommands.MakeViewData();
 
         EditorListT<std::string>& listClass = _mapLists[questClassesType];
-        for (const std::string& nameClass : QuestManager::GetListClasses()) {
+        for (const std::string& nameClass : _questManager.GetListClasses()) {
             listClass.Add(nameClass.c_str());
         }
 
@@ -893,7 +896,7 @@ namespace Editor {
                         }
                     };
 
-                    std::vector<Quest::Ptr>& quests = QuestManager::GetQuests();
+                    std::vector<Quest::Ptr>& quests = _questManager.GetQuests();
 
                     for (const Quest::Ptr& questPtr : quests) {
                         appendCommands(questPtr->Name(), questPtr->_commandMap);
@@ -921,7 +924,7 @@ namespace Editor {
                         }
                     };
 
-                    std::vector<Quest::Ptr>& quests = QuestManager::GetQuests();
+                    std::vector<Quest::Ptr>& quests = _questManager.GetQuests();
 
                     for (const Quest::Ptr& questPtr : quests) {
                         appendParams(questPtr->Name(), questPtr->_params);
@@ -947,7 +950,7 @@ namespace Editor {
                 }
                 else if (paramWord == "#QUESTS") {
                     if (_mapLists.find(paramWord) == _mapLists.end()) {
-                        std::vector<Quest::Ptr>& quests = QuestManager::GetQuests();
+                        std::vector<Quest::Ptr>& quests = _questManager.GetQuests();
                         auto& listParams = _mapLists[paramWord];
                         listParams.Reserve(quests.size());
 
@@ -962,7 +965,7 @@ namespace Editor {
                 }
                 else if (paramWord == "#EXPRESSIONS") {
                     if (_mapLists.find(paramWord) == _mapLists.end()) {
-                        std::vector<Quest::Ptr>& quests = QuestManager::GetQuests();
+                        std::vector<Quest::Ptr>& quests = _questManager.GetQuests();
                         auto& listParams = _mapLists[paramWord];
                         listParams.Add({ ">", ">=", "==", "!=", "<", "<=", "is_more", "is_more_or_equal", "is_equal", "is_not_equal", "is_less", "is_less_or_equal" });
                         
@@ -970,7 +973,7 @@ namespace Editor {
                 }
                 else if (paramWord == "#OPERATIONS") {
                     if (_mapLists.find(paramWord) == _mapLists.end()) {
-                        std::vector<Quest::Ptr>& quests = QuestManager::GetQuests();
+                        std::vector<Quest::Ptr>& quests = _questManager.GetQuests();
                         auto& listParams = _mapLists[paramWord];
                         listParams.Add({ "+", "-", "*", "/" });
 

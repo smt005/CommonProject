@@ -25,7 +25,7 @@ void QuestsWindow::Draw() {
 
     ImGui::Separator();
 
-    for (const Quest::Ptr& questPtr : QuestManager::GetQuests()) {
+    for (const Quest::Ptr& questPtr : QuestManager::Instance().GetQuests()) {
         if (ImGui::Button(questPtr->Name().c_str(), { 180.f, 32.f })) {
             CommandManager::Run(Command("StartQuest", { questPtr->Name() }));
         }

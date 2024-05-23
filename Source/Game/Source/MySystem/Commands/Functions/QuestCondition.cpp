@@ -139,7 +139,7 @@ namespace quest
 		else if (questNameLeft == "CUSTOMER") {
 			valuLeft = StrToDouble(paramLeft);
 		}
-		else if (Quest::Ptr questPtr = QuestManager::GetQuest(questNameLeft)) {
+		else if (Quest::Ptr questPtr = QuestManager::Instance().GetQuest(questNameLeft)) {
 			auto it = questPtr->_params.find(paramLeft);
 			if (it != questPtr->_params.end()) {
 				valuLeft = StrToDouble((it->second));
@@ -167,7 +167,7 @@ namespace quest
 		else if (questNameRight == "CUSTOMER") {
 			valuRight = StrToDouble(paramRight);
 		}
-		else if (Quest::Ptr questPtr = QuestManager::GetQuest(questNameRight)) {
+		else if (Quest::Ptr questPtr = QuestManager::Instance().GetQuest(questNameRight)) {
 			auto it = questPtr->_params.find(paramRight);
 			if (it != questPtr->_params.end()) {
 				valuRight = StrToDouble((it->second));
@@ -207,7 +207,7 @@ namespace quest
 		if (needRun) {
 			Commands* commandsPtr = nullptr;
 
-			if (Quest::Ptr questPtr = QuestManager::GetQuest(questName)) {
+			if (Quest::Ptr questPtr = QuestManager::Instance().GetQuest(questName)) {
 				auto it = questPtr->_commandMap.find(commandName);
 				if (it != questPtr->_commandMap.end()) {
 					commandsPtr = &it->second;
@@ -257,7 +257,7 @@ namespace quest
 		else if (questNameLeft == "CUSTOMER") {
 			valuLeft = StrToDouble(paramLeft);
 		}
-		else if (Quest::Ptr questPtr = QuestManager::GetQuest(questNameLeft)) {
+		else if (Quest::Ptr questPtr = QuestManager::Instance().GetQuest(questNameLeft)) {
 			auto it = questPtr->_params.find(paramLeft);
 			if (it != questPtr->_params.end()) {
 				valuLeft = StrToDouble((it->second));
@@ -285,7 +285,7 @@ namespace quest
 		else if (questNameRight == "CUSTOMER") {
 			valuRight = StrToDouble(paramRight);
 		}
-		else if (Quest::Ptr questPtr = QuestManager::GetQuest(questNameRight)) {
+		else if (Quest::Ptr questPtr = QuestManager::Instance().GetQuest(questNameRight)) {
 			auto it = questPtr->_params.find(paramRight);
 			if (it != questPtr->_params.end()) {
 				valuRight = StrToDouble((it->second));
@@ -313,7 +313,7 @@ namespace quest
 		else if (questNameResult == "CUSTOMER") {
 			valuResult = StrToDouble(paramResult);
 		}
-		else if (Quest::Ptr questPtr = QuestManager::GetQuest(questNameResult)) {
+		else if (Quest::Ptr questPtr = QuestManager::Instance().GetQuest(questNameResult)) {
 			auto it = questPtr->_params.find(paramResult);
 			if (it != questPtr->_params.end()) {
 				valuResult = StrToDouble((it->second));
@@ -358,7 +358,7 @@ namespace quest
 					it->second = std::to_string(valuResult);
 				}
 			}
-			else if (Quest::Ptr questPtr = QuestManager::GetQuest(questNameResult)) {
+			else if (Quest::Ptr questPtr = QuestManager::Instance().GetQuest(questNameResult)) {
 				auto it = questPtr->_params.find(paramResult);
 				if (it != questPtr->_params.end()) {
 					it->second = std::to_string(valuResult);

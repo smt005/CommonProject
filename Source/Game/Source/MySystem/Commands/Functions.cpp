@@ -278,7 +278,7 @@ namespace commands
 		CommonData::textOnScreen.clear();
 		CommonData::nameImageList.clear();
 
-		for (Quest::Ptr& questPtr : QuestManager::GetQuests()) {
+		for (Quest::Ptr& questPtr : QuestManager::Instance().GetQuests()) {
 			questPtr->SetState(Quest::State::NONE);
 			const std::string& questName = questPtr->Name();
 
@@ -460,7 +460,7 @@ namespace commands
 
 	/// StartQuest #QUESTS
 	void StartQuest(const std::string& name) {
-		if (Quest::Ptr questPtr = QuestManager::GetQuest(name)) {
+		if (Quest::Ptr questPtr = QuestManager::Instance().GetQuest(name)) {
 			Commands& commandsDebug = questPtr->_commandsDebug;
 			Commands commands;
 
@@ -506,12 +506,12 @@ namespace commands
 
 		if (comandId == "SetActiveQuest") {
 			if (comand.parameters.size() >= 2) {
-				QuestManager::ActivateState(comand.parameters[0], QuestManager::StateFromString(comand.parameters[1]));
+				QuestManager::Instance().ActivateState(comand.parameters[0], QuestManager::Instance().StateFromString(comand.parameters[1]));
 			}
 		}
 		else if (comandId == "SetStateQuest") {
 			if (comand.parameters.size() >= 2) {
-				QuestManager::SetState(comand.parameters[0], QuestManager::StateFromString(comand.parameters[1]));
+				QuestManager::Instance().SetState(comand.parameters[0], QuestManager::Instance().StateFromString(comand.parameters[1]));
 			}
 		}
 		else if (comandId == "StartQuest") {
@@ -521,11 +521,11 @@ namespace commands
 		}
 		else if (comandId == "LoadQuests") {
 			if (!comand.parameters.empty()) {
-				QuestManager::Load(comand.parameters.front());
+				QuestManager::Instance().Load(comand.parameters.front());
 			}
 		}
 		else if (comandId == "ClearQuests") {
-			QuestManager::Clear();
+			QuestManager::Instance().Clear();
 		}
 		else if (comandId == "SetProcess") {
 			if (!comand.parameters.empty()) {
@@ -612,7 +612,7 @@ namespace commands
 		}
 		else if (comandId == "RunCommands") {
 			if (comand.parameters.size() >= 2) {
-				QuestManager::RunCommands(comand.parameters[0], comand.parameters[1]);
+				QuestManager::Instance().RunCommands(comand.parameters[0], comand.parameters[1]);
 			}
 		}
 		else if (comandId == "RunCommandIf") {

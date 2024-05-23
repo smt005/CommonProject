@@ -31,7 +31,7 @@ namespace commands{
 
 	void DelayActionCommand(const std::string& questName, const std::string& commandsName, float delay)
 	{
-		if (Quest::Ptr questPtr = QuestManager::GetQuest(questName)) {
+		if (Quest::Ptr questPtr = QuestManager::Instance().GetQuest(questName)) {
 			Commands& commandMap = questPtr->_commandMap[commandsName];
 
 			if (!commandMap.empty()) {

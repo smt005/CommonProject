@@ -4,37 +4,46 @@
 #include <string>
 #include <vector>
 #include "Quest.h"
+#include "MyStl/Singleton.h"
 
-class QuestManager
+class QuestManagerImpl
 {
 public:
-	static void SetState(const std::string& name, Quest::State state);
-	static Quest::State GetState(const std::string& name);
-	static void ActivateState(const std::string& name, Quest::State state);
-	static Quest::Ptr& Add(const std::string& classQuest, const std::string& nameQuest);
-	static void Add(const Quest::Ptr& questPtr);
-	static void Remove(const std::string& name);
-	static Quest::Ptr GetQuest(const std::string& name);
-	static const std::vector<std::string>& GetListClasses();
-	static std::string GetClassName(Quest::Ptr& questPtr);
-	static bool HasQuest(const std::string& name);
-	static Quest::State StateFromString(const std::string& stateStr);
-	static void Load(const std::string& pathFileName);
-	static void Reload();
-	static void Save(const std::string& pathFileName = std::string());
-	static void Clear();
-	static void Update();
+	virtual ~QuestManagerImpl() = default;
 
-	static std::vector<Quest::Ptr>& GetQuests() {
+	void SetState(const std::string& name, Quest::State state);
+	Quest::State GetState(const std::string& name);
+	void ActivateState(const std::string& name, Quest::State state);
+	Quest::Ptr& Add(const std::string& classQuest, const std::string& nameQuest);
+	void Add(const Quest::Ptr& questPtr);
+	void Remove(const std::string& name);
+	Quest::Ptr GetQuest(const std::string& name);
+	const std::vector<std::string>& GetListClasses();
+	std::string GetClassName(Quest::Ptr& questPtr);
+	bool HasQuest(const std::string& name);
+	Quest::State StateFromString(const std::string& stateStr);
+	void Load(const std::string& pathFileName);
+	void Reload();
+	void Save(const std::string& pathFileName = std::string());
+	void Clear();
+	void Update();
+
+	std::vector<Quest::Ptr>& GetQuests() {
 		return quests;
 	}
+	
+	const std::string& PathFileName() {
+		return _pathFileName;
+	}
 
-	static void Condition(const std::vector<std::string>& params);
-	static void RunCommands(const std::string& questName, const std::string& commandName);
-	static void SetParamValue(const std::string& questName, const std::string& nameValue, const std::string& valueStr);
-	static void SetGlobalParamValue(const std::string& nameValue, const std::string& valueStr);
+	void RunCommands(const std::string& questName, const std::string& commandName);
+	void SetParamValue(const std::string& questName, const std::string& nameValue, const std::string& valueStr);
+	void SetGlobalParamValue(const std::string& nameValue, const std::string& valueStr);
+
 private:
-	static Quest::Ptr activeQuestPtr;
-	static std::string lastPathFileName; // TODO:
-	static std::vector<Quest::Ptr> quests;
+	Quest::Ptr activeQuestPtr;
+	std::string _pathFileName;
+	std::vector<Quest::Ptr> quests;
 };
+
+class QuestManager : public mystd::Singleton<QuestManagerImpl> {};

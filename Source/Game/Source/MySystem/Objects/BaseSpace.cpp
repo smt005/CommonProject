@@ -5,6 +5,7 @@
 #include <algorithm>
 #include "Common/Common.h"
 #include <Core.h>
+#include "../Common/GravityGrid.h"
 
 void BaseSpace::Update(double dt) {
 	for (size_t i = 0; i < countOfIteration; ++i) {
@@ -206,6 +207,10 @@ void BaseSpace::Update() {
 			body->SetPos(static_cast<BodyData*>(body.get())->_dataPtr->pos);
 
 			body->Force() = static_cast<BodyData*>(body.get())->_dataPtr->force;
+
+			if (GravityGrid::gravityGridPtr) {
+				GravityGrid::gravityGridPtr->AddTime(static_cast<BodyData*>(body.get())->_dataPtr->pos, 0.f);
+			}
 		}
 
 		std::vector<Body::Ptr> bodies;

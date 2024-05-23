@@ -4,12 +4,15 @@
 #include <cmath>
 #include <glm/mat4x4.hpp>
 #include <Draw2/Draw2.h>
+#include <Draw/Camera/Camera.h>
 #include "ShaderGravityGrid.h"
 #include <Common/Help.h>
 
 #include <MySystem/MySystem.h>
 #include <MySystem/Objects/Body.h>
 #include <MySystem/Objects/Space.h>
+
+GravityGrid* GravityGrid::gravityGridPtr = nullptr;
 
 void GravityGrid::Init(float spaceRange, float offset)
 {
@@ -90,6 +93,7 @@ void GravityGrid::Init(float spaceRange, float offset)
 void GravityGrid::Draw()
 {
 	ShaderGravityGrid::Instance().Use();
+
 	Draw2::SetUniform1f(ShaderGravityGrid::u_rangeZ, 75.f);
 	Draw2::SetUniform1f(ShaderGravityGrid::u_range, _spaceRange);
 
@@ -128,7 +132,23 @@ void GravityGrid::Draw()
 		delete[] bodiesPos;
 		delete[] bodiesColor;
 		delete[] bodiesMass;
+
+		if (_mass > 1.f) {
+			float k = _mass / 10.f;
+			_mass -= k;
+		}
+
+		Draw2::SetUniform1f(ShaderGravityGrid::u_mass_factor, _mass);
 	}
+
+	if (_splashCount > 0) {
+		float* splashPosition = reinterpret_cast<float*>(_splashPosition.data());
+		float* distances = reinterpret_cast<float*>(_distances.data());
+
+		Draw2::SetUniform1fv(ShaderGravityGrid::u_distances, distances, _splashCount);
+		Draw2::SetUniform3fv(ShaderGravityGrid::u_splashPosition, splashPosition, _splashCount);
+	}
+	Draw2::SetUniform1i(ShaderGravityGrid::u_splashCount, _splashCount);
 
 	Draw2::SetPointSize(-1.f);
 	Draw2::SetUniform1f(ShaderGravityGrid::u_factor, 0.75f);
@@ -137,4 +157,36 @@ void GravityGrid::Draw()
 	Draw2::SetPointSize(1.f);
 	Draw2::SetUniform1f(ShaderGravityGrid::u_factor, 0.125f);
 	Draw2::drawLines((float*)_line.data(), _line.size());
+}
+
+void GravityGrid::Update(double dt) {
+	if (!_splashPosition.empty() && !_distances.empty()) {
+		int index = 0;
+		while (_distances[index] > 500.f) {
+			auto itPos = _splashPosition.begin() + index;
+			if (itPos != _splashPosition.end()) {
+				_splashPosition.erase(itPos);
+			}
+
+			auto itTime = _distances.begin() + index;
+			if (itTime != _distances.end()) {
+				_distances.erase(itTime);
+			}
+
+			_splashCount = _splashPosition.size();
+			break;
+		}
+
+		for (float& dist : _distances) {
+			dist += static_cast<float>(dt) * 400.f;
+		}
+	}
+}
+
+void GravityGrid::AddTime(const Math::Vector3& pos, float dist)
+{
+	_splashPosition.emplace_back(pos);
+	_distances.emplace_back(dist);
+
+	_splashCount = _splashPosition.size();
 }

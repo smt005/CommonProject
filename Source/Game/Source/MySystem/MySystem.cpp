@@ -45,8 +45,10 @@ void MySystem::init() {
 
 #if _DEBUG
 	gravityGrid.Init(500.f, 1.f);
+	GravityGrid::gravityGridPtr = &gravityGrid;
 #else
 	gravityGrid.Init(500.f, 1.f);
+	GravityGrid::gravityGridPtr = &gravityGrid;
 #endif
 }
 
@@ -57,6 +59,7 @@ void MySystem::close() {
 
 void MySystem::update() {
 	EventOnUpdate::Instance().Action();
+	gravityGrid.Update(Engine::Core::deltaTime());
 
 	if (!currentSpace) {
 		return;

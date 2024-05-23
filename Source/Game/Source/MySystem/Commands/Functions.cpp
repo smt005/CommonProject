@@ -17,6 +17,7 @@
 // View
 #include "Draw2/Draw2.h"
 #include "Draw/Camera/Camera.h"
+#include "../Common/GravityGrid.h"
 
 // Windows
 #include "../UI/RewardWindow.h"
@@ -334,6 +335,10 @@ namespace commands
 
 		//...
 		SpaceManager::AddObject(nameModel, pos, vel, mass);
+		
+		if (GravityGrid::gravityGridPtr) {
+			GravityGrid::gravityGridPtr->AddTime(pos, 100.f);
+		}
 	}
 
 	/// AddBodyToMousePos #MODELS /ToMousePos/ToCenterSpace number number number number /Default/ContrastRandom/Random/RED/GREEN/BLUE/WHITE/BLACK/Custom
@@ -447,6 +452,10 @@ namespace commands
 
 		//...
 		SpaceManager::AddObject(nameModel, pos, vel, mass, color);
+
+		if (GravityGrid::gravityGridPtr) {
+			GravityGrid::gravityGridPtr->AddTime(pos, 0.f);
+		}
 	}
 
 	/// StartQuest #QUESTS

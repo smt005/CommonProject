@@ -5,14 +5,15 @@
 #include <vector>
 #include <memory>
 #include <glm/mat4x4.hpp>
-#include "json/json.h"
-#include "Math/Vector.h"
-#include "MyStl/shared.h"
+#include <json/json.h>
+#include <Math/Vector.h>
+#include <MyStl/shared.h>
 #include "../UI/SpatialGrid.h"
 #include "Body.h"
-#include "Object/Model.h"
+#include <Object/Model.h>
 
-class Space {
+class Space
+{
 public:
 	using Ptr = std::shared_ptr<Space>;
 
@@ -20,7 +21,7 @@ public:
 	Space(const std::string& name);
 	Space(Json::Value& valueData);
 	virtual ~Space() = default;
-	
+
 	virtual void Update(double dt) {}
 	virtual void Save();
 	virtual bool Load(Json::Value& valueData);
@@ -29,20 +30,22 @@ public:
 	virtual Body::Ptr& Add(Body* body);
 	virtual Body::Ptr& Add(Body::Ptr& body);
 	virtual void RemoveBody(Body::Ptr& body);
-	
-	template<typename BodyT, typename ... Args>
-	Body& Add(Args&& ... args) {
+
+	template<typename BodyT, typename... Args>
+	Body& Add(Args&&... args)
+	{
 		Body* body = new BodyT(std::forward<Args>(args)...);
 		_bodies.emplace_back(body);
 		return *body;
 	}
-	
+
 	virtual void Preparation() {}
 
-	std::vector<Body::Ptr>& Objects() {
+	std::vector<Body::Ptr>& Objects()
+	{
 		return _bodies;
 	}
-	
+
 	std::pair<bool, Body&> RefFocusBody();
 	Math::Vector3 CenterMass();
 	Body::Ptr GetHeaviestBody();
@@ -58,7 +61,8 @@ public:
 	virtual std::string GetNameClass();
 
 public:
-	struct Debug {
+	struct Debug
+	{
 		int countOperation = 0;
 	} debugInfo;
 
@@ -72,7 +76,7 @@ public:
 	bool processGPU = false;
 	bool multithread = false;
 	int tag = 0;
-	
+
 	std::map<std::string, std::string> _params;
 	std::vector<Body::Ptr> _bodies;
 

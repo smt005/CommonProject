@@ -3,7 +3,8 @@
 #include <Draw2/Shader/ShaderInterface.h>
 #include <MyStl/Singleton.h>
 
-class ShaderGravityGrid final : public ShaderInterface, public mystd::Singleton<ShaderGravityGrid> {
+class ShaderGravityGrid final : public ShaderInterface, public mystd::Singleton<ShaderGravityGrid>
+{
 public:
 	void Use() override;
 	void GetLocation() override;

@@ -3,7 +3,8 @@
 #include <vector>
 #include <string>
 
-struct CommonData {
+struct CommonData
+{
 	static int lockScreen;
 	static int lockAction;
 
@@ -29,7 +30,7 @@ public:
 	static void PopLockScreen();
 	static void UnlockScreen();
 	static bool IsLockScreen();
+
 private:
 	static int lockScreenCounter;
-
 };

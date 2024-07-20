@@ -1,17 +1,19 @@
 // ◦ Xyz ◦
 #pragma once
 
-#include "Game.h"
+#include <Game.h>
 #include <memory>
 
 class Camera;
 class Space;
 
-namespace Engine {
+namespace Engine
+{
 	class Callback;
 }
 
-class MySystem final : public Engine::Game {
+class MySystem final : public Engine::Game
+{
 public:
 	MySystem() = default;
 	~MySystem() = default;

@@ -1,11 +1,12 @@
 // ◦ Xyz ◦
+
 #include "SpaceManager.h"
-#include "MySystem/MySystem.h"
-#include "Draw/DrawLight.h"
-#include "Draw/Camera/Camera.h"
-#include "json/json.h"
-#include "Common/Help.h"
-#include "Common/Common.h"
+#include <MySystem/MySystem.h>
+#include <Draw/DrawLight.h>
+#include <Draw/Camera/Camera.h>
+#include <json/json.h>
+#include <Common/Help.h>
+#include <Common/Common.h>
 #include "Space.h"
 #include "BaseSpace.h"
 #include "SpaceGpuX0.h"
@@ -14,7 +15,8 @@
 #include "SpaceTree01.h"
 #include "SpaceTree02.h"
 
-void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3& pos, bool withAssotiation) {
+void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3& pos, bool withAssotiation)
+{
 	if (space->_bodies.empty()) {
 		return;
 	}
@@ -30,7 +32,7 @@ void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3& pos, bool withA
 	//static std::vector<std::string> models = { "PointWhite", "PointTurquoise", "PointViolet", "PointYellow" };
 	//int modelIndex = help::random_i(0, (models.size() - 1));
 	//std::string model = models[modelIndex];
-	
+
 	std::string model = "BrownStone";
 
 	float minMass = 100.f;
@@ -69,17 +71,19 @@ void SpaceManager::AddObjectOnOrbit(Space* space, Math::Vector3& pos, bool withA
 	}
 
 	space->Add<BodyData>(model, pos, velocity, mass, "");
-	
+
 	if (withAssotiation) {
 		space->Preparation();
 	}
 }
 
-void SpaceManager::AddObjectDirect(Space* space, Math::Vector3& pos, Math::Vector3& vel) {
+void SpaceManager::AddObjectDirect(Space* space, Math::Vector3& pos, Math::Vector3& vel)
+{
 	//...
 }
 
-void SpaceManager::AddObjects(Space* space, int count, double spaceRange, double conventionalMass) {
+void SpaceManager::AddObjects(Space* space, int count, double spaceRange, double conventionalMass)
+{
 	Math::Vector3 gravityPos;
 	double sumMass = 0;
 	std::vector<Body::Ptr>& bodies = space->_bodies;
@@ -158,7 +162,8 @@ void SpaceManager::AddObjects(Space* space, int count, double spaceRange, double
 	space->Preparation();
 }
 
-void SpaceManager::AddObject(const std::string& nameModel, const Math::Vector3& pos, const Math::Vector3& vel, float mass, const Color& color) {
+void SpaceManager::AddObject(const std::string& nameModel, const Math::Vector3& pos, const Math::Vector3& vel, float mass, const Color& color)
+{
 	if (!MySystem::currentSpace) {
 		return;
 	}
@@ -171,7 +176,8 @@ void SpaceManager::AddObject(const std::string& nameModel, const Math::Vector3& 
 	MySystem::currentSpace->Preparation();
 }
 
-unsigned int SpaceManager::SetView(MySystem* systemMy) {
+unsigned int SpaceManager::SetView(MySystem* systemMy)
+{
 	if (!systemMy) {
 		return 0;
 	}
@@ -180,7 +186,6 @@ unsigned int SpaceManager::SetView(MySystem* systemMy) {
 		systemMy->_camearCurrent = systemMy->_camearTop;
 		DrawLight::setClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 		return 1;
-
 	}
 	else if (systemMy->_camearCurrent == systemMy->_camearTop) {
 		systemMy->_camearCurrent = systemMy->_camearSide;
@@ -189,11 +194,13 @@ unsigned int SpaceManager::SetView(MySystem* systemMy) {
 	}
 }
 
-void SpaceManager::Save(Space::Ptr space) {
+void SpaceManager::Save(Space::Ptr space)
+{
 	space->Save();
 }
 
-Space::Ptr SpaceManager::Load(const std::string& name) {
+Space::Ptr SpaceManager::Load(const std::string& name)
+{
 	std::string filePath = "Spaces/" + name + ".json";
 	Json::Value valueData;
 
@@ -206,39 +213,36 @@ Space::Ptr SpaceManager::Load(const std::string& name) {
 	if (classStr == Engine::GetClassName<BaseSpace>()) {
 		return Space::Ptr(new BaseSpace(valueData));
 	}
-	else
-	if (classStr == Engine::GetClassName<SpaceGpuX0>()) {
+	else if (classStr == Engine::GetClassName<SpaceGpuX0>()) {
 		return Space::Ptr(new SpaceGpuX0(valueData));
 	}
-	else
-	if (classStr == Engine::GetClassName<SpaceGpuX1>()) {
+	else if (classStr == Engine::GetClassName<SpaceGpuX1>()) {
 		return Space::Ptr(new SpaceGpuX1(valueData));
 	}
-	else
-	if (classStr == Engine::GetClassName<SpaceTree00>()) {
+	else if (classStr == Engine::GetClassName<SpaceTree00>()) {
 		return Space::Ptr(new SpaceTree00(valueData));
 	}
-	else
-	if (classStr == Engine::GetClassName<SpaceTree01>()) {
+	else if (classStr == Engine::GetClassName<SpaceTree01>()) {
 		return Space::Ptr(new SpaceTree01(valueData));
 	}
-	else
-	if (classStr == Engine::GetClassName<SpaceTree02>()) {
+	else if (classStr == Engine::GetClassName<SpaceTree02>()) {
 		return Space::Ptr(new SpaceTree02(valueData));
 	}
 	else {
 		return Space::Ptr(new Space(valueData));
 	}
-	
+
 	return Space::Ptr(new Space());
 }
 
-const std::vector<std::string>& SpaceManager::GetListClasses() {
+const std::vector<std::string>& SpaceManager::GetListClasses()
+{
 	static const std::vector<std::string> listClasses = { "SpaceTree02", "SpaceGpuX0", "SpaceTree01", "SpaceGpuX1", "BaseSpace", "SpaceTree00" };
 	return listClasses;
 }
 
-std::shared_ptr<Space> SpaceManager::CopySpace(const std::string& className, Space* space) {
+std::shared_ptr<Space> SpaceManager::CopySpace(const std::string& className, Space* space)
+{
 	if (!space) {
 		return Space::Ptr(new Space("DEFAULT"));
 	}
@@ -248,27 +252,22 @@ std::shared_ptr<Space> SpaceManager::CopySpace(const std::string& className, Spa
 	if (className == Engine::GetClassName<BaseSpace>()) {
 		copySpacePtr = std::make_shared<BaseSpace>();
 	}
-	else
-	if (className == Engine::GetClassName<SpaceGpuX0>()) {
+	else if (className == Engine::GetClassName<SpaceGpuX0>()) {
 		copySpacePtr = std::make_shared<SpaceGpuX0>();
 	}
-	else
-	if (className == Engine::GetClassName<SpaceGpuX1>()) {
+	else if (className == Engine::GetClassName<SpaceGpuX1>()) {
 		copySpacePtr = std::make_shared<SpaceGpuX1>();
 	}
-	else
-	if (className == Engine::GetClassName<SpaceTree00>()) {
+	else if (className == Engine::GetClassName<SpaceTree00>()) {
 		copySpacePtr = std::make_shared<SpaceTree00>();
 	}
-	else
-	if (className == Engine::GetClassName<SpaceTree01>()) {
+	else if (className == Engine::GetClassName<SpaceTree01>()) {
 		copySpacePtr = std::make_shared<SpaceTree01>();
 	}
-	else
-	if (className == Engine::GetClassName<SpaceTree02>()) {
+	else if (className == Engine::GetClassName<SpaceTree02>()) {
 		copySpacePtr = std::make_shared<SpaceTree02>();
 	}
-	
+
 	auto* copySpace = copySpacePtr.get();
 
 	copySpace->_name = space->_name;

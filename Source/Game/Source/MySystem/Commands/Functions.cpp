@@ -1,22 +1,23 @@
 // ◦ Xyz ◦
+
 #include "Functions.h"
 #include "Functions/Actions.h"
 
 // Common
 #include <MyStl/Event.h>
-#include "MySystem/MySystem.h"
+#include <MySystem/MySystem.h>
 #include "../Objects/Space.h"
 #include "../../MySystem/Objects/SpaceManager.h"
 #include "../Commands/Events.h"
 
-#include "../../CUDA/Source/Wrapper.h"
+#include <../../CUDA/Source/Wrapper.h>
 #include <iostream>
 #include <glm/vec3.hpp>
 #include <Object/Color.h>
 
 // View
-#include "Draw2/Draw2.h"
-#include "Draw/Camera/Camera.h"
+#include <Draw2/Draw2.h>
+#include <Draw/Camera/Camera.h>
 #include "../Common/GravityGrid.h"
 
 // Windows
@@ -63,7 +64,6 @@ namespace commands
 		value = value < min ? min : value;
 		value = value > max ? max : value;
 		return value;
-
 	}
 
 	int StrToInt(const std::string& valueStr, int min, int max)
@@ -258,7 +258,8 @@ namespace commands
 	}
 
 	/// GravityPoints /Enable/Disable
-	void GravityPoints(const std::string& param) {
+	void GravityPoints(const std::string& param)
+	{
 		MySystem::gravitypoints = param == "Enable";
 	}
 
@@ -335,7 +336,7 @@ namespace commands
 
 		//...
 		SpaceManager::AddObject(nameModel, pos, vel, mass);
-		
+
 		if (GravityGrid::gravityGridPtr) {
 			GravityGrid::gravityGridPtr->AddTime(pos, 100.f);
 		}
@@ -383,24 +384,25 @@ namespace commands
 				float max = 0.5f;
 
 				switch (componentColor) {
-				{
-				case 0: {
-					color.setRed(1.f);
-					color.setGreen(help::random(min, max));
-					color.setBlue(help::random(min, max));
-				} break;
-				case 1: {
-					color.setRed(help::random(min, max));
-					color.setGreen(1.f);
-					color.setBlue(help::random(min, max));
-				} break;
-				case 2: {
-					color.setRed(help::random(min, max));
-					color.setGreen(help::random(min, max));
-					color.setBlue(1.f);
-				} break;
-				default:
-					break; }
+					{
+						case 0: {
+							color.setRed(1.f);
+							color.setGreen(help::random(min, max));
+							color.setBlue(help::random(min, max));
+						} break;
+						case 1: {
+							color.setRed(help::random(min, max));
+							color.setGreen(1.f);
+							color.setBlue(help::random(min, max));
+						} break;
+						case 2: {
+							color.setRed(help::random(min, max));
+							color.setGreen(help::random(min, max));
+							color.setBlue(1.f);
+						} break;
+						default:
+							break;
+					}
 				}
 			}
 			else if (typeColor == "Random") {
@@ -420,17 +422,17 @@ namespace commands
 			}
 			else if (typeColor == "RED") {
 				color.setRed(1.f);
-					color.setGreen(0.f);
-					color.setBlue(0.f);
+				color.setGreen(0.f);
+				color.setBlue(0.f);
 			}
 			else if (typeColor == "GREEN") {
-					color.setRed(0.f);
+				color.setRed(0.f);
 				color.setGreen(1.f);
-					color.setBlue(0.f);
+				color.setBlue(0.f);
 			}
 			else if (typeColor == "BLUE") {
-					color.setRed(1.f);
-					color.setGreen(0.f);
+				color.setRed(1.f);
+				color.setGreen(0.f);
 				color.setBlue(1.f);
 			}
 			else if (typeColor == "WHITE") {
@@ -459,7 +461,8 @@ namespace commands
 	}
 
 	/// StartQuest #QUESTS
-	void StartQuest(const std::string& name) {
+	void StartQuest(const std::string& name)
+	{
 		if (Quest::Ptr questPtr = QuestManager::Instance().GetQuest(name)) {
 			Commands& commandsDebug = questPtr->_commandsDebug;
 			Commands commands;
@@ -467,7 +470,7 @@ namespace commands
 			commands.reserve(2 + questPtr->_commandsDebug.size()); // +2 для ClearAll, SetActiveQuest
 			commands.emplace_back("ClearAll");
 			commands.insert(commands.end(), commandsDebug.begin(), commandsDebug.end());
-			commands.emplace_back("SetActiveQuest", Parameters{ questPtr->Name(), "ACTIVE" });
+			commands.emplace_back("SetActiveQuest", Parameters { questPtr->Name(), "ACTIVE" });
 
 			CommandManager::Run(std::forward<Commands>(commands));
 		}
@@ -618,23 +621,23 @@ namespace commands
 		else if (comandId == "RunCommandIf") {
 			if (comand.parameters.size() >= 7) {
 				quest::RunCommandIf(comand.parameters[0],
-					                comand.parameters[1],
-									comand.parameters[2],
-									comand.parameters[3],
-									comand.parameters[4],
-									comand.parameters[5],
-									comand.parameters[6]);
+					comand.parameters[1],
+					comand.parameters[2],
+					comand.parameters[3],
+					comand.parameters[4],
+					comand.parameters[5],
+					comand.parameters[6]);
 			}
 		}
 		else if (comandId == "ValueOperation") {
 			if (comand.parameters.size() >= 7) {
 				quest::ValueOperation(comand.parameters[0],
-									  comand.parameters[1],
-									  comand.parameters[2],
-									  comand.parameters[3],
-									  comand.parameters[4],
-									  comand.parameters[5],
-									  comand.parameters[6]);
+					comand.parameters[1],
+					comand.parameters[2],
+					comand.parameters[3],
+					comand.parameters[4],
+					comand.parameters[5],
+					comand.parameters[6]);
 			}
 		}
 		else if (comandId == "LockAction") {

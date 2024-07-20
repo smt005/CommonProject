@@ -1,4 +1,4 @@
-﻿// ◦ Xyz ◦
+// ◦ Xyz ◦
 
 #include "GravityGrid.h"
 #include <cmath>
@@ -29,7 +29,6 @@ void GravityGrid::Init(float spaceRange, float offset)
 			}
 		}
 	}
-
 
 	float x = -_spaceRange;
 	float y = -_spaceRange;
@@ -128,7 +127,7 @@ void GravityGrid::Draw()
 		Draw2::SetUniform3fv(ShaderGravityGrid::u_body_positions, bodiesPos, countBodies);
 		Draw2::SetUniform1fv(ShaderGravityGrid::u_body_massess, bodiesMass, countBodies);
 		Draw2::SetUniform3fv(ShaderGravityGrid::u_body_colors, bodiesColor, countBodies);
-		
+
 		delete[] bodiesPos;
 		delete[] bodiesColor;
 		delete[] bodiesMass;
@@ -159,7 +158,8 @@ void GravityGrid::Draw()
 	Draw2::drawLines((float*)_line.data(), _line.size());
 }
 
-void GravityGrid::Update(double dt) {
+void GravityGrid::Update(double dt)
+{
 	if (!_splashPosition.empty() && !_distances.empty()) {
 		int index = 0;
 		while (_distances[index] > 500.f) {

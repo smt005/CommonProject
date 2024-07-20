@@ -1,6 +1,6 @@
 // ◦ Xyz ◦
 #include "MainUI.h"
-#include "imgui.h"
+#include <imgui.h>
 #include "TopUI.h"
 #include "BottomUI.h"
 #include "SpaceManagerUI.h"
@@ -12,17 +12,17 @@
 #include "Editors/QuestsEditorWindow.h"
 #include "Editors/EditorModel.h"
 #include "Editors/EditMap.h"
-#include "Draw/Camera/Camera.h"
-#include "Draw/Camera/CameraControlOutside.h"
-#include "Callback/Callback.h"
-#include "Callback/CallbackEvent.h"
-#include "Draw/DrawLight.h"
-#include "MySystem/MySystem.h"
+#include <Draw/Camera/Camera.h>
+#include <Draw/Camera/CameraControlOutside.h>
+#include <Callback/Callback.h>
+#include <Callback/CallbackEvent.h>
+#include <Draw/DrawLight.h>
+#include <MySystem/MySystem.h>
 #include "../Objects/SpaceManager.h"
 #include "../Objects/BodyData.h"
 #include "../Objects/Space.h"
-#include "Object/Object.h"
-#include "Object/Model.h"
+#include <Object/Object.h>
+#include <Object/Model.h>
 
 #include <Draw2/Draw2.h>
 #include <Draw2/Shader/ShaderDefault.h>
@@ -31,25 +31,29 @@
 #include <MyStl/Event.h>
 #include "../Commands/Events.h"
 
-namespace {
+namespace
+{
 	Engine::Callback callback;
 	Object::Ptr bodyMarker;
 	Model::Ptr cursorModel;
 }
 
-void MainUI::Open() {
+void MainUI::Open()
+{
 	InitCallback();
 
 	UI::ShowWindow<TopUI>();
 	UI::ShowWindow<BottomUI>();
 }
 
-void MainUI::Hide() {
+void MainUI::Hide()
+{
 	UI::CloseWindowT<SpaceManagerUI>();
 	UI::CloseWindowT<ListHeaviestUI>();
 }
 
-void MainUI::InitCallback() {
+void MainUI::InitCallback()
+{
 	callback.add(Engine::CallbackType::PRESS_KEY, [](const Engine::CallbackEventPtr& callbackEventPtr) {
 		Engine::KeyCallbackEvent* releaseKeyEvent = (Engine::KeyCallbackEvent*)callbackEventPtr->get();
 		Engine::VirtualKey key = releaseKeyEvent->getId();
@@ -117,7 +121,7 @@ void MainUI::InitCallback() {
 				UI::ShowWindow<Editor::MapEditor>();
 			}
 		}
-		
+
 		if (key == Engine::VirtualKey::F11) {
 			if (UI::ShowingWindow<Editor::QuestsEditorWindow>()) {
 				UI::CloseWindowT<Editor::QuestsEditorWindow>();
@@ -162,7 +166,6 @@ void MainUI::InitCallback() {
 		else if (key == Engine::VirtualKey::VK_9) {
 			CommonData::bool9 = !CommonData::bool9;
 		}
-
 	});
 
 	callback.add(Engine::CallbackType::PRESS_TAP, [](const Engine::CallbackEventPtr& callbackEventPtr) {
@@ -206,7 +209,8 @@ void MainUI::InitCallback() {
 	});
 }
 
-void MainUI::DrawOnSpace() {
+void MainUI::DrawOnSpace()
+{
 	/*if (!bodyMarker) {
 		bodyMarker = std::make_shared<Object>("Marker", "Marker");
 	}
@@ -246,11 +250,13 @@ void MainUI::DrawOnSpace() {
 	}
 }
 
-bool MainUI::IsLockAction() {
+bool MainUI::IsLockAction()
+{
 	return ImGui::GetIO().WantCaptureMouse;
 }
 
-unsigned int MainUI::GetViewType() {
+unsigned int MainUI::GetViewType()
+{
 	if (BottomUI* bottomUI = dynamic_cast<BottomUI*>(UI::GetWindow<BottomUI>().get())) {
 		return (unsigned int)bottomUI->_viewType;
 	}
@@ -262,6 +268,6 @@ void MainUI::SetCursorModel(const std::string& nameModel)
 		cursorModel = Model::getByName(nameModel);
 	}
 	else {
-		cursorModel.reset();		
-	}	
+		cursorModel.reset();
+	}
 }

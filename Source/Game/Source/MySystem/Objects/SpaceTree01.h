@@ -10,8 +10,10 @@
 #include <Classes.h>
 #include "BodyData.h"
 
-namespace spaceTree01 {
-	struct DebugInfo {
+namespace spaceTree01
+{
+	struct DebugInfo
+	{
 		size_t countLevel = 0;
 		size_t countCluster = 0;
 		size_t countBodies = 0;
@@ -28,7 +30,8 @@ namespace spaceTree01 {
 		void Print();
 	};
 
-	struct Cluster01 {
+	struct Cluster01
+	{
 		//using Ptr = mystd::shared<Cluster01>;
 		using Ptr = std::shared_ptr<Cluster01>;
 
@@ -45,17 +48,20 @@ namespace spaceTree01 {
 	};
 }
 
-class SpaceTree01 final : public Space {
+class SpaceTree01 final : public Space
+{
 public:
 	using Ptr = std::shared_ptr<SpaceTree01>;
 
 	SpaceTree01() = default;
 	SpaceTree01(const std::string& name)
-		: Space(name) {
+		: Space(name)
+	{
 		LoadProperty();
 	}
 	SpaceTree01(Json::Value& valueData)
-		: Space(valueData) {
+		: Space(valueData)
+	{
 		LoadProperty();
 	}
 
@@ -73,7 +79,6 @@ private:
 
 public:
 	std::string GetNameClass() override;
-
 
 private:
 	std::vector<spaceTree01::Cluster01::Ptr> buffer;

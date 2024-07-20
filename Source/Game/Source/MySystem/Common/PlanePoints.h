@@ -1,13 +1,13 @@
-﻿// ◦ Xyz ◦
+// ◦ Xyz ◦
 
 #include <vector>
 #include <memory>
 #include <Object/Color.h>
-#include "Math/Vector.h"
+#include <Math/Vector.h>
 #include "../Objects/Body.h"
 
-
-class PlanePoints final {
+class PlanePoints final
+{
 public:
 	void Init(float spaceRange, float offset);
 	void Update(std::vector<Body::Ptr>& objects);

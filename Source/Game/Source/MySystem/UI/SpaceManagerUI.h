@@ -1,14 +1,17 @@
 // ◦ Xyz ◦
 #pragma once
 
-#include "ImGuiManager/UI.h"
-#include "Common/Help.h"
-#include "ImGuiManager/Editor/Common/CommonUI.h"
+#include <ImGuiManager/UI.h>
+#include <Common/Help.h>
+#include <ImGuiManager/Editor/Common/CommonUI.h>
 #include <vector>
 
-class SpaceManagerUI final : public UI::Window {
+class SpaceManagerUI final : public UI::Window
+{
 public:
-	SpaceManagerUI() : UI::Window(this) {}
+	SpaceManagerUI()
+		: UI::Window(this)
+	{}
 	void OnOpen() override;
 	void OnClose() override;
 	void Update() override;

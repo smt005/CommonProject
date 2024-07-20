@@ -1,6 +1,7 @@
 // ◦ Xyz ◦
+
 #include "Actions.h"
-#include  <Core.h>
+#include <Core.h>
 #include "../Functions.h"
 #include "../../Quests/Quest.h"
 #include "../../Quests/QuestManager.h"
@@ -8,13 +9,14 @@
 #include <Object/Color.h>
 #include "../Events.h"
 
-namespace commands{
+namespace commands
+{
 	void FadeModel(const std::string& modelName, float fadeTime)
 	{
 		if (Model::Ptr& model = Model::getByName(modelName)) {
 			std::string idObserver = std::string("FadeModel:" + modelName);
 
-			EventOnUpdate::Instance().Add(idObserver, [idObserver, model, kAlpha = float(1000.f/fadeTime)]() {
+			EventOnUpdate::Instance().Add(idObserver, [idObserver, model, kAlpha = float(1000.f / fadeTime)]() {
 				float alpha = model->getAlpha();
 				alpha -= kAlpha * (float)Engine::Core::deltaTime();
 				alpha = alpha < 0.f ? 0.f : alpha;

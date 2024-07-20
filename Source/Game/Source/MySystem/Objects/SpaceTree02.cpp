@@ -1,4 +1,5 @@
 // ◦ Xyz ◦
+
 #include "SpaceTree02.h"
 #include <algorithm>
 #include <stdio.h>
@@ -10,11 +11,13 @@
 
 using Cluster = spaceTree02::Cluster02;
 
-std::string SpaceTree02::GetNameClass() {
+std::string SpaceTree02::GetNameClass()
+{
 	return Engine::GetClassName(this);
 }
 
-void SpaceTree02::LoadProperty() {
+void SpaceTree02::LoadProperty()
+{
 	std::string maxCountBodiesStr = _params["COUNT_IN_CLUSTER"];
 	if (!maxCountBodiesStr.empty()) {
 		maxCountBodies = std::stoi(maxCountBodiesStr);
@@ -31,7 +34,8 @@ void SpaceTree02::LoadProperty() {
 	}
 }
 
-void SpaceTree02::Update(double dt) {
+void SpaceTree02::Update(double dt)
+{
 	if (countOfIteration == 0 || _bodies.size() <= 1) {
 		return;
 	}
@@ -41,7 +45,8 @@ void SpaceTree02::Update(double dt) {
 	}
 }
 
-void SpaceTree02::Update() {
+void SpaceTree02::Update()
+{
 	debugInfo.countOperation = 0;
 
 	GenerateClusters();
@@ -74,7 +79,8 @@ void SpaceTree02::Update() {
 	}
 }
 
-void SpaceTree02::UpdateForceByBody(std::vector<Body*>& bodies, std::vector<Body*>& subBodies) {
+void SpaceTree02::UpdateForceByBody(std::vector<Body*>& bodies, std::vector<Body*>& subBodies)
+{
 	for (Body* body : bodies) {
 		auto pos = body->GetPos();
 		float mass = body->Mass();
@@ -101,7 +107,8 @@ void SpaceTree02::UpdateForceByBody(std::vector<Body*>& bodies, std::vector<Body
 	}
 }
 
-void SpaceTree02::UpdateForceByCluster(Cluster& cluster) {
+void SpaceTree02::UpdateForceByCluster(Cluster& cluster)
+{
 	for (Body* body : cluster.bodies) {
 		auto pos = body->GetPos();
 		float mass = body->Mass();
@@ -115,7 +122,8 @@ void SpaceTree02::UpdateForceByCluster(Cluster& cluster) {
 			if (IsClosestCluster(cluster, *subClusterPtr)) {
 				std::vector<Body*> bodiesTemp = { body };
 				UpdateForceByBody(bodiesTemp, subClusterPtr->bodies);
-			} else {
+			}
+			else {
 				Math::Vector3 gravityVec = subClusterPtr->centerMass - pos;
 				double dist = Math::length(gravityVec);
 
@@ -130,7 +138,8 @@ void SpaceTree02::UpdateForceByCluster(Cluster& cluster) {
 	}
 }
 
-bool SpaceTree02::IsClosestCluster(Cluster& cluster0, Cluster& cluster1) {
+bool SpaceTree02::IsClosestCluster(Cluster& cluster0, Cluster& cluster1)
+{
 	float dist = (cluster0.centerPos - cluster1.centerPos).length();
 	float closestDist = cluster0.dist + cluster1.dist;
 
@@ -138,7 +147,8 @@ bool SpaceTree02::IsClosestCluster(Cluster& cluster0, Cluster& cluster1) {
 	return dist < closestDist;
 }
 
-void SpaceTree02::UpdatePos() {
+void SpaceTree02::UpdatePos()
+{
 	size_t size = _bodies.size();
 
 	for (Body::Ptr& bodyPtr : _bodies) {
@@ -155,16 +165,18 @@ void SpaceTree02::UpdatePos() {
 	}
 }
 
-void SpaceTree02::Preparation() {
+void SpaceTree02::Preparation()
+{
 	buffer.clear();
 }
 
-void SpaceTree02::GenerateClusters() {
+void SpaceTree02::GenerateClusters()
+{
 	buffer.clear();
 
 	mystd::shared<std::vector<Cluster::Ptr>> bufferPtr(new std::vector<Cluster::Ptr>());
 	mystd::shared<std::vector<Cluster::Ptr>> newBufferPtr(new std::vector<Cluster::Ptr>());
-	
+
 	{
 		Cluster& firstCluster = *bufferPtr->emplace_back(new Cluster());
 		firstCluster.bodies.reserve(_bodies.size());
@@ -238,7 +250,6 @@ void SpaceTree02::GenerateClusters() {
 					Math::Vector3 sizeHalt = size / 2.f;
 					cluster->dist = sizeHalt.length();
 					cluster->centerPos = cluster->min + sizeHalt;
-
 				}
 
 				// Создание прямоугольников
@@ -331,7 +342,8 @@ void SpaceTree02::GenerateClusters() {
 	}
 }
 
-std::vector<Cluster::Ptr> SpaceTree02::CreateSubClusters(const Math::Vector3& min, const Math::Vector3& max, const Math::Vector3& half) {
+std::vector<Cluster::Ptr> SpaceTree02::CreateSubClusters(const Math::Vector3& min, const Math::Vector3& max, const Math::Vector3& half)
+{
 	std::vector<Cluster::Ptr> tempBuffer;
 
 	tempBuffer.reserve(8);
@@ -421,18 +433,16 @@ std::vector<Cluster::Ptr> SpaceTree02::CreateSubClusters(const Math::Vector3& mi
 	return tempBuffer;
 }
 
-
-bool spaceTree02::Cluster02::IsInside(const Math::Vector3& pos) {
-	if (pos.x > min.x && pos.x <= max.x &&
-		pos.y > min.y && pos.y <= max.y &&
-		pos.z > min.z && pos.z <= max.z)
-	{
+bool spaceTree02::Cluster02::IsInside(const Math::Vector3& pos)
+{
+	if (pos.x > min.x && pos.x <= max.x && pos.y > min.y && pos.y <= max.y && pos.z > min.z && pos.z <= max.z) {
 		return true;
 	}
 	return false;
 }
 
-void spaceTree02::DebugInfo::Clear() {
+void spaceTree02::DebugInfo::Clear()
+{
 	countLevel = 0;
 	countCluster = 0;
 	countBodies = 0;
@@ -446,7 +456,8 @@ void spaceTree02::DebugInfo::Clear() {
 	maxSize = Math::Vector3(0.f);
 }
 
-void spaceTree02::DebugInfo::Print() {
+void spaceTree02::DebugInfo::Print()
+{
 	printf("Clusters info.\n");
 	printf("count cluster: %i count body: %i \n", countCluster, countBodies);
 	printf("count level: %i minBodies: %i maxBodies: %i \n", countLevel, minBodies, maxBodies);

@@ -1,8 +1,9 @@
 // ◦ Xyz ◦
+
 #include "QuestManager.h"
 #include "Quests.h"
 #include "../Commands/Functions/QuestCondition.h"
-#include "Common/Help.h"
+#include <Common/Help.h>
 
 void QuestManagerImpl::SetState(const std::string& name, Quest::State state)
 {
@@ -40,7 +41,7 @@ Quest::Ptr& QuestManagerImpl::Add(const std::string& classQuest, const std::stri
 	else if (classQuest == "QuestSphere") {
 		return quests.emplace_back(new QuestSphere(nameQuest));
 	}
-	
+
 	return quests.emplace_back(new Quest(nameQuest));
 }
 
@@ -64,7 +65,7 @@ Quest::Ptr QuestManagerImpl::GetQuest(const std::string& name)
 		return *it;
 	}
 
-	return nullptr;// Quest::Ptr(new Quest("EMPTY"));
+	return nullptr; // Quest::Ptr(new Quest("EMPTY"));
 }
 
 const std::vector<std::string>& QuestManagerImpl::GetListClasses()
@@ -84,7 +85,7 @@ std::string QuestManagerImpl::GetClassName(Quest::Ptr& questPtr)
 	else if (dynamic_cast<QuestSphere*>(questPtr.get())) {
 		return "QuestSphere";
 	}
-	
+
 	return "Quest";
 }
 
@@ -135,7 +136,7 @@ void QuestManagerImpl::Load(const std::string& pathFileName)
 				if (jsonParam.isString()) {
 					std::string paramValue = jsonParam.asString();
 					Quest::globalParams.emplace(jsonKey, paramValue);
-				}			
+				}
 			}
 			continue;
 		}
@@ -259,7 +260,7 @@ void QuestManagerImpl::Save(const std::string& pathFileName)
 			}
 
 			Json::Value commandsJson;
-		
+
 			for (Command& command : commands) {
 				if (command.id.empty()) {
 				}

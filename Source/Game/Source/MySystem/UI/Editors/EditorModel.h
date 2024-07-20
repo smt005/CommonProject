@@ -1,14 +1,16 @@
 // ◦ Xyz ◦
 #pragma once
 
-#include "ImGuiManager/UI.h"
+#include <ImGuiManager/UI.h>
 #include <vector>
-#include "Common/Help.h"
-#include "../../../Source/ImGuiManager/Editor/Common/CommonPopupModal.h"
-#include "../../../Source/ImGuiManager/Editor/Common/CommonUI.h"
+#include <Common/Help.h>
+#include <../../../Source/ImGuiManager/Editor/Common/CommonPopupModal.h>
+#include <../../../Source/ImGuiManager/Editor/Common/CommonUI.h>
 
-namespace Editor {
-	class ModelEditor final : public UI::Window, public CommonPopupModal::Wptr {
+namespace Editor
+{
+	class ModelEditor final : public UI::Window, public CommonPopupModal::Wptr
+	{
 		friend UI;
 
 	public:

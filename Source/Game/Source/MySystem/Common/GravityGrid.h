@@ -1,13 +1,14 @@
-﻿// ◦ Xyz ◦
+// ◦ Xyz ◦
+#pragma once
 
 #include <vector>
 #include <memory>
 #include <Object/Color.h>
-#include "Math/Vector.h"
+#include <Math/Vector.h>
 #include "../Objects/Body.h"
 
-
-class GravityGrid final {
+class GravityGrid final
+{
 public:
 	void Init(float spaceRange, float offset);
 	void Draw();

@@ -1,30 +1,37 @@
 // ◦ Xyz ◦
 #pragma once
 
-#include "ImGuiManager/UI.h"
+#include <ImGuiManager/UI.h>
 #include <functional>
 
 class MySystem;
 
 using FunAction = std::pair<std::string, std::function<void(void)>>;
-using FunActions = std::vector< FunAction>;
+using FunActions = std::vector<FunAction>;
 
-enum class AddBodyType {
+enum class AddBodyType
+{
 	ORBIT,
 	DIRECT,
 	ORBIT_CENTER_MASS,
 	NONE
 };
 
-enum class ViewType {
+enum class ViewType
+{
 	PERSPECTIVE,
 	TOP,
 	NONE
 };
 
-class AddObjectUI final : public UI::Window {
+class AddObjectUI final : public UI::Window
+{
 public:
-	AddObjectUI() : UI::Window(this) { Close(); }
+	AddObjectUI()
+		: UI::Window(this)
+	{
+		Close();
+	}
 	AddObjectUI(const FunActions& funActionsArg);
 	void OnOpen() override;
 	void Update() override;
@@ -39,9 +46,14 @@ private:
 	FunActions _funActions;
 };
 
-class SetViewUI final : public UI::Window {
+class SetViewUI final : public UI::Window
+{
 public:
-	SetViewUI() : UI::Window(this) { Close(); }
+	SetViewUI()
+		: UI::Window(this)
+	{
+		Close();
+	}
 	SetViewUI(const FunActions& funActionsArg);
 	void OnOpen() override;
 	void Update() override;
@@ -56,12 +68,15 @@ private:
 	FunActions _funActions;
 };
 
-class BottomUI final : public UI::Window {
+class BottomUI final : public UI::Window
+{
 	friend AddObjectUI;
 	friend SetViewUI;
 
 public:
-	BottomUI() : UI::Window(this) { }
+	BottomUI()
+		: UI::Window(this)
+	{}
 	void OnOpen() override;
 	void OnClose() override;
 	void Update() override;
@@ -88,5 +103,4 @@ public:
 	ViewType _viewType = ViewType::PERSPECTIVE;
 	bool _lockSetView = false;
 	FunAction _funSetView;
-	
 };

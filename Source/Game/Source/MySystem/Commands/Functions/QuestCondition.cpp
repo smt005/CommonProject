@@ -1,11 +1,12 @@
 // ◦ Xyz ◦
+
 #include "QuestCondition.h"
 #include <MySystem/MySystem.h>
 #include "../../Commands/Commands.h"
 #include "../../Objects/Space.h"
 #include "../../Quests/Quest.h"
 #include "../../Quests/QuestManager.h"
-#include "Common/Help.h"
+#include <Common/Help.h>
 
 namespace quest
 {
@@ -15,7 +16,6 @@ namespace quest
 		value = value < min ? min : value;
 		value = value > max ? max : value;
 		return value;
-
 	}
 
 	double StrToDouble(const std::string& valueStr, double min = std::numeric_limits<double>::min(), double max = std::numeric_limits<double>::max())
@@ -24,7 +24,6 @@ namespace quest
 		value = value < min ? min : value;
 		value = value > max ? max : value;
 		return value;
-
 	}
 
 	int StrToInt(const std::string& valueStr, int min, int max)
@@ -108,11 +107,10 @@ namespace quest
 
 	// ///////////////////////////////////////////////////////////////////////////////////////
 
-
 	void RunCommandIf(const std::string& questNameLeft, const std::string& paramLeft,
-						const std::string& expressionStr,
-						const std::string& questNameRight, const std::string& paramRight,
-						const std::string& questName, const std::string& commandName)
+		const std::string& expressionStr,
+		const std::string& questNameRight, const std::string& paramRight,
+		const std::string& questName, const std::string& commandName)
 	{
 		double valuLeft = 0.0;
 		double valuRight = 0.0;
@@ -177,31 +175,30 @@ namespace quest
 		Expression expression = ExpressionFormStr(expressionStr);
 		bool needRun = false;
 
-		switch (expression)
-		{
-		case quest::Expression::is_error:
-			// TODO: ASSERT
-			break;
-		case quest::Expression::is_more:
-			needRun = valuLeft > valuRight;
-			break;
-		case quest::Expression::is_more_or_equal:
-			needRun = valuLeft >= valuRight;
-			break;
-		case quest::Expression::is_less:
-			needRun = valuLeft < valuRight;
-			break;
-		case quest::Expression::is_less_or_equal:
-			needRun = valuLeft <= valuRight;
-			break;
-		case quest::Expression::is_equal:
-			needRun = valuLeft == valuRight;
-			break;
-		case quest::Expression::is_not_equal:
-			needRun = valuLeft != valuRight;
-			break;
-		default:
-			break;
+		switch (expression) {
+			case quest::Expression::is_error:
+				// TODO: ASSERT
+				break;
+			case quest::Expression::is_more:
+				needRun = valuLeft > valuRight;
+				break;
+			case quest::Expression::is_more_or_equal:
+				needRun = valuLeft >= valuRight;
+				break;
+			case quest::Expression::is_less:
+				needRun = valuLeft < valuRight;
+				break;
+			case quest::Expression::is_less_or_equal:
+				needRun = valuLeft <= valuRight;
+				break;
+			case quest::Expression::is_equal:
+				needRun = valuLeft == valuRight;
+				break;
+			case quest::Expression::is_not_equal:
+				needRun = valuLeft != valuRight;
+				break;
+			default:
+				break;
 		}
 
 		if (needRun) {
@@ -227,9 +224,9 @@ namespace quest
 	}
 
 	void ValueOperation(const std::string& questNameLeft, const std::string& paramLeft,
-					const std::string& operationStr,
-					const std::string& questNameRight, const std::string& paramRight,
-					const std::string& questNameResult, const std::string& paramResult)
+		const std::string& operationStr,
+		const std::string& questNameRight, const std::string& paramRight,
+		const std::string& questNameResult, const std::string& paramResult)
 	{
 		double valuLeft = 0.0;
 		double valuRight = 0.0;
@@ -323,31 +320,30 @@ namespace quest
 		Operation operation = OperationFormStr(operationStr);
 		bool hasResult = false;
 
-		switch (operation)
-		{
-		case quest::Operation::is_error:
-			// TODO: ASSERT
-			break;
-		case quest::Operation::is_addition:
-			valuResult = valuLeft + valuRight;
-			hasResult = true;
-			break;
-		case quest::Operation::is_subtraction:
-			valuResult = valuLeft - valuRight;
-			hasResult = true;
-			break;
-		case quest::Operation::is_division:
-			valuResult = valuLeft / valuRight;
-			hasResult = true;
-			break;
-		case quest::Operation::is_multiplication:
-			valuResult = valuLeft * valuRight;
-			hasResult = true;
-			break;
-		/*case quest::Operation::is_remainder:
+		switch (operation) {
+			case quest::Operation::is_error:
+				// TODO: ASSERT
+				break;
+			case quest::Operation::is_addition:
+				valuResult = valuLeft + valuRight;
+				hasResult = true;
+				break;
+			case quest::Operation::is_subtraction:
+				valuResult = valuLeft - valuRight;
+				hasResult = true;
+				break;
+			case quest::Operation::is_division:
+				valuResult = valuLeft / valuRight;
+				hasResult = true;
+				break;
+			case quest::Operation::is_multiplication:
+				valuResult = valuLeft * valuRight;
+				hasResult = true;
+				break;
+			/*case quest::Operation::is_remainder:
 			break;*/
-		default:
-			break;
+			default:
+				break;
 		}
 
 		if (hasResult) {
@@ -376,6 +372,5 @@ namespace quest
 		mapGameParams.emplace("MaxVelocityBody", "");
 		return mapGameParams;
 	}
-
 
 }

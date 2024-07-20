@@ -1,10 +1,11 @@
 // ◦ Xyz ◦
+
 #include "BodyData.h"
 
-#include "Object/Model.h"
-#include "Common/Help.h"
-#include "Callback/Callback.h"
-#include "Draw/Camera/Camera.h"
+#include <Object/Model.h>
+#include <Common/Help.h>
+#include <Callback/Callback.h>
+#include <Draw/Camera/Camera.h>
 
 BodyData::BodyData(const std::string& nameModel)
 	: _model(Model::getByName(nameModel))
@@ -19,15 +20,15 @@ BodyData::BodyData(const std::string& nameModel, const Math::Vector3& pos, const
 }
 
 // TODO:
-Math::Vector3 BodyData::PosOnScreen(const glm::mat4x4& matCamera, bool applySizeScreen) {
+Math::Vector3 BodyData::PosOnScreen(const glm::mat4x4& matCamera, bool applySizeScreen)
+{
 	Math::Vector3 posOnScreen;
 
 	auto transformToScreen = [](Math::Vector3& point, const glm::mat4x4& mat) {
 		glm::vec4 p(point.x, point.y, point.z, 1.0f);
 		p = mat * p;
 
-		if (p.w != 1.0)
-		{
+		if (p.w != 1.0) {
 			p.x /= p.w;
 			p.y /= p.w;
 			p.z /= p.w;
@@ -62,7 +63,8 @@ Math::Vector3 BodyData::PosOnScreen(const glm::mat4x4& matCamera, bool applySize
 	if (aspectCScreen > 1.f) {
 		posOnScreen.x = xInt * aspectCScreen;
 		posOnScreen.y = yInt;
-	} else {
+	}
+	else {
 		posOnScreen.x = xInt;
 		posOnScreen.y = yInt / aspectCScreen;
 	}
@@ -72,7 +74,8 @@ Math::Vector3 BodyData::PosOnScreen(const glm::mat4x4& matCamera, bool applySize
 }
 
 // TODO:
-bool BodyData::hit(const glm::mat4x4& matCamera) {
+bool BodyData::hit(const glm::mat4x4& matCamera)
+{
 	if (!_model) {
 		return false;
 	}
@@ -84,8 +87,7 @@ bool BodyData::hit(const glm::mat4x4& matCamera) {
 		glm::vec4 p(point.x, point.y, point.z, 1.0f);
 		p = mat * p;
 
-		if (p.w != 1.0)
-		{
+		if (p.w != 1.0) {
 			p.x /= p.w;
 			p.y /= p.w;
 			p.z /= p.w;
@@ -124,8 +126,7 @@ bool BodyData::hit(const glm::mat4x4& matCamera) {
 
 	const Mesh& mesh = _model->getMesh();
 
-	for (int index = 0; index < mesh.countIndex(); index += 3)
-	{
+	for (int index = 0; index < mesh.countIndex(); index += 3) {
 		float vertexScreen[3][2];
 
 		for (int iShift = 0; iShift < 3; ++iShift) {
@@ -152,12 +153,14 @@ bool BodyData::hit(const glm::mat4x4& matCamera) {
 	return false;
 }
 
-void BodyData::Rotate() {
+void BodyData::Rotate()
+{
 	_angular += _angularVelocity;
 	_matrix = glm::rotate(_matrix, _angular, { 0.f, 0.f, 1.f });
 }
 
-void BodyData::CalcScale() {
+void BodyData::CalcScale()
+{
 	constexpr float val3div4 = (3.f / 4.f) / PI;
 
 	//  std::pow(n, 1/3.) (or std::cbrtf(v);

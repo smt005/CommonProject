@@ -9,10 +9,12 @@
 #include <Wrapper.h>
 #include <Classes.h>
 #include "BodyData.h"
-#include "../../Engine/Source/Object/Samples/Box.h"
+#include <../../Engine/Source/Object/Samples/Box.h>
 
-namespace spaceTree02 {
-	struct DebugInfo {
+namespace spaceTree02
+{
+	struct DebugInfo
+	{
 		size_t countLevel = 0;
 		size_t countCluster = 0;
 		size_t countBodies = 0;
@@ -29,7 +31,8 @@ namespace spaceTree02 {
 		void Print();
 	};
 
-	struct Cluster02 {
+	struct Cluster02
+	{
 		//using Ptr = mystd::shared<Cluster02>;
 		using Ptr = std::shared_ptr<Cluster02>;
 
@@ -51,17 +54,20 @@ namespace spaceTree02 {
 	};
 }
 
-class SpaceTree02 final : public Space {
+class SpaceTree02 final : public Space
+{
 public:
 	using Ptr = std::shared_ptr<SpaceTree02>;
 
 	SpaceTree02() = default;
 	SpaceTree02(const std::string& name)
-		: Space(name) {
+		: Space(name)
+	{
 		LoadProperty();
 	}
 	SpaceTree02(Json::Value& valueData)
-		: Space(valueData) {
+		: Space(valueData)
+	{
 		LoadProperty();
 	}
 
@@ -88,7 +94,7 @@ private:
 public:
 	std::vector<spaceTree02::Cluster02::Ptr> buffer;
 	spaceTree02::DebugInfo _debugInfo;
-	
+
 	float distFactor = 1.f;
 	bool showDebugInfo = false;
 

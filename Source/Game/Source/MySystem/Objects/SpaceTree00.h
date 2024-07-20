@@ -10,14 +10,17 @@
 #include <Classes.h>
 #include "BodyData.h"
 
-struct Cluster {
-	Cluster() {
+struct Cluster
+{
+	Cluster()
+	{
 		clusters[0][0] = nullptr;
 		clusters[0][1] = nullptr;
 		clusters[1][0] = nullptr;
 		clusters[1][1] = nullptr;
 	}
-	~Cluster() {
+	~Cluster()
+	{
 		delete clusters[0][0];
 		delete clusters[0][1];
 		delete clusters[1][0];
@@ -39,24 +42,26 @@ struct Cluster {
 	std::string tab;
 };
 
-class BodyCluster final : public BodyData {
+class BodyCluster final : public BodyData
+{
 public:
 	Cluster* cluster = nullptr;
 };
 
-class SpaceTree00 final : public Space {
+class SpaceTree00 final : public Space
+{
 private:
-	
-
 public:
 	using Ptr = std::shared_ptr<SpaceTree00>;
 
 	SpaceTree00() = default;
 	SpaceTree00(const std::string& name)
-		: Space(name) {
+		: Space(name)
+	{
 	}
 	SpaceTree00(Json::Value& valueData)
-		: Space(valueData) {
+		: Space(valueData)
+	{
 	}
 
 	void Update(double dt) override;

@@ -1,3 +1,5 @@
+// ◦ Xyz ◦
+
 #include "../Common/ShaderGravityGrid.h"
 #include <glad/gl.h>
 #include <FileManager.h>
@@ -21,7 +23,8 @@ unsigned int ShaderGravityGrid::u_body_massess = 0;
 unsigned int ShaderGravityGrid::u_body_colors = 0;
 
 // ShaderSpatialGrid
-void ShaderGravityGrid::Use() {
+void ShaderGravityGrid::Use()
+{
 	glUseProgram(_program);
 	glUniformMatrix4fv(u_matProjectionView, 1, GL_FALSE, Camera::GetLink().ProjectViewFloat());
 
@@ -38,8 +41,8 @@ void ShaderGravityGrid::Use() {
 	glEnableVertexAttribArray(0);
 }
 
-
-void ShaderGravityGrid::GetLocation() {
+void ShaderGravityGrid::GetLocation()
+{
 	if (_program == 0) {
 		return;
 	}

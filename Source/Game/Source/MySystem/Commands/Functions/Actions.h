@@ -1,8 +1,10 @@
 // ◦ Xyz ◦
 #pragma once
+
 #include <string>
 
-namespace commands {
+namespace commands
+{
 	/// FadeModel #MODELS float
 	void FadeModel(const std::string& model, float fadeTime);
 

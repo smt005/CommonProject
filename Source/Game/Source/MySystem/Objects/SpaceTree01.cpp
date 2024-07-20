@@ -1,4 +1,5 @@
 // ◦ Xyz ◦
+
 #include "SpaceTree01.h"
 #include <algorithm>
 #include <stdio.h>
@@ -10,11 +11,13 @@
 
 using Cluster = spaceTree01::Cluster01;
 
-std::string SpaceTree01::GetNameClass() {
+std::string SpaceTree01::GetNameClass()
+{
 	return Engine::GetClassName(this);
 }
 
-void SpaceTree01::LoadProperty() {
+void SpaceTree01::LoadProperty()
+{
 	std::string maxCountBodiesStr = _params["COUNT_IN_CLUSTER"];
 	if (!maxCountBodiesStr.empty()) {
 		maxCountBodies = std::stoi(maxCountBodiesStr);
@@ -31,7 +34,8 @@ void SpaceTree01::LoadProperty() {
 	}
 }
 
-void SpaceTree01::Update(double dt) {
+void SpaceTree01::Update(double dt)
+{
 	if (countOfIteration == 0 || _bodies.size() <= 1) {
 		return;
 	}
@@ -41,7 +45,8 @@ void SpaceTree01::Update(double dt) {
 	}
 }
 
-void SpaceTree01::Update() {
+void SpaceTree01::Update()
+{
 	debugInfo.countOperation = 0;
 
 	GenerateClusters();
@@ -53,7 +58,7 @@ void SpaceTree01::Update() {
 			UpdateForceByBody(clusterPtr->bodies, clusterPtr->bodies);
 			UpdateForceByCluster(*clusterPtr.get());
 		}
-		
+
 		if (showDebugInfo) {
 			double time1 = Engine::Core::currentTime();
 			double dTime = time1 - time;
@@ -78,7 +83,8 @@ void SpaceTree01::Update() {
 	}
 }
 
-void SpaceTree01::UpdateForceByBody(std::vector<Body*>& bodies, std::vector<Body*>& subBodies) {
+void SpaceTree01::UpdateForceByBody(std::vector<Body*>& bodies, std::vector<Body*>& subBodies)
+{
 	for (Body* body : bodies) {
 		auto pos = body->GetPos();
 		float mass = body->Mass();
@@ -105,7 +111,8 @@ void SpaceTree01::UpdateForceByBody(std::vector<Body*>& bodies, std::vector<Body
 	}
 }
 
-void SpaceTree01::UpdateForceByCluster(Cluster& cluster) {
+void SpaceTree01::UpdateForceByCluster(Cluster& cluster)
+{
 	for (Body* body : cluster.bodies) {
 		auto pos = body->GetPos();
 		float mass = body->Mass();
@@ -119,7 +126,8 @@ void SpaceTree01::UpdateForceByCluster(Cluster& cluster) {
 			if (IsClosestCluster(cluster, *subClusterPtr)) {
 				std::vector<Body*> bodiesTemp = { body };
 				UpdateForceByBody(bodiesTemp, subClusterPtr->bodies);
-			} else {
+			}
+			else {
 				Math::Vector3 gravityVec = subClusterPtr->centerMass - pos;
 				double dist = Math::length(gravityVec);
 
@@ -134,7 +142,8 @@ void SpaceTree01::UpdateForceByCluster(Cluster& cluster) {
 	}
 }
 
-bool SpaceTree01::IsClosestCluster(Cluster& cluster0, Cluster& cluster1) {
+bool SpaceTree01::IsClosestCluster(Cluster& cluster0, Cluster& cluster1)
+{
 	float dist = (cluster0.centerPos - cluster1.centerPos).length();
 	float closestDist = cluster0.dist + cluster1.dist;
 
@@ -142,7 +151,8 @@ bool SpaceTree01::IsClosestCluster(Cluster& cluster0, Cluster& cluster1) {
 	return dist < closestDist;
 }
 
-void SpaceTree01::UpdatePos() {
+void SpaceTree01::UpdatePos()
+{
 	size_t size = _bodies.size();
 
 	for (Body::Ptr& bodyPtr : _bodies) {
@@ -159,11 +169,13 @@ void SpaceTree01::UpdatePos() {
 	}
 }
 
-void SpaceTree01::Preparation() {
+void SpaceTree01::Preparation()
+{
 	buffer.clear();
 }
 
-void SpaceTree01::GenerateClusters() {
+void SpaceTree01::GenerateClusters()
+{
 	double time = Engine::Core::currentTime();
 	//_debugInfo.Clear();
 
@@ -171,7 +183,7 @@ void SpaceTree01::GenerateClusters() {
 
 	mystd::shared<std::vector<Cluster::Ptr>> bufferPtr(new std::vector<Cluster::Ptr>());
 	mystd::shared<std::vector<Cluster::Ptr>> newBufferPtr(new std::vector<Cluster::Ptr>());
-	
+
 	{
 		Cluster& firstCluster = *bufferPtr->emplace_back(new Cluster());
 		firstCluster.bodies.reserve(_bodies.size());
@@ -203,7 +215,6 @@ void SpaceTree01::GenerateClusters() {
 			float k = size.y / size.x;
 			min.x *= k;
 			max.x *= k;
-
 		}
 
 		size = max - min;
@@ -244,7 +255,6 @@ void SpaceTree01::GenerateClusters() {
 					Math::Vector3 sizeHalt = size / 2.f;
 					cluster->dist = sizeHalt.length();
 					cluster->centerPos = cluster->min + sizeHalt;
-
 				}
 
 				if (showDebugInfo) {
@@ -316,16 +326,13 @@ void SpaceTree01::GenerateClusters() {
 				if (pos.x <= half.x && pos.y <= half.y) {
 					tempBuffer[0]->bodies.emplace_back(body);
 				}
-				else
-				if (pos.x <= half.x && pos.y > half.y) {
+				else if (pos.x <= half.x && pos.y > half.y) {
 					tempBuffer[1]->bodies.emplace_back(body);
 				}
-				else
-				if (pos.x > half.x && pos.y <= half.y) {
+				else if (pos.x > half.x && pos.y <= half.y) {
 					tempBuffer[2]->bodies.emplace_back(body);
 				}
-				else
-				if (pos.x > half.x && pos.y > half.y) {
+				else if (pos.x > half.x && pos.y > half.y) {
 					tempBuffer[3]->bodies.emplace_back(body);
 				}
 			}
@@ -368,7 +375,8 @@ void SpaceTree01::GenerateClusters() {
 	//_debugInfo.Print();
 }
 
-void spaceTree01::DebugInfo::Clear() {
+void spaceTree01::DebugInfo::Clear()
+{
 	countLevel = 0;
 	countCluster = 0;
 	countBodies = 0;
@@ -382,7 +390,8 @@ void spaceTree01::DebugInfo::Clear() {
 	maxSize = Math::Vector3(0.f);
 }
 
-void spaceTree01::DebugInfo::Print() {
+void spaceTree01::DebugInfo::Print()
+{
 	printf("Clusters info.\n");
 	printf("count cluster: %i count body: %i \n", countCluster, countBodies);
 	printf("count level: %i minBodies: %i maxBodies: %i \n", countLevel, minBodies, maxBodies);

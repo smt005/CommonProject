@@ -1,14 +1,15 @@
 // ◦ Xyz ◦
 #pragma once
 
-#include "ImGuiManager/UI.h"
-#include "Common/Help.h"
-#include "ImGuiManager/Editor/Common/CommonUI.h"
+#include <ImGuiManager/UI.h>
+#include <Common/Help.h>
+#include <ImGuiManager/Editor/Common/CommonUI.h>
 #include <vector>
 
 class MySystem;
 
-class ComputationsUI final : public UI::Window {
+class ComputationsUI final : public UI::Window
+{
 public:
 	ComputationsUI();
 	void OnOpen() override;

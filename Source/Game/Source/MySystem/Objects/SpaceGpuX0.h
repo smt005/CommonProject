@@ -6,18 +6,21 @@
 #include <vector>
 #include <json/json.h>
 #include <Common/Common.h>
-#include "../../CUDA/Source/Wrapper.h"
+#include <../../CUDA/Source/Wrapper.h>
 
-class SpaceGpuX0 final : public Space {
+class SpaceGpuX0 final : public Space
+{
 public:
 	using Ptr = std::shared_ptr<SpaceGpuX0>;
 
 	SpaceGpuX0() = default;
 	SpaceGpuX0(const std::string& name)
-		: Space(name) {
+		: Space(name)
+	{
 	}
 	SpaceGpuX0(Json::Value& valueData)
-		: Space(valueData) {
+		: Space(valueData)
+	{
 	}
 
 	void Update(double dt) override;

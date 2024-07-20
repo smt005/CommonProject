@@ -1,3 +1,5 @@
+// ◦ Xyz ◦
+
 #include "Quest.h"
 
 std::map<std::string, std::string> Quest::globalParams;

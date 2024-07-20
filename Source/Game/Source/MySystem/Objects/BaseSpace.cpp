@@ -1,19 +1,22 @@
 // ◦ Xyz ◦
+
 #include "BaseSpace.h"
 #include <stdio.h>
 #include <unordered_map>
 #include <algorithm>
-#include "Common/Common.h"
+#include <Common/Common.h>
 #include <Core.h>
 #include "../Common/GravityGrid.h"
 
-void BaseSpace::Update(double dt) {
+void BaseSpace::Update(double dt)
+{
 	for (size_t i = 0; i < countOfIteration; ++i) {
 		Update();
 	}
 }
 
-void BaseSpace::Update() {
+void BaseSpace::Update()
+{
 	double dt = (double)deltaTime;
 
 	size_t sizeData = _datas.size();
@@ -70,14 +73,13 @@ void BaseSpace::Update() {
 			}
 
 			if (mergePair) {
-				// TEMP_ 
+				// TEMP_
 				mergeList.emplace(std::move(*mergePair));
 				delete mergePair;
 				mergePair = nullptr;
 			}
 		}
 	};
-
 
 	getForce(0, _bodies.size() - 1);
 
@@ -234,7 +236,8 @@ void BaseSpace::Update() {
 	}
 }
 
-void BaseSpace::Preparation() {
+void BaseSpace::Preparation()
+{
 	_datas.clear();
 	_datas.reserve(_bodies.size());
 
@@ -266,6 +269,7 @@ void BaseSpace::Preparation() {
 	}
 }
 
-std::string BaseSpace::GetNameClass() {
+std::string BaseSpace::GetNameClass()
+{
 	return Engine::GetClassName(this);
 }

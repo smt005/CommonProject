@@ -4,24 +4,26 @@
 #include <string>
 #include <vector>
 #include <glm/mat4x4.hpp>
-#include "Math/Vector.h"
-#include "MyStl/shared.h"
+#include <Math/Vector.h>
+#include <MyStl/shared.h>
 #include <memory>
-#include "../../Engine/Source/Object/Model.h"
+#include <../../Engine/Source/Object/Model.h>
 #include "Body.h"
 
 class Space;
 class Model;
 using ModelPtr = std::shared_ptr<Model>;
 
-class BodyData : public Body {
+class BodyData : public Body
+{
 	friend Space;
 
 public:
 	using Ptr = mystd::shared<BodyData>;
 	//using Ptr = std::shared_ptr<BodyData>;
 
-	struct Data {
+	struct Data
+	{
 		double mass;
 		Math::Vector3 pos;
 		Math::Vector3 force;
@@ -40,16 +42,20 @@ public:
 	};
 
 	BodyData() = default;
-	BodyData(std::shared_ptr<Model>& model) : _model(model) {}
+	BodyData(std::shared_ptr<Model>& model)
+		: _model(model)
+	{}
 	BodyData(const std::string& nameModel);
 	BodyData(const std::string& nameModel, const Math::Vector3& pos, const Math::Vector3& velocity, double mass, const std::string& name);
 	virtual ~BodyData() = default;
 
-	Math::Vector3 GetPos() const {
+	Math::Vector3 GetPos() const
+	{
 		return Math::Vector3(_matrix[3][0], _matrix[3][1], _matrix[3][2]);
 	}
 
-	void SetPos(const Math::Vector3& pos) {
+	void SetPos(const Math::Vector3& pos)
+	{
 		_matrix[3][0] = pos[0];
 		_matrix[3][1] = pos[1];
 		_matrix[3][2] = pos[2];
@@ -59,19 +65,23 @@ public:
 		}
 	}
 
-	void SetVelocity(const Math::Vector3& velocity) {
+	void SetVelocity(const Math::Vector3& velocity)
+	{
 		_velocity = velocity;
 	}
 
-	bool HasModel() const {
+	bool HasModel() const
+	{
 		return _model ? true : false;
 	}
 
-	Model& getModel() override {
+	Model& getModel() override
+	{
 		return *_model;
 	}
-	
-	const glm::mat4x4& getMatrix() const {
+
+	const glm::mat4x4& getMatrix() const
+	{
 		return _matrix;
 	}
 
@@ -79,7 +89,7 @@ public:
 	bool hit(const glm::mat4x4& matCamera);
 
 	void Rotate();
-	void CalcScale() override ;
+	void CalcScale() override;
 
 	Math::Vector3& Velocity() override { return _velocity; }
 	Math::Vector3& Force() override { return _force; }

@@ -2,21 +2,30 @@
 #pragma once
 #include "Quest.h"
 
-class QuestStart final : public Quest {
+class QuestStart final : public Quest
+{
 public:
-	QuestStart(const std::string& name): Quest(name) {}
+	QuestStart(const std::string& name)
+		: Quest(name)
+	{}
 	void Activete() override;
 	void Deactivation() override;
 };
 
-class QuestSphere100 final : public Quest {
+class QuestSphere100 final : public Quest
+{
 public:
-	QuestSphere100(const std::string& name) : Quest(name) {}
+	QuestSphere100(const std::string& name)
+		: Quest(name)
+	{}
 	void Activete() override;
 };
 
-class QuestSphere final : public Quest {
+class QuestSphere final : public Quest
+{
 public:
-	QuestSphere(const std::string& name) : Quest(name) {}
+	QuestSphere(const std::string& name)
+		: Quest(name)
+	{}
 	void Activete() override;
 };

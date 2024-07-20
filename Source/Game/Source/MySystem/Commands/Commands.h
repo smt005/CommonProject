@@ -1,10 +1,12 @@
 // ◦ Xyz ◦
 #pragma once
+
 #include <string>
 #include <vector>
-#include "json/json.h"
+#include <json/json.h>
 
-struct Command final {
+struct Command final
+{
 	Command() = default;
 	Command(const std::string& _id)
 		: id(_id)
@@ -13,7 +15,8 @@ struct Command final {
 		: id(_id)
 		, parameters(_parameters)
 	{}
-	Command(std::string&& _id, std::vector<std::string>&& _parameters) {
+	Command(std::string&& _id, std::vector<std::string>&& _parameters)
+	{
 		std::swap(id, _id);
 		std::swap(parameters, _parameters);
 	}
@@ -29,7 +32,8 @@ using Commands = std::vector<Command>;
 using Parameters = std::vector<std::string>;
 using Parameter = std::string;
 
-class CommandManager final {
+class CommandManager final
+{
 public:
 	static Commands Load(const std::string& pathFileName);
 	static Commands Load(const Json::Value& valueData);

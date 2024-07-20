@@ -1,12 +1,14 @@
 // ◦ Xyz ◦
+
 #include "SpaceGpuX0.h"
 #include <algorithm>
 #include <stdio.h>
 #include <Core.h>
-#include "../../CUDA/Source/Wrapper.h"
+#include <../../CUDA/Source/Wrapper.h>
 #include <../../CUDA/Source/WrapperX0.h>
 
-void SpaceGpuX0::Update(double dt) {
+void SpaceGpuX0::Update(double dt)
+{
 	if (countOfIteration == 0) {
 		return;
 	}
@@ -19,7 +21,8 @@ void SpaceGpuX0::Update(double dt) {
 
 	if (processGPU) {
 		WrapperX0::UpdatePositionGPU(count, _positions.data(), _masses.data(), _forces.data(), _velocities.data(), deltaTime, countOfIteration);
-	} else {
+	}
+	else {
 		WrapperX0::UpdatePositionCPU(count, _positions.data(), _masses.data(), _forces.data(), _velocities.data(), deltaTime, countOfIteration);
 	}
 
@@ -28,7 +31,8 @@ void SpaceGpuX0::Update(double dt) {
 	}
 }
 
-void SpaceGpuX0::Preparation() {
+void SpaceGpuX0::Preparation()
+{
 	_positions.clear();
 	_masses.clear();
 	_forces.clear();
@@ -36,7 +40,6 @@ void SpaceGpuX0::Preparation() {
 
 	size_t count = _bodies.size();
 	if (count == 0) {
-
 		return;
 	}
 
@@ -73,6 +76,7 @@ void SpaceGpuX0::Preparation() {
 	}
 }
 
-std::string SpaceGpuX0::GetNameClass() {
+std::string SpaceGpuX0::GetNameClass()
+{
 	return Engine::GetClassName(this);
 }

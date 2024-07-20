@@ -1,57 +1,70 @@
-﻿// ◦ Xyz ◦
+// ◦ Xyz ◦
 #pragma once
 
-#include "ImGuiManager/UI.h"
+#include <ImGuiManager/UI.h>
 #include <memory>
 #include <string>
 #include <vector>
 #include "../../Quests/Quest.h"
 #include "../../Quests/QuestManager.h"
 #include "../../Commands/Commands.h"
-#include "Common/Help.h"
-#include "ImGuiManager/Editor/Common/CommonUI.h"
+#include <Common/Help.h>
+#include <ImGuiManager/Editor/Common/CommonUI.h>
 
-namespace Editor {
-	class QuestsEditorWindow final : public UI::Window {
+namespace Editor
+{
+	class QuestsEditorWindow final : public UI::Window
+	{
 	private:
-		struct EditorCommand {
+		struct EditorCommand
+		{
 			std::string name;
 			std::vector<std::string> params;
 			EditorCommand() = default;
-			EditorCommand(const std::string& _name) : name(_name) {}
-			char* data() {
+			EditorCommand(const std::string& _name)
+				: name(_name)
+			{}
+			char* data()
+			{
 				return name.data();
 			}
 			static std::string emptyName;
 		};
 
 		template<typename T>
-		struct EditorListT {
+		struct EditorListT
+		{
 			std::vector<T> dataList;
 			std::vector<const char*> viewList;
 			int currentIndex = -1;
 
-			T& Add(T&& text) {
+			T& Add(T&& text)
+			{
 				return dataList.emplace_back(text);
 			}
-			void Add(std::initializer_list<T>&& texts) {
+			void Add(std::initializer_list<T>&& texts)
+			{
 				dataList.reserve(dataList.size() + texts.size());
 				dataList.insert(dataList.end(), texts.begin(), texts.end());
 			}
-			void MakeViewData() {
+			void MakeViewData()
+			{
 				viewList.clear();
 				for (T& text : dataList) {
 					viewList.emplace_back(text.data());
 				}
 			}
-			void Reserve(int reserveSize) {
+			void Reserve(int reserveSize)
+			{
 				dataList.reserve(reserveSize);
 				viewList.clear();
 			}
-			T& Get() {
+			T& Get()
+			{
 				return GetByIndex(currentIndex);
 			}
-			T& GetByIndex(const int index) {
+			T& GetByIndex(const int index)
+			{
 				if (index < 0 || index >= dataList.size()) {
 					static T empty;
 					return empty;
@@ -68,18 +81,21 @@ namespace Editor {
 						return currentIndex;
 					}
 				}
-				
+
 				currentIndex = -1;
 				return currentIndex;
 			}
-			void Clear() {
+			void Clear()
+			{
 				dataList.clear();
 				viewList.clear();
 			}
 		};
 
 	public:
-		QuestsEditorWindow() : UI::Window(this) {
+		QuestsEditorWindow()
+			: UI::Window(this)
+		{
 			_newTextBuffer[0] = '\0';
 		};
 		void OnOpen() override;
@@ -112,7 +128,8 @@ namespace Editor {
 		void EditorDatasParceFile(const std::string& filePathHame);
 		void PrepareCommand(const std::vector<std::string>& words);
 
-		inline std::shared_ptr<bool> GetSharedWndPtr() {
+		inline std::shared_ptr<bool> GetSharedWndPtr()
+		{
 			if (!_sharedWndPtr) {
 				_sharedWndPtr = std::make_shared<bool>(true);
 			}

@@ -1,6 +1,9 @@
-﻿// ◦ Xyz ◦
+// ◦ Xyz ◦
 #pragma once
+
 #include <MyStl/Event.h>
 
-class EventOnTap final : public Event<EventOnTap> {};
-class EventOnUpdate final : public Event<EventOnUpdate> {};
+class EventOnTap final : public Event<EventOnTap>
+{};
+class EventOnUpdate final : public Event<EventOnUpdate>
+{};

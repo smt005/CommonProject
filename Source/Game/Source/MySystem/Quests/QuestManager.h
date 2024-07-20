@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include "Quest.h"
-#include "MyStl/Singleton.h"
+#include <MyStl/Singleton.h>
 
 class QuestManagerImpl
 {
@@ -28,11 +28,13 @@ public:
 	void Clear();
 	void Update();
 
-	std::vector<Quest::Ptr>& GetQuests() {
+	std::vector<Quest::Ptr>& GetQuests()
+	{
 		return quests;
 	}
-	
-	const std::string& PathFileName() {
+
+	const std::string& PathFileName()
+	{
 		return _pathFileName;
 	}
 
@@ -46,4 +48,5 @@ private:
 	std::vector<Quest::Ptr> quests;
 };
 
-class QuestManager : public mystd::Singleton<QuestManagerImpl> {};
+class QuestManager : public mystd::Singleton<QuestManagerImpl>
+{};

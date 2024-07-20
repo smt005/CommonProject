@@ -1,9 +1,10 @@
 // ◦ Xyz ◦
 #pragma once
 
-#include "ImGuiManager/UI.h"
+#include <ImGuiManager/UI.h>
 
-class RewardWindow final : public UI::Window {
+class RewardWindow final : public UI::Window
+{
 public:
 	RewardWindow(const std::string& currentQuest, const std::string& nextQuest, const std::string& rewardText);
 	void OnOpen() override;

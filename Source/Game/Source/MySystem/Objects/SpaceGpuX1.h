@@ -9,16 +9,19 @@
 #include <Wrapper.h>
 #include <Classes.h>
 
-class SpaceGpuX1 final : public Space {
+class SpaceGpuX1 final : public Space
+{
 public:
 	using Ptr = std::shared_ptr<SpaceGpuX1>;
 
 	SpaceGpuX1() = default;
 	SpaceGpuX1(const std::string& name)
-		: Space(name) {
+		: Space(name)
+	{
 	}
 	SpaceGpuX1(Json::Value& valueData)
-		: Space(valueData) {
+		: Space(valueData)
+	{
 	}
 
 	void Update(double dt) override;

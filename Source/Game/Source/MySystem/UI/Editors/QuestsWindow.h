@@ -1,11 +1,14 @@
 // ◦ Xyz ◦
 #pragma once
 
-#include "ImGuiManager/UI.h"
+#include <ImGuiManager/UI.h>
 
-class QuestsWindow final : public UI::Window {
+class QuestsWindow final : public UI::Window
+{
 public:
-	QuestsWindow() : UI::Window(this) { }
+	QuestsWindow()
+		: UI::Window(this)
+	{}
 	void OnOpen() override;
 	void Draw() override;
 

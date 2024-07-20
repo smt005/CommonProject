@@ -1,6 +1,32 @@
 {
+	"Aim" : 
+	{
+		"color" : null,
+		"scale" : 
+		[
+			20,
+			20,
+			1
+		],
+		"shape" : "Models/Interface/Cube.obj",
+		"texture" : "Textures/Interface/aim_red.png"
+	},
+	"Aim3D" : 
+	{
+		"color" : null,
+		"scale" : 
+		[
+			20,
+			20,
+			1
+		],
+		"shape" : "Models/Interface/Aim_3d.obj",
+		"texture" : "Textures/Colors/Red.png"
+	},
 	"BlackStone" : 
 	{
+		"color" : null,
+		"scale" : null,
 		"shape" : "Models/GeoSphere/GeoSphere_1_4_planar.obj",
 		"texture" : "Textures/Colors/White.png"
 	},
@@ -21,18 +47,6 @@
 		"shape" : "Models/Interface/Cube.obj",
 		"texture" : "Textures/Interface/Tutorial/Finger.png"
 	},
-	"Aim" : 
-	{
-		"scale" : [20, 20, 1],
-		"shape" : "Models/Interface/Cube.obj",
-		"texture" : "Textures/Interface/aim_red.png"
-	},
-	"Aim3D" : 
-	{
-		"scale" : [20, 20, 1],
-		"shape" : "Models/Interface/Aim_3d.obj",
-		"texture" : "Textures/Colors/Red.png"
-	},
 	"Logo" : 
 	{
 		"scale" : 
@@ -46,6 +60,7 @@
 	},
 	"Logo_name" : 
 	{
+		"color" : null,
 		"scale" : 
 		[
 			10,

@@ -3,11 +3,12 @@
 
 #include <string>
 
-class MainUI {
+class MainUI
+{
 public:
 	static void Open();
 	static void Hide();
-	
+
 	static void DrawOnSpace();
 	static bool IsLockAction();
 	static unsigned int GetViewType();

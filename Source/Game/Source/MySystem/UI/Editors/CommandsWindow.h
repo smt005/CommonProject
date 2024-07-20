@@ -1,9 +1,10 @@
 // ◦ Xyz ◦
 #pragma once
 
-#include "ImGuiManager/UI.h"
+#include <ImGuiManager/UI.h>
 
-class CommandsWindow final : public UI::Window {
+class CommandsWindow final : public UI::Window
+{
 public:
 	CommandsWindow();
 	void OnOpen() override;

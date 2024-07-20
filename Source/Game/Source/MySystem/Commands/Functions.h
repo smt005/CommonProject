@@ -1,8 +1,10 @@
 // ◦ Xyz ◦
 #pragma once
+
 #include "Commands.h"
 
-namespace commands {
+namespace commands
+{
 	float StrToFloat(const std::string& valueStr, float min = 0.f, float max = 1.f);
 	int StrToInt(const std::string& valueStr, int min = std::numeric_limits<int>::min(), int max = std::numeric_limits<int>::max());
 

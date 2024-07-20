@@ -1,4 +1,5 @@
 // ◦ Xyz ◦
+
 #include "SpaceTree00.h"
 #include <algorithm>
 #include <stdio.h>
@@ -11,7 +12,8 @@
 size_t Cluster::countBodiesCluster = 100;
 std::vector<Cluster*> Cluster::vecClusters;
 
-void Cluster::LoadBodies(std::vector<Body::Ptr>& bodiesPtr) {
+void Cluster::LoadBodies(std::vector<Body::Ptr>& bodiesPtr)
+{
 	xMin = -1000000.f;
 	xMax = 1000000.f;
 	yMin = -1000000.f;
@@ -29,7 +31,7 @@ void Cluster::LoadBodies(std::vector<Body::Ptr>& bodiesPtr) {
 
 	bodies.clear();
 	bodies.reserve(bodiesPtr.size());
-	
+
 	for (Body::Ptr& bodyPtr : bodiesPtr) {
 		bodies.emplace_back(bodyPtr.get());
 	}
@@ -37,7 +39,8 @@ void Cluster::LoadBodies(std::vector<Body::Ptr>& bodiesPtr) {
 	vecClusters.clear();
 }
 
-void Cluster::CreateChilds() {
+void Cluster::CreateChilds()
+{
 	if (bodies.size() < countBodiesCluster) {
 		if (!bodies.empty()) {
 			vecClusters.emplace_back(this);
@@ -78,14 +81,14 @@ void Cluster::CreateChilds() {
 
 		if (pos.x <= xFalf && pos.y <= yFalf) {
 			clusters[0][0]->bodies.emplace_back(body);
-		} else
-		if (pos.x <= xFalf && pos.y > yFalf) {
+		}
+		else if (pos.x <= xFalf && pos.y > yFalf) {
 			clusters[0][1]->bodies.emplace_back(body);
-		} else
-		if (pos.x > xFalf && pos.y <= yFalf) {
+		}
+		else if (pos.x > xFalf && pos.y <= yFalf) {
 			clusters[1][0]->bodies.emplace_back(body);
-		} else
-		if (pos.x > xFalf && pos.y > yFalf) {
+		}
+		else if (pos.x > xFalf && pos.y > yFalf) {
 			clusters[1][1]->bodies.emplace_back(body);
 		}
 	}
@@ -98,7 +101,8 @@ void Cluster::CreateChilds() {
 	clusters[1][1]->CreateChilds();
 }
 
-void Cluster::Print(std::string tab) {
+void Cluster::Print(std::string tab)
+{
 	tab += '.';
 
 	if (bodies.empty()) {
@@ -115,15 +119,17 @@ void Cluster::Print(std::string tab) {
 	}
 	else {
 		std::cout << tab << " [" << (int)xMin << ", " << (int)yMin << " x " << (int)xMax << ", " << (int)yMax << "] bodies:" << bodies.size() << std::endl;
-	}	
+	}
 }
 
 //.............................................................
-std::string SpaceTree00::GetNameClass() {
+std::string SpaceTree00::GetNameClass()
+{
 	return Engine::GetClassName(this);
 }
 
-void SpaceTree00::Update(double dt) {
+void SpaceTree00::Update(double dt)
+{
 	if (countOfIteration == 0 || _bodies.size() <= 1) {
 		return;
 	}
@@ -133,7 +139,8 @@ void SpaceTree00::Update(double dt) {
 	}
 }
 
-void SpaceTree00::Update() {
+void SpaceTree00::Update()
+{
 	GenerateClusters();
 
 	{
@@ -157,17 +164,18 @@ void SpaceTree00::Update() {
 		printf("Update pos: %lf\n", dTime);
 	}
 
-
 	Preparation();
 }
 
-void SpaceTree00::UpdateForceClusters() {
+void SpaceTree00::UpdateForceClusters()
+{
 	size_t size = _bodies.size();
 	size_t countCluster = Cluster::vecClusters.size();
 
 	for (size_t index = 0; index < size; ++index) {
 		BodyCluster& body = *static_cast<BodyCluster*>(_bodies[index].get());
-		auto pos = body.GetPos();;
+		auto pos = body.GetPos();
+		;
 		float mass = body.Mass();
 		Math::Vector3& forceVec = body.Force();
 
@@ -189,7 +197,8 @@ void SpaceTree00::UpdateForceClusters() {
 	}
 }
 
-void SpaceTree00::UpdateForceClusters(Cluster* cluster) {
+void SpaceTree00::UpdateForceClusters(Cluster* cluster)
+{
 	if (!cluster) {
 		return;
 	}
@@ -244,7 +253,8 @@ void SpaceTree00::UpdateForceClusters(Cluster* cluster) {
 	cluster->clusterCenterMass = sumMassPos / sumMass;
 }
 
-void SpaceTree00::ApplyForce() {
+void SpaceTree00::ApplyForce()
+{
 	size_t size = _bodies.size();
 
 	for (size_t index = 0; index < size; ++index) {
@@ -261,7 +271,8 @@ void SpaceTree00::ApplyForce() {
 	}
 }
 
-void SpaceTree00::GenerateClusters() {
+void SpaceTree00::GenerateClusters()
+{
 	double time = Engine::Core::currentTime();
 
 	cluster.countBodiesCluster = 100;
@@ -281,6 +292,6 @@ void SpaceTree00::GenerateClusters() {
 	printf("Preparation:: %lf\n", dTme);
 }
 
-void SpaceTree00::Preparation() {
-
+void SpaceTree00::Preparation()
+{
 }

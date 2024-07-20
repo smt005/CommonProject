@@ -1,16 +1,18 @@
 // ◦ Xyz ◦
+
 #include "SpaceGpuX1.h"
 #include <algorithm>
 #include <stdio.h>
 #include <unordered_map>>
 #include <set>
 #include <Core.h>
-#include "../../CUDA/Source/Wrapper.h"
+#include <../../CUDA/Source/Wrapper.h>
 #include <../../CUDA/Source/WrapperX0.h>
 #include <../../CUDA/Source/WrapperX1.h>
 #include "BodyData.h"
 
-void SpaceGpuX1::Update(double dt) {
+void SpaceGpuX1::Update(double dt)
+{
 	if (countOfIteration == 0 || _bodies.size() <= 1) {
 		return;
 	}
@@ -20,7 +22,8 @@ void SpaceGpuX1::Update(double dt) {
 	}
 }
 
-void SpaceGpuX1::Update() {
+void SpaceGpuX1::Update()
+{
 	unsigned int count = _bodies.size();
 
 	if (tag == 0) {
@@ -180,7 +183,8 @@ void SpaceGpuX1::Update() {
 	}
 }
 
-void SpaceGpuX1::Preparation() {
+void SpaceGpuX1::Preparation()
+{
 	_positions.clear();
 	_masses.clear();
 	_forces.clear();
@@ -226,6 +230,7 @@ void SpaceGpuX1::Preparation() {
 	}
 }
 
-std::string SpaceGpuX1::GetNameClass() {
+std::string SpaceGpuX1::GetNameClass()
+{
 	return Engine::GetClassName(this);
 }

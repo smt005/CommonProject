@@ -1,27 +1,29 @@
 // ◦ Xyz ◦
 
 #include "MySystem.h"
-#include "Core.h"
+#include <Core.h>
 #include <../../CUDA/Source/Wrapper.h>
-#include "Callback/Callback.h"
-#include "Callback/CallbackEvent.h"
-#include "Common/Help.h"
-#include "Draw/Camera/CameraControl.h"
-#include "Draw/Camera/CameraControlOutside.h"
+#include <Callback/Callback.h>
+#include <Callback/CallbackEvent.h>
+#include <Common/Help.h>
+#include <Draw/Camera/CameraControl.h>
+#include <Draw/Camera/CameraControlOutside.h>
 #include <Draw2/Draw2.h>
 #include <Draw2/Shader/ShaderLine.h>
 #include <Draw2/Shader/ShaderDefault.h>>
-#include "ImGuiManager/UI.h"
+#include <ImGuiManager/UI.h>
+#include <Object/Line.h>
+
 #include "UI/MainUI.h"
 #include "UI/CommonData.h"
-#include "Object/Line.h"
-#include "Objects/Space.h"
 #include "Objects/SpaceTree02.h"
-#include "Quests/QuestManager.h"
 #include "Commands/Commands.h"
 #include "Commands/Events.h"
-#include "Common/PlanePoints.h"
 #include "Common/GravityGrid.h"
+
+//#include "Objects/Space.h"
+//#include "Quests/QuestManager.h"
+//#include "Common/PlanePoints.h"
 
 std::shared_ptr<Space> MySystem::currentSpace;
 std::shared_ptr<Camera> MySystem::_camearSide;
@@ -32,14 +34,15 @@ const std::string saveFileName("../../../Executable/Save.json");
 //PlanePoints gravityGrid;
 GravityGrid gravityGrid;
 
-void MySystem::init() {
+void MySystem::init()
+{
 	CUDA::GetProperty();
 	ShaderDefault::Instance().Init("Default.vert", "Default.frag");
 	ShaderLineP::Instance().Init("LineP.vert", "Line.frag");
 
 	InitСameras();
 	initCallback();
-	
+
 	MainUI::Open();
 	CommandManager::Run("Commands/Main.json");
 
@@ -52,12 +55,14 @@ void MySystem::init() {
 #endif
 }
 
-void MySystem::close() {
+void MySystem::close()
+{
 	save();
 	MainUI::Hide();
 }
 
-void MySystem::update() {
+void MySystem::update()
+{
 	EventOnUpdate::Instance().Action();
 	gravityGrid.Update(Engine::Core::deltaTime());
 
@@ -67,27 +72,30 @@ void MySystem::update() {
 
 	if ((Engine::Core::currentTime() - _time) < (currentSpace->deltaTime > 33 ? 33 : currentSpace->deltaTime)) {
 		return;
-	} else {
+	}
+	else {
 		_time = Engine::Core::currentTime();
 	}
 
 	currentSpace->Update(1);
 
 	// DEPRICATE_
-	auto[hasBody, body] = currentSpace->RefFocusBody();
+	auto [hasBody, body] = currentSpace->RefFocusBody();
 	if (hasBody) {
 		auto centerMassT = body.GetPos();
 		glm::vec3 centerMass = glm::vec3(centerMassT.x, centerMassT.y, centerMassT.z);
 		if (auto camera = dynamic_cast<CameraControlOutside*>(_camearCurrent.get())) {
 			camera->SetPosOutside(centerMass);
-		} else if (auto camera = dynamic_cast<Camera*>(_camearCurrent.get())) {
+		}
+		else if (auto camera = dynamic_cast<Camera*>(_camearCurrent.get())) {
 			centerMass.z = 100000.f;
 			camera->SetPos(centerMass);
 		}
 	}
 }
 
-void MySystem::draw() {
+void MySystem::draw()
+{
 	Draw2::Viewport();
 	Draw2::ClearColor();
 	Camera::Set<Camera>(_camearCurrent);
@@ -213,13 +221,18 @@ void MySystem::draw() {
 	MainUI::DrawOnSpace();
 }
 
-void MySystem::resize() {
-	if (_camearSide) _camearSide->Resize();
-	if (_camearTop) _camearTop->Resize();
-	if (_camearScreen) _camearScreen->Resize();
+void MySystem::resize()
+{
+	if (_camearSide)
+		_camearSide->Resize();
+	if (_camearTop)
+		_camearTop->Resize();
+	if (_camearScreen)
+		_camearScreen->Resize();
 }
 
-bool MySystem::load() {
+bool MySystem::load()
+{
 	Json::Value loadData;
 	if (!help::loadJson(saveFileName, loadData) || loadData.empty()) {
 		return false;
@@ -230,7 +243,8 @@ bool MySystem::load() {
 #endif // _DEBUG
 }
 
-void MySystem::save() {
+void MySystem::save()
+{
 	Json::Value saveData;
 
 	//...
@@ -241,7 +255,8 @@ void MySystem::save() {
 #endif // _DEBUG
 }
 
-void MySystem::initCallback() {
+void MySystem::initCallback()
+{
 	_callbackPtr = std::make_shared<Engine::Callback>(Engine::CallbackType::SCROLL, [this](const Engine::CallbackEventPtr& callbackEventPtr) {
 		if (Engine::TapCallbackEvent* tapCallbackEvent = dynamic_cast<Engine::TapCallbackEvent*>(callbackEventPtr.get())) {
 			CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(_camearCurrent.get());
@@ -274,7 +289,8 @@ void MySystem::initCallback() {
 	});
 }
 
-void MySystem::InitСameras() {
+void MySystem::InitСameras()
+{
 	_camearSide = std::make_shared<CameraControlOutside>();
 	if (CameraControlOutside* cameraPtr = dynamic_cast<CameraControlOutside*>(_camearSide.get())) {
 		cameraPtr->SetPerspective(10000000.f, 1.f, 45.f);

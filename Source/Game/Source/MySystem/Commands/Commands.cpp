@@ -1,9 +1,11 @@
 // ◦ Xyz ◦
+
 #include "Commands.h"
-#include "Common/Help.h"
+#include <Common/Help.h>
 #include "Functions.h"
 
-Commands CommandManager::Load(const std::string& pathFileName) {
+Commands CommandManager::Load(const std::string& pathFileName)
+{
 	Json::Value valueData;
 
 	if (!help::loadJson(pathFileName, valueData)) {
@@ -13,7 +15,8 @@ Commands CommandManager::Load(const std::string& pathFileName) {
 	return Load(valueData);
 }
 
-Commands CommandManager::Load(const Json::Value& valueData) {
+Commands CommandManager::Load(const Json::Value& valueData)
+{
 	Commands commands;
 
 	if (!valueData.isArray()) {
@@ -51,18 +54,21 @@ Commands CommandManager::Load(const Json::Value& valueData) {
 	return commands;
 }
 
-void CommandManager::Run(const std::string& pathFileName) {
+void CommandManager::Run(const std::string& pathFileName)
+{
 	Commands commands = Load(pathFileName);
 	CommandManager::Run(commands);
 }
 
-void CommandManager::Run(const Commands& commands) {
+void CommandManager::Run(const Commands& commands)
+{
 	for (const Command& command : commands) {
 		Run(command);
 	}
 }
 
-void CommandManager::Run(const Command& command) {
+void CommandManager::Run(const Command& command)
+{
 	if (!command.disable) {
 		commands::Run(command);
 	}

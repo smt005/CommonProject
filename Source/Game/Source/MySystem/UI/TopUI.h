@@ -1,9 +1,10 @@
 // ◦ Xyz ◦
 #pragma once
 
-#include "ImGuiManager/UI.h"
+#include <ImGuiManager/UI.h>
 
-class TopUI final : public UI::Window {
+class TopUI final : public UI::Window
+{
 public:
 	TopUI();
 	void OnOpen() override;

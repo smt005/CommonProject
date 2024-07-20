@@ -1,26 +1,29 @@
+
 // ◦ Xyz ◦
 #include "Space.h"
 
 #include <thread>
 #include <list>
 #include <unordered_map>
-#include "Common/Common.h"
-#include "Common/Help.h"
+#include <Common/Common.h>
+#include <Common/Help.h>
 #include "BodyData.h"
 
 Space::Space(const std::string& name)
 	: _name(name)
 {}
 
-Space::Space(Json::Value& valueData) {
+Space::Space(Json::Value& valueData)
+{
 	Load(valueData);
 }
 
-void Space::Save() {
+void Space::Save()
+{
 	Json::Value jsonMap;
 	jsonMap["name"] = _name;
 	jsonMap["const_gravity"] = _constGravity;
-	// TODO: 
+	// TODO:
 	//jsonMap["class"] = Engine::GetClassName(this);
 
 	std::string sc = GetNameClass();
@@ -64,7 +67,8 @@ void Space::Save() {
 	help::saveJson(filePath, valueData);
 }
 
-bool Space::Load(Json::Value& valueData) {
+bool Space::Load(Json::Value& valueData)
+{
 	if (!valueData.isArray() || valueData.empty()) {
 		return false;
 	}
@@ -94,7 +98,7 @@ bool Space::Load(Json::Value& valueData) {
 			_skyboxObject.reset();
 		}*/
 	}
-	
+
 	processGPU = _params["PROCESS"] == "GPU" ? true : false;
 	multithread = _params["MULTITHREAD"] == "true" ? true : false;
 	tag = atoi(_params["TAG"].c_str());
@@ -141,7 +145,8 @@ bool Space::Load(Json::Value& valueData) {
 	return true;
 }
 
-bool Space::Load() {
+bool Space::Load()
+{
 	std::string filePath = "Spaces/" + _name + ".json";
 	Json::Value valueData;
 
@@ -152,13 +157,14 @@ bool Space::Load() {
 	return Load(valueData);
 }
 
-Body::Ptr Space::GetHeaviestBody() {
+Body::Ptr Space::GetHeaviestBody()
+{
 	Body::Ptr heaviestBody;
-	
+
 	if (_bodies.empty()) {
 		return heaviestBody;
 	}
-	
+
 	for (Body::Ptr& body : _bodies) {
 		if (body) {
 			if (!heaviestBody) {
@@ -169,11 +175,12 @@ Body::Ptr Space::GetHeaviestBody() {
 			}
 		}
 	}
-	
+
 	return heaviestBody;
 }
 
-Math::Vector3 Space::CenterMass() {
+Math::Vector3 Space::CenterMass()
+{
 	double sumMass = 0;
 	Math::Vector3 sunPosMass(0, 0, 0);
 
@@ -185,7 +192,8 @@ Math::Vector3 Space::CenterMass() {
 	return sunPosMass / sumMass;
 }
 
-void Space::RemoveVelocity(bool toCenter) {
+void Space::RemoveVelocity(bool toCenter)
+{
 	if (_bodies.empty()) {
 		return;
 	}
@@ -212,7 +220,8 @@ void Space::RemoveVelocity(bool toCenter) {
 	}
 }
 
-Body::Ptr Space::HitObject(const glm::mat4x4& matCamera) {
+Body::Ptr Space::HitObject(const glm::mat4x4& matCamera)
+{
 	for (Body::Ptr& body : _bodies) {
 		if (body->hit(matCamera)) {
 			return body;
@@ -222,50 +231,57 @@ Body::Ptr Space::HitObject(const glm::mat4x4& matCamera) {
 	return Body::Ptr();
 }
 
-void Space::SetSkyBoxModel(const std::string& modelName) {
+void Space::SetSkyBoxModel(const std::string& modelName)
+{
 	_skyboxModel = Model::getByName(modelName);
 }
 
-Model& Space::SkyBoxMode() {
+Model& Space::SkyBoxMode()
+{
 	if (!_skyboxModel) {
 		_skyboxModel = Model::getByName("EMPTY");
 	}
 	return *_skyboxModel;
 }
 
-Body::Ptr Space::GetBody(const char* chName) {
+Body::Ptr Space::GetBody(const char* chName)
+{
 	auto itBody = std::find_if(_bodies.begin(), _bodies.end(), [chName](const Body::Ptr& body) {
 		return body ? (body->_name && chName && strcmp(body->_name, chName) == 0) : false;
 	});
 	return itBody != _bodies.end() ? *itBody : nullptr;
 }
 
-Body::Ptr& Space::Add(Body* body) {
+Body::Ptr& Space::Add(Body* body)
+{
 	_bodies.emplace_back(body);
 	return _bodies.back();
 }
 
-Body::Ptr& Space::Add(Body::Ptr& body) {
+Body::Ptr& Space::Add(Body::Ptr& body)
+{
 	_bodies.emplace_back(body);
 	return body;
 }
 
-void Space::RemoveBody(Body::Ptr& body) {
+void Space::RemoveBody(Body::Ptr& body)
+{
 	auto itRemove = std::find_if(_bodies.begin(), _bodies.end(), [&body](const Body::Ptr& itBody) { return itBody == body; });
 	if (itRemove != _bodies.end()) {
 		_bodies.erase(itRemove);
 	}
 }
 
-std::pair<bool, Body&> Space::RefFocusBody() {
+std::pair<bool, Body&> Space::RefFocusBody()
+{
 	auto it = std::find(_bodies.begin(), _bodies.end(), _focusBody);
 	if (it != _bodies.end()) {
 		Body& body = **it;
-		return {true, body};
+		return { true, body };
 	}
 
 	static Body defaultBody;
-	return {false, defaultBody};
+	return { false, defaultBody };
 }
 
 Math::Vector3& Space::GetMaxSpeed()
@@ -285,6 +301,7 @@ Math::Vector3& Space::GetMaxSpeed()
 	return _maxSpeed;
 }
 
-std::string Space::GetNameClass() {
+std::string Space::GetNameClass()
+{
 	return Engine::GetClassName(this);
 }

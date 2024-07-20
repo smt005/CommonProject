@@ -1,4 +1,4 @@
-﻿// ◦ Xyz ◦
+// ◦ Xyz ◦
 
 #include "PlanePoints.h"
 #include <cmath>
@@ -26,7 +26,6 @@ void PlanePoints::Init(float spaceRange, float offset)
 			}
 		}
 	}
-
 
 	float x = -_spaceRange;
 	float y = -_spaceRange;

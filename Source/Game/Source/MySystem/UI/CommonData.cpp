@@ -24,19 +24,22 @@ float* CommonData::Color4()
 	return color4;
 }
 
-
 // Lock screen
 
-void CommonData::PushLockScreen() {
+void CommonData::PushLockScreen()
+{
 	++lockScreenCounter;
 }
-void CommonData::PopLockScreen() {
+void CommonData::PopLockScreen()
+{
 	--lockScreenCounter;
 }
-void CommonData::UnlockScreen() {
+void CommonData::UnlockScreen()
+{
 	lockScreenCounter = 0;
 }
-bool CommonData::IsLockScreen() {
+bool CommonData::IsLockScreen()
+{
 	return lockScreenCounter > 0;
 }
 int CommonData::lockScreenCounter = 0;

@@ -5,13 +5,13 @@
 #include <cmath>
 #include <glm/ext/scalar_constants.hpp>
 
-
-SpatialGrid::SpatialGrid() {
+SpatialGrid::SpatialGrid()
+{
 	Make();
 }
 
-void SpatialGrid::Make() {
-
+void SpatialGrid::Make()
+{
 	{
 		float distans = 1000.f;
 		float count = 10;

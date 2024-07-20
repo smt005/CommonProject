@@ -1,12 +1,13 @@
 // ◦ Xyz ◦
 #pragma once
 
-#include "ImGuiManager/UI.h"
-#include "Common/Help.h"
-#include "ImGuiManager/Editor/Common/CommonUI.h"
+#include <ImGuiManager/UI.h>
+#include <Common/Help.h>
+#include <ImGuiManager/Editor/Common/CommonUI.h>
 #include <vector>
 
-class ListHeaviestUI final : public UI::Window {
+class ListHeaviestUI final : public UI::Window
+{
 public:
 	ListHeaviestUI();
 	void OnOpen() override;
